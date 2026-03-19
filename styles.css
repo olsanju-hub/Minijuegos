@@ -4746,8 +4746,6 @@ body:not(.is-home-screen) .bg-layer {
   grid-row: var(--row) / span var(--row-span);
   grid-column: var(--col) / span var(--col-span);
   display: grid;
-  grid-template-columns: repeat(8, minmax(0, 1fr));
-  grid-template-rows: repeat(8, minmax(0, 1fr));
   border-radius: 0;
   border: 2.1px solid var(--parchis-line);
   background: #fffdf9;
@@ -4813,7 +4811,7 @@ body:not(.is-home-screen) .bg-layer {
   background:
     linear-gradient(45deg, transparent calc(50% - 1px), var(--parchis-line) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
     linear-gradient(-45deg, transparent calc(50% - 1px), var(--parchis-line) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
-  z-index: 1;
+  z-index: 3;
   pointer-events: none;
 }
 
@@ -4822,27 +4820,27 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .parchis-goal-tri {
-  grid-area: 1 / 1 / -1 / -1;
-  z-index: 0;
+  grid-area: 1 / 1;
+  z-index: 2;
 }
 
 .parchis-goal-tri.slot-0 {
-  clip-path: polygon(0 0, 100% 0, 75% 25%, 25% 25%);
+  clip-path: polygon(50% 50%, 0 0, 100% 0);
   background: #ff2a2f;
 }
 
 .parchis-goal-tri.slot-1 {
-  clip-path: polygon(100% 0, 100% 100%, 75% 75%, 75% 25%);
+  clip-path: polygon(50% 50%, 100% 0, 100% 100%);
   background: #3192dc;
 }
 
 .parchis-goal-tri.slot-2 {
-  clip-path: polygon(0 100%, 100% 100%, 75% 75%, 25% 75%);
+  clip-path: polygon(50% 50%, 0 100%, 100% 100%);
   background: #f4df19;
 }
 
 .parchis-goal-tri.slot-3 {
-  clip-path: polygon(0 0, 25% 25%, 25% 75%, 0 100%);
+  clip-path: polygon(50% 50%, 0 0, 0 100%);
   background: #70bc35;
 }
 
@@ -4889,23 +4887,6 @@ body:not(.is-home-screen) .bg-layer {
   pointer-events: none;
 }
 
-.parchis-goal-lane-cell {
-  position: relative;
-  grid-row: var(--local-row) / span var(--local-row-span);
-  grid-column: var(--local-col) / span var(--local-col-span);
-  z-index: 3;
-  min-width: 0;
-  min-height: 0;
-}
-
-.parchis-goal-lane-cell .parchis-final-core {
-  border-width: 1.75px;
-}
-
-.parchis-goal-lane-cell .parchis-cell-contents {
-  z-index: 3;
-}
-
 .parchis-track-cell,
 .parchis-final-cell {
   position: relative;
@@ -4919,11 +4900,6 @@ body:not(.is-home-screen) .bg-layer {
   display: grid;
   place-items: stretch;
   z-index: 3;
-}
-
-.parchis-goal .parchis-goal-lane-cell {
-  grid-row: var(--local-row) / span var(--local-row-span);
-  grid-column: var(--local-col) / span var(--local-col-span);
 }
 
 .parchis-track-core,

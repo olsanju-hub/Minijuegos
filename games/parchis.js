@@ -267,29 +267,6 @@ const FINAL_LANE_LAYOUT = Object.freeze([
   Object.freeze({ axis: "horizontal", entryEdge: "left", goalEdge: "right", goalStartStep: 6 })
 ]);
 
-const INNER_GOAL_LANE_BLUEPRINT = Object.freeze([
-  Object.freeze([
-    Object.freeze({ step: 6, row: 1, col: 4, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 7, row: 2, col: 4, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 8, row: 3, col: 4, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" })
-  ]),
-  Object.freeze([
-    Object.freeze({ step: 6, row: 4, col: 8, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 7, row: 4, col: 7, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 8, row: 4, col: 6, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" })
-  ]),
-  Object.freeze([
-    Object.freeze({ step: 6, row: 8, col: 4, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 7, row: 7, col: 4, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 8, row: 6, col: 4, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" })
-  ]),
-  Object.freeze([
-    Object.freeze({ step: 6, row: 4, col: 1, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 7, row: 4, col: 2, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 8, row: 4, col: 3, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" })
-  ])
-]);
-
 const HOME_SLOT_ORDER = Object.freeze([0, 1, 2, 3]);
 
 function escapeHtml(value) {
@@ -1511,7 +1488,6 @@ export const parchisGame = {
       const lane = FINAL_LANE_BLUEPRINT[slot];
       const laneLayout = FINAL_LANE_LAYOUT[slot] || FINAL_LANE_LAYOUT[0];
       return lane
-        .filter((cell) => cell.step <= 5)
         .map((cell) => {
           const finalIndex = cell.step - 1;
           const occupants = (finalMap.get(`${slot}:${finalIndex}`) || []).slice().sort((a, b) => a.pieceIndex - b.pieceIndex);
@@ -1520,33 +1496,6 @@ export const parchisGame = {
             <div
               class="${classes.join(" ")}"
               style="${renderGridPlacement(getFinalLanePlacement(slot, cell))}"
-              data-final="${slot}:${cell.step}"
-              data-final-segment="${cell.segment}"
-            >
-              <span class="parchis-final-core" aria-hidden="true"></span>
-              <span class="parchis-cell-contents">
-                ${renderPieceStack(occupants, { state, canAct, phaseAction, movableSet })}
-              </span>
-            </div>
-          `;
-        })
-        .join("");
-    }).join("");
-
-    const innerGoalLaneCells = Array.from({ length: 4 }, (_, slot) => {
-      const lane = INNER_GOAL_LANE_BLUEPRINT[slot];
-      const laneLayout = FINAL_LANE_LAYOUT[slot] || FINAL_LANE_LAYOUT[0];
-
-      return lane
-        .map((cell) => {
-          const finalIndex = cell.step - 1;
-          const occupants = (finalMap.get(`${slot}:${finalIndex}`) || []).slice().sort((a, b) => a.pieceIndex - b.pieceIndex);
-          const classes = [...getFinalLaneCellClasses(slot, cell, laneLayout), "parchis-goal-lane-cell"];
-
-          return `
-            <div
-              class="${classes.join(" ")}"
-              style="${renderLocalGridPlacement(cell)}"
               data-final="${slot}:${cell.step}"
               data-final-segment="${cell.segment}"
             >
@@ -1590,7 +1539,6 @@ export const parchisGame = {
         <span class="parchis-goal-tri slot-1" aria-hidden="true"></span>
         <span class="parchis-goal-tri slot-2" aria-hidden="true"></span>
         <span class="parchis-goal-tri slot-3" aria-hidden="true"></span>
-        ${innerGoalLaneCells}
         <span class="parchis-goal-piece-bay">
           ${Array.from({ length: 4 }, (_, slot) => `
             <span class="parchis-goal-player slot-${slot}">
