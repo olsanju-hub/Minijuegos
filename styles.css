@@ -7286,6 +7286,25 @@ body:not(.is-home-screen) .bg-layer {
   gap: 12px;
 }
 
+.home-game-card-icon-button {
+  position: relative;
+  z-index: 3;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.home-game-card-icon-button:focus-visible {
+  outline: none;
+}
+
+.home-game-card-icon-button:focus-visible .home-game-card-icon {
+  outline: 3px solid rgba(87, 149, 255, 0.92);
+  outline-offset: 3px;
+}
+
 .home-game-card-icon {
   width: 56px;
   height: 56px;
@@ -7377,6 +7396,15 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 @media (max-width: 1280px) {
+  .home-game-card-actions {
+    display: none;
+  }
+
+  .home-game-card-icon-button {
+    pointer-events: auto;
+    cursor: pointer;
+  }
+
   .home-games-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -7441,13 +7469,6 @@ body:not(.is-home-screen) .bg-layer {
   .home-game-card-title {
     font-size: 0.84rem;
     line-height: 1.05;
-  }
-
-  .home-game-card-actions .btn {
-    min-height: 36px;
-    padding: 0 8px;
-    border-radius: 14px;
-    font-size: 0.76rem;
   }
 
   .home-game-card-media .game-illustration {

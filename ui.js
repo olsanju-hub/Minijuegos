@@ -290,7 +290,14 @@ export function createUI({ appElement, toastElement }) {
                       aria-label="Seleccionar ${escapeHtml(game.name)}"
                     ></button>
                     <div class="home-game-card-top">
-                      <span class="home-game-card-icon is-${escapeHtml(game.id)}">${escapeHtml(profile.icon)}</span>
+                      <button
+                        class="home-game-card-icon-button"
+                        data-action="open-game"
+                        data-game-id="${game.id}"
+                        aria-label="Jugar a ${escapeHtml(game.name)}"
+                      >
+                        <span class="home-game-card-icon is-${escapeHtml(game.id)}">${escapeHtml(profile.icon)}</span>
+                      </button>
                       <span class="home-game-card-players">${escapeHtml(profile.playersText)}</span>
                     </div>
                     <div class="home-game-card-media">
