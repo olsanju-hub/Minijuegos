@@ -225,6 +225,43 @@ export function createUI({ appElement, toastElement }) {
           <path d="M24 25L19 20H29L24 25Z" fill="#f3e48f" stroke="#d2bc55" stroke-width="1" />
           <path d="M19 20L24 15V25L19 20Z" fill="#cfead8" stroke="#99c4aa" stroke-width="1" />
         </svg>
+      `,
+      "escaleras-serpientes": `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#fff5de" stroke="#e6cf9d" stroke-width="1.5" />
+          <g>
+            <rect x="8" y="8" width="8" height="8" fill="#f8d3c6" />
+            <rect x="16" y="8" width="8" height="8" fill="#ffffff" />
+            <rect x="24" y="8" width="8" height="8" fill="#d8e9f7" />
+            <rect x="32" y="8" width="8" height="8" fill="#ffffff" />
+            <rect x="8" y="16" width="8" height="8" fill="#ffffff" />
+            <rect x="16" y="16" width="8" height="8" fill="#f6e7ae" />
+            <rect x="24" y="16" width="8" height="8" fill="#ffffff" />
+            <rect x="32" y="16" width="8" height="8" fill="#d8e9f7" />
+            <rect x="8" y="24" width="8" height="8" fill="#f8d3c6" />
+            <rect x="16" y="24" width="8" height="8" fill="#ffffff" />
+            <rect x="24" y="24" width="8" height="8" fill="#dfeec7" />
+            <rect x="32" y="24" width="8" height="8" fill="#ffffff" />
+            <rect x="8" y="32" width="8" height="8" fill="#ffffff" />
+            <rect x="16" y="32" width="8" height="8" fill="#f8d3c6" />
+            <rect x="24" y="32" width="8" height="8" fill="#ffffff" />
+            <rect x="32" y="32" width="8" height="8" fill="#dfeec7" />
+          </g>
+          <g stroke="#9f7c64" stroke-width="2.4" stroke-linecap="round">
+            <line x1="13" y1="35" x2="22" y2="17" />
+            <line x1="18" y1="36" x2="27" y2="18" />
+            <line x1="15" y1="31" x2="20" y2="32" />
+            <line x1="17" y1="26" x2="22" y2="27" />
+            <line x1="20" y1="21" x2="25" y2="22" />
+          </g>
+          <path d="M31 12Q24 16 27 23T20 36" fill="none" stroke="#8fc6e0" stroke-width="6.6" stroke-linecap="round" />
+          <path d="M31 12Q24 16 27 23T20 36" fill="none" stroke="#dbeef6" stroke-width="2.2" stroke-dasharray="4 5" stroke-linecap="round" />
+          <g transform="translate(31 12) rotate(160)">
+            <ellipse cx="0" cy="0" rx="4.8" ry="3.6" fill="#8fc6e0" />
+            <circle cx="1.2" cy="-1" r="0.9" fill="#fff" />
+            <circle cx="1.5" cy="-1" r="0.35" fill="#111" />
+          </g>
+        </svg>
       `
     };
 
@@ -286,6 +323,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Clasico de fichas",
           icon: "P",
           energy: "Caos familiar del bueno."
+        },
+        "escaleras-serpientes": {
+          accent: "#79c95a",
+          glow: "rgba(121, 201, 90, 0.24)",
+          description: "Sube y esquiva",
+          icon: "ES",
+          energy: "Dados, rebotes y serpientes."
         }
       };
 
