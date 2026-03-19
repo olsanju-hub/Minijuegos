@@ -6458,6 +6458,25 @@ body:not(.is-home-screen) .bg-layer {
   letter-spacing: -0.01em;
 }
 
+@media (min-width: 1024px) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-parchis {
+    width: min(1280px, 100%);
+  }
+
+  .parchis-shell {
+    width: min(1220px, calc(100vw - 32px));
+  }
+
+  .parchis-board-frame {
+    width: min(100%, 920px, calc(100vh - 210px));
+    justify-self: center;
+  }
+
+  .parchis-board {
+    width: 100%;
+  }
+}
+
 .parchis-turn-player,
 .parchis-player-name {
   color: var(--text-main);
