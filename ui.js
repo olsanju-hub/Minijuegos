@@ -71,6 +71,7 @@ export function createUI({ appElement, toastElement }) {
   let homeActiveIndex = 0;
   let homeDrawerOpen = false;
   let homeMotionDir = 0;
+  let homeCatalogVisible = false;
 
   function getHomeCatalog(vm) {
     return Array.isArray(vm?.games) ? vm.games : [];
@@ -170,7 +171,7 @@ export function createUI({ appElement, toastElement }) {
     const baseGames = Array.isArray(vm.games) ? vm.games : [];
     if (baseGames.length === 0) {
       return `
-        <section class="screen home-screen home-library-screen">
+        <section class="screen home-screen home-library-screen is-catalog">
           <header class="card home-library-header">
             <div class="home-catalog-brand">
               <div class="home-catalog-icon" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -190,6 +191,7 @@ export function createUI({ appElement, toastElement }) {
     const activeIndex = normalizeHomeIndex(vm);
     const activeGame = games[activeIndex];
     const motionClass = homeMotionDir > 0 ? "is-motion-next" : homeMotionDir < 0 ? "is-motion-prev" : "";
+    const homeViewClass = homeCatalogVisible ? "is-catalog" : "is-cover";
     homeMotionDir = 0;
 
     function profileForGame(game) {
@@ -248,7 +250,7 @@ export function createUI({ appElement, toastElement }) {
     const playerSpreadLabel = games.length > 1 ? "Local y familiar" : activeProfile.playersText;
 
     return `
-      <section class="screen home-screen home-library-screen">
+      <section class="screen home-screen home-library-screen ${homeViewClass}">
         <header class="card home-library-header">
           <div class="home-catalog-brand">
             <div class="home-catalog-icon" aria-hidden="true"><span></span><span></span><span></span></div>
@@ -265,16 +267,25 @@ export function createUI({ appElement, toastElement }) {
 
         <section class="home-hero-stage">
           <article class="card home-family-hero ${motionClass}">
+            <button
+              class="home-family-art-hit"
+              data-action="home-enter-catalog"
+              aria-label="Entrar al catalogo de juegos"
+              aria-controls="home-games-section"
+            ></button>
             <div class="home-family-art">
               <img class="home-family-art-image" src="./assets/home-hero-family.png" alt="Imagen principal familiar de Minijuegos" />
             </div>
           </article>
         </section>
 
-        <section class="home-games-section">
+        <section class="home-games-section" id="home-games-section" data-home-catalog>
           <div class="home-games-heading">
             <h2 class="home-games-title" aria-label="Minijuegos">${renderPlayfulTitle("Minijuegos")}</h2>
             <p class="home-games-subtitle">Juegos rápidos, familiares y listos para jugar en el mismo dispositivo.</p>
+            <div class="home-games-cta-row">
+              <button class="btn btn-primary home-games-enter" data-action="home-enter-catalog">Entrar</button>
+            </div>
           </div>
 
           <section class="home-games-grid" aria-label="Catalogo de juegos">
@@ -608,6 +619,24 @@ export function createUI({ appElement, toastElement }) {
       }
 
       const action = target.dataset.action;
+      if (action === "home-enter-catalog") {
+        homeCatalogVisible = true;
+        const homeScreen = appElement.querySelector(".home-library-screen");
+        const catalogSection = appElement.querySelector("[data-home-catalog]");
+        if (homeScreen) {
+          homeScreen.classList.remove("is-cover");
+          homeScreen.classList.add("is-catalog");
+        } else if (currentVm) {
+          render(currentVm);
+        }
+        window.requestAnimationFrame(() => {
+          if (catalogSection) {
+            catalogSection.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+        return;
+      }
+
       if (action === "home-select") {
         setHomeIndex(Number(target.dataset.homeIndex));
         return;

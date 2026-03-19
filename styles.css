@@ -7113,18 +7113,32 @@ body:not(.is-home-screen) .bg-layer {
   display: none;
 }
 
+.home-library-screen {
+  display: grid;
+  gap: 18px;
+  align-content: start;
+}
+
 .home-hero-stage {
   position: relative;
   padding-top: 6px;
 }
 
 .home-family-hero {
+  position: relative;
   min-height: 0;
   padding: 0;
   display: block;
   border-radius: 34px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    0 20px 34px rgba(31, 28, 24, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  transition:
+    border-radius 0.28s ease,
+    box-shadow 0.28s ease,
+    transform 0.28s ease;
 }
 
 .home-family-hero::before,
@@ -7139,8 +7153,13 @@ body:not(.is-home-screen) .bg-layer {
   background: transparent;
   box-shadow: none;
   position: relative;
-  aspect-ratio: 16 / 9;
+  height: min(72vh, 760px);
   overflow: hidden;
+  transition: height 0.28s ease;
+}
+
+.home-library-screen.is-catalog .home-family-art {
+  height: clamp(250px, 36vh, 390px);
 }
 
 .home-family-art::after {
@@ -7159,12 +7178,42 @@ body:not(.is-home-screen) .bg-layer {
   object-fit: cover;
   object-position: center 24%;
   filter: none;
+  transition:
+    transform 0.32s ease,
+    object-position 0.28s ease;
+}
+
+.home-library-screen.is-cover .home-family-hero:hover {
+  transform: translateY(-2px);
+}
+
+.home-library-screen.is-cover .home-family-hero:hover .home-family-art-image {
+  transform: scale(1.015);
+}
+
+.home-family-art-hit {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.home-family-art-hit:focus-visible {
+  outline: 3px solid rgba(87, 149, 255, 0.92);
+  outline-offset: -6px;
+}
+
+.home-library-screen.is-catalog .home-family-art-hit {
+  display: none;
 }
 
 .home-games-section {
   position: relative;
   display: grid;
   gap: 18px;
+  scroll-margin-top: 18px;
 }
 
 .home-games-heading {
@@ -7187,10 +7236,18 @@ body:not(.is-home-screen) .bg-layer {
   line-height: 0.88;
   letter-spacing: -0.09em;
   color: #14131a;
-  transform: translateY(-12%);
   text-shadow:
     0 6px 0 rgba(255, 255, 255, 0.78),
     0 18px 26px rgba(31, 28, 24, 0.08);
+  transition: transform 0.28s ease;
+}
+
+.home-library-screen.is-cover .home-games-title {
+  transform: translateY(-18%);
+}
+
+.home-library-screen.is-catalog .home-games-title {
+  transform: translateY(-10%);
 }
 
 .home-games-subtitle {
@@ -7200,6 +7257,19 @@ body:not(.is-home-screen) .bg-layer {
   color: #5e5a53;
   font-size: clamp(0.98rem, 1.6vw, 1.08rem);
   line-height: 1.45;
+}
+
+.home-games-cta-row {
+  display: flex;
+  justify-content: center;
+}
+
+.home-games-enter {
+  min-width: 168px;
+}
+
+.home-library-screen.is-catalog .home-games-cta-row {
+  display: none;
 }
 
 .home-games-grid {
@@ -7369,6 +7439,10 @@ body:not(.is-home-screen) .bg-layer {
   .home-games-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .home-family-art {
+    height: min(64vh, 620px);
+  }
 }
 
 @media (max-width: 760px) {
@@ -7377,7 +7451,11 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .home-family-art {
-    aspect-ratio: 5 / 4;
+    height: min(58vh, 520px);
+  }
+
+  .home-library-screen.is-catalog .home-family-art {
+    height: clamp(190px, 30vh, 280px);
   }
 
   .home-family-art-image {
@@ -7390,7 +7468,14 @@ body:not(.is-home-screen) .bg-layer {
 
   .home-games-title {
     font-size: clamp(2.4rem, 12vw, 4rem);
-    transform: translateY(-10%);
+  }
+
+  .home-library-screen.is-cover .home-games-title {
+    transform: translateY(-16%);
+  }
+
+  .home-library-screen.is-catalog .home-games-title {
+    transform: translateY(-8%);
   }
 
   .home-games-grid {
