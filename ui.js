@@ -37,6 +37,20 @@ function normalizeActionPayload(target) {
     };
   }
 
+  if (actionType === "confirm-move") {
+    return {
+      type: "confirm-move",
+      cell: Number(target.dataset.cell)
+    };
+  }
+
+  if (actionType === "select-destination") {
+    return {
+      type: "select-destination",
+      pieceId: String(target.dataset.pieceId || "")
+    };
+  }
+
   if (actionType === "select-piece") {
     return {
       type: "select-piece",

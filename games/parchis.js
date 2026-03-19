@@ -634,12 +634,6 @@ function resolveBonusQueue(state) {
       continue;
     }
 
-    if (legal.length === 1) {
-      state.bonusQueue.shift();
-      applyMoveCore(state, legal[0]);
-      continue;
-    }
-
     state.phase = "await-bonus";
     state.bonusPending = { ...bonus };
     state.pendingMove = {
@@ -649,7 +643,7 @@ function resolveBonusQueue(state) {
     state.movablePieceIds = legal.map((move) => move.pieceId);
     state.selectedPieceId = null;
     state.effectiveSteps = bonus.type;
-    state.lastEvent = `Bonus de ${bonus.type}: elige ficha.`;
+    state.lastEvent = `Bonus de ${bonus.type}: toca el destino.`;
     return "await-input";
   }
 
@@ -769,30 +763,133 @@ function runRollAction(state) {
     return { ok: true };
   }
 
-  if (legalMoves.length === 1) {
-    applyMoveCore(state, legalMoves[0]);
-
-    if (state.winnerSlot !== null) {
-      return { ok: true };
-    }
-
-    const bonusStatus = resolveBonusQueue(state);
-    if (bonusStatus === "await-input") {
-      return { ok: true };
-    }
-
-    finalizeTurnAfterResolution(state);
-    return { ok: true };
-  }
-
   state.phase = "await-piece";
   state.movablePieceIds = legalMoves.map((move) => move.pieceId);
   state.selectedPieceId = null;
-  state.lastEvent = `Tirada de ${rolled}. Elige ficha para mover ${effectiveSteps}.`;
+  state.lastEvent = `Tirada de ${rolled}. Toca el destino para mover ${effectiveSteps}.`;
   return { ok: true };
 }
 
-function runPieceSelection(state, pieceId, expectBonusAction) {
+function buildPendingLegalMoves(state) {
+  const pending = state.pendingMove;
+  if (!pending) {
+    return [];
+  }
+
+  const playerSlot = state.currentPlayerIndex;
+  let options = {};
+  let steps = pending.steps;
+
+  if (pending.source === "die") {
+    if (pending.mustExitHome) {
+      options.mustExitHome = true;
+    }
+
+    if (pending.bridgeRestrictionActive && Array.isArray(pending.bridgePieceIds) && pending.bridgePieceIds.length > 0) {
+      options.restrictPieceIds = new Set(pending.bridgePieceIds);
+    }
+  }
+
+  if (pending.source === "bonus") {
+    options.forBonus = true;
+    const activeBonus = state.bonusQueue[0];
+    if (!activeBonus) {
+      return [];
+    }
+    steps = activeBonus.type;
+  }
+
+  return getLegalMoves(state, playerSlot, steps, options);
+}
+
+function describeMoveTarget(state, move) {
+  const playerSlot = state.currentPlayerIndex;
+
+  if (move.toProgress < TRACK_LENGTH) {
+    const trackIndex = indexForProgress(playerSlot, move.toProgress);
+    const visibleCell = TRACK_BLUEPRINT[trackIndex].visibleCell;
+    return {
+      key: `track:${visibleCell}`,
+      type: "track",
+      visibleCell
+    };
+  }
+
+  if (move.toProgress < GOAL_PROGRESS) {
+    return {
+      key: `final:${playerSlot}:${move.toProgress - TRACK_LENGTH + 1}`,
+      type: "final",
+      slot: playerSlot,
+      step: move.toProgress - TRACK_LENGTH + 1
+    };
+  }
+
+  return {
+    key: `goal:${playerSlot}`,
+    type: "goal",
+    slot: playerSlot
+  };
+}
+
+function buildPendingTargetMap(state) {
+  const targets = new Map();
+  const legalMoves = buildPendingLegalMoves(state);
+
+  for (const move of legalMoves) {
+    const descriptor = describeMoveTarget(state, move);
+    const bucket = targets.get(descriptor.key) || { ...descriptor, moves: [] };
+    bucket.moves.push(move);
+    targets.set(descriptor.key, bucket);
+  }
+
+  return targets;
+}
+
+function renderMoveTarget(state, target, labelPrefix = "Mover") {
+  if (!target) {
+    return "";
+  }
+
+  if (target.moves.length === 1) {
+    return `
+      <button
+        class="parchis-move-target is-single"
+        data-action="game-action"
+        data-game-action="select-destination"
+        data-piece-id="${target.moves[0].pieceId}"
+        aria-label="${escapeHtml(`${labelPrefix}.`)}"
+      >
+        <span class="parchis-move-target-badge">Mover</span>
+      </button>
+    `;
+  }
+
+  return `
+    <span class="parchis-move-target is-multi" role="group" aria-label="${escapeHtml(`${labelPrefix}. Elige ficha.`)}">
+      <span class="parchis-move-target-choice-row">
+        ${target.moves
+          .map((move) => {
+            const piece = state.pieces.find((item) => item.id === move.pieceId);
+            const label = piece ? piece.pieceIndex + 1 : "?";
+            return `
+              <button
+                class="parchis-move-target-choice"
+                data-action="game-action"
+                data-game-action="select-destination"
+                data-piece-id="${move.pieceId}"
+                aria-label="${escapeHtml(`${labelPrefix}. Ficha ${label}.`)}"
+              >
+                ${label}
+              </button>
+            `;
+          })
+          .join("")}
+      </span>
+    </span>
+  `;
+}
+
+function runDestinationSelection(state, pieceId, expectBonusAction) {
   if (!pieceId) {
     return { ok: false, reason: "invalid" };
   }
@@ -810,37 +907,15 @@ function runPieceSelection(state, pieceId, expectBonusAction) {
     return { ok: false, reason: "invalid" };
   }
 
-  const playerSlot = state.currentPlayerIndex;
-  let options = {};
-  let steps = pending.steps;
-
-  if (pending.source === "die") {
-    if (expectBonusAction) {
-      return { ok: false, reason: "invalid" };
-    }
-
-    if (pending.mustExitHome) {
-      options.mustExitHome = true;
-    }
-
-    if (pending.bridgeRestrictionActive && Array.isArray(pending.bridgePieceIds) && pending.bridgePieceIds.length > 0) {
-      options.restrictPieceIds = new Set(pending.bridgePieceIds);
-    }
+  if (pending.source === "die" && expectBonusAction) {
+    return { ok: false, reason: "invalid" };
   }
 
-  if (pending.source === "bonus") {
-    if (!expectBonusAction) {
-      return { ok: false, reason: "invalid" };
-    }
-    options.forBonus = true;
-    const activeBonus = state.bonusQueue[0];
-    if (!activeBonus) {
-      return { ok: false, reason: "invalid" };
-    }
-    steps = activeBonus.type;
+  if (pending.source === "bonus" && !expectBonusAction) {
+    return { ok: false, reason: "invalid" };
   }
 
-  const legal = getLegalMoves(state, playerSlot, steps, options);
+  const legal = buildPendingLegalMoves(state);
   const selectedMove = legal.find((move) => move.pieceId === pieceId);
   if (!selectedMove) {
     return { ok: false, reason: "invalid" };
@@ -1112,7 +1187,7 @@ function getFinalLaneCellClasses(slot, cell, laneLayout) {
 
 function renderPieceButton(piece, { state, canAct, phaseAction, movableSet, bridge = false } = {}) {
   const theme = getTheme(piece.playerSlot);
-  const movable = movableSet.has(piece.id) && canAct && phaseAction;
+  const movable = false;
   const selected = state.selectedPieceId === piece.id;
   const isGoalPiece = piece.progress >= GOAL_PROGRESS;
 
@@ -1192,10 +1267,10 @@ function buildPhaseHelp(state) {
     return "Pulsa Tirar dado para continuar.";
   }
   if (state.phase === "await-piece") {
-    return `Selecciona una ficha para mover ${state.effectiveSteps || 0}.`;
+    return `Toca el destino para mover ${state.effectiveSteps || 0}.`;
   }
   if (state.phase === "await-bonus") {
-    return `Bonus de ${state.bonusPending ? state.bonusPending.type : 0}. Elige ficha.`;
+    return `Bonus de ${state.bonusPending ? state.bonusPending.type : 0}. Toca el destino.`;
   }
   return "Resolviendo movimiento.";
 }
@@ -1287,12 +1362,12 @@ export const parchisGame = {
     }
 
     if (state.phase === "await-piece") {
-      return `Turno de ${name}. Mueve ${state.effectiveSteps || 0} casillas.`;
+      return `Turno de ${name}. Toca el destino para mover ${state.effectiveSteps || 0} casillas.`;
     }
 
     if (state.phase === "await-bonus") {
       const steps = state.bonusPending ? state.bonusPending.type : 0;
-      return `Turno de ${name}. Bonus ${steps}: elige ficha.`;
+      return `Turno de ${name}. Bonus ${steps}: toca el destino.`;
     }
 
     return `Turno de ${name}.`;
@@ -1321,7 +1396,7 @@ export const parchisGame = {
     }
 
     if (action.type === "select-piece") {
-      const result = runPieceSelection(next, String(action.pieceId || ""), false);
+      const result = runDestinationSelection(next, String(action.pieceId || ""), false);
       if (!result.ok) {
         return result;
       }
@@ -1329,7 +1404,15 @@ export const parchisGame = {
     }
 
     if (action.type === "apply-bonus") {
-      const result = runPieceSelection(next, String(action.pieceId || ""), true);
+      const result = runDestinationSelection(next, String(action.pieceId || ""), true);
+      if (!result.ok) {
+        return result;
+      }
+      return { ok: true, state: next };
+    }
+
+    if (action.type === "select-destination") {
+      const result = runDestinationSelection(next, String(action.pieceId || ""), state.phase === "await-bonus");
       if (!result.ok) {
         return result;
       }
@@ -1373,6 +1456,7 @@ export const parchisGame = {
     const movableSet = new Set(state.movablePieceIds || []);
     const recentPath = new Set(state.lastPath || []);
     const phaseAction = state.phase === "await-piece" ? "select-piece" : state.phase === "await-bonus" ? "apply-bonus" : "";
+    const targetMap = buildPendingTargetMap(state);
     const activePlayer = players.find((player) => player.slot === state.currentPlayerIndex) || null;
     const activeSlots = new Set(players.map((player) => player.slot));
 
@@ -1394,6 +1478,7 @@ export const parchisGame = {
       const isBridgeCell = bridgeCells.has(index);
       const placement = getTrackPlacement(cell);
       const occupants = (trackMap.get(index) || []).slice().sort((a, b) => a.playerSlot - b.playerSlot || a.pieceIndex - b.pieceIndex);
+      const moveTarget = targetMap.get(`track:${cell.visibleCell}`) || null;
       const classes = getTrackCellClasses({
         cell,
         startOwner,
@@ -1419,6 +1504,7 @@ export const parchisGame = {
           <span class="parchis-cell-contents">
             ${renderPieceStack(occupants, { state, canAct, phaseAction, movableSet, bridge: isBridgeCell })}
           </span>
+          ${renderMoveTarget(state, moveTarget, `Mover a la casilla ${cell.visibleCell}`)}
         </div>
       `;
     }).join("");
@@ -1431,6 +1517,7 @@ export const parchisGame = {
         const isSafe = SAFE_INDICES.has(index);
         const isBridgeCell = bridgeCells.has(index);
         const occupants = (trackMap.get(index) || []).slice().sort((a, b) => a.playerSlot - b.playerSlot || a.pieceIndex - b.pieceIndex);
+        const moveTarget = targetMap.get(`track:${cell.visibleCell}`) || null;
         const classes = getTrackCellClasses({
           cell,
           startOwner,
@@ -1454,6 +1541,7 @@ export const parchisGame = {
             <span class="parchis-cell-contents">
               ${renderPieceStack(occupants, { state, canAct, phaseAction, movableSet, bridge: isBridgeCell })}
             </span>
+            ${renderMoveTarget(state, moveTarget, `Mover a la casilla ${cell.visibleCell}`)}
           </div>
         `;
       })
@@ -1491,6 +1579,7 @@ export const parchisGame = {
         .map((cell) => {
           const finalIndex = cell.step - 1;
           const occupants = (finalMap.get(`${slot}:${finalIndex}`) || []).slice().sort((a, b) => a.pieceIndex - b.pieceIndex);
+          const moveTarget = targetMap.get(`final:${slot}:${cell.step}`) || null;
           const classes = getFinalLaneCellClasses(slot, cell, laneLayout);
           return `
             <div
@@ -1503,6 +1592,7 @@ export const parchisGame = {
               <span class="parchis-cell-contents">
                 ${renderPieceStack(occupants, { state, canAct, phaseAction, movableSet })}
               </span>
+              ${renderMoveTarget(state, moveTarget, `Mover al pasillo final ${cell.step}`)}
             </div>
           `;
         })
@@ -1550,6 +1640,7 @@ export const parchisGame = {
                   </span>
                 `;
               }).join("")}
+              ${renderMoveTarget(state, targetMap.get(`goal:${slot}`) || null, "Mover a meta")}
             </span>
           `).join("")}
         </span>

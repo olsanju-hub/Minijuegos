@@ -354,7 +354,8 @@ function cloneState(state) {
   return {
     ...state,
     pieces: state.pieces.map((piece) => ({ ...piece })),
-    lastMove: state.lastMove ? { ...state.lastMove } : null
+    lastMove: state.lastMove ? { ...state.lastMove } : null,
+    pendingMove: state.pendingMove ? { ...state.pendingMove } : null
   };
 }
 
@@ -390,6 +391,62 @@ function buildEventText(player, move, roll) {
   }
 
   return parts.join(" ");
+}
+
+function buildPendingEventText(player, move, roll) {
+  const parts = [`${player.name} saca ${roll}.`];
+
+  if (move.from === 0) {
+    parts.push(`Toca la casilla ${move.rolledTo} para entrar al tablero.`);
+  } else if (move.bounced) {
+    parts.push(`Se pasa de la casilla 100 y debe rebotar hasta la casilla ${move.rolledTo}. Toca la casilla marcada.`);
+  } else {
+    parts.push(`Toca la casilla ${move.rolledTo} para mover la ficha.`);
+  }
+
+  if (move.jumpType === "ladder") {
+    parts.push(`Desde ahi subira por la escalera hasta la casilla ${move.final}.`);
+  } else if (move.jumpType === "snake") {
+    parts.push(`Desde ahi bajara por la serpiente hasta la casilla ${move.final}.`);
+  } else if (move.final === GOAL_CELL) {
+    parts.push("Si la tocas, gana.");
+  }
+
+  return parts.join(" ");
+}
+
+function resolveMove(from, roll) {
+  let rolledTo = from === 0 ? roll : from + roll;
+  let bounced = false;
+
+  if (rolledTo > GOAL_CELL) {
+    bounced = true;
+    rolledTo = GOAL_CELL - (rolledTo - GOAL_CELL);
+  }
+
+  let final = rolledTo;
+  let jumpType = null;
+  let jumpFrom = null;
+  let jumpTo = null;
+
+  const jump = getJumpAt(final);
+  if (jump) {
+    jumpType = jump.type;
+    jumpFrom = final;
+    jumpTo = jump.to;
+    final = jump.to;
+  }
+
+  return {
+    from,
+    rolledTo,
+    final,
+    jumpType,
+    jumpFrom,
+    jumpTo,
+    bounced,
+    extraTurn: roll === 6 && final !== GOAL_CELL
+  };
 }
 
 function buildPiecesByCell(state) {
@@ -448,9 +505,10 @@ function renderPlayerRows(state, players) {
     .join("");
 }
 
-function buildBoardCells(state, players) {
+function buildBoardCells(state, players, canAct) {
   const piecesByCell = buildPiecesByCell(state);
   const lastMove = state.lastMove || null;
+  const pendingMove = state.pendingMove || null;
   const activeSlot = state.turnSlot;
 
   return Array.from({ length: CELL_COUNT }, (_, index) => {
@@ -475,6 +533,12 @@ function buildBoardCells(state, players) {
     if (lastMove?.jumpType && cell === lastMove.jumpTo) {
       classes.push("is-jump-target");
     }
+    if (pendingMove && cell === pendingMove.rolledTo) {
+      classes.push("is-pending-target");
+    }
+    if (pendingMove?.jumpType && pendingMove.final !== pendingMove.rolledTo && cell === pendingMove.final) {
+      classes.push("is-pending-result");
+    }
 
     const pieceMarkup = pieces.length
       ? `
@@ -483,6 +547,21 @@ function buildBoardCells(state, players) {
         </span>
       `
       : "";
+
+    const targetMarkup =
+      pendingMove && canAct && cell === pendingMove.rolledTo
+        ? `
+          <button
+            class="sns-cell-target"
+            data-action="game-action"
+            data-game-action="confirm-move"
+            data-cell="${cell}"
+            aria-label="Mover a la casilla ${cell}"
+          >
+            <span class="sns-cell-target-badge">Mover</span>
+          </button>
+        `
+        : "";
 
     const labelPieces = pieces
       .map((piece) => {
@@ -497,6 +576,7 @@ function buildBoardCells(state, players) {
       <div class="${classes.join(" ")}" style="${renderGridPlacement(cell)}" aria-label="${escapeHtml(aria)}">
         <span class="sns-cell-number">${cell}</span>
         <span class="sns-cell-piece-layer">${pieceMarkup}</span>
+        ${targetMarkup}
       </div>
     `;
   }).join("");
@@ -536,6 +616,7 @@ export const escalerasSerpientesGame = {
       winnerSlot: null,
       lastEvent: "Pulsa Tirar dado para empezar.",
       lastMove: null,
+      pendingMove: null,
       pieces: Array.from({ length: totalPlayers }, (_, slot) => ({
         id: `sns-piece-${slot}`,
         playerSlot: slot,
@@ -561,10 +642,13 @@ export const escalerasSerpientesGame = {
     }
 
     const active = players.find((player) => player.slot === state.turnSlot);
+    if (state.pendingMove) {
+      return `Turno de ${active ? active.name : "Jugador"}. Toca la casilla ${state.pendingMove.rolledTo}.`;
+    }
     return `Turno de ${active ? active.name : "Jugador"}. Tira el dado.`;
   },
   applyAction({ state, action, actorSlot, players }) {
-    if (!action || action.type !== "roll-die") {
+    if (!action || (action.type !== "roll-die" && action.type !== "confirm-move")) {
       return { ok: false, reason: "invalid" };
     }
 
@@ -577,61 +661,48 @@ export const escalerasSerpientesGame = {
     }
 
     const next = cloneState(state);
-    const roll = rollDie();
     const piece = playerPiece(next, actorSlot);
     if (!piece) {
       return { ok: false, reason: "invalid" };
     }
 
-    const from = piece.position;
-    let rolledTo = from === 0 ? roll : from + roll;
-    let bounced = false;
-
-    if (rolledTo > GOAL_CELL) {
-      bounced = true;
-      rolledTo = GOAL_CELL - (rolledTo - GOAL_CELL);
-    }
-
-    let final = rolledTo;
-    let jumpType = null;
-    let jumpFrom = null;
-    let jumpTo = null;
-
-    const jump = getJumpAt(final);
-    if (jump) {
-      jumpType = jump.type;
-      jumpFrom = final;
-      jumpTo = jump.to;
-      final = jump.to;
-    }
-
-    piece.position = final;
-
-    const extraTurn = roll === 6 && final !== GOAL_CELL;
-
-    next.diceValue = roll;
-    next.diceToken = (next.diceToken || 0) + 1;
-    next.lastMove = {
-      playerSlot: actorSlot,
-      from,
-      rolledTo,
-      final,
-      jumpType,
-      jumpFrom,
-      jumpTo,
-      bounced,
-      extraTurn
-    };
-
     const player = players.find((item) => item.slot === actorSlot) || { name: `Jugador ${actorSlot + 1}` };
-    next.lastEvent = buildEventText(player, next.lastMove, roll);
+    if (action.type === "roll-die") {
+      if (state.pendingMove) {
+        return { ok: false, reason: "invalid" };
+      }
 
-    if (final === GOAL_CELL) {
+      const roll = rollDie();
+      const move = resolveMove(piece.position, roll);
+      next.diceValue = roll;
+      next.diceToken = (next.diceToken || 0) + 1;
+      next.pendingMove = {
+        playerSlot: actorSlot,
+        roll,
+        ...move
+      };
+      next.lastEvent = buildPendingEventText(player, next.pendingMove, roll);
+      return { ok: true, state: next };
+    }
+
+    const pendingMove = next.pendingMove;
+    if (!pendingMove || pendingMove.playerSlot !== actorSlot || Number(action.cell) !== pendingMove.rolledTo) {
+      return { ok: false, reason: "invalid" };
+    }
+
+    piece.position = pendingMove.final;
+    next.lastMove = {
+      ...pendingMove
+    };
+    next.pendingMove = null;
+    next.lastEvent = buildEventText(player, next.lastMove, pendingMove.roll);
+
+    if (pendingMove.final === GOAL_CELL) {
       next.winnerSlot = actorSlot;
       return { ok: true, state: next };
     }
 
-    if (!extraTurn) {
+    if (!pendingMove.extraTurn) {
       next.turnSlot = (actorSlot + 1) % next.playerCount;
     }
 
@@ -683,9 +754,14 @@ export const escalerasSerpientesGame = {
   renderBoard({ state, players, canAct }) {
     const active = players.find((player) => player.slot === state.turnSlot) || null;
     const diceValue = Number.isInteger(state.diceValue) ? state.diceValue : 1;
-    const boardCells = buildBoardCells(state, players);
+    const boardCells = buildBoardCells(state, players, canAct);
     const laddersSvg = LADDERS.map((item) => renderLadder(item)).join("");
     const snakesSvg = SNAKES.map((item) => renderSnake(item)).join("");
+    const pendingMove = state.pendingMove || null;
+    const rollDisabled = !canAct || Boolean(pendingMove);
+    const helperText = pendingMove
+      ? `Toca la casilla ${pendingMove.rolledTo}${pendingMove.jumpType ? ` y se ${pendingMove.jumpType === "ladder" ? "subira" : "bajara"} hasta la ${pendingMove.final}` : ""}.`
+      : `Resultado: ${Number.isInteger(state.diceValue) ? state.diceValue : "-"}`;
 
     return `
       <section class="sns-shell">
@@ -714,11 +790,11 @@ export const escalerasSerpientesGame = {
               class="btn btn-primary sns-roll-btn"
               data-action="game-action"
               data-game-action="roll-die"
-              ${canAct ? "" : "disabled"}
+              ${rollDisabled ? "disabled" : ""}
             >
               Tirar dado
             </button>
-            <p class="sns-side-note">Resultado: ${Number.isInteger(state.diceValue) ? state.diceValue : "-"}</p>
+            <p class="sns-side-note">${escapeHtml(helperText)}</p>
           </article>
 
           <article class="sns-side-card sns-turn-card">
