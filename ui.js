@@ -166,6 +166,71 @@ export function createUI({ appElement, toastElement }) {
       .join("");
   }
 
+  function renderHomeGameGlyph(gameId) {
+    const glyphs = {
+      tictactoe: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="4" y="4" width="40" height="40" rx="12" fill="#eef8ff" stroke="#b9dff6" stroke-width="1.5" />
+          <path d="M17 12V36M31 12V36M12 17H36M12 31H36" stroke="#c6baa8" stroke-width="2.6" stroke-linecap="round" />
+          <path d="M13.5 13.5L19.5 19.5M19.5 13.5L13.5 19.5" stroke="#de6a51" stroke-width="2.8" stroke-linecap="round" />
+          <circle cx="24" cy="24" r="4.5" fill="none" stroke="#e6ba3a" stroke-width="2.8" />
+          <path d="M28.5 28.5L34.5 34.5M34.5 28.5L28.5 34.5" stroke="#4f9b76" stroke-width="2.8" stroke-linecap="round" />
+        </svg>
+      `,
+      connect4: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="5" y="7" width="38" height="34" rx="10" fill="#3c8769" stroke="#2c654d" stroke-width="1.5" />
+          <g fill="#f7efe2">
+            <circle cx="15" cy="17" r="3.4" />
+            <circle cx="24" cy="17" r="3.4" />
+            <circle cx="33" cy="17" r="3.4" />
+            <circle cx="15" cy="25" r="3.4" />
+            <circle cx="24" cy="25" r="3.4" />
+            <circle cx="33" cy="25" r="3.4" />
+            <circle cx="15" cy="33" r="3.4" />
+            <circle cx="24" cy="33" r="3.4" />
+            <circle cx="33" cy="33" r="3.4" />
+          </g>
+          <circle cx="15" cy="33" r="3.1" fill="#de6a51" />
+          <circle cx="24" cy="25" r="3.1" fill="#e6ba3a" />
+          <circle cx="33" cy="17" r="3.1" fill="#4f9b76" />
+        </svg>
+      `,
+      damas: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="5" y="5" width="38" height="38" rx="10" fill="#f6ecdb" stroke="#d6c4a9" stroke-width="1.5" />
+          <g>
+            <rect x="10" y="10" width="7" height="7" fill="#8c5b40" />
+            <rect x="24" y="10" width="7" height="7" fill="#8c5b40" />
+            <rect x="17" y="17" width="7" height="7" fill="#8c5b40" />
+            <rect x="31" y="17" width="7" height="7" fill="#8c5b40" />
+            <rect x="10" y="24" width="7" height="7" fill="#8c5b40" />
+            <rect x="24" y="24" width="7" height="7" fill="#8c5b40" />
+            <rect x="17" y="31" width="7" height="7" fill="#8c5b40" />
+            <rect x="31" y="31" width="7" height="7" fill="#8c5b40" />
+          </g>
+          <circle cx="20.5" cy="20.5" r="4.1" fill="#de6a51" stroke="#b14c37" stroke-width="1" />
+          <circle cx="27.5" cy="27.5" r="4.1" fill="#f2d76b" stroke="#c9a83f" stroke-width="1" />
+        </svg>
+      `,
+      parchis: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#fbf4e8" stroke="#d9c8af" stroke-width="1.5" />
+          <rect x="8" y="8" width="12" height="12" rx="3" fill="#f2d2cd" stroke="#d8a8a2" stroke-width="1" />
+          <rect x="28" y="8" width="12" height="12" rx="3" fill="#d8e6fb" stroke="#a9c0e6" stroke-width="1" />
+          <rect x="28" y="28" width="12" height="12" rx="3" fill="#f3e8bf" stroke="#d9c88f" stroke-width="1" />
+          <rect x="8" y="28" width="12" height="12" rx="3" fill="#d7efde" stroke="#9fc9ae" stroke-width="1" />
+          <path d="M24 15L29 20H19L24 15Z" fill="#ffb3b8" stroke="#d9666f" stroke-width="1" />
+          <path d="M29 20L24 25V15L29 20Z" fill="#cde2f9" stroke="#9ebfe7" stroke-width="1" />
+          <path d="M24 25L19 20H29L24 25Z" fill="#f3e48f" stroke="#d2bc55" stroke-width="1" />
+          <path d="M19 20L24 15V25L19 20Z" fill="#cfead8" stroke="#99c4aa" stroke-width="1" />
+        </svg>
+      `
+    };
+
+    return glyphs[gameId] || "";
+  }
+
   function renderHome(vm) {
     const baseGames = Array.isArray(vm.games) ? vm.games : [];
     if (baseGames.length === 0) {
@@ -297,6 +362,7 @@ export function createUI({ appElement, toastElement }) {
                         aria-label="Jugar a ${escapeHtml(game.name)}"
                       >
                         <span class="home-game-card-icon is-${escapeHtml(game.id)}">${escapeHtml(profile.icon)}</span>
+                        <span class="home-game-card-glyph is-${escapeHtml(game.id)}" aria-hidden="true">${renderHomeGameGlyph(game.id)}</span>
                       </button>
                       <span class="home-game-card-players">${escapeHtml(profile.playersText)}</span>
                     </div>
