@@ -1,19 +1,21 @@
-const CACHE_NAME = "minijuegos-shell-v1";
+const CACHE_NAME = "minijuegos-shell-v2";
+const SCOPE_URL = new URL(self.registration.scope);
+const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;
 const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/styles.css",
-  "/app.js",
-  "/engine.js",
-  "/ui.js",
-  "/manifest.webmanifest",
-  "/assets/icono.png",
-  "/assets/icon-192.png",
-  "/assets/icon-512.png",
-  "/games/tres-en-raya.js",
-  "/games/cuatro-en-raya.js",
-  "/games/damas.js",
-  "/games/parchis.js"
+  APP_BASE,
+  `${APP_BASE}index.html`,
+  `${APP_BASE}styles.css`,
+  `${APP_BASE}app.js`,
+  `${APP_BASE}engine.js`,
+  `${APP_BASE}ui.js`,
+  `${APP_BASE}manifest.webmanifest`,
+  `${APP_BASE}assets/icono.png`,
+  `${APP_BASE}assets/icon-192.png`,
+  `${APP_BASE}assets/icon-512.png`,
+  `${APP_BASE}games/tres-en-raya.js`,
+  `${APP_BASE}games/cuatro-en-raya.js`,
+  `${APP_BASE}games/damas.js`,
+  `${APP_BASE}games/parchis.js`
 ];
 
 self.addEventListener("install", (event) => {
@@ -46,7 +48,7 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(
-      fetch(request).catch(() => caches.match("/index.html"))
+      fetch(request).catch(() => caches.match(`${APP_BASE}index.html`))
     );
     return;
   }
