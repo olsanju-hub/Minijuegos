@@ -345,6 +345,10 @@ function hasHomePieces(state, playerSlot) {
   return playerPieces(state, playerSlot).some((piece) => piece.progress < 0);
 }
 
+function allPiecesInHome(state, playerSlot) {
+  return playerPieces(state, playerSlot).every((piece) => piece.progress < 0);
+}
+
 function allPiecesOutsideHome(state, playerSlot) {
   return playerPieces(state, playerSlot).every((piece) => piece.progress >= 0);
 }
@@ -395,9 +399,10 @@ function evaluateTrackLanding(piece, targetIndex, trackMap) {
 
 function computeMoveForPiece(state, piece, steps, options = {}, trackMap) {
   const forBonus = Boolean(options.forBonus);
+  const exitFromHome = Boolean(options.exitFromHome);
 
   if (piece.progress < 0) {
-    if (forBonus || steps !== 5) {
+    if (forBonus || !exitFromHome) {
       return null;
     }
 
@@ -521,60 +526,42 @@ function cloneState(state) {
     bonusQueue: [...(state.bonusQueue || [])],
     bonusPending: state.bonusPending ? { ...state.bonusPending } : null,
     pendingMove: state.pendingMove ? { ...state.pendingMove } : null,
-    lastPath: [...(state.lastPath || [])]
+    lastPath: [...(state.lastPath || [])],
+    diceValues: [...(state.diceValues || [null, null])],
+    diceConsumed: [...(state.diceConsumed || [false, false])],
+    splitUsedPieceIds: [...(state.splitUsedPieceIds || [])],
+    extraTurnsPending: Number(state.extraTurnsPending || 0),
+    homeRollAttempts: Number(state.homeRollAttempts || 0),
+    showDiceAnimation: Boolean(state.showDiceAnimation)
   };
+}
+
+function resetTurnDiceState(state) {
+  state.diceValues = [null, null];
+  state.diceConsumed = [false, false];
+  state.showDiceAnimation = false;
+  state.pendingMove = null;
+  state.movablePieceIds = [];
+  state.selectedPieceId = null;
+  state.bonusPending = null;
+  state.effectiveSteps = null;
+  state.splitUsedPieceIds = [];
 }
 
 function resetSelectionState(state) {
   state.phase = "await-roll";
-  state.pendingMove = null;
-  state.movablePieceIds = [];
-  state.selectedPieceId = null;
-  state.bonusPending = null;
-  state.effectiveSteps = null;
+  resetTurnDiceState(state);
 }
 
 function advanceToNextPlayer(state) {
   state.currentPlayerIndex = (state.currentPlayerIndex + 1) % state.playerCount;
-  state.consecutiveSixes = 0;
   state.turnLastMovedPieceId = null;
-  state.repeatTurnPending = false;
-  state.diceValue = null;
   state.lastPath = [];
   state.bonusQueue = [];
-  state.bonusPending = null;
-  state.pendingMove = null;
-  state.movablePieceIds = [];
-  state.selectedPieceId = null;
-  state.effectiveSteps = null;
+  state.extraTurnsPending = 0;
+  state.homeRollAttempts = 0;
+  resetTurnDiceState(state);
   state.phase = "await-roll";
-}
-
-function applyTripleSixPenalty(state) {
-  const candidateId = state.turnLastMovedPieceId;
-  if (!candidateId) {
-    state.lastEvent = "Tres seises seguidos: no habia ficha previa para penalizar.";
-    return;
-  }
-
-  const piece = state.pieces.find((item) => item.id === candidateId && item.playerSlot === state.currentPlayerIndex);
-  if (!piece) {
-    state.lastEvent = "Tres seises seguidos: no se encontro la ficha para penalizar.";
-    return;
-  }
-
-  if (piece.progress >= TRACK_LENGTH) {
-    state.lastEvent = "Tres seises seguidos: la ultima ficha estaba en pasillo/meta, sin penalizacion.";
-    return;
-  }
-
-  if (piece.progress < 0) {
-    state.lastEvent = "Tres seises seguidos: la ultima ficha ya estaba en casa.";
-    return;
-  }
-
-  piece.progress = -1;
-  state.lastEvent = "Tres seises seguidos: la ultima ficha movida vuelve a casa.";
 }
 
 function applyMoveCore(state, move) {
@@ -599,11 +586,11 @@ function applyMoveCore(state, move) {
   }
 
   if (piece.progress === GOAL_PROGRESS) {
-    state.bonusQueue.push({ type: 10, reason: "goal", sourcePieceId: piece.id });
+    state.extraTurnsPending = (state.extraTurnsPending || 0) + 1;
     if (move.capturePieceId) {
-      state.lastEvent = "Captura y entrada en meta. Bonus de 20 y 10 casillas.";
+      state.lastEvent = "Captura y entrada en meta. Ganas tiro extra.";
     } else {
-      state.lastEvent = "Ficha en meta. Bonus de 10 casillas.";
+      state.lastEvent = "Ficha en meta. Ganas tiro extra.";
     }
   }
 
@@ -614,13 +601,229 @@ function applyMoveCore(state, move) {
   if (checkWinner(state, piece.playerSlot)) {
     state.winnerSlot = piece.playerSlot;
     state.phase = "finished";
-    state.repeatTurnPending = false;
     state.bonusQueue = [];
     state.bonusPending = null;
     state.pendingMove = null;
     state.movablePieceIds = [];
+    state.extraTurnsPending = 0;
     state.lastEvent = "Partida terminada.";
   }
+}
+
+function availableDiceIndices(state) {
+  return (state.diceValues || [])
+    .map((value, index) => ({ value, index }))
+    .filter((item) => Number.isInteger(item.value) && !(state.diceConsumed || [])[item.index])
+    .map((item) => item.index);
+}
+
+function getExitMoves(state, playerSlot) {
+  return getLegalMoves(state, playerSlot, 0, { exitFromHome: true });
+}
+
+function describeMoveTargetForPlayer(playerSlot, move) {
+  if (move.toProgress < TRACK_LENGTH) {
+    const trackIndex = indexForProgress(playerSlot, move.toProgress);
+    const visibleCell = TRACK_BLUEPRINT[trackIndex].visibleCell;
+    return {
+      key: `track:${visibleCell}`,
+      type: "track",
+      visibleCell
+    };
+  }
+
+  if (move.toProgress < GOAL_PROGRESS) {
+    return {
+      key: `final:${playerSlot}:${move.toProgress - TRACK_LENGTH + 1}`,
+      type: "final",
+      slot: playerSlot,
+      step: move.toProgress - TRACK_LENGTH + 1
+    };
+  }
+
+  return {
+    key: `goal:${playerSlot}`,
+    type: "goal",
+    slot: playerSlot
+  };
+}
+
+function createMoveOption(state, move, meta) {
+  const target = describeMoveTargetForPlayer(state.currentPlayerIndex, move);
+  const consumeDice = [...(meta.consumeDice || [])];
+  return {
+    id: `${meta.kind}:${consumeDice.join("")}:${move.pieceId}:${move.toProgress}:${move.capturePieceId || "-"}`,
+    kind: meta.kind,
+    consumeDice,
+    badge: meta.badge,
+    label: meta.label,
+    remainingDieIndex: meta.remainingDieIndex ?? null,
+    pieceId: move.pieceId,
+    move,
+    target
+  };
+}
+
+function buildSingleDieOptions(state, dieIndex, excludedPieceIds = []) {
+  const value = state.diceValues?.[dieIndex];
+  if (!Number.isInteger(value) || state.diceConsumed?.[dieIndex]) {
+    return [];
+  }
+
+  const options = excludedPieceIds.length > 0 ? { restrictPieceIds: new Set(excludedPieceIds) } : {};
+  const legalMoves = getLegalMoves(state, state.currentPlayerIndex, value, options);
+  return legalMoves.map((move) =>
+    createMoveOption(state, move, {
+      kind: "single",
+      consumeDice: [dieIndex],
+      badge: `D${dieIndex + 1}`,
+      label: `Mover con el dado ${dieIndex + 1}`,
+      remainingDieIndex: availableDiceIndices(state).find((index) => index !== dieIndex) ?? null
+    })
+  );
+}
+
+function canContinueSplitAfterMove(state, move, dieIndex) {
+  const remainingDieIndex = availableDiceIndices(state).find((index) => index !== dieIndex);
+  if (remainingDieIndex === undefined || remainingDieIndex === null) {
+    return false;
+  }
+
+  const clone = cloneState(state);
+  clone.diceConsumed[dieIndex] = true;
+  clone.splitUsedPieceIds = [...(clone.splitUsedPieceIds || []), move.pieceId];
+  applyMoveCore(clone, move);
+
+  if (clone.winnerSlot !== null) {
+    return true;
+  }
+
+  if ((clone.bonusQueue || []).length > 0) {
+    return true;
+  }
+
+  return buildSingleDieOptions(clone, remainingDieIndex, clone.splitUsedPieceIds).length > 0;
+}
+
+function buildTurnOptions(state) {
+  const available = availableDiceIndices(state);
+  if (available.length === 0) {
+    return [];
+  }
+
+  const playerSlot = state.currentPlayerIndex;
+  const options = [];
+  const splitUsedPieceIds = [...(state.splitUsedPieceIds || [])];
+
+  if (available.length === 2 && splitUsedPieceIds.length === 0) {
+    const [firstDieIndex, secondDieIndex] = available;
+    const firstValue = state.diceValues[firstDieIndex];
+    const secondValue = state.diceValues[secondDieIndex];
+    const isDouble = firstValue === secondValue;
+
+    if (isDouble && hasHomePieces(state, playerSlot)) {
+      const exitMoves = getExitMoves(state, playerSlot);
+      options.push(
+        ...exitMoves.map((move) =>
+          createMoveOption(state, move, {
+            kind: "exit-double",
+            consumeDice: [firstDieIndex, secondDieIndex],
+            badge: "Salir",
+            label: "Salir con doble"
+          })
+        )
+      );
+    }
+
+    const sumMoves = getLegalMoves(state, playerSlot, firstValue + secondValue, {});
+    options.push(
+      ...sumMoves.map((move) =>
+        createMoveOption(state, move, {
+          kind: "sum",
+          consumeDice: [firstDieIndex, secondDieIndex],
+          badge: "Suma",
+          label: `Mover con la suma ${firstValue + secondValue}`
+        })
+      )
+    );
+
+    const splitStarts = isDouble ? [firstDieIndex] : available;
+    for (const dieIndex of splitStarts) {
+      const singleMoves = buildSingleDieOptions(state, dieIndex, []);
+      for (const option of singleMoves) {
+        if (canContinueSplitAfterMove(state, option.move, dieIndex)) {
+          options.push({
+            ...option,
+            kind: "split",
+            badge: option.badge,
+            label: option.label
+          });
+        }
+      }
+    }
+
+    return options;
+  }
+
+  const remainingDieIndex = available[0];
+  return buildSingleDieOptions(state, remainingDieIndex, splitUsedPieceIds);
+}
+
+function buildBonusOptions(state) {
+  const bonus = state.bonusQueue[0];
+  if (!bonus) {
+    return [];
+  }
+
+  const legalMoves = getLegalMoves(state, state.currentPlayerIndex, bonus.type, { forBonus: true });
+  return legalMoves.map((move) =>
+    createMoveOption(state, move, {
+      kind: "bonus",
+      consumeDice: [],
+      badge: `+${bonus.type}`,
+      label: `Bonus de ${bonus.type}`
+    })
+  );
+}
+
+function buildCurrentOptions(state) {
+  if (state.phase === "await-bonus") {
+    return buildBonusOptions(state);
+  }
+  if (state.phase === "await-piece") {
+    return buildTurnOptions(state);
+  }
+  return [];
+}
+
+function buildPendingTargetMap(state) {
+  const targets = new Map();
+  const options = buildCurrentOptions(state);
+
+  for (const option of options) {
+    const bucket = targets.get(option.target.key) || { ...option.target, options: [] };
+    bucket.options.push(option);
+    targets.set(option.target.key, bucket);
+  }
+
+  return targets;
+}
+
+function startTurnDestinationSelection(state, message = "") {
+  const options = buildTurnOptions(state);
+  if (options.length === 0) {
+    return false;
+  }
+
+  state.phase = "await-piece";
+  state.pendingMove = { source: "turn" };
+  state.movablePieceIds = options.map((option) => option.move.pieceId);
+  state.selectedPieceId = null;
+  state.effectiveSteps = null;
+  if (message) {
+    state.lastEvent = message;
+  }
+  return true;
 }
 
 function resolveBonusQueue(state) {
@@ -648,11 +851,16 @@ function resolveBonusQueue(state) {
   }
 
   state.bonusPending = null;
-  state.pendingMove = null;
   state.movablePieceIds = [];
   state.selectedPieceId = null;
   state.effectiveSteps = null;
   return "done";
+}
+
+function resetForExtraTurn(state) {
+  resetTurnDiceState(state);
+  state.phase = "await-roll";
+  state.homeRollAttempts = 0;
 }
 
 function finalizeTurnAfterResolution(state) {
@@ -660,15 +868,11 @@ function finalizeTurnAfterResolution(state) {
     return;
   }
 
-  if (state.repeatTurnPending) {
-    state.phase = "await-roll";
-    state.pendingMove = null;
-    state.movablePieceIds = [];
-    state.selectedPieceId = null;
-    state.bonusPending = null;
-    state.effectiveSteps = null;
+  if ((state.extraTurnsPending || 0) > 0) {
+    state.extraTurnsPending -= 1;
+    resetForExtraTurn(state);
     if (!state.lastEvent || state.lastEvent === "Movimiento aplicado.") {
-      state.lastEvent = "Has sacado 6. Vuelves a tirar.";
+      state.lastEvent = "Tiro extra concedido.";
     }
     return;
   }
@@ -680,217 +884,61 @@ function rollDie() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
+function rollDicePair() {
+  return [rollDie(), rollDie()];
+}
+
 function runRollAction(state) {
   if (state.phase !== "await-roll") {
     return { ok: false, reason: "invalid" };
   }
 
   const playerSlot = state.currentPlayerIndex;
-  const rolled = rollDie();
-  state.diceValue = rolled;
+  const [leftDie, rightDie] = rollDicePair();
+  const isDouble = leftDie === rightDie;
+  const allHome = allPiecesInHome(state, playerSlot);
+
+  state.diceValues = [leftDie, rightDie];
+  state.diceConsumed = [false, false];
+  state.showDiceAnimation = true;
   state.diceToken = (state.diceToken + 1) % 1000000;
   state.lastPath = [];
+  state.homeRollAttempts = allHome ? Number(state.homeRollAttempts || 0) : 0;
+  state.splitUsedPieceIds = [];
+  state.bonusQueue = [];
+  state.bonusPending = null;
+  state.pendingMove = null;
+  state.movablePieceIds = [];
+  state.selectedPieceId = null;
+  state.effectiveSteps = null;
 
-  if (rolled === 6) {
-    state.consecutiveSixes += 1;
-  } else {
-    state.consecutiveSixes = 0;
-  }
-
-  if (rolled === 6 && state.consecutiveSixes === 3) {
-    applyTripleSixPenalty(state);
-    state.consecutiveSixes = 0;
-    state.repeatTurnPending = false;
-    advanceToNextPlayer(state);
-    return { ok: true };
-  }
-
-  const effectiveSteps = rolled === 6 && allPiecesOutsideHome(state, playerSlot) ? 7 : rolled;
-  state.effectiveSteps = effectiveSteps;
-  state.repeatTurnPending = rolled === 6;
-
-  let legalMoves = [];
-  let mustExitHome = false;
-  let bridgeRestrictionActive = false;
-  let bridgePieceIds = [];
-
-  if (rolled === 6) {
-    bridgePieceIds = getBridgePieceIds(state, playerSlot);
-    if (bridgePieceIds.length > 0) {
-      const restricted = getLegalMoves(state, playerSlot, effectiveSteps, {
-        restrictPieceIds: new Set(bridgePieceIds)
-      });
-      if (restricted.length > 0) {
-        legalMoves = restricted;
-        bridgeRestrictionActive = true;
-      }
-    }
-  }
-
-  if (!bridgeRestrictionActive) {
-    if (rolled === 5 && hasHomePieces(state, playerSlot)) {
-      const exitMoves = getLegalMoves(state, playerSlot, effectiveSteps, { mustExitHome: true });
-      if (exitMoves.length > 0) {
-        legalMoves = exitMoves;
-        mustExitHome = true;
-      }
-    }
-
-    if (legalMoves.length === 0) {
-      legalMoves = getLegalMoves(state, playerSlot, effectiveSteps, {});
-    }
-  }
-
-  state.pendingMove = {
-    source: "die",
-    rolledValue: rolled,
-    steps: effectiveSteps,
-    mustExitHome,
-    bridgeRestrictionActive,
-    bridgePieceIds
-  };
-
-  if (legalMoves.length === 0) {
-    resetSelectionState(state);
-
-    if (rolled === 6) {
-      state.lastEvent = "Sin jugada legal con 6. Repite turno.";
+  if (allHome && !isDouble) {
+    state.homeRollAttempts += 1;
+    if (state.homeRollAttempts >= 3) {
+      state.lastEvent = `No salio doble en 3 intentos (${leftDie} y ${rightDie}). Pierdes el turno.`;
+      advanceToNextPlayer(state);
       return { ok: true };
     }
 
-    state.lastEvent = "Sin jugada legal. Pasa turno.";
-    advanceToNextPlayer(state);
+    state.lastEvent = `No salio doble (${leftDie} y ${rightDie}). Intento ${state.homeRollAttempts} de 3 para salir.`;
     return { ok: true };
   }
 
-  state.phase = "await-piece";
-  state.movablePieceIds = legalMoves.map((move) => move.pieceId);
-  state.selectedPieceId = null;
-  state.lastEvent = `Tirada de ${rolled}. Toca el destino para mover ${effectiveSteps}.`;
+  const message = isDouble
+    ? `Doble ${leftDie}-${rightDie}. Toca un destino para salir o mover.`
+    : `Tirada de ${leftDie} y ${rightDie}. Toca un destino para mover.`;
+
+  if (startTurnDestinationSelection(state, message)) {
+    return { ok: true };
+  }
+
+  state.lastEvent = `No hay jugada legal con ${leftDie} y ${rightDie}.`;
+  finalizeTurnAfterResolution(state);
   return { ok: true };
 }
 
-function buildPendingLegalMoves(state) {
-  const pending = state.pendingMove;
-  if (!pending) {
-    return [];
-  }
-
-  const playerSlot = state.currentPlayerIndex;
-  let options = {};
-  let steps = pending.steps;
-
-  if (pending.source === "die") {
-    if (pending.mustExitHome) {
-      options.mustExitHome = true;
-    }
-
-    if (pending.bridgeRestrictionActive && Array.isArray(pending.bridgePieceIds) && pending.bridgePieceIds.length > 0) {
-      options.restrictPieceIds = new Set(pending.bridgePieceIds);
-    }
-  }
-
-  if (pending.source === "bonus") {
-    options.forBonus = true;
-    const activeBonus = state.bonusQueue[0];
-    if (!activeBonus) {
-      return [];
-    }
-    steps = activeBonus.type;
-  }
-
-  return getLegalMoves(state, playerSlot, steps, options);
-}
-
-function describeMoveTarget(state, move) {
-  const playerSlot = state.currentPlayerIndex;
-
-  if (move.toProgress < TRACK_LENGTH) {
-    const trackIndex = indexForProgress(playerSlot, move.toProgress);
-    const visibleCell = TRACK_BLUEPRINT[trackIndex].visibleCell;
-    return {
-      key: `track:${visibleCell}`,
-      type: "track",
-      visibleCell
-    };
-  }
-
-  if (move.toProgress < GOAL_PROGRESS) {
-    return {
-      key: `final:${playerSlot}:${move.toProgress - TRACK_LENGTH + 1}`,
-      type: "final",
-      slot: playerSlot,
-      step: move.toProgress - TRACK_LENGTH + 1
-    };
-  }
-
-  return {
-    key: `goal:${playerSlot}`,
-    type: "goal",
-    slot: playerSlot
-  };
-}
-
-function buildPendingTargetMap(state) {
-  const targets = new Map();
-  const legalMoves = buildPendingLegalMoves(state);
-
-  for (const move of legalMoves) {
-    const descriptor = describeMoveTarget(state, move);
-    const bucket = targets.get(descriptor.key) || { ...descriptor, moves: [] };
-    bucket.moves.push(move);
-    targets.set(descriptor.key, bucket);
-  }
-
-  return targets;
-}
-
-function renderMoveTarget(state, target, labelPrefix = "Mover") {
-  if (!target) {
-    return "";
-  }
-
-  if (target.moves.length === 1) {
-    return `
-      <button
-        class="parchis-move-target is-single"
-        data-action="game-action"
-        data-game-action="select-destination"
-        data-piece-id="${target.moves[0].pieceId}"
-        aria-label="${escapeHtml(`${labelPrefix}.`)}"
-      >
-        <span class="parchis-move-target-badge">Mover</span>
-      </button>
-    `;
-  }
-
-  return `
-    <span class="parchis-move-target is-multi" role="group" aria-label="${escapeHtml(`${labelPrefix}. Elige ficha.`)}">
-      <span class="parchis-move-target-choice-row">
-        ${target.moves
-          .map((move) => {
-            const piece = state.pieces.find((item) => item.id === move.pieceId);
-            const label = piece ? piece.pieceIndex + 1 : "?";
-            return `
-              <button
-                class="parchis-move-target-choice"
-                data-action="game-action"
-                data-game-action="select-destination"
-                data-piece-id="${move.pieceId}"
-                aria-label="${escapeHtml(`${labelPrefix}. Ficha ${label}.`)}"
-              >
-                ${label}
-              </button>
-            `;
-          })
-          .join("")}
-      </span>
-    </span>
-  `;
-}
-
-function runDestinationSelection(state, pieceId, expectBonusAction) {
-  if (!pieceId) {
+function runDestinationSelection(state, selectionId, expectBonusAction) {
+  if (!selectionId) {
     return { ok: false, reason: "invalid" };
   }
 
@@ -907,7 +955,7 @@ function runDestinationSelection(state, pieceId, expectBonusAction) {
     return { ok: false, reason: "invalid" };
   }
 
-  if (pending.source === "die" && expectBonusAction) {
+  if (pending.source === "turn" && expectBonusAction) {
     return { ok: false, reason: "invalid" };
   }
 
@@ -915,17 +963,26 @@ function runDestinationSelection(state, pieceId, expectBonusAction) {
     return { ok: false, reason: "invalid" };
   }
 
-  const legal = buildPendingLegalMoves(state);
-  const selectedMove = legal.find((move) => move.pieceId === pieceId);
-  if (!selectedMove) {
+  const currentOptions = buildCurrentOptions(state);
+  const selectedOption = currentOptions.find((option) => option.id === selectionId);
+  if (!selectedOption) {
     return { ok: false, reason: "invalid" };
   }
 
+  state.showDiceAnimation = false;
+
   if (pending.source === "bonus") {
     state.bonusQueue.shift();
+  } else {
+    for (const dieIndex of selectedOption.consumeDice) {
+      state.diceConsumed[dieIndex] = true;
+    }
+    if (selectedOption.consumeDice.length === 1) {
+      state.splitUsedPieceIds = [...(state.splitUsedPieceIds || []), selectedOption.move.pieceId];
+    }
   }
 
-  applyMoveCore(state, selectedMove);
+  applyMoveCore(state, selectedOption.move);
 
   if (state.winnerSlot !== null) {
     return { ok: true };
@@ -936,18 +993,87 @@ function runDestinationSelection(state, pieceId, expectBonusAction) {
     return { ok: true };
   }
 
+  if (availableDiceIndices(state).length > 0 && startTurnDestinationSelection(state, "Queda un dado por jugar. Toca el siguiente destino.")) {
+    return { ok: true };
+  }
+
+  if (availableDiceIndices(state).length > 0) {
+    state.lastEvent = "No queda jugada legal con el dado restante.";
+  }
+
   finalizeTurnAfterResolution(state);
   return { ok: true };
 }
 
+function renderMoveTarget(state, target, labelPrefix = "Mover") {
+  if (!target) {
+    return "";
+  }
+
+  const delayedClass = state.showDiceAnimation ? " is-delayed" : "";
+
+  if (target.options.length === 1) {
+    const option = target.options[0];
+    return `
+      <button
+        class="parchis-move-target is-single${delayedClass}"
+        data-action="game-action"
+        data-game-action="select-destination"
+        data-piece-id="${option.id}"
+        aria-label="${escapeHtml(`${labelPrefix}. ${option.label}.`)}"
+      >
+        <span class="parchis-move-target-badge">${escapeHtml(option.badge || "Mover")}</span>
+      </button>
+    `;
+  }
+
+  const groupBadge = target.options.every((option) => option.badge === target.options[0].badge) ? target.options[0].badge : "Mover";
+
+  return `
+    <span class="parchis-move-target is-multi${delayedClass}" role="group" aria-label="${escapeHtml(`${labelPrefix}. Elige ficha.`)}">
+      <span class="parchis-move-target-badge is-group">${escapeHtml(groupBadge)}</span>
+      <span class="parchis-move-target-choice-row">
+        ${target.options
+          .map((option) => {
+            const piece = state.pieces.find((item) => item.id === option.move.pieceId);
+            const label = piece ? piece.pieceIndex + 1 : "?";
+            return `
+              <button
+                class="parchis-move-target-choice"
+                data-action="game-action"
+                data-game-action="select-destination"
+                data-piece-id="${option.id}"
+                aria-label="${escapeHtml(`${labelPrefix}. Ficha ${label}. ${option.label}.`)}"
+              >
+                ${label}
+              </button>
+            `;
+          })
+          .join("")}
+      </span>
+    </span>
+  `;
+}
+
+function renderDieFace(value, extraClass = "") {
+  const pips = Number.isInteger(value) ? new Set(DIE_PIPS[value] || []) : new Set();
+  const classes = ["parchis-die-face"];
+  if (extraClass) {
+    classes.push(extraClass);
+  }
+  return `
+    <span class="${classes.join(" ")}">
+      ${Array.from({ length: 9 }, (_, index) => `<span class="parchis-die-pip ${pips.has(index) ? "is-on" : ""}"></span>`).join("")}
+    </span>
+  `;
+}
+
 function renderDie(value) {
-  const pips = new Set(DIE_PIPS[value] || []);
   return `
     <span class="parchis-die-cube" aria-hidden="true">
       <span class="parchis-die-cube-top"></span>
-      <span class="parchis-die-face">
-        ${Array.from({ length: 9 }, (_, index) => `<span class="parchis-die-pip ${pips.has(index) ? "is-on" : ""}"></span>`).join("")}
-      </span>
+      ${renderDieFace(value, "parchis-die-face-final")}
+      ${renderDieFace(5, "parchis-die-face-ghost")}
     </span>
   `;
 }
@@ -1264,10 +1390,20 @@ function buildPhaseHelp(state) {
     return "Partida finalizada.";
   }
   if (state.phase === "await-roll") {
-    return "Pulsa Tirar dado para continuar.";
+    if (allPiecesInHome(state, state.currentPlayerIndex) && state.homeRollAttempts > 0) {
+      return `Busca doble para salir. Vas por el intento ${Math.min(state.homeRollAttempts + 1, 3)} de 3.`;
+    }
+    return "Pulsa Tirar dados para continuar.";
   }
   if (state.phase === "await-piece") {
-    return `Toca el destino para mover ${state.effectiveSteps || 0}.`;
+    const available = availableDiceIndices(state);
+    if (available.length === 2) {
+      return "Toca un destino para salir, mover con la suma o empezar un movimiento con un dado.";
+    }
+    if (available.length === 1) {
+      return `Queda ${state.diceValues?.[available[0]] || "-"} por jugar. Toca el siguiente destino.`;
+    }
+    return "Toca un destino para completar el movimiento.";
   }
   if (state.phase === "await-bonus") {
     return `Bonus de ${state.bonusPending ? state.bonusPending.type : 0}. Toca el destino.`;
@@ -1285,12 +1421,13 @@ export const parchisGame = {
   useCustomTurnMessage: true,
   hideDefaultPlayerChips: true,
   rules: [
-    { title: "Salida", text: "Para sacar ficha de casa necesitas 5. Si hay casa y salida libre, sacar es obligatorio." },
-    { title: "Movimiento", text: "Cada ficha avanza el valor del dado. Con 6 juegas otra vez; si todas tus fichas estan fuera, el 6 mueve 7." },
-    { title: "Triple 6", text: "Al tercer 6 seguido, la ultima ficha movida vuelve a casa salvo que este en pasillo final o meta." },
-    { title: "Captura", text: "En casilla no segura capturas al rival y ganas bonus de 20 casillas." },
-    { title: "Puentes", text: "Dos fichas del mismo color forman puente, no se puede saltar y con 6 debes abrirlo si hay jugada legal." },
-    { title: "Meta", text: "Para entrar en meta necesitas numero exacto. Cada ficha que entra en meta otorga bonus de 10 casillas." },
+    { title: "Dados", text: "En cada turno tiras 2 dados: puedes mover una ficha con la suma o 2 fichas distintas, una con cada dado." },
+    { title: "Salida", text: "Se puede sacar ficha con cualquier doble. Si usas el doble para salir, se consume completo y no haces otro movimiento." },
+    { title: "Dobles", text: "Si ya tienes fichas fuera, el doble se juega como una tirada normal: puedes usar suma o dos fichas distintas, pero no da tiro extra por si mismo." },
+    { title: "3 intentos", text: "Si no tienes ninguna ficha fuera, dispones de 3 intentos para sacar un doble. Si no sale, pierdes el turno." },
+    { title: "Captura", text: "En casilla no segura capturas al rival y obtienes un bonus obligatorio de 20 casillas. Si no hay jugada legal, se pierde." },
+    { title: "Puentes", text: "Dos fichas del mismo color forman puente, bloquean el paso y tampoco puedes terminar con una tercera ficha encima." },
+    { title: "Meta", text: "Para entrar en meta necesitas numero exacto. Meter ficha no da 10: solo concede un tiro extra completo al terminar el turno." },
     { title: "Victoria", text: "Gana quien mete sus 4 fichas en meta." }
   ],
   getDefaultOptions() {
@@ -1319,19 +1456,22 @@ export const parchisGame = {
       currentPlayerIndex: 0,
       winnerSlot: null,
       phase: "await-roll",
-      diceValue: null,
+      diceValues: [null, null],
+      diceConsumed: [false, false],
       diceToken: 0,
       effectiveSteps: null,
-      consecutiveSixes: 0,
       turnLastMovedPieceId: null,
       lastMovedPieceId: null,
-      repeatTurnPending: false,
       pendingMove: null,
       bonusQueue: [],
       bonusPending: null,
       movablePieceIds: [],
+      splitUsedPieceIds: [],
+      extraTurnsPending: 0,
+      homeRollAttempts: 0,
+      showDiceAnimation: false,
       selectedPieceId: null,
-      lastEvent: "Pulsa Tirar dado para empezar.",
+      lastEvent: "Pulsa Tirar dados para empezar.",
       lastPath: [],
       pieces
     };
@@ -1358,11 +1498,21 @@ export const parchisGame = {
     const name = active ? active.name : "Jugador";
 
     if (state.phase === "await-roll") {
-      return `Turno de ${name}. Tira el dado.`;
+      if (allPiecesInHome(state, state.currentPlayerIndex) && state.homeRollAttempts > 0) {
+        return `Turno de ${name}. Busca doble para salir.`;
+      }
+      return `Turno de ${name}. Tira los dados.`;
     }
 
     if (state.phase === "await-piece") {
-      return `Turno de ${name}. Toca el destino para mover ${state.effectiveSteps || 0} casillas.`;
+      const available = availableDiceIndices(state);
+      if (available.length === 2) {
+        return `Turno de ${name}. Toca un destino para salir o mover.`;
+      }
+      if (available.length === 1) {
+        return `Turno de ${name}. Queda un dado por jugar: toca el siguiente destino.`;
+      }
+      return `Turno de ${name}. Toca el destino para mover.`;
     }
 
     if (state.phase === "await-bonus") {
@@ -1655,8 +1805,59 @@ export const parchisGame = {
     `;
 
     const canRoll = canAct && state.phase === "await-roll" && state.winnerSlot === null;
-    const dieValue = Number.isInteger(state.diceValue) ? state.diceValue : 1;
-    const diceClass = state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b";
+    const diceValues = Array.isArray(state.diceValues) ? state.diceValues : [null, null];
+    const diceConsumed = Array.isArray(state.diceConsumed) ? state.diceConsumed : [false, false];
+    const rollVariant = state.diceToken % 2 === 0 ? "a" : "b";
+    const shouldAnimateDice = Boolean(state.showDiceAnimation);
+    const currentOptions = buildCurrentOptions(state);
+    const optionBadges = Array.from(
+      new Map(
+        currentOptions.map((option) => [
+          `${option.kind}:${option.badge}`,
+          {
+            badge: option.badge,
+            label: option.label
+          }
+        ])
+      ).values()
+    );
+    const diceMarkup = diceValues
+      .map((value, index) => {
+        const hasValue = Number.isInteger(value);
+        const consumed = Boolean(diceConsumed[index]);
+        const dieClasses = [
+          "parchis-die",
+          `die-${index + 1}`,
+          hasValue && shouldAnimateDice ? `is-roll-${rollVariant}` : hasValue ? "is-settled" : "is-idle",
+          consumed ? "is-consumed" : "is-available"
+        ];
+        const statusLabel = hasValue ? (consumed ? "Usado" : "Disponible") : "Pendiente";
+        return `
+          <div class="${dieClasses.join(" ")}">
+            <span class="parchis-die-label">D${index + 1}</span>
+            ${renderDie(hasValue ? value : null)}
+            <span class="parchis-die-status">${statusLabel}</span>
+          </div>
+        `;
+      })
+      .join("");
+    const helperChips = optionBadges.length
+      ? `
+        <div class="parchis-option-chip-row">
+          ${optionBadges
+            .map(
+              (item) => `
+                <span class="parchis-option-chip" title="${escapeHtml(item.label)}">${escapeHtml(item.badge || item.label)}</span>
+              `
+            )
+            .join("")}
+        </div>
+      `
+      : "";
+    const exitAttemptsMarkup =
+      allPiecesInHome(state, state.currentPlayerIndex) && state.homeRollAttempts > 0 && state.phase === "await-roll"
+        ? `<p class="parchis-side-badge">Intentos de salida: ${state.homeRollAttempts} de 3</p>`
+        : "";
 
     return `
       <section class="parchis-shell">
@@ -1672,8 +1873,8 @@ export const parchisGame = {
 
         <aside class="parchis-side">
           <article class="parchis-side-card parchis-die-card">
-            <div class="parchis-die ${diceClass}">
-              ${renderDie(dieValue)}
+            <div class="parchis-dice-grid">
+              ${diceMarkup}
             </div>
             <button
               class="btn btn-primary parchis-roll-btn"
@@ -1681,9 +1882,11 @@ export const parchisGame = {
               data-game-action="roll-die"
               ${canRoll ? "" : "disabled"}
             >
-              Tirar dado
+              Tirar dados
             </button>
-            <p class="parchis-side-note">Resultado: ${Number.isInteger(state.diceValue) ? state.diceValue : "-"}</p>
+            <p class="parchis-side-note">
+              ${diceValues.every((value) => Number.isInteger(value)) ? `Resultado: ${diceValues[0]} y ${diceValues[1]}` : "Lanza para descubrir los 2 dados."}
+            </p>
           </article>
 
           <article class="parchis-side-card parchis-turn-card">
@@ -1697,6 +1900,8 @@ export const parchisGame = {
                 ? `<p class="parchis-side-badge">Bonus activo: ${state.bonusPending.type}</p>`
                 : ""
             }
+            ${exitAttemptsMarkup}
+            ${helperChips}
           </article>
 
           <article class="parchis-side-card parchis-players-card">
@@ -1722,7 +1927,7 @@ export const parchisGame = {
 
     return {
       title: `Ha ganado ${name}`,
-      subtitle: "Victoria en Parchis clasico.",
+      subtitle: "Victoria en Parchis de 2 dados.",
       iconText: winner ? winner.identity.icon : "*",
       iconClass: "win"
     };

@@ -355,7 +355,8 @@ function cloneState(state) {
     ...state,
     pieces: state.pieces.map((piece) => ({ ...piece })),
     lastMove: state.lastMove ? { ...state.lastMove } : null,
-    pendingMove: state.pendingMove ? { ...state.pendingMove } : null
+    pendingMove: state.pendingMove ? { ...state.pendingMove } : null,
+    showRollAnimation: Boolean(state.showRollAnimation)
   };
 }
 
@@ -462,11 +463,24 @@ function buildPiecesByCell(state) {
   return map;
 }
 
+function renderDieFace(value, extraClass = "") {
+  const pips = Number.isInteger(value) ? DIE_PIPS[value] || DIE_PIPS[1] : [];
+  const classes = ["sns-die-face"];
+  if (extraClass) {
+    classes.push(extraClass);
+  }
+  return `
+    <span class="${classes.join(" ")}">
+      ${Array.from({ length: 9 }, (_, index) => `<span class="sns-die-pip ${pips.includes(index) ? "is-on" : ""}"></span>`).join("")}
+    </span>
+  `;
+}
+
 function renderDie(value) {
-  const pips = DIE_PIPS[value] || DIE_PIPS[1];
   return `
     <div class="sns-die-cube" aria-hidden="true">
-      ${Array.from({ length: 9 }, (_, index) => `<span class="sns-die-pip ${pips.includes(index) ? "is-on" : ""}"></span>`).join("")}
+      ${renderDieFace(value, "sns-die-face-final")}
+      ${renderDieFace(5, "sns-die-face-ghost")}
     </div>
   `;
 }
@@ -552,7 +566,7 @@ function buildBoardCells(state, players, canAct) {
       pendingMove && canAct && cell === pendingMove.rolledTo
         ? `
           <button
-            class="sns-cell-target"
+            class="sns-cell-target ${state.showRollAnimation ? "is-delayed" : ""}"
             data-action="game-action"
             data-game-action="confirm-move"
             data-cell="${cell}"
@@ -613,6 +627,7 @@ export const escalerasSerpientesGame = {
       turnSlot: 0,
       diceValue: null,
       diceToken: 0,
+      showRollAnimation: false,
       winnerSlot: null,
       lastEvent: "Pulsa Tirar dado para empezar.",
       lastMove: null,
@@ -676,6 +691,7 @@ export const escalerasSerpientesGame = {
       const move = resolveMove(piece.position, roll);
       next.diceValue = roll;
       next.diceToken = (next.diceToken || 0) + 1;
+      next.showRollAnimation = true;
       next.pendingMove = {
         playerSlot: actorSlot,
         roll,
@@ -691,6 +707,7 @@ export const escalerasSerpientesGame = {
     }
 
     piece.position = pendingMove.final;
+    next.showRollAnimation = false;
     next.lastMove = {
       ...pendingMove
     };
@@ -753,7 +770,7 @@ export const escalerasSerpientesGame = {
   },
   renderBoard({ state, players, canAct }) {
     const active = players.find((player) => player.slot === state.turnSlot) || null;
-    const diceValue = Number.isInteger(state.diceValue) ? state.diceValue : 1;
+    const diceValue = Number.isInteger(state.diceValue) ? state.diceValue : null;
     const boardCells = buildBoardCells(state, players, canAct);
     const laddersSvg = LADDERS.map((item) => renderLadder(item)).join("");
     const snakesSvg = SNAKES.map((item) => renderSnake(item)).join("");
@@ -783,7 +800,7 @@ export const escalerasSerpientesGame = {
 
         <aside class="sns-side">
           <article class="sns-side-card sns-die-card">
-            <div class="sns-die ${state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b"}">
+            <div class="sns-die ${state.showRollAnimation ? (state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b") : "is-settled"}">
               ${renderDie(diceValue)}
             </div>
             <button
