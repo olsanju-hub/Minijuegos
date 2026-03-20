@@ -1,7 +1,7 @@
 const LANE_COUNT = 3;
 const VISIBLE_STEPS = 8;
 const STEP_DISTANCE = 1 / VISIBLE_STEPS;
-const PLAYER_Y = 0.76;
+const PLAYER_Y = 0.8;
 const PLAYER_HEIGHT = 0.18;
 const RIVAL_HEIGHT = 0.18;
 const PICKUP_HEIGHT = 0.11;
@@ -596,43 +596,103 @@ function renderStat(label, value, tone = "", key = "") {
   `;
 }
 
-function renderBoardControls(state, canAct) {
-  const isReady = state.status === "ready";
-  const isPaused = state.status === "paused";
+function renderFallbackControls(state, canAct) {
   const isPlaying = state.status === "playing";
-  const primaryAction = isReady ? "start-run" : "toggle-pause";
-  const primaryLabel = isReady ? "Empezar" : isPaused ? "Reanudar" : "Pausa";
 
   return `
-    <div class="traffic-control-row">
-      <button
-        class="btn btn-secondary traffic-control-btn"
-        data-action="game-action"
-        data-game-action="steer-left"
-        data-traffic-role="steer-left"
-        ${canAct && isPlaying ? "" : "disabled"}
-      >
-        Izquierda
-      </button>
-      <button
-        class="btn ${isPlaying ? "btn-secondary" : "btn-primary"} traffic-control-btn is-primary"
-        data-action="game-action"
-        data-game-action="${primaryAction}"
-        data-traffic-role="primary-action"
-        ${canAct && (isReady || isPaused || isPlaying) ? "" : "disabled"}
-      >
-        ${primaryLabel}
-      </button>
-      <button
-        class="btn btn-secondary traffic-control-btn"
-        data-action="game-action"
-        data-game-action="steer-right"
-        data-traffic-role="steer-right"
-        ${canAct && isPlaying ? "" : "disabled"}
-      >
-        Derecha
-      </button>
+    <div class="traffic-fallback-block">
+      <p class="traffic-control-hint">Desliza sobre la carretera. Estos botones quedan como respaldo.</p>
+      <div class="traffic-control-row">
+        <button
+          class="btn btn-secondary traffic-control-btn"
+          data-action="game-action"
+          data-game-action="steer-left"
+          data-traffic-role="steer-left"
+          aria-label="Mover a la izquierda"
+          ${canAct && isPlaying ? "" : "disabled"}
+        >
+          ←
+        </button>
+        <button
+          class="btn btn-secondary traffic-control-btn"
+          data-action="game-action"
+          data-game-action="steer-right"
+          data-traffic-role="steer-right"
+          aria-label="Mover a la derecha"
+          ${canAct && isPlaying ? "" : "disabled"}
+        >
+          →
+        </button>
+      </div>
     </div>
+  `;
+}
+
+function renderPrimaryStatRow(state) {
+  return `
+    <div class="traffic-live-grid">
+      ${renderStat("Tiempo", formatTime(state.elapsedMs), "time", "time")}
+      ${renderStat("Puntuacion", String(state.score), "", "score")}
+    </div>
+  `;
+}
+
+function renderSecondaryStats(state) {
+  const isInfinite = state.mode === "infinite";
+
+  return `
+    <div class="traffic-secondary-grid">
+      ${renderStat("Distancia", String(state.distance), "", "distance")}
+      ${renderStat("Adelantamientos", String(state.overtakes), "", "overtakes")}
+      ${renderStat("Recogidas", String(state.pickups), "", "pickups")}
+      ${renderStat("Mejor", isInfinite ? formatTime(state.bestInfiniteMs) : "-", "record", "record")}
+    </div>
+  `;
+}
+
+function renderSidePanel(state, players, canAct) {
+  const activePlayer = players[0];
+  const primaryButtonAction = state.status === "ready" ? "start-run" : "toggle-pause";
+  const primaryButtonLabel =
+    state.status === "ready" ? "Empezar" : state.status === "paused" ? "Reanudar" : "Pausa";
+
+  return `
+    <aside class="traffic-side">
+      <article class="traffic-side-card traffic-status-card">
+        <div class="traffic-hud-main">
+          <div class="traffic-hud-copy">
+            <div class="traffic-mode-row">
+              <span class="traffic-mode-pill" data-traffic-mode-label>${escapeHtml(modeLabel(state.mode))}</span>
+              <span class="traffic-mode-pill is-soft" data-traffic-status-label>${escapeHtml(statusLabel(state.status))}</span>
+            </div>
+            <h4 data-traffic-player-name>${escapeHtml(activePlayer ? activePlayer.name : "Jugador")}</h4>
+            <p class="traffic-side-note traffic-objective-note" data-traffic-note="objective">${escapeHtml(objectiveProgressText(state))}</p>
+            <p class="traffic-side-note traffic-event-note" data-traffic-note="event">${escapeHtml(state.lastEvent || "")}</p>
+          </div>
+          ${renderPrimaryStatRow(state)}
+        </div>
+        <div class="traffic-hud-actions">
+          <button
+            class="btn ${state.status === "playing" ? "btn-secondary" : "btn-primary"} traffic-primary-btn"
+            data-action="game-action"
+            data-game-action="${primaryButtonAction}"
+            data-traffic-role="primary-action"
+            ${canAct && ["ready", "paused", "playing"].includes(state.status) ? "" : "disabled"}
+          >
+            ${primaryButtonLabel}
+          </button>
+          ${renderFallbackControls(state, canAct)}
+        </div>
+      </article>
+
+      <article class="traffic-side-card traffic-secondary-card">
+        <div class="traffic-secondary-head">
+          <h4>Detalle</h4>
+          <p class="traffic-side-note">Metricas secundarias</p>
+        </div>
+        ${renderSecondaryStats(state)}
+      </article>
+    </aside>
   `;
 }
 
@@ -645,56 +705,6 @@ function objectiveProgressText(state) {
 
 function modeLabel(mode) {
   return mode === "objectives" ? "Objetivos" : "Infinito";
-}
-
-function renderSidePanel(state, players, canAct) {
-  const activePlayer = players[0];
-  const isInfinite = state.mode === "infinite";
-  const primaryButtonAction = state.status === "ready" ? "start-run" : "toggle-pause";
-  const primaryButtonLabel =
-    state.status === "ready" ? "Empezar" : state.status === "paused" ? "Reanudar" : "Pausa";
-
-  return `
-    <aside class="traffic-side">
-      <article class="traffic-side-card traffic-status-card">
-        <div class="traffic-mode-row">
-          <span class="traffic-mode-pill" data-traffic-mode-label>${escapeHtml(modeLabel(state.mode))}</span>
-          <span class="traffic-mode-pill is-soft" data-traffic-status-label>${escapeHtml(statusLabel(state.status))}</span>
-        </div>
-        <h4 data-traffic-player-name>${escapeHtml(activePlayer ? activePlayer.name : "Jugador")}</h4>
-        <p class="traffic-side-note" data-traffic-note="objective">${escapeHtml(objectiveProgressText(state))}</p>
-        <p class="traffic-side-note" data-traffic-note="event">${escapeHtml(state.lastEvent || "")}</p>
-        <button
-          class="btn ${state.status === "playing" ? "btn-secondary" : "btn-primary"} traffic-primary-btn"
-          data-action="game-action"
-          data-game-action="${primaryButtonAction}"
-          data-traffic-role="primary-action"
-          ${canAct && ["ready", "paused", "playing"].includes(state.status) ? "" : "disabled"}
-        >
-          ${primaryButtonLabel}
-        </button>
-      </article>
-
-      <article class="traffic-side-card traffic-stats-card">
-        <div class="traffic-stat-grid">
-          ${renderStat("Modo", modeLabel(state.mode), "", "mode")}
-          ${renderStat("Objetivo", state.mode === "objectives" ? `${objectiveLabel(state.objectiveType)} ${currentObjectiveValue(state)}/${state.objectiveTarget}` : "Mejor tiempo", "", "objective")}
-          ${renderStat("Distancia", String(state.distance), "", "distance")}
-          ${renderStat("Puntuacion", String(state.score), "", "score")}
-          ${renderStat("Tiempo", formatTime(state.elapsedMs), "time", "time")}
-          ${renderStat("Adelantamientos", String(state.overtakes), "", "overtakes")}
-          ${renderStat("Recogidas", String(state.pickups), "", "pickups")}
-          ${renderStat("Mejor", isInfinite ? formatTime(state.bestInfiniteMs) : "-", "record", "record")}
-        </div>
-      </article>
-
-      <article class="traffic-side-card traffic-controls-card">
-        <h4>Controles</h4>
-        <p class="traffic-side-note">Cambia de carril con izquierda y derecha. Pulsa pausa cuando lo necesites.</p>
-        ${renderBoardControls(state, canAct)}
-      </article>
-    </aside>
-  `;
 }
 
 function setNodeText(root, selector, value) {

@@ -118,6 +118,9 @@ export function createUI({ appElement, toastElement }) {
   let trafficTickFrame = null;
   let trafficLastFrameAt = 0;
   let trafficDispatchInFlight = false;
+  let homeSwipeStartX = null;
+  let trafficSwipeState = null;
+  let trafficSwipeInFlight = false;
 
   function getHomeCatalog(vm) {
     return Array.isArray(vm?.games) ? vm.games : [];
@@ -831,6 +834,10 @@ export function createUI({ appElement, toastElement }) {
     trafficDispatchInFlight = false;
   }
 
+  function clearTrafficSwipeState() {
+    trafficSwipeState = null;
+  }
+
   function queueTrafficFrame() {
     if (trafficTickFrame || !shouldRunTrafficLoop()) {
       return;
@@ -1057,39 +1064,89 @@ export function createUI({ appElement, toastElement }) {
       await onAction("game-action", { action });
     });
 
-    let swipeStartX = null;
     document.addEventListener("touchstart", (event) => {
-      if (!(event.target instanceof Element)) {
-        return;
-      }
-      const zone = event.target.closest("[data-home-swipe]");
-      if (!zone || !currentVm || currentVm.screen !== "home") {
-        return;
-      }
       const touch = event.changedTouches && event.changedTouches[0];
       if (!touch) {
         return;
       }
-      swipeStartX = touch.clientX;
+
+      if (event.target instanceof Element) {
+        const homeZone = event.target.closest("[data-home-swipe]");
+        if (homeZone && currentVm && currentVm.screen === "home") {
+          homeSwipeStartX = touch.clientX;
+        }
+
+        const trafficZone = event.target.closest("[data-traffic-road]");
+        if (
+          trafficZone &&
+          currentVm &&
+          currentVm.screen === "game" &&
+          currentVm.game?.id === "trafico" &&
+          currentVm.session?.state?.status === "playing" &&
+          onAction
+        ) {
+          trafficSwipeState = {
+            identifier: touch.identifier,
+            startX: touch.clientX,
+            startY: touch.clientY
+          };
+        }
+      }
     });
 
     document.addEventListener("touchend", (event) => {
-      if (swipeStartX === null || !currentVm || currentVm.screen !== "home") {
-        swipeStartX = null;
-        return;
+      if (homeSwipeStartX !== null && currentVm && currentVm.screen === "home") {
+        const touch = event.changedTouches && event.changedTouches[0];
+        if (touch) {
+          const deltaX = touch.clientX - homeSwipeStartX;
+          if (Math.abs(deltaX) >= 44) {
+            shiftHomeIndex(deltaX < 0 ? 1 : -1);
+          }
+        }
       }
-      const touch = event.changedTouches && event.changedTouches[0];
-      if (!touch) {
-        swipeStartX = null;
-        return;
-      }
-      const deltaX = touch.clientX - swipeStartX;
-      swipeStartX = null;
+      homeSwipeStartX = null;
 
-      if (Math.abs(deltaX) < 44) {
+      if (
+        !trafficSwipeState ||
+        !currentVm ||
+        currentVm.screen !== "game" ||
+        currentVm.game?.id !== "trafico" ||
+        !onAction
+      ) {
+        clearTrafficSwipeState();
         return;
       }
-      shiftHomeIndex(deltaX < 0 ? 1 : -1);
+
+      const changedTouches = Array.from(event.changedTouches || []);
+      const touch = changedTouches.find((item) => item.identifier === trafficSwipeState.identifier) || changedTouches[0];
+      if (!touch) {
+        clearTrafficSwipeState();
+        return;
+      }
+
+      const deltaX = touch.clientX - trafficSwipeState.startX;
+      const deltaY = touch.clientY - trafficSwipeState.startY;
+      clearTrafficSwipeState();
+
+      if (Math.abs(deltaX) < 32 || Math.abs(deltaX) <= Math.abs(deltaY) || trafficSwipeInFlight) {
+        return;
+      }
+
+      trafficSwipeInFlight = true;
+      Promise.resolve(
+        onAction("game-action", {
+          action: {
+            type: deltaX < 0 ? "steer-left" : "steer-right"
+          }
+        })
+      ).finally(() => {
+        trafficSwipeInFlight = false;
+      });
+    });
+
+    document.addEventListener("touchcancel", () => {
+      homeSwipeStartX = null;
+      clearTrafficSwipeState();
     });
   }
 
