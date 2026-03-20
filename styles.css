@@ -4765,6 +4765,7 @@ body:not(.is-home-screen) .bg-layer {
   height: 100%;
   z-index: 6;
   pointer-events: none;
+  background: #fffefc;
 }
 
 .parchis-center-transition,
@@ -4793,12 +4794,12 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .parchis-center-transition-fill {
-  fill: var(--parchis-lane-paper);
+  fill: #fffefc;
 }
 
 .parchis-center-transition-diagonal {
   stroke: var(--parchis-line);
-  stroke-width: 1.95px;
+  stroke-width: 2.1px;
   stroke-linecap: square;
   vector-effect: non-scaling-stroke;
   shape-rendering: geometricPrecision;
@@ -5049,10 +5050,15 @@ body:not(.is-home-screen) .bg-layer {
 
 .parchis-track-cell.is-center-ring-cell {
   z-index: 5;
+  background: transparent;
 }
 
 .parchis-track-cell.is-center-ring-proxy .parchis-track-core {
   background: var(--parchis-lane-paper);
+}
+
+.parchis-center-ring .parchis-track-cell.is-center-ring-cell .parchis-track-core {
+  background: #fffefc;
 }
 
 .parchis-track-cell.number-center::after {

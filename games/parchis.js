@@ -76,13 +76,6 @@ const GOAL_BLUEPRINT = Object.freeze({
   colSpan: 4
 });
 
-const CENTER_CROSS_BLUEPRINT = Object.freeze({
-  row: 7,
-  col: 7,
-  rowSpan: 6,
-  colSpan: 6
-});
-
 const CENTER_RING_BLUEPRINT = Object.freeze({
   row: 6,
   col: 6,
@@ -216,6 +209,9 @@ function buildTrackBlueprint(rawBlueprint) {
 }
 
 const TRACK_BLUEPRINT = buildTrackBlueprint(RAW_TRACK_BLUEPRINT);
+const OUTER_TRACK_BLUEPRINT = Object.freeze(
+  TRACK_BLUEPRINT.filter((cell) => !CENTER_RING_TRACK_CELLS.has(cell.visibleCell))
+);
 
 const FINAL_LANE_BLUEPRINT = Object.freeze([
   Object.freeze([
@@ -1621,7 +1617,8 @@ export const parchisGame = {
       }
     }
 
-    const trackCells = TRACK_BLUEPRINT.map((cell, index) => {
+    const trackCells = OUTER_TRACK_BLUEPRINT.map((cell) => {
+      const index = cell.visibleCell - 1;
       const startOwner = START_INDICES.findIndex((value) => value === index);
       const isEntry = FINAL_ENTRY_INDICES.includes(index);
       const isSafe = SAFE_INDICES.has(index);
@@ -1639,15 +1636,12 @@ export const parchisGame = {
         occupants,
         placement
       });
-      const trackCellAttr = CENTER_RING_TRACK_CELLS.has(cell.visibleCell)
-        ? `data-track-source="${cell.visibleCell}"`
-        : `data-track-cell="${cell.visibleCell}"`;
 
       return `
         <div
           class="${classes.join(" ")}"
           style="${renderGridPlacement(placement)}"
-          ${trackCellAttr}
+          data-track-cell="${cell.visibleCell}"
         >
           <span class="parchis-track-core" aria-hidden="true"></span>
           ${startOwner >= 0 ? '<span class="parchis-start-marker" aria-hidden="true"></span>' : ""}
