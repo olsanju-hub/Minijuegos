@@ -8825,63 +8825,115 @@ body:not(.is-home-screen) .bg-layer {
 @media (min-width: 761px) and (max-width: 1100px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-parchis,
   .app-shell:not(.app-shell-home) .screen.game-screen-escaleras-serpientes {
-    width: min(900px, calc(100vw - 28px));
+    width: min(100%, calc(100vw - 20px));
   }
 
   .game-screen-parchis .parchis-shell {
-    width: min(760px, calc(100vw - 34px));
+    width: min(100%, calc(100vw - 20px));
     grid-template-columns: 1fr;
     gap: 12px;
   }
 
   .game-screen-parchis .parchis-board-frame {
-    width: min(100%, 650px);
-    padding: 6px;
+    width: min(100%, calc(100vw - 24px), 700px);
+    padding: 7px;
+    border-radius: 22px;
+  }
+
+  .game-screen-parchis .parchis-board {
+    width: 100%;
   }
 
   .game-screen-parchis .parchis-piece {
-    width: min(74%, clamp(14px, 2vw, 20px));
-    height: min(74%, clamp(14px, 2vw, 20px));
+    width: min(76%, clamp(14px, 1.9vw, 19px));
+    height: min(76%, clamp(14px, 1.9vw, 19px));
     font-size: 0.5rem;
   }
 
   .game-screen-parchis .parchis-home-slot .parchis-piece,
   .game-screen-parchis .parchis-goal-slot .parchis-piece {
-    width: min(68%, clamp(12px, 1.7vw, 16px));
-    height: min(68%, clamp(12px, 1.7vw, 16px));
+    width: min(68%, clamp(12px, 1.55vw, 15px));
+    height: min(68%, clamp(12px, 1.55vw, 15px));
   }
 
   .game-screen-parchis .parchis-track-cell::after {
-    font-size: clamp(6px, 1vw, 8px);
+    font-size: clamp(6px, 0.92vw, 8px);
+  }
+
+  .game-screen-parchis .parchis-side {
+    grid-template-columns: 1fr;
   }
 
   .game-screen-parchis .parchis-side-card {
-    padding: 12px;
+    border-radius: 20px;
+    padding: 13px;
   }
 
   .game-screen-escaleras-serpientes .sns-shell {
-    width: min(760px, calc(100vw - 34px));
+    width: min(100%, calc(100vw - 20px));
     gap: 12px;
   }
 
   .game-screen-escaleras-serpientes .sns-board-frame {
-    width: min(100%, 620px);
-    padding: 10px;
+    width: min(100%, calc(100vw - 24px), 680px);
+    padding: 11px;
+    border-radius: 24px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-board {
+    border-radius: 18px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-cell-number {
+    top: 5px;
+    left: 6px;
+    font-size: clamp(0.58rem, 1.45vw, 0.76rem);
+  }
+
+  .game-screen-escaleras-serpientes .sns-cell-piece-layer {
+    inset: 35% 5% 5% 5%;
+  }
+
+  .game-screen-escaleras-serpientes .sns-cell-target::before {
+    inset: 7%;
+    border-width: 2px;
+    border-radius: 12px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-cell-target-badge {
+    right: 5px;
+    bottom: 5px;
+    padding: 1px 5px;
+    font-size: 0.56rem;
+  }
+
+  .game-screen-escaleras-serpientes .sns-piece {
+    width: min(100%, clamp(15px, 2.4vw, 21px));
+  }
+
+  .game-screen-escaleras-serpientes .sns-piece-core {
+    font-size: 0.58rem;
+    border-width: 1.2px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-side {
+    grid-template-columns: 1fr;
   }
 
   .game-screen-escaleras-serpientes .sns-die {
-    width: 82px;
-    height: 82px;
+    width: 86px;
+    height: 86px;
     margin-bottom: 10px;
   }
 
   .game-screen-escaleras-serpientes .sns-die-cube {
-    width: 60px;
-    height: 60px;
+    width: 64px;
+    height: 64px;
     border-radius: 15px;
   }
 
   .game-screen-escaleras-serpientes .sns-side-card {
-    padding: 14px;
+    border-radius: 20px;
+    padding: 13px;
   }
 }
