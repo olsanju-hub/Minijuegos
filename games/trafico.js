@@ -9,6 +9,8 @@ const OBJECTIVE_TARGETS = Object.freeze({
 const STORAGE_KEY_BEST_TIME = "minijuegos:trafico:best-time-ms";
 const BASE_TICK_MS = 720;
 const MIN_TICK_MS = 460;
+const MIN_MOTION_MS = 180;
+const MAX_MOTION_MS = 260;
 
 const PATTERN_POOLS = Object.freeze([
   Object.freeze([[], [], [0], [1], [2], [0, 2], [0], [1], [2]]),
@@ -149,6 +151,10 @@ function computeTickMs(distance) {
     difficultyLevel: stage,
     tickMs: Math.max(MIN_TICK_MS, BASE_TICK_MS - stage * 36)
   };
+}
+
+function computeMotionMs(tickMs) {
+  return clamp(Math.round((Number(tickMs) || BASE_TICK_MS) * 0.42), MIN_MOTION_MS, MAX_MOTION_MS);
 }
 
 function buildReachableLanes(entities, startLane) {
@@ -387,73 +393,97 @@ function runTick(state) {
   return { ok: true, state };
 }
 
-function entityByPosition(entities) {
-  const map = new Map();
-  for (const entity of entities) {
-    map.set(`${entity.row}:${entity.lane}`, entity);
+function overlayCopy(state) {
+  if (state.status === "playing") {
+    return null;
   }
-  return map;
+
+  if (state.status === "paused") {
+    return { title: "Pausa", text: "Pulsa Reanudar para seguir." };
+  }
+  if (state.status === "objective-complete") {
+    return { title: "Objetivo cumplido", text: "La partida ha terminado." };
+  }
+  if (state.status === "game-over") {
+    return { title: "Game over", text: "Has chocado con otro coche." };
+  }
+  return { title: "Listo", text: "Pulsa Empezar para arrancar." };
 }
 
 function renderStatusOverlay(state) {
-  if (state.status === "playing") {
-    return "";
-  }
-
-  const copy =
-    state.status === "paused"
-      ? { title: "Pausa", text: "Pulsa Reanudar para seguir." }
-      : state.status === "objective-complete"
-        ? { title: "Objetivo cumplido", text: "La partida ha terminado." }
-        : state.status === "game-over"
-          ? { title: "Game over", text: "Has chocado con otro coche." }
-          : { title: "Listo", text: "Pulsa Empezar para arrancar." };
-
+  const copy = overlayCopy(state);
   return `
-    <div class="traffic-road-overlay">
-      <p class="traffic-road-overlay-title">${escapeHtml(copy.title)}</p>
-      <p class="traffic-road-overlay-text">${escapeHtml(copy.text)}</p>
+    <div class="traffic-road-overlay" data-traffic-overlay ${copy ? "" : "hidden"}>
+      <p class="traffic-road-overlay-title" data-traffic-overlay-title>${escapeHtml(copy ? copy.title : "")}</p>
+      <p class="traffic-road-overlay-text" data-traffic-overlay-text>${escapeHtml(copy ? copy.text : "")}</p>
     </div>
   `;
 }
 
-function renderCell(row, lane, state, entityMap) {
-  const entity = entityMap.get(`${row}:${lane}`) || null;
-  const isPlayer = row === PLAYER_ROW && lane === state.playerLane;
-  const hasCollision = Boolean(state.lastCollision) && state.lastCollision.row === row && state.lastCollision.lane === lane;
-  const classes = ["traffic-cell", `lane-${lane}`];
+function buildRenderableEntities(state) {
+  const collisionKey = state.lastCollision ? `${state.lastCollision.row}:${state.lastCollision.lane}` : "";
+  const isCollision = (row, lane) => collisionKey !== "" && collisionKey === `${row}:${lane}`;
 
-  if (isPlayer) {
-    classes.push("has-player");
-  }
-  if (entity) {
-    classes.push(`has-${entity.type}`);
-  }
-  if (hasCollision) {
-    classes.push("is-collision");
-  }
+  return [
+    {
+      id: "player",
+      kind: "player",
+      lane: state.playerLane,
+      row: PLAYER_ROW,
+      isCollision: isCollision(PLAYER_ROW, state.playerLane)
+    },
+    ...state.entities.map((entity) => ({
+      id: entity.id,
+      kind: entity.type === "rival" ? "rival" : "pickup",
+      lane: entity.lane,
+      row: entity.row,
+      isCollision: entity.type === "rival" && isCollision(entity.row, entity.lane)
+    }))
+  ];
+}
 
+function entityVisualClass(kind) {
+  if (kind === "player") {
+    return "traffic-player-car";
+  }
+  if (kind === "pickup") {
+    return "traffic-pickup-coin";
+  }
+  return "traffic-rival-car";
+}
+
+function renderTrafficEntity(entity) {
   return `
-    <div class="${classes.join(" ")}">
+    <span
+      class="traffic-entity ${entity.isCollision ? "is-collision" : ""}"
+      data-traffic-entity-id="${escapeHtml(entity.id)}"
+      data-traffic-kind="${escapeHtml(entity.kind)}"
+      style="--traffic-lane:${entity.lane};--traffic-row:${entity.row};"
+      aria-hidden="true"
+    >
+      <span class="${entityVisualClass(entity.kind)}" aria-hidden="true"></span>
+    </span>
+  `;
+}
+
+function renderStaticCell() {
+  return `
+    <div class="traffic-cell">
       <span class="traffic-cell-surface" aria-hidden="true"></span>
-      ${entity && entity.type === "rival" ? '<span class="traffic-rival-car" aria-hidden="true"></span>' : ""}
-      ${entity && entity.type === "pickup" ? '<span class="traffic-pickup-coin" aria-hidden="true"></span>' : ""}
-      ${isPlayer ? '<span class="traffic-player-car" aria-hidden="true"></span>' : ""}
     </div>
   `;
 }
 
 function renderRoad(state) {
-  const entityMap = entityByPosition(state.entities);
-  const rows = Array.from({ length: VISIBLE_ROWS }, (_, row) =>
-    Array.from({ length: LANE_COUNT }, (_, lane) => renderCell(row, lane, state, entityMap)).join("")
-  ).join("");
+  const cells = Array.from({ length: VISIBLE_ROWS * LANE_COUNT }, () => renderStaticCell()).join("");
+  const entities = buildRenderableEntities(state).map(renderTrafficEntity).join("");
 
   return `
     <div class="traffic-road-frame">
-      <div class="traffic-road">
+      <div class="traffic-road" data-traffic-road style="--traffic-motion-ms:${computeMotionMs(state.tickMs)}ms;">
         <div class="traffic-road-surface">
-          <div class="traffic-grid">${rows}</div>
+          <div class="traffic-grid" aria-hidden="true">${cells}</div>
+          <div class="traffic-entities" data-traffic-entities>${entities}</div>
         </div>
         ${renderStatusOverlay(state)}
       </div>
@@ -461,11 +491,11 @@ function renderRoad(state) {
   `;
 }
 
-function renderStat(label, value, tone = "") {
+function renderStat(label, value, tone = "", key = "") {
   return `
     <div class="traffic-stat ${tone ? `is-${tone}` : ""}">
       <span class="traffic-stat-label">${escapeHtml(label)}</span>
-      <strong class="traffic-stat-value">${escapeHtml(value)}</strong>
+      <strong class="traffic-stat-value" ${key ? `data-traffic-stat="${escapeHtml(key)}"` : ""}>${escapeHtml(value)}</strong>
     </div>
   `;
 }
@@ -483,6 +513,7 @@ function renderBoardControls(state, canAct) {
         class="btn btn-secondary traffic-control-btn"
         data-action="game-action"
         data-game-action="steer-left"
+        data-traffic-role="steer-left"
         ${canAct && isPlaying ? "" : "disabled"}
       >
         Izquierda
@@ -491,6 +522,7 @@ function renderBoardControls(state, canAct) {
         class="btn ${isPlaying ? "btn-secondary" : "btn-primary"} traffic-control-btn is-primary"
         data-action="game-action"
         data-game-action="${primaryAction}"
+        data-traffic-role="primary-action"
         ${canAct && (isReady || isPaused || isPlaying) ? "" : "disabled"}
       >
         ${primaryLabel}
@@ -499,6 +531,7 @@ function renderBoardControls(state, canAct) {
         class="btn btn-secondary traffic-control-btn"
         data-action="game-action"
         data-game-action="steer-right"
+        data-traffic-role="steer-right"
         ${canAct && isPlaying ? "" : "disabled"}
       >
         Derecha
@@ -516,6 +549,212 @@ function objectiveProgressText(state) {
 
 function modeLabel(mode) {
   return mode === "objectives" ? "Objetivos" : "Infinito";
+}
+
+function renderSidePanel(state, players, canAct) {
+  const activePlayer = players[0];
+  const isInfinite = state.mode === "infinite";
+  const primaryButtonAction = state.status === "ready" ? "start-run" : "toggle-pause";
+  const primaryButtonLabel =
+    state.status === "ready" ? "Empezar" : state.status === "paused" ? "Reanudar" : "Pausa";
+
+  return `
+    <aside class="traffic-side">
+      <article class="traffic-side-card traffic-status-card">
+        <div class="traffic-mode-row">
+          <span class="traffic-mode-pill" data-traffic-mode-label>${escapeHtml(modeLabel(state.mode))}</span>
+          <span class="traffic-mode-pill is-soft" data-traffic-status-label>${escapeHtml(statusLabel(state.status))}</span>
+        </div>
+        <h4 data-traffic-player-name>${escapeHtml(activePlayer ? activePlayer.name : "Jugador")}</h4>
+        <p class="traffic-side-note" data-traffic-note="objective">${escapeHtml(objectiveProgressText(state))}</p>
+        <p class="traffic-side-note" data-traffic-note="event">${escapeHtml(state.lastEvent || "")}</p>
+        <button
+          class="btn ${state.status === "playing" ? "btn-secondary" : "btn-primary"} traffic-primary-btn"
+          data-action="game-action"
+          data-game-action="${primaryButtonAction}"
+          data-traffic-role="primary-action"
+          ${canAct && ["ready", "paused", "playing"].includes(state.status) ? "" : "disabled"}
+        >
+          ${primaryButtonLabel}
+        </button>
+      </article>
+
+      <article class="traffic-side-card traffic-stats-card">
+        <div class="traffic-stat-grid">
+          ${renderStat("Modo", modeLabel(state.mode), "", "mode")}
+          ${renderStat("Objetivo", state.mode === "objectives" ? `${objectiveLabel(state.objectiveType)} ${currentObjectiveValue(state)}/${state.objectiveTarget}` : "Mejor tiempo", "", "objective")}
+          ${renderStat("Distancia", String(state.distance), "", "distance")}
+          ${renderStat("Puntuacion", String(state.score), "", "score")}
+          ${renderStat("Tiempo", formatTime(state.elapsedMs), "time", "time")}
+          ${renderStat("Adelantamientos", String(state.overtakes), "", "overtakes")}
+          ${renderStat("Recogidas", String(state.pickups), "", "pickups")}
+          ${renderStat("Mejor", isInfinite ? formatTime(state.bestInfiniteMs) : "-", "record", "record")}
+        </div>
+      </article>
+
+      <article class="traffic-side-card traffic-controls-card">
+        <h4>Controles</h4>
+        <p class="traffic-side-note">Cambia de carril con izquierda y derecha. Pausa cuando lo necesites.</p>
+        ${renderBoardControls(state, canAct)}
+      </article>
+    </aside>
+  `;
+}
+
+function setNodeText(root, selector, value) {
+  const node = root.querySelector(selector);
+  if (node) {
+    node.textContent = value;
+  }
+}
+
+function setEntityPosition(node, lane, row) {
+  node.style.setProperty("--traffic-lane", String(lane));
+  node.style.setProperty("--traffic-row", String(row));
+}
+
+function createTrafficEntityNode(entity) {
+  const node = document.createElement("span");
+  node.className = "traffic-entity";
+  node.dataset.trafficEntityId = entity.id;
+  node.dataset.trafficKind = entity.kind;
+  node.setAttribute("aria-hidden", "true");
+  const visual = document.createElement("span");
+  visual.className = entityVisualClass(entity.kind);
+  visual.setAttribute("aria-hidden", "true");
+  node.append(visual);
+  return node;
+}
+
+function removeTrafficEntityNode(node, motionMs) {
+  if (!node || node.dataset.trafficKind === "player") {
+    return;
+  }
+  if (node.dataset.trafficRemoving === "true") {
+    return;
+  }
+
+  node.dataset.trafficRemoving = "true";
+  const currentRow = Number(node.style.getPropertyValue("--traffic-row"));
+  const nextRow = Number.isFinite(currentRow) ? Math.min(VISIBLE_ROWS + 0.85, currentRow + 0.9) : VISIBLE_ROWS + 0.85;
+  node.classList.add("is-exiting");
+
+  if (node.dataset.trafficKind === "rival") {
+    node.style.setProperty("--traffic-row", String(nextRow));
+  }
+
+  window.setTimeout(() => {
+    if (node.isConnected) {
+      node.remove();
+    }
+  }, motionMs + 80);
+}
+
+function syncTrafficEntities(root, state) {
+  const layer = root.querySelector("[data-traffic-entities]");
+  if (!layer) {
+    return;
+  }
+
+  const motionMs = computeMotionMs(state.tickMs);
+  const nextEntities = buildRenderableEntities(state);
+  const previousNodes = new Map();
+  for (const node of layer.querySelectorAll("[data-traffic-entity-id]")) {
+    previousNodes.set(node.dataset.trafficEntityId || "", node);
+  }
+
+  const activeIds = new Set();
+  for (const entity of nextEntities) {
+    activeIds.add(entity.id);
+    let node = previousNodes.get(entity.id);
+
+    if (!node) {
+      node = createTrafficEntityNode(entity);
+      const startRow = entity.kind === "player" ? entity.row : Math.max(-0.9, entity.row - 0.75);
+      setEntityPosition(node, entity.lane, startRow);
+      layer.append(node);
+      window.requestAnimationFrame(() => {
+        node.classList.toggle("is-collision", entity.isCollision);
+        setEntityPosition(node, entity.lane, entity.row);
+      });
+      continue;
+    }
+
+    node.dataset.trafficRemoving = "false";
+    node.classList.remove("is-exiting");
+    node.classList.toggle("is-collision", entity.isCollision);
+    setEntityPosition(node, entity.lane, entity.row);
+  }
+
+  for (const [entityId, node] of previousNodes) {
+    if (activeIds.has(entityId)) {
+      continue;
+    }
+    removeTrafficEntityNode(node, motionMs);
+  }
+}
+
+function syncTrafficOverlay(root, state) {
+  const overlay = root.querySelector("[data-traffic-overlay]");
+  if (!overlay) {
+    return;
+  }
+
+  const copy = overlayCopy(state);
+  overlay.hidden = !copy;
+  setNodeText(root, "[data-traffic-overlay-title]", copy ? copy.title : "");
+  setNodeText(root, "[data-traffic-overlay-text]", copy ? copy.text : "");
+}
+
+function syncTrafficControls(root, state, canAct) {
+  const isReady = state.status === "ready";
+  const isPaused = state.status === "paused";
+  const isPlaying = state.status === "playing";
+  const primaryAction = isReady ? "start-run" : "toggle-pause";
+  const primaryLabel = isReady ? "Empezar" : isPaused ? "Reanudar" : "Pausa";
+  const primaryEnabled = canAct && (isReady || isPaused || isPlaying);
+
+  for (const button of root.querySelectorAll('[data-traffic-role="primary-action"]')) {
+    button.dataset.gameAction = primaryAction;
+    button.textContent = primaryLabel;
+    button.disabled = !primaryEnabled;
+    button.classList.toggle("btn-primary", !isPlaying);
+    button.classList.toggle("btn-secondary", isPlaying);
+  }
+
+  for (const button of root.querySelectorAll('[data-traffic-role="steer-left"], [data-traffic-role="steer-right"]')) {
+    button.disabled = !(canAct && isPlaying);
+  }
+}
+
+function syncTrafficHud(root, state, players, canAct) {
+  const road = root.querySelector("[data-traffic-road]");
+  if (road) {
+    road.style.setProperty("--traffic-motion-ms", `${computeMotionMs(state.tickMs)}ms`);
+  }
+
+  setNodeText(root, "[data-traffic-mode-label]", modeLabel(state.mode));
+  setNodeText(root, "[data-traffic-status-label]", statusLabel(state.status));
+  setNodeText(root, "[data-traffic-player-name]", players[0] ? players[0].name : "Jugador");
+  setNodeText(root, '[data-traffic-note="objective"]', objectiveProgressText(state));
+  setNodeText(root, '[data-traffic-note="event"]', state.lastEvent || "");
+
+  const statValues = {
+    mode: modeLabel(state.mode),
+    objective: state.mode === "objectives" ? `${objectiveLabel(state.objectiveType)} ${currentObjectiveValue(state)}/${state.objectiveTarget}` : "Mejor tiempo",
+    distance: String(state.distance),
+    score: String(state.score),
+    time: formatTime(state.elapsedMs),
+    overtakes: String(state.overtakes),
+    pickups: String(state.pickups),
+    record: state.mode === "infinite" ? formatTime(state.bestInfiniteMs) : "-"
+  };
+
+  for (const [key, value] of Object.entries(statValues)) {
+    setNodeText(root, `[data-traffic-stat="${key}"]`, value);
+  }
+
+  syncTrafficControls(root, state, canAct);
 }
 
 export const traficoGame = {
@@ -682,56 +921,23 @@ export const traficoGame = {
     `;
   },
   renderBoard({ state, players, canAct }) {
-    const activePlayer = players[0];
-    const isInfinite = state.mode === "infinite";
-    const primaryButtonAction = state.status === "ready" ? "start-run" : "toggle-pause";
-    const primaryButtonLabel =
-      state.status === "ready" ? "Empezar" : state.status === "paused" ? "Reanudar" : "Pausa";
-
     return `
-      <section class="traffic-shell">
+      <section class="traffic-shell" data-traffic-root>
         ${renderRoad(state)}
-
-        <aside class="traffic-side">
-          <article class="traffic-side-card traffic-status-card">
-            <div class="traffic-mode-row">
-              <span class="traffic-mode-pill">${escapeHtml(modeLabel(state.mode))}</span>
-              <span class="traffic-mode-pill is-soft">${escapeHtml(statusLabel(state.status))}</span>
-            </div>
-            <h4>${escapeHtml(activePlayer ? activePlayer.name : "Jugador")}</h4>
-            <p class="traffic-side-note">${escapeHtml(objectiveProgressText(state))}</p>
-            <p class="traffic-side-note">${escapeHtml(state.lastEvent || "")}</p>
-            <button
-              class="btn ${state.status === "playing" ? "btn-secondary" : "btn-primary"} traffic-primary-btn"
-              data-action="game-action"
-              data-game-action="${primaryButtonAction}"
-              ${canAct && ["ready", "paused", "playing"].includes(state.status) ? "" : "disabled"}
-            >
-              ${primaryButtonLabel}
-            </button>
-          </article>
-
-          <article class="traffic-side-card traffic-stats-card">
-            <div class="traffic-stat-grid">
-              ${renderStat("Modo", modeLabel(state.mode))}
-              ${renderStat("Objetivo", state.mode === "objectives" ? `${objectiveLabel(state.objectiveType)} ${currentObjectiveValue(state)}/${state.objectiveTarget}` : "Mejor tiempo")}
-              ${renderStat("Distancia", String(state.distance))}
-              ${renderStat("Puntuacion", String(state.score))}
-              ${renderStat("Tiempo", formatTime(state.elapsedMs), "time")}
-              ${renderStat("Adelantamientos", String(state.overtakes))}
-              ${renderStat("Recogidas", String(state.pickups))}
-              ${renderStat("Mejor", isInfinite ? formatTime(state.bestInfiniteMs) : "-", "record")}
-            </div>
-          </article>
-
-          <article class="traffic-side-card traffic-controls-card">
-            <h4>Controles</h4>
-            <p class="traffic-side-note">Cambia de carril con izquierda y derecha. Pausa cuando lo necesites.</p>
-            ${renderBoardControls(state, canAct)}
-          </article>
-        </aside>
+        ${renderSidePanel(state, players, canAct)}
       </section>
     `;
+  },
+  patchBoardElement(boardWrap, { state, players, canAct }) {
+    const root = boardWrap.querySelector("[data-traffic-root]");
+    if (!root) {
+      return false;
+    }
+
+    syncTrafficEntities(root, state);
+    syncTrafficOverlay(root, state);
+    syncTrafficHud(root, state, players, canAct);
+    return true;
   },
   formatResult({ state }) {
     if (state.status === "objective-complete") {

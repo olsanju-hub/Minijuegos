@@ -732,7 +732,61 @@ export function createUI({ appElement, toastElement }) {
     `;
   }
 
+  function hasGameResult(vm) {
+    return Boolean(vm?.session && vm?.game && vm.game.getResult(vm.session.state));
+  }
+
+  function canPatchCurrentGame(nextVm) {
+    const previousVm = currentVm;
+    if (!previousVm || !nextVm) {
+      return false;
+    }
+
+    if (previousVm.screen !== "game" || nextVm.screen !== "game") {
+      return false;
+    }
+
+    if (!previousVm.game || !nextVm.game || previousVm.game.id !== nextVm.game.id) {
+      return false;
+    }
+
+    if (typeof nextVm.game.patchBoardElement !== "function") {
+      return false;
+    }
+
+    if (previousVm.rulesOpen !== nextVm.rulesOpen) {
+      return false;
+    }
+
+    if (hasGameResult(previousVm) || hasGameResult(nextVm)) {
+      return false;
+    }
+
+    return Boolean(appElement.querySelector(".board-wrap"));
+  }
+
   function render(vm) {
+    if (canPatchCurrentGame(vm)) {
+      const boardWrap = appElement.querySelector(".board-wrap");
+      const patched = boardWrap
+        ? vm.game.patchBoardElement(boardWrap, {
+            state: vm.session.state,
+            players: vm.session.players,
+            options: vm.session.options,
+            canAct: vm.canAct,
+            uiState: vm.uiState
+          })
+        : false;
+
+      if (patched) {
+        currentVm = vm;
+        document.body.classList.toggle("is-home-screen", false);
+        appElement.classList.toggle("app-shell-home", false);
+        syncTrafficTickLoop(vm);
+        return;
+      }
+    }
+
     currentVm = vm;
     if (vm.screen !== "home") {
       homeDrawerOpen = false;
