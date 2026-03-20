@@ -1,4 +1,4 @@
-const CACHE_NAME = "minijuegos-shell-v6";
+const CACHE_NAME = "minijuegos-shell-v7";
 const SCOPE_URL = new URL(self.registration.scope);
 const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;
 const APP_SHELL = [

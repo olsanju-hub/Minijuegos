@@ -1,13 +1,13 @@
-const TRACK_LENGTH = 68;
-const FINAL_LENGTH = 8;
+const TRACK_LENGTH = 52;
+const FINAL_LENGTH = 6;
 const GOAL_PROGRESS = TRACK_LENGTH + FINAL_LENGTH;
 const PIECES_PER_PLAYER = 4;
 
-// Visible board cells follow the classic parchis numbering from the reference board.
-// Internal track operations remain zero-based 0..67 to keep the existing engine stable.
-const START_CELLS = Object.freeze([39, 22, 5, 56]);
-const FINAL_ENTRY_CELLS = Object.freeze([38, 21, 4, 55]);
-const SAFE_CELLS = new Set([5, 12, 17, 22, 29, 34, 39, 46, 51, 56, 63, 68]);
+// Ludo-style path: 52 outer cells + 6 final lane cells per player.
+// Visible numbering is rebuilt to match the new 15x15 board geometry.
+const START_CELLS = Object.freeze([6, 45, 32, 19]);
+const FINAL_ENTRY_CELLS = Object.freeze([5, 44, 31, 18]);
+const SAFE_CELLS = new Set([6, 13, 19, 26, 32, 39, 45, 52]);
 
 function visibleCellToIndex(cell) {
   return cell - 1;
@@ -64,195 +64,133 @@ const DIE_PIPS = {
 
 const HOME_BLUEPRINT = Object.freeze([
   Object.freeze({ slot: 0, row: 1, col: 1, rowSpan: 6, colSpan: 6 }),
-  Object.freeze({ slot: 1, row: 1, col: 13, rowSpan: 6, colSpan: 6 }),
-  Object.freeze({ slot: 2, row: 13, col: 13, rowSpan: 6, colSpan: 6 }),
-  Object.freeze({ slot: 3, row: 13, col: 1, rowSpan: 6, colSpan: 6 })
+  Object.freeze({ slot: 1, row: 1, col: 10, rowSpan: 6, colSpan: 6 }),
+  Object.freeze({ slot: 2, row: 10, col: 10, rowSpan: 6, colSpan: 6 }),
+  Object.freeze({ slot: 3, row: 10, col: 1, rowSpan: 6, colSpan: 6 })
 ]);
 
 const GOAL_BLUEPRINT = Object.freeze({
-  row: 8,
-  col: 8,
-  rowSpan: 4,
-  colSpan: 4
+  row: 7,
+  col: 7,
+  rowSpan: 3,
+  colSpan: 3
 });
 
-const CENTER_RING_BLUEPRINT = Object.freeze({
-  row: 6,
-  col: 6,
-  rowSpan: 8,
-  colSpan: 8
-});
-
-const CENTER_RING_TRACK_BLUEPRINT = Object.freeze([
-  Object.freeze({ visibleCell: 41, row: 1, col: 3, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 42, row: 2, col: 3, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 43, row: 3, col: 2, axis: "vertical" }),
-  Object.freeze({ visibleCell: 44, row: 3, col: 1, axis: "vertical" }),
-  Object.freeze({ visibleCell: 27, row: 1, col: 6, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 26, row: 2, col: 6, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 25, row: 3, col: 7, axis: "vertical" }),
-  Object.freeze({ visibleCell: 24, row: 3, col: 8, axis: "vertical" }),
-  Object.freeze({ visibleCell: 58, row: 6, col: 1, axis: "vertical" }),
-  Object.freeze({ visibleCell: 59, row: 6, col: 2, axis: "vertical" }),
-  Object.freeze({ visibleCell: 60, row: 7, col: 3, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 61, row: 8, col: 3, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 9, row: 6, col: 7, axis: "vertical" }),
-  Object.freeze({ visibleCell: 10, row: 6, col: 8, axis: "vertical" }),
-  Object.freeze({ visibleCell: 8, row: 7, col: 6, axis: "horizontal" }),
-  Object.freeze({ visibleCell: 7, row: 8, col: 6, axis: "horizontal" })
+const TOP_TRACK_PATH = Object.freeze([
+  Object.freeze({ row: 6, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 5, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 4, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 3, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 2, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 1, col: 9, axis: "horizontal" }),
+  Object.freeze({ row: 1, col: 8, axis: "horizontal" }),
+  Object.freeze({ row: 1, col: 7, axis: "horizontal" }),
+  Object.freeze({ row: 2, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 3, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 4, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 5, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 6, col: 7, axis: "vertical" })
 ]);
 
-const CENTER_RING_TRACK_CELLS = new Set(CENTER_RING_TRACK_BLUEPRINT.map((cell) => cell.visibleCell));
-
-const CENTER_TRANSITION_BLUEPRINT = Object.freeze([
-  Object.freeze({ key: "tl", row: 2, col: 2, diagonal: "down" }),
-  Object.freeze({ key: "tr", row: 2, col: 7, diagonal: "up" }),
-  Object.freeze({ key: "bl", row: 7, col: 2, diagonal: "up" }),
-  Object.freeze({ key: "br", row: 7, col: 7, diagonal: "down" })
+const WEST_TRACK_PATH = Object.freeze([
+  Object.freeze({ row: 7, col: 6, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 5, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 4, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 3, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 2, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 1, axis: "vertical" }),
+  Object.freeze({ row: 8, col: 1, axis: "vertical" }),
+  Object.freeze({ row: 9, col: 1, axis: "vertical" }),
+  Object.freeze({ row: 9, col: 2, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 3, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 4, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 5, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 6, axis: "horizontal" })
 ]);
 
-const RAW_TRACK_BLUEPRINT = Object.freeze([
-  Object.freeze({ visibleCell: 1, row: 1, col: 7, axis: "h" }),
-  Object.freeze({ visibleCell: 2, row: 1, col: 8, axis: "h" }),
-  Object.freeze({ visibleCell: 3, row: 1, col: 9, axis: "h" }),
-  Object.freeze({ visibleCell: 4, row: 1, col: 10, axis: "h" }),
-  Object.freeze({ visibleCell: 5, row: 1, col: 11, axis: "h" }),
-  Object.freeze({ visibleCell: 6, row: 1, col: 12, axis: "h" }),
-  Object.freeze({ visibleCell: 7, row: 2, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 8, row: 3, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 9, row: 4, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 10, row: 5, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 11, row: 6, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 12, row: 7, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 13, row: 8, col: 12, axis: "h" }),
-  Object.freeze({ visibleCell: 14, row: 8, col: 13, axis: "h" }),
-  Object.freeze({ visibleCell: 15, row: 8, col: 14, axis: "h" }),
-  Object.freeze({ visibleCell: 16, row: 8, col: 15, axis: "h" }),
-  Object.freeze({ visibleCell: 17, row: 8, col: 16, axis: "h" }),
-  Object.freeze({ visibleCell: 18, row: 8, col: 17, axis: "h" }),
-  Object.freeze({ visibleCell: 19, row: 8, col: 18, axis: "v" }),
-  Object.freeze({ visibleCell: 20, row: 9, col: 18, axis: "v" }),
-  Object.freeze({ visibleCell: 21, row: 10, col: 18, axis: "v" }),
-  Object.freeze({ visibleCell: 22, row: 11, col: 18, axis: "v" }),
-  Object.freeze({ visibleCell: 23, row: 12, col: 18, axis: "v" }),
-  Object.freeze({ visibleCell: 24, row: 11, col: 17, axis: "h" }),
-  Object.freeze({ visibleCell: 25, row: 11, col: 16, axis: "h" }),
-  Object.freeze({ visibleCell: 26, row: 11, col: 15, axis: "h" }),
-  Object.freeze({ visibleCell: 27, row: 11, col: 14, axis: "h" }),
-  Object.freeze({ visibleCell: 28, row: 11, col: 13, axis: "h" }),
-  Object.freeze({ visibleCell: 29, row: 11, col: 12, axis: "h" }),
-  Object.freeze({ visibleCell: 30, row: 12, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 31, row: 13, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 32, row: 14, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 33, row: 15, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 34, row: 16, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 35, row: 17, col: 11, axis: "v" }),
-  Object.freeze({ visibleCell: 36, row: 18, col: 11, axis: "h" }),
-  Object.freeze({ visibleCell: 37, row: 18, col: 10, axis: "h" }),
-  Object.freeze({ visibleCell: 38, row: 18, col: 9, axis: "h" }),
-  Object.freeze({ visibleCell: 39, row: 18, col: 8, axis: "h" }),
-  Object.freeze({ visibleCell: 40, row: 18, col: 7, axis: "h" }),
-  Object.freeze({ visibleCell: 41, row: 17, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 42, row: 16, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 43, row: 15, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 44, row: 14, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 45, row: 13, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 46, row: 12, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 47, row: 11, col: 7, axis: "h" }),
-  Object.freeze({ visibleCell: 48, row: 11, col: 6, axis: "h" }),
-  Object.freeze({ visibleCell: 49, row: 11, col: 5, axis: "h" }),
-  Object.freeze({ visibleCell: 50, row: 11, col: 4, axis: "h" }),
-  Object.freeze({ visibleCell: 51, row: 11, col: 3, axis: "h" }),
-  Object.freeze({ visibleCell: 52, row: 11, col: 2, axis: "h" }),
-  Object.freeze({ visibleCell: 53, row: 11, col: 1, axis: "v" }),
-  Object.freeze({ visibleCell: 54, row: 10, col: 1, axis: "v" }),
-  Object.freeze({ visibleCell: 55, row: 9, col: 1, axis: "v" }),
-  Object.freeze({ visibleCell: 56, row: 8, col: 1, axis: "v" }),
-  Object.freeze({ visibleCell: 57, row: 7, col: 1, axis: "v" }),
-  Object.freeze({ visibleCell: 58, row: 8, col: 2, axis: "h" }),
-  Object.freeze({ visibleCell: 59, row: 8, col: 3, axis: "h" }),
-  Object.freeze({ visibleCell: 60, row: 8, col: 4, axis: "h" }),
-  Object.freeze({ visibleCell: 61, row: 8, col: 5, axis: "h" }),
-  Object.freeze({ visibleCell: 62, row: 8, col: 6, axis: "h" }),
-  Object.freeze({ visibleCell: 63, row: 8, col: 7, axis: "h" }),
-  Object.freeze({ visibleCell: 64, row: 7, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 65, row: 6, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 66, row: 5, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 67, row: 4, col: 8, axis: "v" }),
-  Object.freeze({ visibleCell: 68, row: 3, col: 8, axis: "v" })
+const SOUTH_TRACK_PATH = Object.freeze([
+  Object.freeze({ row: 10, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 11, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 12, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 13, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 14, col: 7, axis: "vertical" }),
+  Object.freeze({ row: 15, col: 7, axis: "horizontal" }),
+  Object.freeze({ row: 15, col: 8, axis: "horizontal" }),
+  Object.freeze({ row: 15, col: 9, axis: "horizontal" }),
+  Object.freeze({ row: 14, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 13, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 12, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 11, col: 9, axis: "vertical" }),
+  Object.freeze({ row: 10, col: 9, axis: "vertical" })
 ]);
 
-function buildTrackBlueprint(rawBlueprint) {
-  // The reference board runs the circuit in the opposite direction and starts from
-  // the lower-right shoulder of the yellow arm. Reorder the same row/col cells to
-  // preserve engine coordinates while aligning visible numbering, starts and safes.
-  const reversed = rawBlueprint.slice().reverse();
-  const firstCellIndex = reversed.findIndex((cell) => cell.visibleCell === 36);
-  const ordered = firstCellIndex >= 0
-    ? [...reversed.slice(firstCellIndex), ...reversed.slice(0, firstCellIndex)]
-    : reversed;
+const EAST_TRACK_PATH = Object.freeze([
+  Object.freeze({ row: 9, col: 10, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 11, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 12, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 13, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 14, axis: "horizontal" }),
+  Object.freeze({ row: 9, col: 15, axis: "vertical" }),
+  Object.freeze({ row: 8, col: 15, axis: "vertical" }),
+  Object.freeze({ row: 7, col: 15, axis: "vertical" }),
+  Object.freeze({ row: 7, col: 14, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 13, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 12, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 11, axis: "horizontal" }),
+  Object.freeze({ row: 7, col: 10, axis: "horizontal" })
+]);
 
-  return Object.freeze(
-    ordered.map((cell, index) => {
-      const visibleCell = index + 1;
-      return Object.freeze({
-        row: cell.row,
-        col: cell.col,
-        axis: cell.axis,
-        visibleCell,
-        isFinalEntry: FINAL_ENTRY_CELLS.includes(visibleCell),
-        isStart: START_CELLS.includes(visibleCell),
-        isSafe: SAFE_CELLS.has(visibleCell)
-      });
+const TRACK_SEQUENCE = Object.freeze([
+  ...TOP_TRACK_PATH,
+  ...WEST_TRACK_PATH,
+  ...SOUTH_TRACK_PATH,
+  ...EAST_TRACK_PATH
+]);
+
+const TRACK_BLUEPRINT = Object.freeze(
+  TRACK_SEQUENCE.map((cell, index) =>
+    Object.freeze({
+      ...cell,
+      visibleCell: index + 1,
+      isFinalEntry: FINAL_ENTRY_CELLS.includes(index + 1),
+      isStart: START_CELLS.includes(index + 1),
+      isSafe: SAFE_CELLS.has(index + 1)
     })
-  );
-}
-
-const TRACK_BLUEPRINT = buildTrackBlueprint(RAW_TRACK_BLUEPRINT);
-const OUTER_TRACK_BLUEPRINT = Object.freeze(
-  TRACK_BLUEPRINT.filter((cell) => !CENTER_RING_TRACK_CELLS.has(cell.visibleCell))
+  )
 );
 
 const FINAL_LANE_BLUEPRINT = Object.freeze([
   Object.freeze([
-    Object.freeze({ step: 1, row: 2, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "entry" }),
-    Object.freeze({ step: 2, row: 3, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 3, row: 4, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 4, row: 5, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 5, row: 6, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 6, row: 7, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 7, row: 8, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 8, row: 9, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" })
+    Object.freeze({ step: 1, row: 2, col: 8, axis: "v", segment: "entry" }),
+    Object.freeze({ step: 2, row: 3, col: 8, axis: "v", segment: "mid" }),
+    Object.freeze({ step: 3, row: 4, col: 8, axis: "v", segment: "mid" }),
+    Object.freeze({ step: 4, row: 5, col: 8, axis: "v", segment: "mid" }),
+    Object.freeze({ step: 5, row: 6, col: 8, axis: "v", segment: "goal" }),
+    Object.freeze({ step: 6, row: 7, col: 8, axis: "v", segment: "goal" })
   ]),
   Object.freeze([
-    Object.freeze({ step: 1, row: 9, col: 17, rowSpan: 2, colSpan: 1, axis: "h", segment: "entry" }),
-    Object.freeze({ step: 2, row: 9, col: 16, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 3, row: 9, col: 15, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 4, row: 9, col: 14, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 5, row: 9, col: 13, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 6, row: 9, col: 12, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 7, row: 9, col: 11, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 8, row: 9, col: 10, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" })
+    Object.freeze({ step: 1, row: 8, col: 14, axis: "h", segment: "entry" }),
+    Object.freeze({ step: 2, row: 8, col: 13, axis: "h", segment: "mid" }),
+    Object.freeze({ step: 3, row: 8, col: 12, axis: "h", segment: "mid" }),
+    Object.freeze({ step: 4, row: 8, col: 11, axis: "h", segment: "mid" }),
+    Object.freeze({ step: 5, row: 8, col: 10, axis: "h", segment: "goal" }),
+    Object.freeze({ step: 6, row: 8, col: 9, axis: "h", segment: "goal" })
   ]),
   Object.freeze([
-    Object.freeze({ step: 1, row: 17, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "entry" }),
-    Object.freeze({ step: 2, row: 16, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 3, row: 15, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 4, row: 14, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 5, row: 13, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "mid" }),
-    Object.freeze({ step: 6, row: 12, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 7, row: 11, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" }),
-    Object.freeze({ step: 8, row: 10, col: 9, rowSpan: 1, colSpan: 2, axis: "v", segment: "goal" })
+    Object.freeze({ step: 1, row: 14, col: 8, axis: "v", segment: "entry" }),
+    Object.freeze({ step: 2, row: 13, col: 8, axis: "v", segment: "mid" }),
+    Object.freeze({ step: 3, row: 12, col: 8, axis: "v", segment: "mid" }),
+    Object.freeze({ step: 4, row: 11, col: 8, axis: "v", segment: "mid" }),
+    Object.freeze({ step: 5, row: 10, col: 8, axis: "v", segment: "goal" }),
+    Object.freeze({ step: 6, row: 9, col: 8, axis: "v", segment: "goal" })
   ]),
   Object.freeze([
-    Object.freeze({ step: 1, row: 9, col: 2, rowSpan: 2, colSpan: 1, axis: "h", segment: "entry" }),
-    Object.freeze({ step: 2, row: 9, col: 3, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 3, row: 9, col: 4, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 4, row: 9, col: 5, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 5, row: 9, col: 6, rowSpan: 2, colSpan: 1, axis: "h", segment: "mid" }),
-    Object.freeze({ step: 6, row: 9, col: 7, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 7, row: 9, col: 8, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" }),
-    Object.freeze({ step: 8, row: 9, col: 9, rowSpan: 2, colSpan: 1, axis: "h", segment: "goal" })
+    Object.freeze({ step: 1, row: 8, col: 2, axis: "h", segment: "entry" }),
+    Object.freeze({ step: 2, row: 8, col: 3, axis: "h", segment: "mid" }),
+    Object.freeze({ step: 3, row: 8, col: 4, axis: "h", segment: "mid" }),
+    Object.freeze({ step: 4, row: 8, col: 5, axis: "h", segment: "mid" }),
+    Object.freeze({ step: 5, row: 8, col: 6, axis: "h", segment: "goal" }),
+    Object.freeze({ step: 6, row: 8, col: 7, axis: "h", segment: "goal" })
   ])
 ]);
 
@@ -1110,115 +1048,12 @@ function renderLocalGridPlacement({ row, col, rowSpan = 1, colSpan = 1 }) {
 }
 
 function getTrackPlacement(cell) {
-  const visibleCell = cell.visibleCell;
-
-  if (visibleCell === 34) {
-    return { row: 1, col: 9, rowSpan: 1, colSpan: 2 };
-  }
-  if (visibleCell === 35) {
-    return { row: 1, col: 7, rowSpan: 1, colSpan: 2 };
-  }
-  if (visibleCell === 33) {
-    return { row: 1, col: 11, rowSpan: 1, colSpan: 2 };
-  }
-
-  if (visibleCell >= 36 && visibleCell <= 42) {
-    return {
-      row: visibleCell - 34,
-      col: 7,
-      rowSpan: 1,
-      colSpan: 2
-    };
-  }
-
-  if (visibleCell >= 26 && visibleCell <= 32) {
-    return {
-      row: 34 - visibleCell,
-      col: 11,
-      rowSpan: 1,
-      colSpan: 2
-    };
-  }
-
-  if (visibleCell >= 18 && visibleCell <= 25) {
-    return {
-      row: 7,
-      col: 36 - visibleCell,
-      rowSpan: 2,
-      colSpan: 1
-    };
-  }
-
-  if (visibleCell === 17) {
-    return { row: 9, col: 18, rowSpan: 2, colSpan: 1 };
-  }
-
-  if (visibleCell === 16) {
-    return { row: 11, col: 18, rowSpan: 2, colSpan: 1 };
-  }
-
-  if (visibleCell >= 9 && visibleCell <= 15) {
-    return {
-      row: 11,
-      col: visibleCell + 2,
-      rowSpan: 2,
-      colSpan: 1
-    };
-  }
-
-  if (visibleCell >= 43 && visibleCell <= 50) {
-    return {
-      row: 7,
-      col: 51 - visibleCell,
-      rowSpan: 2,
-      colSpan: 1
-    };
-  }
-
-  if (visibleCell === 51) {
-    return { row: 9, col: 1, rowSpan: 2, colSpan: 1 };
-  }
-
-  if (visibleCell === 52) {
-    return { row: 11, col: 1, rowSpan: 2, colSpan: 1 };
-  }
-
-  if (visibleCell >= 53 && visibleCell <= 59) {
-    return {
-      row: 11,
-      col: visibleCell - 51,
-      rowSpan: 2,
-      colSpan: 1
-    };
-  }
-
-  if (visibleCell >= 60 && visibleCell <= 67) {
-    return {
-      row: visibleCell - 49,
-      col: 7,
-      rowSpan: 1,
-      colSpan: 2
-    };
-  }
-
-  if (visibleCell === 68) {
-    return { row: 18, col: 9, rowSpan: 1, colSpan: 2 };
-  }
-
-  if (visibleCell >= 1 && visibleCell <= 8) {
-    return {
-      row: 19 - visibleCell,
-      col: 11,
-      rowSpan: 1,
-      colSpan: 2
-    };
-  }
-
   return {
     row: cell.row,
     col: cell.col,
     rowSpan: 1,
-    colSpan: 1
+    colSpan: 1,
+    axis: cell.axis
   };
 }
 
@@ -1234,10 +1069,19 @@ function getFinalLanePlacement(slot, cell) {
 }
 
 function getTrackNumberRegion(placement) {
-  if (placement.rowSpan > placement.colSpan) {
-    return placement.col <= 9 ? "left" : "right";
+  if (placement.row <= 6) {
+    return "top";
   }
-  return placement.row <= 9 ? "top" : "bottom";
+  if (placement.row >= 10) {
+    return "bottom";
+  }
+  if (placement.col <= 6) {
+    return "left";
+  }
+  if (placement.col >= 10) {
+    return "right";
+  }
+  return "center";
 }
 
 function getTrackCellClasses({
@@ -1248,8 +1092,7 @@ function getTrackCellClasses({
   isBridgeCell,
   recentPath,
   occupants,
-  placement,
-  centerRingProxy = false
+  placement
 }) {
   const visualAxis = placement.axis || (placement.rowSpan > placement.colSpan ? "vertical" : "horizontal");
   const classes = ["parchis-track-cell", `is-${visualAxis}`];
@@ -1275,12 +1118,7 @@ function getTrackCellClasses({
   if (placement.rowSpan > 1 || placement.colSpan > 1) {
     classes.push("is-wide-track");
   }
-  if (CENTER_RING_TRACK_CELLS.has(cell.visibleCell)) {
-    classes.push(centerRingProxy ? "is-center-ring-proxy" : "is-center-ring-source");
-    classes.push("number-center");
-  } else {
-    classes.push(`number-${getTrackNumberRegion(placement)}`);
-  }
+  classes.push(`number-${getTrackNumberRegion(placement)}`);
 
   return classes;
 }
@@ -1617,7 +1455,7 @@ export const parchisGame = {
       }
     }
 
-    const trackCells = OUTER_TRACK_BLUEPRINT.map((cell) => {
+    const trackCells = TRACK_BLUEPRINT.map((cell) => {
       const index = cell.visibleCell - 1;
       const startOwner = START_INDICES.findIndex((value) => value === index);
       const isEntry = FINAL_ENTRY_INDICES.includes(index);
@@ -1650,69 +1488,6 @@ export const parchisGame = {
           </span>
           ${renderMoveTarget(state, moveTarget, `Mover a la casilla ${cell.visibleCell}`)}
         </div>
-      `;
-    }).join("");
-
-    const centerRingCells = CENTER_RING_TRACK_BLUEPRINT.map((ringCell) => {
-        const index = ringCell.visibleCell - 1;
-        const cell = TRACK_BLUEPRINT[index];
-        const startOwner = START_INDICES.findIndex((value) => value === index);
-        const isEntry = FINAL_ENTRY_INDICES.includes(index);
-        const isSafe = SAFE_INDICES.has(index);
-        const isBridgeCell = bridgeCells.has(index);
-        const occupants = (trackMap.get(index) || []).slice().sort((a, b) => a.playerSlot - b.playerSlot || a.pieceIndex - b.pieceIndex);
-        const moveTarget = targetMap.get(`track:${cell.visibleCell}`) || null;
-        const classes = getTrackCellClasses({
-          cell,
-          startOwner,
-          isEntry,
-          isSafe,
-          isBridgeCell,
-          recentPath: recentPath.has(index),
-          occupants,
-          placement: ringCell,
-          centerRingProxy: true
-        });
-
-        return `
-          <div
-            class="${classes.join(" ")} is-center-ring-cell"
-            style="${renderLocalGridPlacement(ringCell)}"
-            data-track-cell="${cell.visibleCell}"
-          >
-            <span class="parchis-track-core" aria-hidden="true"></span>
-            ${startOwner >= 0 ? '<span class="parchis-start-marker" aria-hidden="true"></span>' : ""}
-            <span class="parchis-cell-contents">
-              ${renderPieceStack(occupants, { state, canAct, phaseAction, movableSet, bridge: isBridgeCell })}
-            </span>
-            ${renderMoveTarget(state, moveTarget, `Mover a la casilla ${cell.visibleCell}`)}
-          </div>
-        `;
-      })
-      .join("");
-
-    const centerTransitions = CENTER_TRANSITION_BLUEPRINT.map((transition) => {
-      const line = transition.diagonal === "down"
-        ? 'x1="0" y1="0" x2="100" y2="100"'
-        : 'x1="100" y1="0" x2="0" y2="100"';
-
-      return `
-        <span
-          class="parchis-center-transition corner-${transition.key} is-${transition.diagonal}"
-          style="${renderLocalGridPlacement(transition)}"
-          aria-hidden="true"
-        >
-          <svg
-            class="parchis-center-transition-svg"
-            viewBox="0 0 100 100"
-            preserveAspectRatio="none"
-            focusable="false"
-            aria-hidden="true"
-          >
-            <rect class="parchis-center-transition-fill" x="0" y="0" width="100" height="100"></rect>
-            <line class="parchis-center-transition-diagonal" ${line}></line>
-          </svg>
-        </span>
       `;
     }).join("");
 
@@ -1791,13 +1566,6 @@ export const parchisGame = {
       </div>
     `;
 
-    const centerRing = `
-      <div class="parchis-center-ring" style="${renderGridPlacement(CENTER_RING_BLUEPRINT)}">
-        ${centerTransitions}
-        ${centerRingCells}
-      </div>
-    `;
-
     const canRoll = canAct && state.phase === "await-roll" && state.winnerSlot === null;
     const diceValues = Array.isArray(state.diceValues) ? state.diceValues : [null, null];
     const diceConsumed = Array.isArray(state.diceConsumed) ? state.diceConsumed : [false, false];
@@ -1858,7 +1626,6 @@ export const parchisGame = {
         <div class="parchis-board-frame">
           <div class="parchis-board">
             ${homeAreas}
-            ${centerRing}
             ${goalArea}
             ${trackCells}
             ${finalCells}
