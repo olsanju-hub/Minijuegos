@@ -12,6 +12,7 @@ const COLLISION_BAND = 0.11;
 const PICKUP_BAND = 0.1;
 const MAX_FRAME_DELTA_MS = 64;
 const ROAD_SCROLL_PX_PER_STEP = 96;
+const SAFE_LOOKAHEAD_STEPS = 5;
 
 const OBJECTIVE_TARGETS = Object.freeze({
   distance: 36,
@@ -25,11 +26,11 @@ const MIN_TICK_MS = 460;
 
 const PATTERN_POOLS = Object.freeze([
   Object.freeze([[], [], [0], [1], [2], [0, 2], [0], [1], [2]]),
-  Object.freeze([[], [0], [1], [2], [0, 2], [0, 1], [1, 2], [0], [2]]),
-  Object.freeze([[], [0], [1], [2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2]]),
-  Object.freeze([[0], [1], [2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2], []]),
-  Object.freeze([[0], [1], [2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2], [0], [2]]),
-  Object.freeze([[0], [1], [2], [0, 2], [0, 1], [1, 2], [0, 2], [0, 1], [1, 2], [0, 2], []])
+  Object.freeze([[], [0], [1], [2], [0, 2], [0], [2], [0, 2], [1]]),
+  Object.freeze([[], [0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2]]),
+  Object.freeze([[0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2], []]),
+  Object.freeze([[0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2], [0], [2]]),
+  Object.freeze([[0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2], [0], [2], []])
 ]);
 
 function escapeHtml(value) {
@@ -190,7 +191,8 @@ function projectedThreat(entity, futureStep) {
 function buildReachableLanes(entities, startLane) {
   let reachable = new Set([startLane]);
 
-  for (let futureStep = 1; futureStep <= 3; futureStep += 1) {
+  // Mira más horizonte que en la V1 para evitar embudos injustos con movimiento continuo.
+  for (let futureStep = 1; futureStep <= SAFE_LOOKAHEAD_STEPS; futureStep += 1) {
     const blocked = new Set(
       entities
         .filter((entity) => projectedThreat(entity, futureStep))

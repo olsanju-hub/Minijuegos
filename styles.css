@@ -9577,7 +9577,7 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-fallback-block {
-    gap: 6px;
+    display: none;
   }
 
   .traffic-control-hint {
