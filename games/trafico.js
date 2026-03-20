@@ -4,6 +4,7 @@ const STEP_DISTANCE = 1 / VISIBLE_STEPS;
 const PLAYER_Y = 0.8;
 const PLAYER_HEIGHT = 0.18;
 const RIVAL_HEIGHT = 0.18;
+const TRUCK_HEIGHT = 0.26;
 const PICKUP_HEIGHT = 0.11;
 const PLAYER_CENTER_Y = PLAYER_Y + PLAYER_HEIGHT / 2;
 const SPAWN_Y = -0.22;
@@ -12,7 +13,9 @@ const COLLISION_BAND = 0.11;
 const PICKUP_BAND = 0.1;
 const MAX_FRAME_DELTA_MS = 64;
 const ROAD_SCROLL_PX_PER_STEP = 96;
-const SAFE_LOOKAHEAD_STEPS = 5;
+const TRAJECTORY_LOOKAHEAD_STEPS = 11;
+const TRUCK_SPAWN_CHANCE = 0.16;
+const TRUCK_MIN_DIFFICULTY = 2;
 
 const OBJECTIVE_TARGETS = Object.freeze({
   distance: 36,
@@ -142,26 +145,44 @@ function shuffleWithState(state, values) {
   return items;
 }
 
-function createEntity(state, type, lane, y = SPAWN_Y) {
+function createEntity(state, type, lane, y = SPAWN_Y, variant = "") {
   const nextId = state.nextEntityId + 1;
   state.nextEntityId = nextId;
-  return {
+  const entity = {
     id: `traffic-${nextId}`,
     type,
     lane,
     y
   };
+  if (variant) {
+    entity.variant = variant;
+  }
+  return entity;
 }
 
-function entityHeight(type) {
-  if (type === "pickup") {
+function createPreviewEntity(type, lane, y = SPAWN_Y, variant = "") {
+  const entity = { type, lane, y };
+  if (variant) {
+    entity.variant = variant;
+  }
+  return entity;
+}
+
+function entityHeight(entity) {
+  if (!entity) {
+    return RIVAL_HEIGHT;
+  }
+  if (entity.type === "pickup") {
     return PICKUP_HEIGHT;
+  }
+  if (entity.type === "rival" && entity.variant === "truck") {
+    return TRUCK_HEIGHT;
   }
   return RIVAL_HEIGHT;
 }
 
 function entityCenterY(entity) {
-  return entity.y + entityHeight(entity.type) / 2;
+  return entity.y + entityHeight(entity) / 2;
 }
 
 function playerCenterY() {
@@ -191,8 +212,9 @@ function projectedThreat(entity, futureStep) {
 function buildReachableLanes(entities, startLane) {
   let reachable = new Set([startLane]);
 
-  // Mira más horizonte que en la V1 para evitar embudos injustos con movimiento continuo.
-  for (let futureStep = 1; futureStep <= SAFE_LOOKAHEAD_STEPS; futureStep += 1) {
+  // Valida una pequeña trayectoria real: desde la posicion actual o una alcanzable
+  // inmediatamente hasta que el nuevo rival entra en la zona de riesgo del jugador.
+  for (let futureStep = 1; futureStep <= TRAJECTORY_LOOKAHEAD_STEPS; futureStep += 1) {
     const blocked = new Set(
       entities
         .filter((entity) => projectedThreat(entity, futureStep))
@@ -224,7 +246,25 @@ function isSafeSpawn(entities, playerLane) {
   return Boolean(buildReachableLanes(entities, playerLane));
 }
 
-function maybeSpawnPickup(state, baseEntities, carPattern, playerLane) {
+function buildRivalCandidates(state, pattern, difficultyLevel, baseEntities) {
+  const baseCars = pattern.map((lane) => createPreviewEntity("rival", lane, SPAWN_Y, "car"));
+
+  if (
+    pattern.length !== 1 ||
+    difficultyLevel < TRUCK_MIN_DIFFICULTY ||
+    baseEntities.some((entity) => entity.type === "rival" && entity.variant === "truck") ||
+    nextRandom(state) >= TRUCK_SPAWN_CHANCE
+  ) {
+    return [baseCars];
+  }
+
+  return [
+    [createPreviewEntity("rival", pattern[0], SPAWN_Y, "truck")],
+    baseCars
+  ];
+}
+
+function maybeSpawnPickup(state, baseEntities, spawnVehicles, playerLane) {
   const hasActivePickup = baseEntities.some((entity) => entity.type === "pickup");
   if (hasActivePickup || state.pickupCooldown > 0) {
     return null;
@@ -237,14 +277,16 @@ function maybeSpawnPickup(state, baseEntities, carPattern, playerLane) {
 
   const freeLanes = shuffleWithState(
     state,
-    Array.from({ length: LANE_COUNT }, (_, lane) => lane).filter((lane) => !carPattern.includes(lane))
+    Array.from({ length: LANE_COUNT }, (_, lane) => lane).filter(
+      (lane) => !spawnVehicles.some((entity) => entity.lane === lane)
+    )
   );
 
   for (const lane of freeLanes) {
     const candidate = { type: "pickup", lane, y: SPAWN_Y };
     const nextEntities = [
       ...baseEntities,
-      ...carPattern.map((item) => ({ type: "rival", lane: item, y: SPAWN_Y })),
+      ...spawnVehicles,
       candidate
     ];
     if (isSafeSpawn(nextEntities, playerLane)) {
@@ -261,18 +303,23 @@ function chooseSpawn(state, baseEntities, playerLane) {
   const patternPool = mustRest ? [[], [], [], []] : PATTERN_POOLS[stage];
   const orderedPatterns = shuffleWithState(state, patternPool);
 
-  let selectedPattern = [];
+  let selectedVehicles = [];
+
+  outerLoop:
   for (const pattern of orderedPatterns) {
-    const nextEntities = [...baseEntities, ...pattern.map((lane) => ({ type: "rival", lane, y: SPAWN_Y }))];
-    if (isSafeSpawn(nextEntities, playerLane)) {
-      selectedPattern = pattern;
-      break;
+    const rivalCandidates = buildRivalCandidates(state, pattern, stage, baseEntities);
+    for (const vehicles of rivalCandidates) {
+      const nextEntities = [...baseEntities, ...vehicles];
+      if (isSafeSpawn(nextEntities, playerLane)) {
+        selectedVehicles = vehicles;
+        break outerLoop;
+      }
     }
   }
 
-  const pickup = maybeSpawnPickup(state, baseEntities, selectedPattern, playerLane);
+  const pickup = maybeSpawnPickup(state, baseEntities, selectedVehicles, playerLane);
   return {
-    cars: selectedPattern.map((lane) => createEntity(state, "rival", lane, SPAWN_Y)),
+    cars: selectedVehicles.map((entity) => createEntity(state, "rival", entity.lane, SPAWN_Y, entity.variant || "car")),
     pickup: pickup ? createEntity(state, "pickup", pickup.lane, pickup.y) : null
   };
 }
@@ -534,7 +581,7 @@ function buildRenderableEntities(state) {
     },
     ...state.entities.map((entity) => ({
       id: entity.id,
-      kind: entity.type === "rival" ? "rival" : "pickup",
+      kind: entity.type === "pickup" ? "pickup" : entity.variant === "truck" ? "truck" : "rival",
       lane: entity.lane,
       y: entity.y,
       isCollision: entity.type === "rival" && state.lastCollision?.rivalId === entity.id
@@ -548,6 +595,9 @@ function entityVisualClass(kind) {
   }
   if (kind === "pickup") {
     return "traffic-pickup-coin";
+  }
+  if (kind === "truck") {
+    return "traffic-rival-truck";
   }
   return "traffic-rival-car";
 }
@@ -735,6 +785,13 @@ function createTrafficEntityNode(entity) {
   return node;
 }
 
+function syncTrafficEntityVisual(node, kind) {
+  const visual = node.firstElementChild;
+  if (visual instanceof HTMLElement) {
+    visual.className = entityVisualClass(kind);
+  }
+}
+
 function syncTrafficEntities(root, state) {
   const layer = root.querySelector("[data-traffic-entities]");
   if (!layer) {
@@ -758,6 +815,7 @@ function syncTrafficEntities(root, state) {
     }
 
     node.dataset.trafficKind = entity.kind;
+    syncTrafficEntityVisual(node, entity.kind);
     node.classList.toggle("is-collision", entity.isCollision);
     setEntityPosition(node, entity.lane, entity.y);
   }

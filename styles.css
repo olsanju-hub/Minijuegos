@@ -9082,9 +9082,14 @@ body:not(.is-home-screen) .bg-layer {
   transition: none;
 }
 
-.traffic-entity[data-traffic-kind="rival"] {
+.traffic-entity[data-traffic-kind="rival"],
+.traffic-entity[data-traffic-kind="truck"] {
   z-index: 3;
   transition: none;
+}
+
+.traffic-entity[data-traffic-kind="truck"] {
+  height: 26%;
 }
 
 .traffic-entity[data-traffic-kind="player"] {
@@ -9093,29 +9098,39 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-player-car,
-.traffic-rival-car {
+.traffic-rival-car,
+.traffic-rival-truck {
   position: absolute;
-  inset: 0 14%;
-  border-radius: 18px;
   transform: translateZ(0);
   box-shadow:
     0 10px 16px rgba(21, 30, 36, 0.24),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
-.traffic-player-car::before,
-.traffic-rival-car::before {
-  content: "";
-  position: absolute;
-  top: 14%;
-  left: 24%;
-  right: 24%;
-  height: 24%;
-  border-radius: 9px;
-  background: rgba(226, 245, 255, 0.92);
+.traffic-player-car {
+  inset: 0 11%;
+  border-radius: 22px 22px 17px 17px / 30px 30px 18px 18px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 18%),
+    linear-gradient(180deg, #79b6ff 0%, #4d86fa 54%, #315fd6 100%);
+  border: 1px solid rgba(42, 81, 168, 0.84);
 }
 
-.traffic-player-car::after,
+.traffic-player-car::before {
+  content: "";
+  position: absolute;
+  top: 11%;
+  left: 23%;
+  right: 23%;
+  height: 42%;
+  border-radius: 12px 12px 9px 9px / 14px 14px 9px 9px;
+  background:
+    linear-gradient(180deg, rgba(238, 249, 255, 0.98) 0 42%, rgba(172, 205, 236, 0.94) 42% 58%, rgba(232, 245, 255, 0.96) 58% 100%);
+  box-shadow:
+    0 0 0 2px rgba(35, 78, 150, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
 .traffic-rival-car::after {
   content: "";
   position: absolute;
@@ -9127,14 +9142,70 @@ body:not(.is-home-screen) .bg-layer {
   background: rgba(18, 26, 31, 0.15);
 }
 
-.traffic-player-car {
-  background: linear-gradient(180deg, #68a8ff 0%, #3f79f6 100%);
-  border: 1px solid rgba(42, 81, 168, 0.8);
+.traffic-player-car::after {
+  content: "";
+  position: absolute;
+  left: 12%;
+  right: 12%;
+  top: 56%;
+  height: 23%;
+  border-radius: 999px 999px 12px 12px / 16px 16px 10px 10px;
+  background:
+    radial-gradient(circle at 16% 54%, rgba(17, 24, 31, 0.22) 0 10%, transparent 11%),
+    radial-gradient(circle at 84% 54%, rgba(17, 24, 31, 0.22) 0 10%, transparent 11%),
+    linear-gradient(180deg, rgba(26, 48, 98, 0.2), rgba(14, 24, 36, 0.08) 58%, rgba(12, 20, 31, 0.18));
 }
 
 .traffic-rival-car {
+  inset: 0 14%;
+  border-radius: 18px;
   background: linear-gradient(180deg, #ff9a64 0%, #ea6647 100%);
   border: 1px solid rgba(162, 68, 49, 0.82);
+}
+
+.traffic-rival-car::before {
+  content: "";
+  position: absolute;
+  top: 14%;
+  left: 24%;
+  right: 24%;
+  height: 24%;
+  border-radius: 9px;
+  background: rgba(226, 245, 255, 0.92);
+}
+
+.traffic-rival-truck {
+  inset: 0 16%;
+  border-radius: 18px 18px 12px 12px / 22px 22px 12px 12px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 14%),
+    linear-gradient(180deg, #f1ad69 0 24%, #d77d48 24% 100%);
+  border: 1px solid rgba(138, 76, 51, 0.9);
+}
+
+.traffic-rival-truck::before {
+  content: "";
+  position: absolute;
+  top: 9%;
+  left: 22%;
+  right: 22%;
+  height: 16%;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(236, 248, 255, 0.96), rgba(190, 210, 226, 0.92));
+}
+
+.traffic-rival-truck::after {
+  content: "";
+  position: absolute;
+  left: 14%;
+  right: 14%;
+  top: 31%;
+  bottom: 12%;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, rgba(117, 59, 42, 0.12), rgba(117, 59, 42, 0) 28%),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0 6px, rgba(255, 255, 255, 0) 6px 18px),
+    linear-gradient(180deg, rgba(201, 101, 66, 0.78) 0%, rgba(153, 66, 43, 0.9) 100%);
 }
 
 .traffic-pickup-coin {
@@ -9150,7 +9221,8 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-entity.is-collision .traffic-player-car,
-.traffic-entity.is-collision .traffic-rival-car {
+.traffic-entity.is-collision .traffic-rival-car,
+.traffic-entity.is-collision .traffic-rival-truck {
   box-shadow:
     0 0 0 4px rgba(255, 108, 87, 0.26),
     0 12px 18px rgba(21, 30, 36, 0.28);
@@ -9499,10 +9571,19 @@ body:not(.is-home-screen) .bg-layer {
     inset: 8px 14px;
   }
 
-  .traffic-player-car,
+  .traffic-player-car {
+    inset: 0 10%;
+    border-radius: 18px 18px 14px 14px / 25px 25px 16px 16px;
+  }
+
   .traffic-rival-car {
     inset: 0 12%;
     border-radius: 14px;
+  }
+
+  .traffic-rival-truck {
+    inset: 0 14%;
+    border-radius: 16px 16px 10px 10px / 19px 19px 10px 10px;
   }
 
   .traffic-road-overlay-title {
