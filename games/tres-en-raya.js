@@ -31,6 +31,10 @@ function escapeHtml(value) {
   });
 }
 
+function randomStarterSlot(playerCount = 2) {
+  return Math.floor(Math.random() * Math.max(1, playerCount));
+}
+
 export const tresEnRayaGame = {
   id: "tictactoe",
   name: "3 en raya",
@@ -41,6 +45,7 @@ export const tresEnRayaGame = {
   rules: [
     { title: "Objetivo", text: "Consigue una linea de 3 marcas iguales." },
     { title: "Como se juega", text: "Cada jugador marca una casilla vacia en su turno." },
+    { title: "Inicio", text: "La persona que empieza se elige al azar en cada partida." },
     { title: "Como se gana", text: "Gana quien haga 3 en raya en horizontal, vertical o diagonal." },
     { title: "Si nadie gana", text: "Si se llenan las casillas sin linea ganadora, es empate." }
   ],
@@ -50,10 +55,10 @@ export const tresEnRayaGame = {
   normalizeOptions() {
     return {};
   },
-  createInitialState() {
+  createInitialState({ playerCount = 2 } = {}) {
     return {
       board: Array(9).fill(null),
-      turnSlot: 0,
+      turnSlot: randomStarterSlot(playerCount),
       result: null,
       lastMove: null
     };
