@@ -1,15 +1,15 @@
 const DIFFICULTY_PRESETS = {
   easy: {
     id: "easy",
-    label: "Facil",
+    label: "Fácil",
     rows: 8,
     cols: 8,
     mines: 10,
     boardMaxWidth: 420
   },
-  medium: {
-    id: "medium",
-    label: "Media",
+  moderate: {
+    id: "moderate",
+    label: "Moderado",
     rows: 12,
     cols: 12,
     mines: 20,
@@ -17,7 +17,7 @@ const DIFFICULTY_PRESETS = {
   },
   hard: {
     id: "hard",
-    label: "Dificil",
+    label: "Difícil",
     rows: 16,
     cols: 16,
     mines: 40,
@@ -25,7 +25,24 @@ const DIFFICULTY_PRESETS = {
   }
 };
 
-const DIFFICULTY_ORDER = ["easy", "medium", "hard"];
+const DIFFICULTY_ORDER = ["easy", "moderate", "hard"];
+
+const SHAPE_PRESETS = {
+  classic: {
+    id: "classic",
+    label: "Clásico"
+  },
+  cross: {
+    id: "cross",
+    label: "Cruz"
+  },
+  diamond: {
+    id: "diamond",
+    label: "Rombo"
+  }
+};
+
+const SHAPE_ORDER = ["classic", "cross", "diamond"];
 
 const NUMBER_LABELS = {
   1: "Una mina cercana",
@@ -53,11 +70,26 @@ function escapeHtml(value) {
 
 function normalizeDifficulty(difficulty) {
   const key = String(difficulty || "").trim().toLowerCase();
+  if (key === "medium") {
+    return "moderate";
+  }
   return DIFFICULTY_PRESETS[key] ? key : "easy";
+}
+
+function normalizeShape(shape) {
+  const key = String(shape || "").trim().toLowerCase();
+  if (key === "rhombus") {
+    return "diamond";
+  }
+  return SHAPE_PRESETS[key] ? key : "classic";
 }
 
 function getDifficultyMeta(difficulty) {
   return DIFFICULTY_PRESETS[normalizeDifficulty(difficulty)];
+}
+
+function getShapeMeta(shape) {
+  return SHAPE_PRESETS[normalizeShape(shape)];
 }
 
 function cellIndex(row, col, cols) {
@@ -68,32 +100,16 @@ function isCellIndex(index, length) {
   return Number.isInteger(index) && index >= 0 && index < length;
 }
 
-function createCell(index, row, col) {
+function createCell(index, row, col, isActive) {
   return {
     index,
     row,
     col,
+    isActive,
     hasMine: false,
     adjacentMines: 0,
     isOpen: false,
     isFlagged: false
-  };
-}
-
-function buildEmptyCells(rows, cols) {
-  const cells = [];
-  for (let row = 0; row < rows; row += 1) {
-    for (let col = 0; col < cols; col += 1) {
-      cells.push(createCell(cellIndex(row, col, cols), row, col));
-    }
-  }
-  return cells;
-}
-
-function cloneState(state) {
-  return {
-    ...state,
-    cells: state.cells.map((cell) => ({ ...cell }))
   };
 }
 
@@ -105,29 +121,6 @@ function sanitizeNowMs(value) {
   return Date.now();
 }
 
-function buildFreshState(options = {}) {
-  const difficulty = normalizeDifficulty(options.difficulty);
-  const meta = getDifficultyMeta(difficulty);
-
-  return {
-    difficulty,
-    rows: meta.rows,
-    cols: meta.cols,
-    mineCount: meta.mines,
-    cells: buildEmptyCells(meta.rows, meta.cols),
-    initialized: false,
-    status: "ready",
-    interactionMode: "reveal",
-    safeOpenCount: 0,
-    flaggedCount: 0,
-    minesRemaining: meta.mines,
-    elapsedMs: 0,
-    timerStartedAtMs: null,
-    lastTimerTickAtMs: null,
-    detonatedCell: null
-  };
-}
-
 function formatTime(elapsedMs) {
   const totalSeconds = Math.max(0, Math.floor(Number(elapsedMs || 0) / 1000));
   const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
@@ -135,42 +128,32 @@ function formatTime(elapsedMs) {
   return `${minutes}:${seconds}`;
 }
 
-function difficultyText(state) {
-  const meta = getDifficultyMeta(state.difficulty);
-  return `${meta.label} · ${meta.rows}x${meta.cols} · ${meta.mines} minas`;
+function normalizedDistance(value, total) {
+  const center = total / 2;
+  const radius = Math.max(1, total / 2);
+  return Math.abs(value + 0.5 - center) / radius;
 }
 
-function statusText(status) {
-  const map = {
-    ready: "Listo",
-    playing: "Jugando",
-    won: "Victoria",
-    lost: "Derrota"
-  };
-  return map[status] || "Listo";
+function isActiveShapeCell(shape, row, col, rows, cols) {
+  if (shape === "classic") {
+    return true;
+  }
+
+  const normRow = normalizedDistance(row, rows);
+  const normCol = normalizedDistance(col, cols);
+
+  if (shape === "cross") {
+    return normRow <= 0.375 || normCol <= 0.375;
+  }
+
+  if (shape === "diamond") {
+    return normRow + normCol <= 1.02;
+  }
+
+  return true;
 }
 
-function noteText(state) {
-  if (state.status === "ready") {
-    return state.interactionMode === "flag"
-      ? "Modo bandera activo. Cambia a Abrir cuando quieras descubrir la primera celda."
-      : "Abre una celda para empezar. La primera jugada siempre es segura.";
-  }
-
-  if (state.status === "won") {
-    return "Has despejado todas las celdas seguras.";
-  }
-
-  if (state.status === "lost") {
-    return "Has tocado una mina. Reinicia para intentarlo otra vez.";
-  }
-
-  return state.interactionMode === "flag"
-    ? "Modo bandera activo. Marca las celdas que creas peligrosas."
-    : "Modo abrir activo. Usa las banderas para bloquear las minas sospechosas.";
-}
-
-function getNeighborIndexes(index, rows, cols) {
+function getAllNeighborIndexes(index, rows, cols) {
   if (!isCellIndex(index, rows * cols)) {
     return [];
   }
@@ -190,6 +173,7 @@ function getNeighborIndexes(index, rows, cols) {
       if (row < 0 || row >= rows || col < 0 || col >= cols) {
         continue;
       }
+
       neighbors.push(cellIndex(row, col, cols));
     }
   }
@@ -197,15 +181,131 @@ function getNeighborIndexes(index, rows, cols) {
   return neighbors;
 }
 
-function buildSafeExclusion(rows, cols, safeIndex, mineCount) {
-  const immediateZone = new Set([safeIndex, ...getNeighborIndexes(safeIndex, rows, cols)]);
-  const boardSize = rows * cols;
+function buildBoardGeometry(rows, cols, shape, baseMineCount) {
+  const cells = [];
+  const activeCellIndexes = [];
 
-  if (boardSize - immediateZone.size >= mineCount) {
-    return immediateZone;
+  for (let row = 0; row < rows; row += 1) {
+    for (let col = 0; col < cols; col += 1) {
+      const index = cellIndex(row, col, cols);
+      const isActive = isActiveShapeCell(shape, row, col, rows, cols);
+      cells.push(createCell(index, row, col, isActive));
+      if (isActive) {
+        activeCellIndexes.push(index);
+      }
+    }
   }
 
-  return new Set([safeIndex]);
+  const neighborMap = Array.from({ length: cells.length }, () => []);
+  for (const index of activeCellIndexes) {
+    neighborMap[index] = getAllNeighborIndexes(index, rows, cols).filter((neighborIndex) => cells[neighborIndex].isActive);
+  }
+
+  const boardSize = rows * cols;
+  const activeCellCount = activeCellIndexes.length;
+  const baseDensity = boardSize > 0 ? baseMineCount / boardSize : 0;
+  const densityMineCount = Math.max(1, Math.round(activeCellCount * baseDensity));
+  const maxSafeZoneSize = activeCellIndexes.reduce((max, index) => {
+    return Math.max(max, 1 + neighborMap[index].length);
+  }, 1);
+  const safeMineCap = Math.max(1, activeCellCount - maxSafeZoneSize);
+  const mineCount = Math.max(1, Math.min(densityMineCount, safeMineCap));
+
+  return {
+    cells,
+    activeCellIndexes,
+    activeCellCount,
+    neighborMap,
+    mineCount
+  };
+}
+
+function buildFreshState(options = {}) {
+  const difficulty = normalizeDifficulty(options.difficulty);
+  const shape = normalizeShape(options.shape);
+  const difficultyMeta = getDifficultyMeta(difficulty);
+  const geometry = buildBoardGeometry(difficultyMeta.rows, difficultyMeta.cols, shape, difficultyMeta.mines);
+
+  return {
+    difficulty,
+    shape,
+    rows: difficultyMeta.rows,
+    cols: difficultyMeta.cols,
+    boardMaxWidth: difficultyMeta.boardMaxWidth,
+    baseMineCount: difficultyMeta.mines,
+    mineCount: geometry.mineCount,
+    activeCellCount: geometry.activeCellCount,
+    cells: geometry.cells,
+    activeCellIndexes: geometry.activeCellIndexes,
+    neighborMap: geometry.neighborMap,
+    initialized: false,
+    status: "ready",
+    interactionMode: "reveal",
+    safeOpenCount: 0,
+    flaggedCount: 0,
+    minesRemaining: geometry.mineCount,
+    elapsedMs: 0,
+    timerStartedAtMs: null,
+    lastTimerTickAtMs: null,
+    detonatedCell: null
+  };
+}
+
+function cloneState(state) {
+  return {
+    ...state,
+    cells: state.cells.map((cell) => ({ ...cell }))
+  };
+}
+
+function difficultyText(state) {
+  return getDifficultyMeta(state.difficulty).label;
+}
+
+function shapeText(state) {
+  return getShapeMeta(state.shape).label;
+}
+
+function boardSummaryText(state) {
+  return `${state.rows}x${state.cols} · ${state.activeCellCount} activas · ${state.mineCount} minas`;
+}
+
+function statusText(status) {
+  const map = {
+    ready: "Listo",
+    playing: "Jugando",
+    won: "Victoria",
+    lost: "Derrota"
+  };
+  return map[status] || "Listo";
+}
+
+function noteText(state) {
+  if (state.status === "ready") {
+    return state.interactionMode === "flag"
+      ? "Modo bandera activo. La primera apertura seguirá siendo segura cuando abras una celda."
+      : "Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata.";
+  }
+
+  if (state.status === "won") {
+    return "Has despejado todas las celdas seguras del tablero.";
+  }
+
+  if (state.status === "lost") {
+    return "Has tocado una mina. Reinicia para intentarlo otra vez.";
+  }
+
+  return state.interactionMode === "flag"
+    ? "Modo bandera activo. Marca las celdas que creas peligrosas."
+    : "Modo abrir activo. Descubre zonas seguras y usa banderas cuando haga falta.";
+}
+
+function buildSafeExclusion(state, safeIndex) {
+  if (!state.cells[safeIndex] || !state.cells[safeIndex].isActive) {
+    return new Set();
+  }
+
+  return new Set([safeIndex, ...(state.neighborMap[safeIndex] || [])]);
 }
 
 function shuffleInPlace(items) {
@@ -219,14 +319,8 @@ function shuffleInPlace(items) {
 }
 
 function placeMines(state, safeIndex) {
-  const exclusion = buildSafeExclusion(state.rows, state.cols, safeIndex, state.mineCount);
-  const candidates = [];
-
-  for (let index = 0; index < state.cells.length; index += 1) {
-    if (!exclusion.has(index)) {
-      candidates.push(index);
-    }
-  }
+  const exclusion = buildSafeExclusion(state, safeIndex);
+  const candidates = state.activeCellIndexes.filter((index) => !exclusion.has(index));
 
   shuffleInPlace(candidates);
   const selected = candidates.slice(0, state.mineCount);
@@ -234,16 +328,16 @@ function placeMines(state, safeIndex) {
     state.cells[mineIndex].hasMine = true;
   }
 
-  for (const cell of state.cells) {
+  for (const index of state.activeCellIndexes) {
+    const cell = state.cells[index];
     if (cell.hasMine) {
       cell.adjacentMines = 0;
       continue;
     }
 
-    const adjacentMines = getNeighborIndexes(cell.index, state.rows, state.cols).reduce((count, neighborIndex) => {
+    cell.adjacentMines = (state.neighborMap[index] || []).reduce((count, neighborIndex) => {
       return count + (state.cells[neighborIndex].hasMine ? 1 : 0);
     }, 0);
-    cell.adjacentMines = adjacentMines;
   }
 
   state.initialized = true;
@@ -274,7 +368,9 @@ function advanceTimer(state, nowMs) {
 }
 
 function updateFlagCounters(state) {
-  state.flaggedCount = state.cells.reduce((count, cell) => count + (cell.isFlagged ? 1 : 0), 0);
+  state.flaggedCount = state.activeCellIndexes.reduce((count, index) => {
+    return count + (state.cells[index].isFlagged ? 1 : 0);
+  }, 0);
   state.minesRemaining = state.mineCount - state.flaggedCount;
 }
 
@@ -284,13 +380,14 @@ function floodOpen(state, startIndex) {
 
   while (queue.length > 0) {
     const index = queue.shift();
-    if (!isCellIndex(index, state.cells.length) || visited.has(index)) {
+    if (!visited.has(index) && isCellIndex(index, state.cells.length)) {
+      visited.add(index);
+    } else {
       continue;
     }
-    visited.add(index);
 
     const cell = state.cells[index];
-    if (cell.isOpen || cell.isFlagged || cell.hasMine) {
+    if (!cell || !cell.isActive || cell.isOpen || cell.isFlagged || cell.hasMine) {
       continue;
     }
 
@@ -301,9 +398,9 @@ function floodOpen(state, startIndex) {
       continue;
     }
 
-    for (const neighborIndex of getNeighborIndexes(index, state.rows, state.cols)) {
+    for (const neighborIndex of state.neighborMap[index] || []) {
       const neighbor = state.cells[neighborIndex];
-      if (!neighbor.hasMine && !neighbor.isOpen && !neighbor.isFlagged) {
+      if (neighbor && neighbor.isActive && !neighbor.isOpen && !neighbor.isFlagged && !neighbor.hasMine) {
         queue.push(neighborIndex);
       }
     }
@@ -311,7 +408,8 @@ function floodOpen(state, startIndex) {
 }
 
 function autoFlagRemainingMines(state) {
-  for (const cell of state.cells) {
+  for (const index of state.activeCellIndexes) {
+    const cell = state.cells[index];
     if (cell.hasMine) {
       cell.isFlagged = true;
     }
@@ -320,7 +418,7 @@ function autoFlagRemainingMines(state) {
 }
 
 function isVictory(state) {
-  return state.safeOpenCount >= state.cells.length - state.mineCount;
+  return state.safeOpenCount >= state.activeCellCount - state.mineCount;
 }
 
 function finalizeWin(state, nowMs) {
@@ -335,9 +433,8 @@ function finalizeLoss(state, detonatedCell, nowMs) {
   state.status = "lost";
   state.interactionMode = "reveal";
   state.detonatedCell = detonatedCell;
-  const cell = state.cells[detonatedCell];
-  if (cell) {
-    cell.isOpen = true;
+  if (state.cells[detonatedCell]) {
+    state.cells[detonatedCell].isOpen = true;
   }
 }
 
@@ -353,7 +450,7 @@ function ensurePlayingState(state, nowMs) {
 
 function applyToggleFlag(state, index, nowMs) {
   const cell = state.cells[index];
-  if (!cell || cell.isOpen) {
+  if (!cell || !cell.isActive || cell.isOpen) {
     return { ok: false, reason: "invalid" };
   }
 
@@ -365,7 +462,7 @@ function applyToggleFlag(state, index, nowMs) {
 
 function applyOpenCell(state, index, nowMs) {
   const cell = state.cells[index];
-  if (!cell || cell.isOpen || cell.isFlagged) {
+  if (!cell || !cell.isActive || cell.isOpen || cell.isFlagged) {
     return { ok: false, reason: "invalid" };
   }
 
@@ -422,7 +519,7 @@ function cellContentData(cell, state) {
       content = `<span class="mines-number" aria-hidden="true">${cell.adjacentMines}</span>`;
     } else {
       baseClass.push("is-empty");
-      label = `Celda ${cell.row + 1},${cell.col + 1} abierta vacia`;
+      label = `Celda ${cell.row + 1},${cell.col + 1} abierta vacía`;
       content = '<span class="mines-icon mines-icon-empty" aria-hidden="true">·</span>';
     }
   } else if (state.status === "lost" && cell.hasMine) {
@@ -452,7 +549,7 @@ function cellContentData(cell, state) {
   };
 }
 
-function renderCell(cell, state) {
+function renderActiveCell(cell, state) {
   const view = cellContentData(cell, state);
   return `
     <button
@@ -470,16 +567,26 @@ function renderCell(cell, state) {
   `;
 }
 
+function renderInactiveCell(cell) {
+  return `
+    <span
+      class="mines-cell is-inactive"
+      data-mines-gap="${cell.index}"
+      aria-hidden="true"
+    ></span>
+  `;
+}
+
 function renderBoardGrid(state) {
-  const meta = getDifficultyMeta(state.difficulty);
   return `
     <div class="mines-board-frame">
       <div
-        class="mines-board"
+        class="mines-board is-${escapeHtml(state.shape)}"
         data-mines-board
-        style="--mines-cols:${state.cols};--mines-board-max:${meta.boardMaxWidth}px;"
+        data-mines-shape="${escapeHtml(state.shape)}"
+        style="--mines-cols:${state.cols};--mines-board-max:${state.boardMaxWidth}px;"
       >
-        ${state.cells.map((cell) => renderCell(cell, state)).join("")}
+        ${state.cells.map((cell) => (cell.isActive ? renderActiveCell(cell, state) : renderInactiveCell(cell))).join("")}
       </div>
     </div>
   `;
@@ -524,8 +631,10 @@ function renderHud(state) {
         <div class="mines-hud-copy">
           <div class="mines-mode-row">
             <span class="mines-mode-pill" data-mines-difficulty>${escapeHtml(difficultyText(state))}</span>
+            <span class="mines-mode-pill" data-mines-shape>${escapeHtml(shapeText(state))}</span>
             <span class="mines-mode-pill is-soft" data-mines-status>${escapeHtml(statusText(state.status))}</span>
           </div>
+          <p class="mines-board-summary" data-mines-summary>${escapeHtml(boardSummaryText(state))}</p>
           <p class="mines-note" data-mines-note>${escapeHtml(noteText(state))}</p>
         </div>
         <button class="btn btn-secondary mines-restart-btn" data-action="restart-game">Reiniciar</button>
@@ -556,7 +665,7 @@ function syncModeButtons(root, state) {
   }
 }
 
-function syncCellNode(node, cell, state) {
+function syncActiveCellNode(node, cell, state) {
   const view = cellContentData(cell, state);
   node.className = view.className;
   node.innerHTML = view.content;
@@ -571,12 +680,13 @@ function syncBoardCells(root, state) {
   }
 
   const nodes = Array.from(board.querySelectorAll("[data-mines-cell]"));
-  if (nodes.length !== state.cells.length) {
+  if (nodes.length !== state.activeCellIndexes.length) {
     return false;
   }
 
-  for (let index = 0; index < state.cells.length; index += 1) {
-    syncCellNode(nodes[index], state.cells[index], state);
+  for (let order = 0; order < state.activeCellIndexes.length; order += 1) {
+    const cell = state.cells[state.activeCellIndexes[order]];
+    syncActiveCellNode(nodes[order], cell, state);
   }
 
   return true;
@@ -594,27 +704,30 @@ export const buscaminasGame = {
   hideDefaultPlayerChips: true,
   rules: [
     { title: "Objetivo", text: "Abre todas las celdas seguras sin tocar ninguna mina." },
-    { title: "Numeros", text: "Cada numero indica cuantas minas hay en las ocho celdas vecinas." },
+    { title: "Números", text: "Cada número indica cuántas minas hay en las celdas activas vecinas." },
+    { title: "Formas", text: "Puedes jugar en tablero clásico, cruz o rombo. Solo las celdas activas forman parte de la partida." },
     { title: "Banderas", text: "Marca con bandera las celdas que creas peligrosas. En escritorio puedes usar clic derecho." },
-    { title: "Primera jugada", text: "La primera apertura siempre es segura y prioriza tambien la vecindad inmediata." },
-    { title: "Victoria", text: "Ganas al descubrir todas las celdas que no tienen mina." }
+    { title: "Primera jugada", text: "La primera apertura siempre excluye la celda elegida y su vecindad activa inmediata." }
   ],
   getDefaultOptions() {
     return {
-      difficulty: "easy"
+      difficulty: "easy",
+      shape: "classic"
     };
   },
   normalizeOptions(options = {}) {
     return {
-      difficulty: normalizeDifficulty(options.difficulty)
+      difficulty: normalizeDifficulty(options.difficulty),
+      shape: normalizeShape(options.shape)
     };
   },
   renderConfigPanel({ options }) {
     const difficulty = normalizeDifficulty(options?.difficulty);
+    const shape = normalizeShape(options?.shape);
+
     return `
       <div class="block">
         <h3 class="block-title">Dificultad</h3>
-        <p class="info-line">Elige un tablero clasico y compacto para jugar al instante.</p>
         <div class="player-count-row">
           ${DIFFICULTY_ORDER.map((id) => {
             const meta = getDifficultyMeta(id);
@@ -625,7 +738,26 @@ export const buscaminasGame = {
                 data-option="difficulty"
                 data-value="${id}"
               >
-                ${escapeHtml(`${meta.label} · ${meta.rows}x${meta.cols}`)}
+                ${escapeHtml(`${meta.label} · ${meta.rows}x${meta.cols} · ${meta.mines}`)}
+              </button>
+            `;
+          }).join("")}
+        </div>
+      </div>
+
+      <div class="block">
+        <h3 class="block-title">Forma</h3>
+        <div class="player-count-row">
+          ${SHAPE_ORDER.map((id) => {
+            const meta = getShapeMeta(id);
+            return `
+              <button
+                class="pill ${shape === id ? "is-active" : ""}"
+                data-action="set-game-option"
+                data-option="shape"
+                data-value="${id}"
+              >
+                ${escapeHtml(meta.label)}
               </button>
             `;
           }).join("")}
@@ -683,7 +815,7 @@ export const buscaminasGame = {
     }
 
     const index = Number(action.cell);
-    if (!isCellIndex(index, next.cells.length)) {
+    if (!isCellIndex(index, next.cells.length) || !next.cells[index].isActive) {
       return { ok: false, reason: "invalid" };
     }
 
@@ -756,7 +888,9 @@ export const buscaminasGame = {
     }
 
     syncNodeText(root, "[data-mines-difficulty]", difficultyText(state));
+    syncNodeText(root, "[data-mines-shape]", shapeText(state));
     syncNodeText(root, "[data-mines-status]", statusText(state.status));
+    syncNodeText(root, "[data-mines-summary]", boardSummaryText(state));
     syncNodeText(root, "[data-mines-note]", noteText(state));
     syncNodeText(root, '[data-mines-stat="minesRemaining"]', String(state.minesRemaining));
     syncNodeText(root, '[data-mines-stat="time"]', formatTime(state.elapsedMs));
@@ -768,7 +902,7 @@ export const buscaminasGame = {
     if (state.status === "won") {
       return {
         title: "Tablero despejado",
-        subtitle: `Tiempo final ${formatTime(state.elapsedMs)}. Todas las minas quedaron marcadas.`,
+        subtitle: `Tiempo final ${formatTime(state.elapsedMs)} · ${shapeText(state)} · ${state.mineCount} minas.`,
         iconText: "✓",
         iconClass: "win"
       };
@@ -777,7 +911,7 @@ export const buscaminasGame = {
     if (state.status === "lost") {
       return {
         title: "Has tocado una mina",
-        subtitle: `Tiempo final ${formatTime(state.elapsedMs)}. Revisa el tablero y vuelve a intentarlo.`,
+        subtitle: `Tiempo final ${formatTime(state.elapsedMs)}. Puedes volver a probar ${shapeText(state).toLowerCase()}.`,
         iconText: "✹",
         iconClass: "draw"
       };

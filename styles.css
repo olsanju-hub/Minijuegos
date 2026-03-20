@@ -9019,6 +9019,13 @@ body:not(.is-home-screen) .bg-layer {
   line-height: 1.4;
 }
 
+.mines-board-summary {
+  margin: 0;
+  color: #566776;
+  font-size: 0.83rem;
+  font-weight: 700;
+}
+
 .mines-restart-btn {
   min-width: 118px;
 }
@@ -9129,6 +9136,16 @@ body:not(.is-home-screen) .bg-layer {
     background-color var(--ui-speed) var(--ui-ease),
     box-shadow var(--ui-speed) var(--ui-ease);
   -webkit-touch-callout: none;
+}
+
+.mines-cell.is-inactive {
+  border-style: dashed;
+  border-color: rgba(191, 177, 147, 0.3);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(214, 203, 179, 0.08));
+  box-shadow: none;
+  opacity: 0.58;
+  pointer-events: none;
 }
 
 .mines-cell:hover:not([disabled]) {
@@ -9316,6 +9333,10 @@ body:not(.is-home-screen) .bg-layer {
     font-size: 0.88rem;
   }
 
+  .mines-board-summary {
+    font-size: 0.77rem;
+  }
+
   .mines-live-grid {
     gap: 8px;
   }
@@ -9366,6 +9387,10 @@ body:not(.is-home-screen) .bg-layer {
 
   .mines-cell {
     border-radius: 8px;
+  }
+
+  .mines-cell.is-inactive {
+    opacity: 0.48;
   }
 
   .mines-number,
