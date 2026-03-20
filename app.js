@@ -6,6 +6,7 @@ import { damasGame } from "./games/damas.js";
 import { parchisGame } from "./games/parchis.js";
 import { escalerasSerpientesGame } from "./games/escaleras-serpientes.js";
 import { traficoGame } from "./games/trafico.js";
+import { buscaminasGame } from "./games/buscaminas.js";
 
 const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
@@ -23,6 +24,7 @@ engine.registerGame(damasGame);
 engine.registerGame(parchisGame);
 engine.registerGame(escalerasSerpientesGame);
 engine.registerGame(traficoGame);
+engine.registerGame(buscaminasGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {

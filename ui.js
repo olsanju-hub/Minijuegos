@@ -24,6 +24,29 @@ function normalizeActionPayload(target) {
     };
   }
 
+  if (actionType === "press-cell") {
+    return {
+      type: "press-cell",
+      cell: Number(target.dataset.cell),
+      nowMs: Date.now()
+    };
+  }
+
+  if (actionType === "toggle-flag") {
+    return {
+      type: "toggle-flag",
+      cell: Number(target.dataset.cell),
+      nowMs: Date.now()
+    };
+  }
+
+  if (actionType === "set-interaction-mode") {
+    return {
+      type: "set-interaction-mode",
+      mode: String(target.dataset.mode || "")
+    };
+  }
+
   if (actionType === "drop") {
     return {
       type: "drop",
@@ -118,6 +141,8 @@ export function createUI({ appElement, toastElement }) {
   let trafficTickFrame = null;
   let trafficLastFrameAt = 0;
   let trafficDispatchInFlight = false;
+  let minesTimerId = null;
+  let minesTimerInFlight = false;
   let homeSwipeStartX = null;
   let trafficSwipeState = null;
   let trafficSwipeInFlight = false;
@@ -327,6 +352,26 @@ export function createUI({ appElement, toastElement }) {
           <circle cx="17.5" cy="31.5" r="3.8" fill="#f4c446" stroke="#cd9821" stroke-width="1.4" />
           <circle cx="17.5" cy="31.5" r="1.4" fill="#fff6d7" />
         </svg>
+      `,
+      buscaminas: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#fbf3e2" stroke="#d9c4a0" stroke-width="1.5" />
+          <rect x="9" y="9" width="30" height="30" rx="8" fill="#e6d9bf" stroke="#cab38c" stroke-width="1.1" />
+          <g>
+            <rect x="12" y="12" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+            <rect x="19" y="12" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+            <rect x="26" y="12" width="6" height="6" rx="1.6" fill="#f1e7d4" stroke="#ccc0a8" />
+            <rect x="12" y="19" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+            <rect x="19" y="19" width="6" height="6" rx="1.6" fill="#f1e7d4" stroke="#ccc0a8" />
+            <rect x="26" y="19" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+            <rect x="12" y="26" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+            <rect x="19" y="26" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+            <rect x="26" y="26" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
+          </g>
+          <text x="21.9" y="23.5" text-anchor="middle" font-size="7.8" font-weight="800" fill="#2f69d3">1</text>
+          <text x="30" y="30.5" text-anchor="middle" font-size="7.6" font-weight="800" fill="#cc553f">⚑</text>
+          <text x="15" y="30.5" text-anchor="middle" font-size="7.1" font-weight="800" fill="#6f5137">✹</text>
+        </svg>
       `
     };
 
@@ -402,6 +447,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Carriles y reflejos",
           icon: "TR",
           energy: "Coches, monedas y escapadas."
+        },
+        buscaminas: {
+          accent: "#5b93ff",
+          glow: "rgba(91, 147, 255, 0.24)",
+          description: "Minas y banderas",
+          icon: "BM",
+          energy: "Pistas cortas y riesgo medido."
         }
       };
 
@@ -786,7 +838,7 @@ export function createUI({ appElement, toastElement }) {
         currentVm = vm;
         document.body.classList.toggle("is-home-screen", false);
         appElement.classList.toggle("app-shell-home", false);
-        syncTrafficTickLoop(vm);
+        syncGameLoops(vm);
         return;
       }
     }
@@ -813,7 +865,7 @@ export function createUI({ appElement, toastElement }) {
     document.body.classList.toggle("is-home-screen", vm.screen === "home");
     appElement.classList.toggle("app-shell-home", vm.screen === "home");
     appElement.innerHTML = html;
-    syncTrafficTickLoop(vm);
+    syncGameLoops(vm);
   }
 
   function shouldRunTrafficLoop(vm = currentVm) {
@@ -888,6 +940,66 @@ export function createUI({ appElement, toastElement }) {
     }
 
     queueTrafficFrame();
+  }
+
+  function shouldRunMinesTimer(vm = currentVm) {
+    return Boolean(
+      vm?.screen === "game" &&
+      vm?.game?.id === "buscaminas" &&
+      vm?.session?.state?.status === "playing" &&
+      typeof onAction === "function"
+    );
+  }
+
+  function clearMinesTimerLoop() {
+    if (minesTimerId) {
+      window.clearInterval(minesTimerId);
+      minesTimerId = null;
+    }
+    minesTimerInFlight = false;
+  }
+
+  function syncMinesTimerLoop(vm) {
+    if (!shouldRunMinesTimer(vm)) {
+      clearMinesTimerLoop();
+      return;
+    }
+
+    if (minesTimerId) {
+      return;
+    }
+
+    minesTimerId = window.setInterval(async () => {
+      if (!shouldRunMinesTimer()) {
+        clearMinesTimerLoop();
+        return;
+      }
+
+      if (minesTimerInFlight) {
+        return;
+      }
+
+      minesTimerInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "tick-time",
+            nowMs: Date.now()
+          }
+        });
+      } finally {
+        minesTimerInFlight = false;
+        if (!shouldRunMinesTimer()) {
+          clearMinesTimerLoop();
+        }
+      }
+    }, 1000);
+  }
+
+  function syncGameLoops(vm) {
+    syncTrafficTickLoop(vm);
+    syncMinesTimerLoop(vm);
   }
 
   function showToast(message, duration = 2200) {
@@ -1062,6 +1174,30 @@ export function createUI({ appElement, toastElement }) {
 
       event.preventDefault();
       await onAction("game-action", { action });
+    });
+
+    document.addEventListener("contextmenu", async (event) => {
+      const target = event.target instanceof Element ? event.target.closest("[data-mines-cell]") : null;
+      if (
+        !target ||
+        !currentVm ||
+        currentVm.screen !== "game" ||
+        currentVm.game?.id !== "buscaminas" ||
+        !currentVm.canAct ||
+        target.hasAttribute("disabled") ||
+        !onAction
+      ) {
+        return;
+      }
+
+      event.preventDefault();
+      await onAction("game-action", {
+        action: {
+          type: "toggle-flag",
+          cell: Number(target.dataset.cell),
+          nowMs: Date.now()
+        }
+      });
     });
 
     document.addEventListener("touchstart", (event) => {
