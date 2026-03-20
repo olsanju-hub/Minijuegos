@@ -1,16 +1,27 @@
 const LANE_COUNT = 3;
-const VISIBLE_ROWS = 8;
-const PLAYER_ROW = VISIBLE_ROWS - 2;
+const VISIBLE_STEPS = 8;
+const STEP_DISTANCE = 1 / VISIBLE_STEPS;
+const PLAYER_Y = 0.76;
+const PLAYER_HEIGHT = 0.18;
+const RIVAL_HEIGHT = 0.18;
+const PICKUP_HEIGHT = 0.11;
+const PLAYER_CENTER_Y = PLAYER_Y + PLAYER_HEIGHT / 2;
+const SPAWN_Y = -0.22;
+const EXIT_Y = 1.14;
+const COLLISION_BAND = 0.11;
+const PICKUP_BAND = 0.1;
+const MAX_FRAME_DELTA_MS = 64;
+const ROAD_SCROLL_PX_PER_STEP = 96;
+
 const OBJECTIVE_TARGETS = Object.freeze({
   distance: 36,
   overtakes: 10,
   pickups: 5
 });
+
 const STORAGE_KEY_BEST_TIME = "minijuegos:trafico:best-time-ms";
 const BASE_TICK_MS = 720;
 const MIN_TICK_MS = 460;
-const MIN_MOTION_MS = 180;
-const MAX_MOTION_MS = 260;
 
 const PATTERN_POOLS = Object.freeze([
   Object.freeze([[], [], [0], [1], [2], [0, 2], [0], [1], [2]]),
@@ -109,14 +120,10 @@ function formatTime(ms) {
   return `${seconds}.${decimal}s`;
 }
 
-function cloneEntity(entity) {
-  return { ...entity };
-}
-
 function cloneState(state) {
   return {
     ...state,
-    entities: state.entities.map(cloneEntity)
+    entities: state.entities.map((entity) => ({ ...entity }))
   };
 }
 
@@ -134,15 +141,34 @@ function shuffleWithState(state, values) {
   return items;
 }
 
-function createEntity(state, type, lane, row) {
+function createEntity(state, type, lane, y = SPAWN_Y) {
   const nextId = state.nextEntityId + 1;
   state.nextEntityId = nextId;
   return {
     id: `traffic-${nextId}`,
     type,
     lane,
-    row
+    y
   };
+}
+
+function entityHeight(type) {
+  if (type === "pickup") {
+    return PICKUP_HEIGHT;
+  }
+  return RIVAL_HEIGHT;
+}
+
+function entityCenterY(entity) {
+  return entity.y + entityHeight(entity.type) / 2;
+}
+
+function playerCenterY() {
+  return PLAYER_CENTER_Y;
+}
+
+function currentTravelSteps(state) {
+  return state.distance + state.stepProgress;
 }
 
 function computeTickMs(distance) {
@@ -153,18 +179,24 @@ function computeTickMs(distance) {
   };
 }
 
-function computeMotionMs(tickMs) {
-  return clamp(Math.round((Number(tickMs) || BASE_TICK_MS) * 0.42), MIN_MOTION_MS, MAX_MOTION_MS);
+function projectedThreat(entity, futureStep) {
+  if (entity.type !== "rival") {
+    return false;
+  }
+  const futureCenter = entityCenterY(entity) + futureStep * STEP_DISTANCE;
+  return Math.abs(futureCenter - playerCenterY()) <= COLLISION_BAND;
 }
 
 function buildReachableLanes(entities, startLane) {
   let reachable = new Set([startLane]);
-  for (let futureTick = 1; futureTick <= 3; futureTick += 1) {
+
+  for (let futureStep = 1; futureStep <= 3; futureStep += 1) {
     const blocked = new Set(
       entities
-        .filter((entity) => entity.type === "rival" && entity.row + futureTick === PLAYER_ROW)
+        .filter((entity) => projectedThreat(entity, futureStep))
         .map((entity) => entity.lane)
     );
+
     const next = new Set();
     for (const lane of reachable) {
       for (const candidate of [lane - 1, lane, lane + 1]) {
@@ -176,11 +208,13 @@ function buildReachableLanes(entities, startLane) {
         }
       }
     }
+
     if (next.size === 0) {
       return null;
     }
     reachable = next;
   }
+
   return reachable;
 }
 
@@ -205,8 +239,13 @@ function maybeSpawnPickup(state, baseEntities, carPattern, playerLane) {
   );
 
   for (const lane of freeLanes) {
-    const candidate = { type: "pickup", lane, row: 0 };
-    if (isSafeSpawn([...baseEntities, ...carPattern.map((item) => ({ type: "rival", lane: item, row: 0 })), candidate], playerLane)) {
+    const candidate = { type: "pickup", lane, y: SPAWN_Y };
+    const nextEntities = [
+      ...baseEntities,
+      ...carPattern.map((item) => ({ type: "rival", lane: item, y: SPAWN_Y })),
+      candidate
+    ];
+    if (isSafeSpawn(nextEntities, playerLane)) {
       return candidate;
     }
   }
@@ -222,7 +261,7 @@ function chooseSpawn(state, baseEntities, playerLane) {
 
   let selectedPattern = [];
   for (const pattern of orderedPatterns) {
-    const nextEntities = [...baseEntities, ...pattern.map((lane) => ({ type: "rival", lane, row: 0 }))];
+    const nextEntities = [...baseEntities, ...pattern.map((lane) => ({ type: "rival", lane, y: SPAWN_Y }))];
     if (isSafeSpawn(nextEntities, playerLane)) {
       selectedPattern = pattern;
       break;
@@ -231,9 +270,8 @@ function chooseSpawn(state, baseEntities, playerLane) {
 
   const pickup = maybeSpawnPickup(state, baseEntities, selectedPattern, playerLane);
   return {
-    cars: selectedPattern.map((lane) => createEntity(state, "rival", lane, 0)),
-    pickup: pickup ? createEntity(state, "pickup", pickup.lane, 0) : null,
-    rested: mustRest
+    cars: selectedPattern.map((lane) => createEntity(state, "rival", lane, SPAWN_Y)),
+    pickup: pickup ? createEntity(state, "pickup", pickup.lane, pickup.y) : null
   };
 }
 
@@ -242,13 +280,13 @@ function buildFreshState(options) {
   const normalizedObjective = normalizeObjectiveType(options?.objectiveType);
   const difficulty = computeTickMs(0);
   const randomSeed = ((Date.now() & 0xffffffff) ^ Math.floor(Math.random() * 4294967295)) >>> 0;
+
   return {
     mode: normalizedMode,
     objectiveType: normalizedObjective,
     objectiveTarget: getObjectiveTarget(normalizedObjective),
     status: "ready",
     playerLane: 1,
-    pendingInput: null,
     entities: [],
     distance: 0,
     overtakes: 0,
@@ -256,6 +294,7 @@ function buildFreshState(options) {
     score: 0,
     elapsedMs: 0,
     tickCount: 0,
+    stepProgress: 0,
     difficultyLevel: difficulty.difficultyLevel,
     tickMs: difficulty.tickMs,
     spawnStreak: 0,
@@ -273,7 +312,6 @@ function buildFreshState(options) {
 
 function setRunningState(state, message) {
   state.status = "playing";
-  state.pendingInput = null;
   if (message) {
     state.lastEvent = message;
   }
@@ -281,7 +319,6 @@ function setRunningState(state, message) {
 
 function setPauseState(state) {
   state.status = "paused";
-  state.pendingInput = null;
   state.lastEvent = "Partida en pausa.";
 }
 
@@ -308,32 +345,69 @@ function persistBestIfNeeded(state) {
 
 function completeRun(state, status, message) {
   state.status = status;
-  state.pendingInput = null;
   state.lastEvent = message;
   persistBestIfNeeded(state);
 }
 
-function runTick(state) {
-  if (state.status !== "playing") {
-    return { ok: false, reason: "invalid" };
+function moveEntities(state, deltaY) {
+  for (const entity of state.entities) {
+    entity.y += deltaY;
+  }
+}
+
+function removeExitedEntities(state) {
+  let overtakes = 0;
+  state.entities = state.entities.filter((entity) => {
+    if (entity.y <= EXIT_Y) {
+      return true;
+    }
+    if (entity.type === "rival") {
+      overtakes += 1;
+    }
+    return false;
+  });
+  return overtakes;
+}
+
+function collectPickups(state) {
+  const collectedIds = new Set();
+  let pickupDelta = 0;
+
+  for (const entity of state.entities) {
+    if (
+      entity.type === "pickup" &&
+      entity.lane === state.playerLane &&
+      Math.abs(entityCenterY(entity) - playerCenterY()) <= PICKUP_BAND
+    ) {
+      collectedIds.add(entity.id);
+      pickupDelta += 1;
+    }
   }
 
-  const laneDelta = state.pendingInput === "left" ? -1 : state.pendingInput === "right" ? 1 : 0;
-  state.playerLane = clamp(state.playerLane + laneDelta, 0, LANE_COUNT - 1);
-  state.pendingInput = null;
+  if (pickupDelta > 0) {
+    state.entities = state.entities.filter((entity) => !collectedIds.has(entity.id));
+    state.pickups += pickupDelta;
+    state.lastPickupTick = state.tickCount;
+  }
 
-  let entities = state.entities.map((entity) => ({
-    ...entity,
-    row: entity.row + 1
-  }));
+  return pickupDelta;
+}
 
-  const exitingCars = entities.filter((entity) => entity.type === "rival" && entity.row >= VISIBLE_ROWS).length;
-  entities = entities.filter((entity) => entity.row < VISIBLE_ROWS);
+function findCollision(state) {
+  return state.entities.find(
+    (entity) =>
+      entity.type === "rival" &&
+      entity.lane === state.playerLane &&
+      Math.abs(entityCenterY(entity) - playerCenterY()) <= COLLISION_BAND
+  ) || null;
+}
 
-  const spawn = chooseSpawn(state, entities, state.playerLane);
-  entities.push(...spawn.cars);
+function applySpawnStep(state) {
+  const spawn = chooseSpawn(state, state.entities, state.playerLane);
+  state.entities.push(...spawn.cars);
+
   if (spawn.pickup) {
-    entities.push(spawn.pickup);
+    state.entities.push(spawn.pickup);
     state.pickupCooldown = state.mode === "objectives" && state.objectiveType === "pickups" ? 4 : 6;
   } else {
     state.pickupCooldown = Math.max(0, state.pickupCooldown - 1);
@@ -351,43 +425,70 @@ function runTick(state) {
     }
   }
 
-  const collision = entities.find(
-    (entity) => entity.type === "rival" && entity.row === PLAYER_ROW && entity.lane === state.playerLane
-  );
-  const collected = entities.filter(
-    (entity) => entity.type === "pickup" && entity.row === PLAYER_ROW && entity.lane === state.playerLane
-  );
-
-  if (collected.length > 0) {
-    const collectedIds = new Set(collected.map((item) => item.id));
-    entities = entities.filter((entity) => !collectedIds.has(entity.id));
-    state.pickups += collected.length;
-    state.lastPickupTick = state.tickCount + 1;
-  }
-
-  state.entities = entities;
-  state.distance += 1;
-  state.overtakes += exitingCars;
-  state.elapsedMs += state.tickMs;
   state.tickCount += 1;
+  state.distance += 1;
   updateDerivedStats(state);
-  updateScore(state, exitingCars, collected.length);
+}
 
-  if (collision) {
-    state.lastCollision = { lane: state.playerLane, row: PLAYER_ROW };
-    completeRun(state, "game-over", "Colision. Fin de la partida.");
+function runFrame(state, deltaMs) {
+  if (state.status !== "playing") {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const safeDeltaMs = clamp(Number(deltaMs) || 0, 0, MAX_FRAME_DELTA_MS);
+  if (safeDeltaMs <= 0) {
     return { ok: true, state };
   }
 
-  if (state.mode === "objectives" && currentObjectiveValue(state) >= state.objectiveTarget) {
-    completeRun(state, "objective-complete", "Objetivo cumplido.");
-    return { ok: true, state };
+  let remainingMs = safeDeltaMs;
+  let overtakeDelta = 0;
+  let pickupDelta = 0;
+
+  while (remainingMs > 0.0001 && state.status === "playing") {
+    const tickMs = Math.max(MIN_TICK_MS, Number(state.tickMs) || BASE_TICK_MS);
+    const stepSliceMs = tickMs * (1 - state.stepProgress);
+    const sliceMs = Math.min(remainingMs, stepSliceMs);
+    const sliceProgress = sliceMs / tickMs;
+    const deltaY = sliceProgress * STEP_DISTANCE;
+
+    moveEntities(state, deltaY);
+    state.stepProgress = clamp(state.stepProgress + sliceProgress, 0, 1);
+    state.elapsedMs += sliceMs;
+
+    overtakeDelta += removeExitedEntities(state);
+    pickupDelta += collectPickups(state);
+
+    const collision = findCollision(state);
+    if (collision) {
+      state.lastCollision = {
+        lane: state.playerLane,
+        rivalId: collision.id
+      };
+      updateScore(state, overtakeDelta, pickupDelta);
+      completeRun(state, "game-over", "Colision. Fin de la partida.");
+      return { ok: true, state };
+    }
+
+    remainingMs -= sliceMs;
+
+    if (state.stepProgress >= 0.999999) {
+      state.stepProgress = 0;
+      applySpawnStep(state);
+
+      if (state.mode === "objectives" && currentObjectiveValue(state) >= state.objectiveTarget) {
+        updateScore(state, overtakeDelta, pickupDelta);
+        completeRun(state, "objective-complete", "Objetivo cumplido.");
+        return { ok: true, state };
+      }
+    }
   }
 
-  if (collected.length > 0) {
+  updateScore(state, overtakeDelta, pickupDelta);
+
+  if (pickupDelta > 0) {
     state.lastEvent = "Moneda recogida.";
-  } else if (exitingCars > 0) {
-    state.lastEvent = exitingCars > 1 ? "Buen tramo: has adelantado varios coches." : "Adelantamiento limpio.";
+  } else if (overtakeDelta > 0) {
+    state.lastEvent = overtakeDelta > 1 ? "Buen tramo: has adelantado varios coches." : "Adelantamiento limpio.";
   }
 
   return { ok: true, state };
@@ -421,23 +522,20 @@ function renderStatusOverlay(state) {
 }
 
 function buildRenderableEntities(state) {
-  const collisionKey = state.lastCollision ? `${state.lastCollision.row}:${state.lastCollision.lane}` : "";
-  const isCollision = (row, lane) => collisionKey !== "" && collisionKey === `${row}:${lane}`;
-
   return [
     {
       id: "player",
       kind: "player",
       lane: state.playerLane,
-      row: PLAYER_ROW,
-      isCollision: isCollision(PLAYER_ROW, state.playerLane)
+      y: PLAYER_Y,
+      isCollision: Boolean(state.lastCollision)
     },
     ...state.entities.map((entity) => ({
       id: entity.id,
       kind: entity.type === "rival" ? "rival" : "pickup",
       lane: entity.lane,
-      row: entity.row,
-      isCollision: entity.type === "rival" && isCollision(entity.row, entity.lane)
+      y: entity.y,
+      isCollision: entity.type === "rival" && state.lastCollision?.rivalId === entity.id
     }))
   ];
 }
@@ -452,13 +550,18 @@ function entityVisualClass(kind) {
   return "traffic-rival-car";
 }
 
+function roadScrollPx(state) {
+  const loop = ROAD_SCROLL_PX_PER_STEP;
+  return ((currentTravelSteps(state) * loop) % loop).toFixed(2);
+}
+
 function renderTrafficEntity(entity) {
   return `
     <span
       class="traffic-entity ${entity.isCollision ? "is-collision" : ""}"
       data-traffic-entity-id="${escapeHtml(entity.id)}"
       data-traffic-kind="${escapeHtml(entity.kind)}"
-      style="--traffic-lane:${entity.lane};--traffic-row:${entity.row};"
+      style="--traffic-lane:${entity.lane};--traffic-y:${entity.y.toFixed(4)};"
       aria-hidden="true"
     >
       <span class="${entityVisualClass(entity.kind)}" aria-hidden="true"></span>
@@ -466,23 +569,16 @@ function renderTrafficEntity(entity) {
   `;
 }
 
-function renderStaticCell() {
-  return `
-    <div class="traffic-cell">
-      <span class="traffic-cell-surface" aria-hidden="true"></span>
-    </div>
-  `;
-}
-
 function renderRoad(state) {
-  const cells = Array.from({ length: VISIBLE_ROWS * LANE_COUNT }, () => renderStaticCell()).join("");
   const entities = buildRenderableEntities(state).map(renderTrafficEntity).join("");
 
   return `
     <div class="traffic-road-frame">
-      <div class="traffic-road" data-traffic-road style="--traffic-motion-ms:${computeMotionMs(state.tickMs)}ms;">
+      <div class="traffic-road" data-traffic-road style="--traffic-scroll-px:${roadScrollPx(state)}px;">
         <div class="traffic-road-surface">
-          <div class="traffic-grid" aria-hidden="true">${cells}</div>
+          <div class="traffic-road-flow" aria-hidden="true"></div>
+          <span class="traffic-lane-divider is-left" aria-hidden="true"></span>
+          <span class="traffic-lane-divider is-right" aria-hidden="true"></span>
           <div class="traffic-entities" data-traffic-entities>${entities}</div>
         </div>
         ${renderStatusOverlay(state)}
@@ -504,7 +600,7 @@ function renderBoardControls(state, canAct) {
   const isReady = state.status === "ready";
   const isPaused = state.status === "paused";
   const isPlaying = state.status === "playing";
-  const primaryAction = isReady ? "start-run" : isPaused ? "toggle-pause" : "toggle-pause";
+  const primaryAction = isReady ? "start-run" : "toggle-pause";
   const primaryLabel = isReady ? "Empezar" : isPaused ? "Reanudar" : "Pausa";
 
   return `
@@ -542,7 +638,7 @@ function renderBoardControls(state, canAct) {
 
 function objectiveProgressText(state) {
   if (state.mode !== "objectives") {
-    return "Aguanta lo máximo posible.";
+    return "Aguanta lo maximo posible.";
   }
   return `${objectiveLabel(state.objectiveType)}: ${currentObjectiveValue(state)} / ${state.objectiveTarget}`;
 }
@@ -594,7 +690,7 @@ function renderSidePanel(state, players, canAct) {
 
       <article class="traffic-side-card traffic-controls-card">
         <h4>Controles</h4>
-        <p class="traffic-side-note">Cambia de carril con izquierda y derecha. Pausa cuando lo necesites.</p>
+        <p class="traffic-side-note">Cambia de carril con izquierda y derecha. Pulsa pausa cuando lo necesites.</p>
         ${renderBoardControls(state, canAct)}
       </article>
     </aside>
@@ -608,9 +704,9 @@ function setNodeText(root, selector, value) {
   }
 }
 
-function setEntityPosition(node, lane, row) {
+function setEntityPosition(node, lane, y) {
   node.style.setProperty("--traffic-lane", String(lane));
-  node.style.setProperty("--traffic-row", String(row));
+  node.style.setProperty("--traffic-y", Number(y).toFixed(4));
 }
 
 function createTrafficEntityNode(entity) {
@@ -619,35 +715,12 @@ function createTrafficEntityNode(entity) {
   node.dataset.trafficEntityId = entity.id;
   node.dataset.trafficKind = entity.kind;
   node.setAttribute("aria-hidden", "true");
+
   const visual = document.createElement("span");
   visual.className = entityVisualClass(entity.kind);
   visual.setAttribute("aria-hidden", "true");
   node.append(visual);
   return node;
-}
-
-function removeTrafficEntityNode(node, motionMs) {
-  if (!node || node.dataset.trafficKind === "player") {
-    return;
-  }
-  if (node.dataset.trafficRemoving === "true") {
-    return;
-  }
-
-  node.dataset.trafficRemoving = "true";
-  const currentRow = Number(node.style.getPropertyValue("--traffic-row"));
-  const nextRow = Number.isFinite(currentRow) ? Math.min(VISIBLE_ROWS + 0.85, currentRow + 0.9) : VISIBLE_ROWS + 0.85;
-  node.classList.add("is-exiting");
-
-  if (node.dataset.trafficKind === "rival") {
-    node.style.setProperty("--traffic-row", String(nextRow));
-  }
-
-  window.setTimeout(() => {
-    if (node.isConnected) {
-      node.remove();
-    }
-  }, motionMs + 80);
 }
 
 function syncTrafficEntities(root, state) {
@@ -656,41 +729,31 @@ function syncTrafficEntities(root, state) {
     return;
   }
 
-  const motionMs = computeMotionMs(state.tickMs);
   const nextEntities = buildRenderableEntities(state);
-  const previousNodes = new Map();
+  const currentNodes = new Map();
   for (const node of layer.querySelectorAll("[data-traffic-entity-id]")) {
-    previousNodes.set(node.dataset.trafficEntityId || "", node);
+    currentNodes.set(node.dataset.trafficEntityId || "", node);
   }
 
   const activeIds = new Set();
   for (const entity of nextEntities) {
     activeIds.add(entity.id);
-    let node = previousNodes.get(entity.id);
 
+    let node = currentNodes.get(entity.id);
     if (!node) {
       node = createTrafficEntityNode(entity);
-      const startRow = entity.kind === "player" ? entity.row : Math.max(-0.9, entity.row - 0.75);
-      setEntityPosition(node, entity.lane, startRow);
       layer.append(node);
-      window.requestAnimationFrame(() => {
-        node.classList.toggle("is-collision", entity.isCollision);
-        setEntityPosition(node, entity.lane, entity.row);
-      });
-      continue;
     }
 
-    node.dataset.trafficRemoving = "false";
-    node.classList.remove("is-exiting");
+    node.dataset.trafficKind = entity.kind;
     node.classList.toggle("is-collision", entity.isCollision);
-    setEntityPosition(node, entity.lane, entity.row);
+    setEntityPosition(node, entity.lane, entity.y);
   }
 
-  for (const [entityId, node] of previousNodes) {
-    if (activeIds.has(entityId)) {
-      continue;
+  for (const [entityId, node] of currentNodes) {
+    if (!activeIds.has(entityId) && node.isConnected) {
+      node.remove();
     }
-    removeTrafficEntityNode(node, motionMs);
   }
 }
 
@@ -730,7 +793,7 @@ function syncTrafficControls(root, state, canAct) {
 function syncTrafficHud(root, state, players, canAct) {
   const road = root.querySelector("[data-traffic-road]");
   if (road) {
-    road.style.setProperty("--traffic-motion-ms", `${computeMotionMs(state.tickMs)}ms`);
+    road.style.setProperty("--traffic-scroll-px", `${roadScrollPx(state)}px`);
   }
 
   setNodeText(root, "[data-traffic-mode-label]", modeLabel(state.mode));
@@ -770,10 +833,10 @@ export const traficoGame = {
   hideDefaultPlayerChips: true,
   rules: [
     { title: "Objetivo", text: "Cambia de carril y evita el trafico. En Infinito gana quien mas tiempo aguanta; en Objetivos debes completar una meta corta." },
-    { title: "Tick", text: "Cada tick mueve el trafico una fila, resuelve spawns seguros, recoge monedas, cuenta adelantamientos y aumenta la dificultad." },
-    { title: "Colision", text: "Si un coche rival alcanza tu misma fila y carril, la partida termina al instante." },
-    { title: "Monedas", text: "Las monedas suman puntuacion y cuentan para el objetivo de Recogidas." },
-    { title: "Adelantamientos", text: "Un adelantamiento cuenta cuando un coche rival sale por abajo de la rejilla sin chocar contigo." }
+    { title: "Flujo", text: "La carretera avanza de forma continua. El coche del jugador sigue limitado a tres carriles logicos." },
+    { title: "Colision", text: "Si un coche rival coincide con tu carril y tu zona de impacto, la partida termina al instante." },
+    { title: "Monedas", text: "Solo aparece una moneda activa a la vez. Suma puntuacion y cuenta para el objetivo de Recogidas." },
+    { title: "Adelantamientos", text: "Un adelantamiento cuenta cuando un coche rival sale por abajo de la carretera sin chocar contigo." }
   ],
   getDefaultOptions() {
     return {
@@ -874,16 +937,24 @@ export const traficoGame = {
       return { ok: false, reason: "invalid" };
     }
 
-    if (action.type === "steer-left" || action.type === "steer-right") {
+    if (action.type === "steer-left") {
       if (next.status !== "playing") {
         return { ok: false, reason: "invalid" };
       }
-      next.pendingInput = action.type === "steer-left" ? "left" : "right";
+      next.playerLane = clamp(next.playerLane - 1, 0, LANE_COUNT - 1);
+      return { ok: true, state: next };
+    }
+
+    if (action.type === "steer-right") {
+      if (next.status !== "playing") {
+        return { ok: false, reason: "invalid" };
+      }
+      next.playerLane = clamp(next.playerLane + 1, 0, LANE_COUNT - 1);
       return { ok: true, state: next };
     }
 
     if (action.type === "tick") {
-      return runTick(next);
+      return runFrame(next, action.deltaMs);
     }
 
     return { ok: false, reason: "invalid" };

@@ -26,9 +26,63 @@ engine.registerGame(traficoGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js").catch((error) => {
-      console.warn("No se pudo registrar el service worker de Minijuegos.", error);
+  const SERVICE_WORKER_URL = "./sw.js";
+  const SERVICE_WORKER_ACTIVATED = "minijuegos:sw-activated";
+  const SERVICE_WORKER_RELOAD_KEY = "minijuegos:sw-reload-version";
+  const hadControllerOnBoot = Boolean(navigator.serviceWorker.controller);
+  let registrationRef = null;
+  let hasReloadedForUpdate = false;
+
+  function reloadForUpdatedWorker(version) {
+    if (!hadControllerOnBoot || hasReloadedForUpdate) {
+      return;
+    }
+
+    const normalizedVersion = String(version || "").trim();
+    if (!normalizedVersion) {
+      return;
+    }
+
+    if (window.sessionStorage.getItem(SERVICE_WORKER_RELOAD_KEY) === normalizedVersion) {
+      return;
+    }
+
+    hasReloadedForUpdate = true;
+    window.sessionStorage.setItem(SERVICE_WORKER_RELOAD_KEY, normalizedVersion);
+    window.location.reload();
+  }
+
+  function updateServiceWorkerRegistration() {
+    if (!registrationRef) {
+      return;
+    }
+
+    registrationRef.update().catch((error) => {
+      console.warn("No se pudo comprobar la actualizacion del service worker de Minijuegos.", error);
     });
+  }
+
+  navigator.serviceWorker.addEventListener("message", (event) => {
+    const data = event.data;
+    if (!data || data.type !== SERVICE_WORKER_ACTIVATED) {
+      return;
+    }
+
+    reloadForUpdatedWorker(data.version);
+  });
+
+  window.addEventListener("load", async () => {
+    try {
+      registrationRef = await navigator.serviceWorker.register(SERVICE_WORKER_URL);
+      updateServiceWorkerRegistration();
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState === "visible") {
+          updateServiceWorkerRegistration();
+        }
+      });
+    } catch (error) {
+      console.warn("No se pudo registrar el service worker de Minijuegos.", error);
+    }
   });
 }

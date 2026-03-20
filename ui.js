@@ -115,8 +115,9 @@ export function createUI({ appElement, toastElement }) {
   let homeActiveIndex = 0;
   let homeDrawerOpen = false;
   let homeMotionDir = 0;
-  let trafficTickTimer = null;
-  let trafficTickDelay = null;
+  let trafficTickFrame = null;
+  let trafficLastFrameAt = 0;
+  let trafficDispatchInFlight = false;
 
   function getHomeCatalog(vm) {
     return Array.isArray(vm?.games) ? vm.games : [];
@@ -812,53 +813,74 @@ export function createUI({ appElement, toastElement }) {
     syncTrafficTickLoop(vm);
   }
 
-  function clearTrafficTickLoop() {
-    if (trafficTickTimer) {
-      window.clearTimeout(trafficTickTimer);
-      trafficTickTimer = null;
-    }
-    trafficTickDelay = null;
-  }
-
-  function syncTrafficTickLoop(vm) {
-    const shouldRun =
+  function shouldRunTrafficLoop(vm = currentVm) {
+    return Boolean(
       vm?.screen === "game" &&
       vm?.game?.id === "trafico" &&
       vm?.session?.state?.status === "playing" &&
-      typeof onAction === "function";
+      typeof onAction === "function"
+    );
+  }
 
-    if (!shouldRun) {
+  function clearTrafficTickLoop() {
+    if (trafficTickFrame) {
+      window.cancelAnimationFrame(trafficTickFrame);
+      trafficTickFrame = null;
+    }
+    trafficLastFrameAt = 0;
+    trafficDispatchInFlight = false;
+  }
+
+  function queueTrafficFrame() {
+    if (trafficTickFrame || !shouldRunTrafficLoop()) {
+      return;
+    }
+
+    trafficTickFrame = window.requestAnimationFrame(async (timestamp) => {
+      trafficTickFrame = null;
+
+      if (!shouldRunTrafficLoop()) {
+        clearTrafficTickLoop();
+        return;
+      }
+
+      if (!trafficLastFrameAt) {
+        trafficLastFrameAt = timestamp;
+      }
+
+      const deltaMs = Math.min(64, Math.max(0, timestamp - trafficLastFrameAt));
+      trafficLastFrameAt = timestamp;
+
+      if (trafficDispatchInFlight || deltaMs <= 0) {
+        queueTrafficFrame();
+        return;
+      }
+
+      trafficDispatchInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "tick",
+            deltaMs
+          }
+        });
+      } finally {
+        trafficDispatchInFlight = false;
+        if (shouldRunTrafficLoop()) {
+          queueTrafficFrame();
+        }
+      }
+    });
+  }
+
+  function syncTrafficTickLoop(vm) {
+    if (!shouldRunTrafficLoop(vm)) {
       clearTrafficTickLoop();
       return;
     }
 
-    const delay = Math.max(220, Number(vm.session.state.tickMs) || 0);
-    if (trafficTickTimer && trafficTickDelay === delay) {
-      return;
-    }
-
-    clearTrafficTickLoop();
-    trafficTickDelay = delay;
-    trafficTickTimer = window.setTimeout(async () => {
-      trafficTickTimer = null;
-      trafficTickDelay = null;
-
-      if (
-        !currentVm ||
-        currentVm.screen !== "game" ||
-        currentVm.game?.id !== "trafico" ||
-        currentVm.session?.state?.status !== "playing" ||
-        typeof onAction !== "function"
-      ) {
-        return;
-      }
-
-      await onAction("game-action", {
-        action: {
-          type: "tick"
-        }
-      });
-    }, delay);
+    queueTrafficFrame();
   }
 
   function showToast(message, duration = 2200) {
