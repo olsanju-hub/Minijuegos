@@ -8937,3 +8937,395 @@ body:not(.is-home-screen) .bg-layer {
     padding: 13px;
   }
 }
+
+.app-shell:not(.app-shell-home) .screen.game-screen-trafico {
+  width: min(100%, calc(100vw - 36px));
+}
+
+.game-screen-trafico .board-wrap {
+  display: flex;
+  justify-content: center;
+}
+
+.traffic-shell {
+  width: min(100%, 860px);
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: minmax(0, 390px) minmax(280px, 340px);
+  justify-content: center;
+  align-items: start;
+  gap: 16px;
+}
+
+.traffic-road-frame {
+  width: min(100%, 390px);
+  margin: 0 auto;
+  padding: 14px;
+  border-radius: 30px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.8), transparent 55%),
+    linear-gradient(180deg, rgba(255, 248, 236, 0.98) 0%, rgba(246, 236, 220, 0.98) 100%);
+  border: 1px solid rgba(209, 190, 158, 0.72);
+  box-shadow:
+    0 18px 34px rgba(162, 145, 110, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.86);
+}
+
+.traffic-road {
+  position: relative;
+  width: 100%;
+  height: clamp(480px, 72vh, 640px);
+  border-radius: 24px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #44525b 0%, #313c43 100%);
+  border: 1px solid rgba(40, 50, 56, 0.9);
+}
+
+.traffic-road-surface {
+  position: absolute;
+  inset: 0;
+  padding-inline: 22px;
+  background:
+    linear-gradient(90deg, #d8c39d 0 10px, transparent 10px calc(100% - 10px), #d8c39d calc(100% - 10px) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 24%, transparent 76%, rgba(0, 0, 0, 0.08));
+}
+
+.traffic-road-surface::before,
+.traffic-road-surface::after {
+  content: "";
+  position: absolute;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 999px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(247, 239, 223, 0.9) 0 20px,
+      transparent 20px 36px
+    );
+  opacity: 0.92;
+}
+
+.traffic-road-surface::before {
+  left: calc(33.333% - 2px);
+}
+
+.traffic-road-surface::after {
+  left: calc(66.666% - 2px);
+}
+
+.traffic-grid {
+  position: absolute;
+  inset: 14px 22px;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(8, minmax(0, 1fr));
+  gap: 8px 10px;
+}
+
+.traffic-cell {
+  position: relative;
+  border-radius: 16px;
+}
+
+.traffic-cell-surface {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0));
+}
+
+.traffic-player-car,
+.traffic-rival-car {
+  position: absolute;
+  inset: 10% 16%;
+  border-radius: 18px;
+  box-shadow:
+    0 10px 16px rgba(21, 30, 36, 0.24),
+    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+}
+
+.traffic-player-car::before,
+.traffic-rival-car::before {
+  content: "";
+  position: absolute;
+  top: 14%;
+  left: 24%;
+  right: 24%;
+  height: 24%;
+  border-radius: 9px;
+  background: rgba(226, 245, 255, 0.92);
+}
+
+.traffic-player-car::after,
+.traffic-rival-car::after {
+  content: "";
+  position: absolute;
+  left: 18%;
+  right: 18%;
+  bottom: 16%;
+  height: 14%;
+  border-radius: 999px;
+  background: rgba(18, 26, 31, 0.15);
+}
+
+.traffic-player-car {
+  background: linear-gradient(180deg, #68a8ff 0%, #3f79f6 100%);
+  border: 1px solid rgba(42, 81, 168, 0.8);
+}
+
+.traffic-rival-car {
+  background: linear-gradient(180deg, #ff9a64 0%, #ea6647 100%);
+  border: 1px solid rgba(162, 68, 49, 0.82);
+}
+
+.traffic-pickup-coin {
+  position: absolute;
+  inset: 26%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 35% 35%, #fff7cf 0 22%, #ffd96b 22% 58%, #e1a72a 58% 100%);
+  border: 1px solid rgba(193, 135, 17, 0.85);
+  box-shadow:
+    0 8px 16px rgba(34, 27, 5, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.traffic-cell.is-collision .traffic-player-car,
+.traffic-cell.is-collision .traffic-rival-car {
+  box-shadow:
+    0 0 0 4px rgba(255, 108, 87, 0.26),
+    0 12px 18px rgba(21, 30, 36, 0.28);
+}
+
+.traffic-road-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 22px;
+  text-align: center;
+  background: linear-gradient(180deg, rgba(24, 31, 37, 0.16) 0%, rgba(24, 31, 37, 0.52) 100%);
+  z-index: 4;
+}
+
+.traffic-road-overlay-title {
+  margin: 0;
+  color: #fff8ef;
+  font-size: clamp(1.35rem, 2vw, 1.7rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.traffic-road-overlay-text {
+  margin: 0;
+  max-width: 18rem;
+  color: rgba(255, 248, 239, 0.88);
+  font-size: 0.94rem;
+}
+
+.traffic-side {
+  display: grid;
+  gap: 12px;
+}
+
+.traffic-side-card {
+  border-radius: 24px;
+  padding: 16px;
+  background:
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.82), transparent 58%),
+    linear-gradient(180deg, rgba(255, 249, 238, 0.98) 0%, rgba(246, 236, 220, 0.98) 100%);
+  border: 1px solid rgba(209, 190, 158, 0.72);
+  box-shadow:
+    0 16px 28px rgba(162, 145, 110, 0.14),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+.traffic-side-card h4 {
+  margin: 0 0 8px;
+  font-size: 1.04rem;
+  color: #233042;
+}
+
+.traffic-mode-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.traffic-mode-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 30px;
+  padding: 0 11px;
+  border-radius: 999px;
+  background: rgba(62, 123, 245, 0.14);
+  color: #2e5fc9;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.traffic-mode-pill.is-soft {
+  background: rgba(85, 102, 128, 0.12);
+  color: #526276;
+}
+
+.traffic-side-note {
+  margin: 0 0 10px;
+  color: #61727f;
+  line-height: 1.4;
+  font-size: 0.92rem;
+}
+
+.traffic-primary-btn {
+  width: 100%;
+}
+
+.traffic-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.traffic-stat {
+  display: grid;
+  gap: 3px;
+  border-radius: 18px;
+  padding: 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(214, 199, 173, 0.72);
+}
+
+.traffic-stat.is-time,
+.traffic-stat.is-record {
+  background: rgba(235, 243, 255, 0.78);
+}
+
+.traffic-stat-label {
+  color: #71818e;
+  font-size: 0.76rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.traffic-stat-value {
+  color: #233042;
+  font-size: 1rem;
+  line-height: 1.15;
+}
+
+.traffic-control-row {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.traffic-control-btn {
+  min-height: 46px;
+  padding-inline: 10px;
+}
+
+.traffic-control-btn.is-primary {
+  font-weight: 800;
+}
+
+@media (max-width: 1100px) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-trafico {
+    width: min(100%, calc(100vw - 20px));
+  }
+
+  .traffic-shell {
+    width: min(100%, 560px);
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .traffic-road-frame {
+    width: min(100%, 420px);
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  .traffic-road {
+    height: clamp(430px, 68vh, 560px);
+    border-radius: 20px;
+  }
+
+  .traffic-grid {
+    inset: 12px 18px;
+    gap: 7px 9px;
+  }
+
+  .traffic-side {
+    grid-template-columns: 1fr;
+  }
+
+  .traffic-side-card {
+    border-radius: 20px;
+    padding: 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .traffic-shell {
+    width: min(100%, 100%);
+  }
+
+  .traffic-road-frame {
+    width: min(100%, 360px);
+    padding: 10px;
+    border-radius: 20px;
+  }
+
+  .traffic-road {
+    height: clamp(390px, 64vh, 500px);
+    border-radius: 18px;
+  }
+
+  .traffic-road-surface {
+    padding-inline: 18px;
+  }
+
+  .traffic-grid {
+    inset: 10px 18px;
+    gap: 6px 8px;
+  }
+
+  .traffic-player-car,
+  .traffic-rival-car {
+    inset: 12% 15%;
+    border-radius: 14px;
+  }
+
+  .traffic-road-overlay-title {
+    font-size: 1.24rem;
+  }
+
+  .traffic-road-overlay-text,
+  .traffic-side-note {
+    font-size: 0.88rem;
+  }
+
+  .traffic-stat-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .traffic-control-row {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .traffic-control-btn {
+    min-height: 42px;
+    padding-inline: 8px;
+    font-size: 0.88rem;
+  }
+}

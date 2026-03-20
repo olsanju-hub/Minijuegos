@@ -73,6 +73,36 @@ function normalizeActionPayload(target) {
     };
   }
 
+  if (actionType === "start-run") {
+    return {
+      type: "start-run"
+    };
+  }
+
+  if (actionType === "toggle-pause") {
+    return {
+      type: "toggle-pause"
+    };
+  }
+
+  if (actionType === "steer-left") {
+    return {
+      type: "steer-left"
+    };
+  }
+
+  if (actionType === "steer-right") {
+    return {
+      type: "steer-right"
+    };
+  }
+
+  if (actionType === "tick") {
+    return {
+      type: "tick"
+    };
+  }
+
   return null;
 }
 
@@ -85,6 +115,8 @@ export function createUI({ appElement, toastElement }) {
   let homeActiveIndex = 0;
   let homeDrawerOpen = false;
   let homeMotionDir = 0;
+  let trafficTickTimer = null;
+  let trafficTickDelay = null;
 
   function getHomeCatalog(vm) {
     return Array.isArray(vm?.games) ? vm.games : [];
@@ -276,6 +308,21 @@ export function createUI({ appElement, toastElement }) {
             <circle cx="1.5" cy="-1" r="0.35" fill="#111" />
           </g>
         </svg>
+      `,
+      trafico: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="5" y="4" width="38" height="40" rx="11" fill="#f5ebd8" stroke="#dbc5a0" stroke-width="1.5" />
+          <rect x="13" y="7" width="22" height="34" rx="8" fill="#39444c" />
+          <rect x="10" y="7" width="3" height="34" rx="2" fill="#d8c39d" />
+          <rect x="35" y="7" width="3" height="34" rx="2" fill="#d8c39d" />
+          <path d="M24 10V38" stroke="#f6efe1" stroke-width="2.2" stroke-dasharray="4 4" opacity="0.88" />
+          <rect x="16.5" y="10.5" width="6.8" height="11.5" rx="3" fill="#ff7c4d" />
+          <rect x="18.3" y="13" width="3.3" height="3.4" rx="1.1" fill="#e8f5ff" opacity="0.9" />
+          <rect x="24.5" y="23.5" width="7.6" height="12.6" rx="3.2" fill="#4f8eff" />
+          <rect x="26.6" y="26.3" width="3.4" height="3.7" rx="1.1" fill="#e8f5ff" opacity="0.92" />
+          <circle cx="17.5" cy="31.5" r="3.8" fill="#f4c446" stroke="#cd9821" stroke-width="1.4" />
+          <circle cx="17.5" cy="31.5" r="1.4" fill="#fff6d7" />
+        </svg>
       `
     };
 
@@ -344,6 +391,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Sube y esquiva",
           icon: "ES",
           energy: "Dados, rebotes y serpientes."
+        },
+        trafico: {
+          accent: "#62a8ff",
+          glow: "rgba(98, 168, 255, 0.22)",
+          description: "Carriles y reflejos",
+          icon: "TR",
+          energy: "Coches, monedas y escapadas."
         }
       };
 
@@ -357,7 +411,7 @@ export function createUI({ appElement, toastElement }) {
 
       const playersText =
         game && game.minPlayers === game.maxPlayers
-          ? `${game.minPlayers} jugadores`
+          ? `${game.minPlayers} ${game.minPlayers === 1 ? "jugador" : "jugadores"}`
           : `${game?.minPlayers || 2}-${game?.maxPlayers || 4} jugadores`;
 
       return {
@@ -478,6 +532,15 @@ export function createUI({ appElement, toastElement }) {
       `;
     }).join("");
 
+    const namesBlock = game.hidePlayerNames
+      ? ""
+      : `
+          <div class="block">
+            <h3 class="block-title">Nombres</h3>
+            <div class="fields-grid">${namesFields}</div>
+          </div>
+        `;
+
     const gameConfigPanel = game.renderConfigPanel
       ? game.renderConfigPanel({
           options: vm.config.gameOptions || {},
@@ -506,10 +569,7 @@ export function createUI({ appElement, toastElement }) {
             ${playersRow}
           </div>
 
-          <div class="block">
-            <h3 class="block-title">Nombres</h3>
-            <div class="fields-grid">${namesFields}</div>
-          </div>
+          ${namesBlock}
 
           ${gameConfigPanel}
 
@@ -695,6 +755,56 @@ export function createUI({ appElement, toastElement }) {
     document.body.classList.toggle("is-home-screen", vm.screen === "home");
     appElement.classList.toggle("app-shell-home", vm.screen === "home");
     appElement.innerHTML = html;
+    syncTrafficTickLoop(vm);
+  }
+
+  function clearTrafficTickLoop() {
+    if (trafficTickTimer) {
+      window.clearTimeout(trafficTickTimer);
+      trafficTickTimer = null;
+    }
+    trafficTickDelay = null;
+  }
+
+  function syncTrafficTickLoop(vm) {
+    const shouldRun =
+      vm?.screen === "game" &&
+      vm?.game?.id === "trafico" &&
+      vm?.session?.state?.status === "playing" &&
+      typeof onAction === "function";
+
+    if (!shouldRun) {
+      clearTrafficTickLoop();
+      return;
+    }
+
+    const delay = Math.max(220, Number(vm.session.state.tickMs) || 0);
+    if (trafficTickTimer && trafficTickDelay === delay) {
+      return;
+    }
+
+    clearTrafficTickLoop();
+    trafficTickDelay = delay;
+    trafficTickTimer = window.setTimeout(async () => {
+      trafficTickTimer = null;
+      trafficTickDelay = null;
+
+      if (
+        !currentVm ||
+        currentVm.screen !== "game" ||
+        currentVm.game?.id !== "trafico" ||
+        currentVm.session?.state?.status !== "playing" ||
+        typeof onAction !== "function"
+      ) {
+        return;
+      }
+
+      await onAction("game-action", {
+        action: {
+          type: "tick"
+        }
+      });
+    }, delay);
   }
 
   function showToast(message, duration = 2200) {
@@ -833,6 +943,42 @@ export function createUI({ appElement, toastElement }) {
 
       event.preventDefault();
       setHomeIndex(Number(target.dataset.homeIndex));
+    });
+
+    document.addEventListener("keydown", async (event) => {
+      const interactiveTarget = event.target;
+      if (
+        interactiveTarget instanceof HTMLElement &&
+        (interactiveTarget.tagName === "INPUT" ||
+          interactiveTarget.tagName === "TEXTAREA" ||
+          interactiveTarget.isContentEditable)
+      ) {
+        return;
+      }
+
+      if (!currentVm || currentVm.screen !== "game" || currentVm.game?.id !== "trafico" || !onAction) {
+        return;
+      }
+
+      const status = currentVm.session?.state?.status;
+      let action = null;
+
+      if ((event.key === "ArrowLeft" || event.key.toLowerCase() === "a") && status === "playing") {
+        action = { type: "steer-left" };
+      } else if ((event.key === "ArrowRight" || event.key.toLowerCase() === "d") && status === "playing") {
+        action = { type: "steer-right" };
+      } else if ((event.key === " " || event.key === "Enter") && status === "ready") {
+        action = { type: "start-run" };
+      } else if ((event.key === " " || event.key.toLowerCase() === "p") && (status === "playing" || status === "paused")) {
+        action = { type: "toggle-pause" };
+      }
+
+      if (!action) {
+        return;
+      }
+
+      event.preventDefault();
+      await onAction("game-action", { action });
     });
 
     let swipeStartX = null;

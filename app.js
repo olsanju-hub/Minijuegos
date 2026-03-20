@@ -5,6 +5,7 @@ import { cuatroEnRayaGame } from "./games/cuatro-en-raya.js";
 import { damasGame } from "./games/damas.js";
 import { parchisGame } from "./games/parchis.js";
 import { escalerasSerpientesGame } from "./games/escaleras-serpientes.js";
+import { traficoGame } from "./games/trafico.js";
 
 const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
@@ -21,6 +22,7 @@ engine.registerGame(cuatroEnRayaGame);
 engine.registerGame(damasGame);
 engine.registerGame(parchisGame);
 engine.registerGame(escalerasSerpientesGame);
+engine.registerGame(traficoGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {

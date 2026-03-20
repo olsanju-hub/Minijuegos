@@ -1,4 +1,4 @@
-const CACHE_NAME = "minijuegos-shell-v9";
+const CACHE_NAME = "minijuegos-shell-v10";
 const SCOPE_URL = new URL(self.registration.scope);
 const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;
 const APP_SHELL = [
@@ -16,7 +16,8 @@ const APP_SHELL = [
   `${APP_BASE}games/cuatro-en-raya.js`,
   `${APP_BASE}games/damas.js`,
   `${APP_BASE}games/parchis.js`,
-  `${APP_BASE}games/escaleras-serpientes.js`
+  `${APP_BASE}games/escaleras-serpientes.js`,
+  `${APP_BASE}games/trafico.js`
 ];
 
 self.addEventListener("install", (event) => {
