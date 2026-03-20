@@ -5757,16 +5757,25 @@ body:not(.is-home-screen) .bg-layer {
   .parchis-shell {
     grid-template-columns: 1fr;
     width: min(860px, calc(100vw - 14px));
-    gap: 10px;
+    gap: 12px;
   }
 
   .parchis-side {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 8px;
+    grid-template-columns: 1fr;
+    gap: 10px;
   }
 
   .parchis-event-card {
     grid-column: 1 / -1;
+  }
+
+  .parchis-side-card {
+    border-radius: 18px;
+    padding: 12px;
+  }
+
+  .parchis-dice-grid {
+    gap: 10px;
   }
 
   .parchis-board {
@@ -7696,6 +7705,67 @@ body:not(.is-home-screen) .bg-layer {
   }
 }
 
+@media (max-width: 1024px) and (min-width: 761px) {
+  .app-shell.app-shell-home {
+    width: min(100%, calc(100% - 24px));
+  }
+
+  .home-family-hero {
+    border-radius: 30px;
+  }
+
+  .home-family-art {
+    height: clamp(230px, 32vh, 320px);
+  }
+
+  .home-games-heading {
+    max-width: calc(100% - 20px);
+  }
+
+  .home-games-title {
+    font-size: clamp(2.8rem, 7vw, 4.6rem);
+    transform: translateY(-8%);
+  }
+
+  .home-games-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .home-game-card {
+    padding: 12px;
+    gap: 10px;
+    border-radius: 24px;
+  }
+
+  .home-game-card-top {
+    justify-content: center;
+  }
+
+  .home-game-card-icon-button {
+    width: 52px;
+    height: 52px;
+    border-radius: 16px;
+  }
+
+  .home-game-card-players,
+  .home-game-card-subtitle,
+  .home-game-card-media {
+    display: none;
+  }
+
+  .home-game-card-copy {
+    gap: 0;
+    justify-items: center;
+    text-align: center;
+  }
+
+  .home-game-card-title {
+    font-size: 0.92rem;
+    line-height: 1.08;
+  }
+}
+
 @media (max-width: 760px) {
   .home-family-hero {
     border-radius: 28px;
@@ -8240,16 +8310,24 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 1080px) {
   .sns-shell {
-    width: min(820px, 100%);
+    width: min(860px, calc(100vw - 16px));
     grid-template-columns: 1fr;
+    gap: 14px;
   }
 
   .sns-board-frame {
     width: min(100%, 760px);
+    padding: 12px;
+    border-radius: 24px;
   }
 
   .sns-side {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .sns-side-card {
+    border-radius: 18px;
+    padding: 14px;
   }
 }
 
