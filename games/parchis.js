@@ -1002,12 +1002,17 @@ function renderDieFace(value, extraClass = "") {
   `;
 }
 
-function renderDie(value) {
+function getGhostDieValue(finalValue, tokenSeed) {
+  const fallback = ((Number(tokenSeed) || 0) % 6) + 1;
+  return fallback === finalValue ? (fallback % 6) + 1 : fallback;
+}
+
+function renderDie(value, ghostValue = 5) {
   return `
     <span class="parchis-die-cube" aria-hidden="true">
       <span class="parchis-die-cube-top"></span>
       ${renderDieFace(value, "parchis-die-face-final")}
-      ${renderDieFace(5, "parchis-die-face-ghost")}
+      ${renderDieFace(ghostValue, "parchis-die-face-ghost")}
     </span>
   `;
 }
@@ -1597,7 +1602,7 @@ export const parchisGame = {
         return `
           <div class="${dieClasses.join(" ")}">
             <span class="parchis-die-label">D${index + 1}</span>
-            ${renderDie(hasValue ? value : null)}
+            ${renderDie(hasValue ? value : null, getGhostDieValue(value, state.diceToken + index + 1))}
             <span class="parchis-die-status">${statusLabel}</span>
           </div>
         `;

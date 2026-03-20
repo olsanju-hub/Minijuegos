@@ -476,11 +476,16 @@ function renderDieFace(value, extraClass = "") {
   `;
 }
 
-function renderDie(value) {
+function getGhostDieValue(finalValue, tokenSeed) {
+  const fallback = ((Number(tokenSeed) || 0) % 6) + 1;
+  return fallback === finalValue ? (fallback % 6) + 1 : fallback;
+}
+
+function renderDie(value, ghostValue = 5) {
   return `
     <div class="sns-die-cube" aria-hidden="true">
       ${renderDieFace(value, "sns-die-face-final")}
-      ${renderDieFace(5, "sns-die-face-ghost")}
+      ${renderDieFace(ghostValue, "sns-die-face-ghost")}
     </div>
   `;
 }
@@ -801,7 +806,7 @@ export const escalerasSerpientesGame = {
         <aside class="sns-side">
           <article class="sns-side-card sns-die-card">
             <div class="sns-die ${state.showRollAnimation ? (state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b") : "is-settled"}">
-              ${renderDie(diceValue)}
+              ${renderDie(diceValue, getGhostDieValue(diceValue, state.diceToken + 2))}
             </div>
             <button
               class="btn btn-primary sns-roll-btn"

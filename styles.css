@@ -8634,3 +8634,254 @@ body:not(.is-home-screen) .bg-layer {
     padding: 1px 4px;
   }
 }
+
+/* Tablet sizing and dice animation visibility fixes */
+.game-screen-parchis .parchis-dice-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(88px, 1fr));
+  gap: 8px;
+  align-items: start;
+}
+
+.game-screen-parchis .parchis-die {
+  min-width: 0;
+  min-height: 116px;
+  padding: 8px 4px;
+}
+
+.game-screen-parchis .parchis-die-cube {
+  width: 60px;
+  height: 60px;
+  border-radius: 14px;
+  transform-origin: 50% 56%;
+}
+
+.game-screen-parchis .parchis-die-face {
+  inset: 12px;
+}
+
+.game-screen-parchis .parchis-die-pip {
+  width: 8px;
+  height: 8px;
+}
+
+.game-screen-parchis .parchis-die-label,
+.game-screen-parchis .parchis-die-status {
+  font-size: 0.62rem;
+}
+
+.game-screen-parchis .parchis-die.is-roll-a .parchis-die-cube {
+  animation: parchisDieRollAReal 420ms cubic-bezier(0.18, 0.8, 0.24, 1) both;
+}
+
+.game-screen-parchis .parchis-die.is-roll-b .parchis-die-cube {
+  animation: parchisDieRollBReal 420ms cubic-bezier(0.18, 0.8, 0.24, 1) both;
+}
+
+.game-screen-parchis .parchis-die.is-roll-a .parchis-die-face-final,
+.game-screen-parchis .parchis-die.is-roll-b .parchis-die-face-final {
+  animation: parchisDieRevealFace 420ms ease-out both;
+}
+
+.game-screen-parchis .parchis-die.is-roll-a .parchis-die-face-ghost,
+.game-screen-parchis .parchis-die.is-roll-b .parchis-die-face-ghost {
+  animation: parchisDieGhostFace 420ms ease-out both;
+}
+
+.sns-die.is-roll-a .sns-die-cube {
+  animation: snsDieRollA 420ms cubic-bezier(0.18, 0.8, 0.24, 1) both;
+}
+
+.sns-die.is-roll-b .sns-die-cube {
+  animation: snsDieRollB 420ms cubic-bezier(0.18, 0.8, 0.24, 1) both;
+}
+
+.sns-die.is-roll-a .sns-die-face-final,
+.sns-die.is-roll-b .sns-die-face-final {
+  animation: snsDieRevealFace 420ms ease-out both;
+}
+
+.sns-die.is-roll-a .sns-die-face-ghost,
+.sns-die.is-roll-b .sns-die-face-ghost {
+  animation: snsDieGhostFace 420ms ease-out both;
+}
+
+@keyframes parchisDieRollAReal {
+  0% {
+    transform: rotateX(6deg) rotateY(-16deg) translateY(-8px) scale(0.92);
+  }
+
+  34% {
+    transform: rotateX(18deg) rotateY(14deg) translateY(5px) scale(1.05);
+  }
+
+  70% {
+    transform: rotateX(10deg) rotateY(-6deg) translateY(-2px) scale(0.98);
+  }
+
+  100% {
+    transform: rotateX(6deg) rotateY(-7deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes parchisDieRollBReal {
+  0% {
+    transform: rotateX(6deg) rotateY(16deg) translateY(-8px) scale(0.92);
+  }
+
+  34% {
+    transform: rotateX(18deg) rotateY(-14deg) translateY(5px) scale(1.05);
+  }
+
+  70% {
+    transform: rotateX(10deg) rotateY(6deg) translateY(-2px) scale(0.98);
+  }
+
+  100% {
+    transform: rotateX(6deg) rotateY(-7deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes parchisDieRevealFace {
+  0%,
+  64% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes parchisDieGhostFace {
+  0%,
+  64% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes snsDieRollA {
+  0% {
+    transform: rotate(-16deg) translateY(-8px) scale(0.92);
+  }
+
+  35% {
+    transform: rotate(12deg) translateY(5px) scale(1.05);
+  }
+
+  70% {
+    transform: rotate(-7deg) translateY(-2px) scale(0.98);
+  }
+
+  100% {
+    transform: rotate(0deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes snsDieRollB {
+  0% {
+    transform: rotate(16deg) translateY(-8px) scale(0.92);
+  }
+
+  35% {
+    transform: rotate(-12deg) translateY(5px) scale(1.05);
+  }
+
+  70% {
+    transform: rotate(7deg) translateY(-2px) scale(0.98);
+  }
+
+  100% {
+    transform: rotate(0deg) translateY(0) scale(1);
+  }
+}
+
+@keyframes snsDieRevealFace {
+  0%,
+  64% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes snsDieGhostFace {
+  0%,
+  64% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1100px) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-parchis,
+  .app-shell:not(.app-shell-home) .screen.game-screen-escaleras-serpientes {
+    width: min(900px, calc(100vw - 28px));
+  }
+
+  .game-screen-parchis .parchis-shell {
+    width: min(760px, calc(100vw - 34px));
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .game-screen-parchis .parchis-board-frame {
+    width: min(100%, 650px);
+    padding: 6px;
+  }
+
+  .game-screen-parchis .parchis-piece {
+    width: min(74%, clamp(14px, 2vw, 20px));
+    height: min(74%, clamp(14px, 2vw, 20px));
+    font-size: 0.5rem;
+  }
+
+  .game-screen-parchis .parchis-home-slot .parchis-piece,
+  .game-screen-parchis .parchis-goal-slot .parchis-piece {
+    width: min(68%, clamp(12px, 1.7vw, 16px));
+    height: min(68%, clamp(12px, 1.7vw, 16px));
+  }
+
+  .game-screen-parchis .parchis-track-cell::after {
+    font-size: clamp(6px, 1vw, 8px);
+  }
+
+  .game-screen-parchis .parchis-side-card {
+    padding: 12px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-shell {
+    width: min(760px, calc(100vw - 34px));
+    gap: 12px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-board-frame {
+    width: min(100%, 620px);
+    padding: 10px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-die {
+    width: 82px;
+    height: 82px;
+    margin-bottom: 10px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-die-cube {
+    width: 60px;
+    height: 60px;
+    border-radius: 15px;
+  }
+
+  .game-screen-escaleras-serpientes .sns-side-card {
+    padding: 14px;
+  }
+}
