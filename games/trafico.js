@@ -13,7 +13,9 @@ const COLLISION_BAND = 0.11;
 const PICKUP_BAND = 0.1;
 const MAX_FRAME_DELTA_MS = 64;
 const ROAD_SCROLL_PX_PER_STEP = 96;
-const TRAJECTORY_LOOKAHEAD_STEPS = 11;
+const TRAJECTORY_SLICE_DISTANCE = STEP_DISTANCE / 4;
+const TRAJECTORY_LOOKAHEAD_DISTANCE = PLAYER_CENTER_Y - SPAWN_Y + TRUCK_HEIGHT + STEP_DISTANCE;
+const TRAJECTORY_BUFFER_Y = 0.028;
 const TRUCK_SPAWN_CHANCE = 0.16;
 const TRUCK_MIN_DIFFICULTY = 2;
 
@@ -201,30 +203,55 @@ function computeTickMs(distance) {
   };
 }
 
-function projectedThreat(entity, futureStep) {
+function isValidLane(lane) {
+  return lane >= 0 && lane < LANE_COUNT;
+}
+
+function threatBand(entity) {
+  const extraSize = Math.max(0, entityHeight(entity) - RIVAL_HEIGHT);
+  return COLLISION_BAND + TRAJECTORY_BUFFER_Y + extraSize * 0.4;
+}
+
+function projectedThreat(entity, distanceOffset) {
   if (entity.type !== "rival") {
     return false;
   }
-  const futureCenter = entityCenterY(entity) + futureStep * STEP_DISTANCE;
-  return Math.abs(futureCenter - playerCenterY()) <= COLLISION_BAND;
+  const futureCenter = entityCenterY(entity) + distanceOffset;
+  return Math.abs(futureCenter - playerCenterY()) <= threatBand(entity);
+}
+
+function blockedLanesAtOffset(entities, distanceOffset) {
+  return new Set(
+    entities
+      .filter((entity) => projectedThreat(entity, distanceOffset))
+      .map((entity) => entity.lane)
+  );
 }
 
 function buildReachableLanes(entities, startLane) {
-  let reachable = new Set([startLane]);
+  const initialBlocked = blockedLanesAtOffset(entities, 0);
+  let reachable = new Set(
+    [startLane - 1, startLane, startLane + 1].filter((lane) => isValidLane(lane) && !initialBlocked.has(lane))
+  );
+
+  if (reachable.size === 0) {
+    return null;
+  }
 
   // Valida una pequeña trayectoria real: desde la posicion actual o una alcanzable
-  // inmediatamente hasta que el nuevo rival entra en la zona de riesgo del jugador.
-  for (let futureStep = 1; futureStep <= TRAJECTORY_LOOKAHEAD_STEPS; futureStep += 1) {
-    const blocked = new Set(
-      entities
-        .filter((entity) => projectedThreat(entity, futureStep))
-        .map((entity) => entity.lane)
-    );
+  // inmediatamente hasta que los nuevos rivales pasan por la zona del jugador.
+  const totalSlices = Math.ceil(TRAJECTORY_LOOKAHEAD_DISTANCE / TRAJECTORY_SLICE_DISTANCE);
+  for (let slice = 1; slice <= totalSlices; slice += 1) {
+    const blocked = blockedLanesAtOffset(entities, slice * TRAJECTORY_SLICE_DISTANCE);
+
+    if (blocked.size >= LANE_COUNT) {
+      return null;
+    }
 
     const next = new Set();
     for (const lane of reachable) {
       for (const candidate of [lane - 1, lane, lane + 1]) {
-        if (candidate < 0 || candidate >= LANE_COUNT) {
+        if (!isValidLane(candidate)) {
           continue;
         }
         if (!blocked.has(candidate)) {
