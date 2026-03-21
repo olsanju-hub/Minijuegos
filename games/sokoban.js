@@ -151,8 +151,8 @@ const SOKOBAN_STYLES = String.raw`
   display: block;
 }
 
-.game-screen-sokoban .actions-bottom {
-  display: none;
+.app-shell:not(.app-shell-home) .game-screen-sokoban .actions-bottom {
+  display: none !important;
 }
 
 .sokoban-shell {
@@ -375,6 +375,7 @@ const SOKOBAN_STYLES = String.raw`
   gap: 0;
   position: relative;
   width: min(100%, calc((var(--sokoban-cols) * var(--sokoban-cell-size)) + ((var(--sokoban-cols) - 1) * var(--sokoban-gap))));
+  height: calc((var(--sokoban-rows) * var(--sokoban-cell-size)) + ((var(--sokoban-rows) - 1) * var(--sokoban-gap)));
   margin: 0 auto;
   z-index: 1;
 }
@@ -382,9 +383,11 @@ const SOKOBAN_STYLES = String.raw`
 .sokoban-grid,
 .sokoban-entities {
   display: grid;
-  grid-template-columns: repeat(var(--sokoban-cols), minmax(0, 1fr));
+  grid-template-columns: repeat(var(--sokoban-cols), minmax(0, var(--sokoban-cell-size)));
+  grid-template-rows: repeat(var(--sokoban-rows), minmax(0, var(--sokoban-cell-size)));
   gap: var(--sokoban-gap);
   width: 100%;
+  height: 100%;
 }
 
 .sokoban-grid {
@@ -401,7 +404,8 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-cell {
   position: relative;
-  aspect-ratio: 1;
+  width: 100%;
+  height: 100%;
   border-radius: 14px;
   overflow: hidden;
 }
@@ -469,6 +473,8 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-piece {
   position: relative;
+  width: 100%;
+  height: 100%;
   display: grid;
   place-items: center;
   animation: sokobanEntityStep 150ms cubic-bezier(0.24, 0.8, 0.26, 1);
@@ -1463,7 +1469,7 @@ function renderBoardGrid(state, canAct) {
         class="sokoban-board"
         role="img"
         aria-label="${escapeHtml(summary)}"
-        style="--sokoban-cols:${state.cols};"
+        style="--sokoban-cols:${state.cols};--sokoban-rows:${state.rows};"
       >
         <div class="sokoban-grid">
           ${Array.from({ length: state.rows * state.cols }, (_, index) => renderBoardCell(index, state, boxSet)).join("")}
