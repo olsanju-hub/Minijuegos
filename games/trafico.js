@@ -280,7 +280,7 @@ function resolveTrafficProfile() {
     return {
       id: "tablet",
       laneCount: TABLET_LANE_COUNT,
-      roadMaxWidth: 468
+      roadMaxWidth: 484
     };
   }
 

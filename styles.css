@@ -9482,6 +9482,11 @@ body:not(.is-home-screen) .bg-layer {
   border: 1px solid rgba(40, 50, 56, 0.9);
 }
 
+.traffic-shell[data-traffic-profile="mobile"] .traffic-road,
+.traffic-shell[data-traffic-profile="tablet"] .traffic-road {
+  touch-action: none;
+}
+
 .traffic-road-surface {
   position: absolute;
   inset: 0;
@@ -10012,19 +10017,19 @@ body:not(.is-home-screen) .bg-layer {
   font-weight: 800;
 }
 
-@media (max-width: 1100px) {
+@media (min-width: 761px) and (max-width: 1100px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-trafico {
     width: min(100%, calc(100vw - 20px));
   }
 
   .traffic-shell {
-    width: min(100%, calc(var(--traffic-road-max, 468px) + 2px));
-    grid-template-columns: 1fr;
-    gap: 10px;
+    width: min(100%, calc(var(--traffic-road-max, 484px) + 226px + 12px));
+    grid-template-columns: minmax(0, var(--traffic-road-max, 484px)) minmax(210px, 226px);
+    gap: 12px;
   }
 
   .traffic-road-frame {
-    width: min(100%, var(--traffic-road-max, 468px));
+    width: min(100%, var(--traffic-road-max, 484px));
     padding: 10px;
     border-radius: 22px;
   }
@@ -10032,17 +10037,71 @@ body:not(.is-home-screen) .bg-layer {
   .traffic-road {
     --traffic-road-pad-y: 12px;
     --traffic-road-pad-x: 18px;
-    height: clamp(380px, 56vh, 520px);
+    height: clamp(388px, 50vh, 500px);
     border-radius: 18px;
   }
 
   .traffic-side-card {
     border-radius: 18px;
-    padding: 14px;
+    padding: 12px;
   }
 
   .traffic-hud-main {
-    grid-template-columns: minmax(0, 1fr) minmax(156px, 176px);
+    grid-template-columns: minmax(0, 1fr) minmax(122px, 132px);
+    gap: 8px;
+  }
+
+  .traffic-live-grid {
+    gap: 5px;
+  }
+
+  .traffic-live-grid .traffic-stat {
+    padding: 7px 8px;
+    border-radius: 12px;
+  }
+
+  .traffic-live-grid .traffic-stat-label {
+    font-size: 0.62rem;
+  }
+
+  .traffic-live-grid .traffic-stat-value {
+    font-size: 0.84rem;
+  }
+
+  .traffic-fallback-block {
+    display: none;
+  }
+
+  .traffic-primary-btn {
+    min-height: 40px;
+  }
+
+  .traffic-secondary-card {
+    gap: 6px;
+    padding-top: 9px;
+  }
+
+  .traffic-secondary-head .traffic-side-note {
+    display: none;
+  }
+
+  .traffic-secondary-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+  }
+
+  .traffic-secondary-grid .traffic-stat {
+    min-width: 0;
+    padding: 7px 8px;
+    border-radius: 11px;
+  }
+
+  .traffic-secondary-grid .traffic-stat-label {
+    font-size: 0.58rem;
+  }
+
+  .traffic-secondary-grid .traffic-stat-value {
+    font-size: 0.76rem;
   }
 
   .app-shell:not(.app-shell-home) .game-screen-trafico .actions-bottom {
@@ -10055,11 +10114,11 @@ body:not(.is-home-screen) .bg-layer {
   .app-shell:not(.app-shell-home) .game-screen-trafico .actions-bottom .btn {
     width: 100%;
     min-width: 0;
-    min-height: 40px;
-    height: 40px;
-    padding: 0 12px;
+    min-height: 38px;
+    height: 38px;
+    padding: 0 10px;
     border-radius: 14px;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
   }
 }
 
