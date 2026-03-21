@@ -370,6 +370,9 @@ const SOKOBAN_STYLES = String.raw`
 .sokoban-board {
   --sokoban-gap: clamp(3px, 0.55vw, 6px);
   --sokoban-cell-size: clamp(44px, 6.8vw, 84px);
+  display: block;
+  grid-template-columns: none;
+  gap: 0;
   position: relative;
   width: min(100%, calc((var(--sokoban-cols) * var(--sokoban-cell-size)) + ((var(--sokoban-cols) - 1) * var(--sokoban-gap))));
   margin: 0 auto;
@@ -381,6 +384,7 @@ const SOKOBAN_STYLES = String.raw`
   display: grid;
   grid-template-columns: repeat(var(--sokoban-cols), minmax(0, 1fr));
   gap: var(--sokoban-gap);
+  width: 100%;
 }
 
 .sokoban-grid {
