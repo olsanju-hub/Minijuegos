@@ -62,6 +62,27 @@ function normalizeActionPayload(target) {
     };
   }
 
+  if (actionType === "restart-level") {
+    return {
+      type: "restart-level",
+      nowMs: Date.now()
+    };
+  }
+
+  if (actionType === "next-level") {
+    return {
+      type: "next-level",
+      nowMs: Date.now()
+    };
+  }
+
+  if (actionType === "restart-campaign") {
+    return {
+      type: "restart-campaign",
+      nowMs: Date.now()
+    };
+  }
+
   if (actionType === "drop") {
     return {
       type: "drop",
