@@ -1,4 +1,4 @@
-const CACHE_NAME = "minijuegos-shell-v13";
+const CACHE_NAME = "minijuegos-shell-v14";
 const UPDATE_MESSAGE_TYPE = "minijuegos:sw-activated";
 const SCOPE_URL = new URL(self.registration.scope);
 const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;
@@ -20,7 +20,8 @@ const APP_SHELL = [
   `${APP_BASE}games/parchis.js`,
   `${APP_BASE}games/escaleras-serpientes.js`,
   `${APP_BASE}games/trafico.js`,
-  `${APP_BASE}games/buscaminas.js`
+  `${APP_BASE}games/buscaminas.js`,
+  `${APP_BASE}games/sokoban.js`
 ];
 
 const NETWORK_FIRST_PATHS = new Set([

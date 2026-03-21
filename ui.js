@@ -47,6 +47,21 @@ function normalizeActionPayload(target) {
     };
   }
 
+  if (actionType === "move-direction") {
+    return {
+      type: "move",
+      direction: String(target.dataset.direction || ""),
+      nowMs: Date.now()
+    };
+  }
+
+  if (actionType === "undo-move") {
+    return {
+      type: "undo",
+      nowMs: Date.now()
+    };
+  }
+
   if (actionType === "drop") {
     return {
       type: "drop",
@@ -372,6 +387,50 @@ export function createUI({ appElement, toastElement }) {
           <text x="30" y="30.5" text-anchor="middle" font-size="7.6" font-weight="800" fill="#cc553f">⚑</text>
           <text x="15" y="30.5" text-anchor="middle" font-size="7.1" font-weight="800" fill="#6f5137">✹</text>
         </svg>
+      `,
+      sokoban: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="sokGlyphFrame" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fff9ef" />
+              <stop offset="100%" stop-color="#f1e1c5" />
+            </linearGradient>
+            <linearGradient id="sokGlyphBoard" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#f3e4ca" />
+              <stop offset="100%" stop-color="#e3ccaa" />
+            </linearGradient>
+            <linearGradient id="sokGlyphWall" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#d7ad80" />
+              <stop offset="100%" stop-color="#b88453" />
+            </linearGradient>
+            <linearGradient id="sokGlyphBox" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#efbe76" />
+              <stop offset="100%" stop-color="#cf8741" />
+            </linearGradient>
+            <linearGradient id="sokGlyphPlayer" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#87b8ff" />
+              <stop offset="100%" stop-color="#4f82ef" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="url(#sokGlyphFrame)" stroke="#dcc5a3" stroke-width="1.5" />
+          <rect x="9" y="9" width="30" height="30" rx="9" fill="#f8efdf" stroke="#dfc8a6" stroke-width="1" />
+          <rect x="12" y="12" width="24" height="24" rx="7" fill="url(#sokGlyphBoard)" stroke="#d1b185" stroke-width="1" />
+          <g fill="url(#sokGlyphWall)">
+            <rect x="14" y="14" width="6" height="6" rx="2" />
+            <rect x="21" y="14" width="6" height="6" rx="2" />
+            <rect x="28" y="14" width="6" height="6" rx="2" />
+            <rect x="14" y="21" width="6" height="6" rx="2" />
+            <rect x="28" y="21" width="6" height="6" rx="2" />
+            <rect x="14" y="28" width="6" height="6" rx="2" />
+          </g>
+          <rect x="21" y="21" width="6" height="6" rx="2" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.9" />
+          <rect x="21" y="28" width="6" height="6" rx="2" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.9" />
+          <circle cx="24" cy="24" r="3.3" fill="none" stroke="#63aa70" stroke-width="1.8" />
+          <rect x="24.5" y="20.5" width="9" height="9" rx="2.4" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
+          <path d="M24.5 25H33.5M29 20.5V29.5" stroke="rgba(255,255,255,0.34)" stroke-width="0.9" />
+          <circle cx="30.5" cy="31.5" r="4.5" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.2" />
+          <circle cx="29.3" cy="29.8" r="1.2" fill="#eef6ff" />
+        </svg>
       `
     };
 
@@ -454,6 +513,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Minas y banderas",
           icon: "BM",
           energy: "Pistas cortas y riesgo medido."
+        },
+        sokoban: {
+          accent: "#e39b57",
+          glow: "rgba(227, 155, 87, 0.24)",
+          description: "Cajas y objetivos",
+          icon: "SK",
+          energy: "Empuja, ordena y no te encierres."
         }
       };
 
@@ -1151,7 +1217,27 @@ export function createUI({ appElement, toastElement }) {
         return;
       }
 
-      if (!currentVm || currentVm.screen !== "game" || currentVm.game?.id !== "trafico" || !onAction) {
+      if (!currentVm || currentVm.screen !== "game" || !onAction) {
+        return;
+      }
+
+      if (typeof currentVm.game?.getKeyboardAction === "function") {
+        const action = currentVm.game.getKeyboardAction({
+          event,
+          state: currentVm.session?.state || null,
+          players: currentVm.session?.players || [],
+          options: currentVm.session?.options || {},
+          canAct: currentVm.canAct
+        });
+
+        if (action) {
+          event.preventDefault();
+          await onAction("game-action", { action });
+          return;
+        }
+      }
+
+      if (currentVm.game?.id !== "trafico") {
         return;
       }
 
