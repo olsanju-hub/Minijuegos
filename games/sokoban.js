@@ -477,6 +477,9 @@ const SOKOBAN_STYLES = String.raw`
   height: 100%;
   display: grid;
   place-items: center;
+  overflow: hidden;
+  border-radius: clamp(11px, 1.2vw, 14px);
+  will-change: transform;
   animation: sokobanEntityStep 150ms cubic-bezier(0.24, 0.8, 0.26, 1);
 }
 
@@ -499,26 +502,28 @@ const SOKOBAN_STYLES = String.raw`
 @keyframes sokobanEntitySlide {
   from {
     transform: translate(
-      calc(var(--sokoban-delta-x, 0) * (100% + var(--sokoban-gap))),
-      calc(var(--sokoban-delta-y, 0) * (100% + var(--sokoban-gap)))
+      calc(var(--sokoban-delta-x, 0) * 15%),
+      calc(var(--sokoban-delta-y, 0) * 15%)
     );
+    opacity: 0.94;
   }
 
   to {
     transform: translate(0, 0);
+    opacity: 1;
   }
 }
 
 .sokoban-box {
-  width: 72%;
-  height: 72%;
-  border-radius: 12px;
+  width: 64%;
+  height: 64%;
+  border-radius: 10px;
   border: 1px solid rgba(160, 103, 48, 0.94);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 18%),
     linear-gradient(135deg, #f1bf76 0%, #ca843d 100%);
   box-shadow:
-    0 10px 16px rgba(92, 62, 30, 0.18),
+    0 6px 10px rgba(92, 62, 30, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
   position: relative;
 }
@@ -565,14 +570,14 @@ const SOKOBAN_STYLES = String.raw`
     linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 18%),
     linear-gradient(135deg, #d8cb71 0%, #7faf5a 100%);
   box-shadow:
-    0 10px 18px rgba(90, 129, 70, 0.18),
+    0 6px 12px rgba(90, 129, 70, 0.14),
     0 0 0 3px rgba(130, 184, 103, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
 }
 
 .sokoban-player {
-  width: 66%;
-  height: 66%;
+  width: 58%;
+  height: 58%;
   display: grid;
   place-items: center;
 }
@@ -586,13 +591,13 @@ const SOKOBAN_STYLES = String.raw`
     radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.84) 0 12%, rgba(255, 255, 255, 0) 13%),
     linear-gradient(180deg, #8dbcff 0%, #4f81ef 100%);
   box-shadow:
-    0 10px 16px rgba(49, 92, 192, 0.2),
+    0 6px 10px rgba(49, 92, 192, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.52);
 }
 
 .sokoban-piece.is-targeted .sokoban-player-core {
   box-shadow:
-    0 10px 16px rgba(49, 92, 192, 0.2),
+    0 6px 10px rgba(49, 92, 192, 0.16),
     0 0 0 4px rgba(103, 170, 115, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.56);
 }
