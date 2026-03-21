@@ -143,7 +143,7 @@ const SOKOBAN_STYLE_ID = "minijuegos-sokoban-phase";
 
 const SOKOBAN_STYLES = String.raw`
 .app-shell:not(.app-shell-home) .screen.game-screen-sokoban {
-  width: min(1120px, 100%);
+  width: min(1220px, 100%);
   gap: 10px;
 }
 
@@ -156,7 +156,7 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-shell {
-  width: min(100%, 1024px);
+  width: min(100%, 1120px);
   margin: 0 auto;
   display: grid;
   gap: 10px;
@@ -327,6 +327,8 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-board-frame {
   position: relative;
+  display: grid;
+  place-items: center;
   padding: clamp(8px, 1.4vw, 16px);
   overflow: hidden;
   transition:
@@ -367,9 +369,10 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-board {
   --sokoban-gap: clamp(3px, 0.55vw, 6px);
-  --sokoban-cell-size: clamp(42px, 6vw, 66px);
+  --sokoban-cell-size: clamp(44px, 6.8vw, 84px);
   position: relative;
   width: min(100%, calc((var(--sokoban-cols) * var(--sokoban-cell-size)) + ((var(--sokoban-cols) - 1) * var(--sokoban-gap))));
+  margin: 0 auto;
   z-index: 1;
 }
 
@@ -751,9 +754,21 @@ const SOKOBAN_STYLES = String.raw`
   font-weight: 800;
 }
 
-@media (min-width: 901px) {
+@media (min-width: 761px) and (max-width: 1099px) {
   .sokoban-shell {
-    grid-template-columns: minmax(0, 1fr) 282px;
+    width: min(100%, 900px);
+  }
+
+  .sokoban-board {
+    --sokoban-gap: clamp(3px, 0.45vw, 5px);
+    --sokoban-cell-size: clamp(36px, calc((100vw - 92px) / var(--sokoban-cols)), 80px);
+  }
+}
+
+@media (min-width: 1100px) {
+  .sokoban-shell {
+    width: min(100%, 1180px);
+    grid-template-columns: minmax(0, 1fr) 258px;
     grid-template-areas:
       "stage hud"
       "stage controls";
@@ -841,7 +856,7 @@ const SOKOBAN_STYLES = String.raw`
 
   .sokoban-board {
     --sokoban-gap: clamp(2px, 0.45vw, 4px);
-    --sokoban-cell-size: clamp(28px, 7.8vw, 54px);
+    --sokoban-cell-size: clamp(27px, calc((100vw - 56px) / var(--sokoban-cols)), 56px);
   }
 
   .sokoban-cell {
