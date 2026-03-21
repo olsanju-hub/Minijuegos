@@ -161,6 +161,12 @@ export function createUI({ appElement, toastElement }) {
   let homeSwipeStartX = null;
   let trafficSwipeState = null;
   let trafficSwipeInFlight = false;
+  let gameSwipeState = null;
+  let gameSwipeInFlight = false;
+
+  function isCompactTouchViewport() {
+    return window.matchMedia("(max-width: 760px)").matches;
+  }
 
   function getHomeCatalog(vm) {
     return Array.isArray(vm?.games) ? vm.games : [];
@@ -956,6 +962,10 @@ export function createUI({ appElement, toastElement }) {
     trafficSwipeState = null;
   }
 
+  function clearGameSwipeState() {
+    gameSwipeState = null;
+  }
+
   function queueTrafficFrame() {
     if (trafficTickFrame || !shouldRunTrafficLoop()) {
       return;
@@ -1313,6 +1323,23 @@ export function createUI({ appElement, toastElement }) {
             startY: touch.clientY
           };
         }
+
+        const gameSwipeZone = event.target.closest("[data-game-swipe-zone]");
+        if (
+          gameSwipeZone &&
+          currentVm &&
+          currentVm.screen === "game" &&
+          typeof currentVm.game?.getTouchAction === "function" &&
+          onAction &&
+          isCompactTouchViewport()
+        ) {
+          gameSwipeState = {
+            identifier: touch.identifier,
+            gameId: currentVm.game.id,
+            startX: touch.clientX,
+            startY: touch.clientY
+          };
+        }
       }
     });
 
@@ -1329,46 +1356,91 @@ export function createUI({ appElement, toastElement }) {
       homeSwipeStartX = null;
 
       if (
-        !trafficSwipeState ||
+        trafficSwipeState &&
+        currentVm &&
+        currentVm.screen === "game" &&
+        currentVm.game?.id === "trafico" &&
+        onAction
+      ) {
+        const changedTouches = Array.from(event.changedTouches || []);
+        const touch = changedTouches.find((item) => item.identifier === trafficSwipeState.identifier) || changedTouches[0];
+        const startX = trafficSwipeState.startX;
+        const startY = trafficSwipeState.startY;
+        clearTrafficSwipeState();
+
+        if (!touch) {
+          return;
+        }
+
+        const deltaX = touch.clientX - startX;
+        const deltaY = touch.clientY - startY;
+
+        if (Math.abs(deltaX) < 32 || Math.abs(deltaX) <= Math.abs(deltaY) || trafficSwipeInFlight) {
+          return;
+        }
+
+        trafficSwipeInFlight = true;
+        Promise.resolve(
+          onAction("game-action", {
+            action: {
+              type: deltaX < 0 ? "steer-left" : "steer-right"
+            }
+          })
+        ).finally(() => {
+          trafficSwipeInFlight = false;
+        });
+      } else {
+        clearTrafficSwipeState();
+      }
+
+      if (
+        !gameSwipeState ||
         !currentVm ||
         currentVm.screen !== "game" ||
-        currentVm.game?.id !== "trafico" ||
-        !onAction
+        currentVm.game?.id !== gameSwipeState.gameId ||
+        typeof currentVm.game?.getTouchAction !== "function" ||
+        !onAction ||
+        !isCompactTouchViewport()
       ) {
-        clearTrafficSwipeState();
+        clearGameSwipeState();
         return;
       }
 
-      const changedTouches = Array.from(event.changedTouches || []);
-      const touch = changedTouches.find((item) => item.identifier === trafficSwipeState.identifier) || changedTouches[0];
-      if (!touch) {
-        clearTrafficSwipeState();
+      const gameTouches = Array.from(event.changedTouches || []);
+      const gameTouch = gameTouches.find((item) => item.identifier === gameSwipeState.identifier) || gameTouches[0];
+      if (!gameTouch) {
+        clearGameSwipeState();
         return;
       }
 
-      const deltaX = touch.clientX - trafficSwipeState.startX;
-      const deltaY = touch.clientY - trafficSwipeState.startY;
-      clearTrafficSwipeState();
+      const action = currentVm.game.getTouchAction({
+        startX: gameSwipeState.startX,
+        startY: gameSwipeState.startY,
+        endX: gameTouch.clientX,
+        endY: gameTouch.clientY,
+        state: currentVm.session?.state || null,
+        players: currentVm.session?.players || [],
+        options: currentVm.session?.options || {},
+        canAct: currentVm.canAct
+      });
+      clearGameSwipeState();
 
-      if (Math.abs(deltaX) < 32 || Math.abs(deltaX) <= Math.abs(deltaY) || trafficSwipeInFlight) {
+      if (!action || gameSwipeInFlight) {
         return;
       }
 
-      trafficSwipeInFlight = true;
+      gameSwipeInFlight = true;
       Promise.resolve(
-        onAction("game-action", {
-          action: {
-            type: deltaX < 0 ? "steer-left" : "steer-right"
-          }
-        })
+        onAction("game-action", { action })
       ).finally(() => {
-        trafficSwipeInFlight = false;
+        gameSwipeInFlight = false;
       });
     });
 
     document.addEventListener("touchcancel", () => {
       homeSwipeStartX = null;
       clearTrafficSwipeState();
+      clearGameSwipeState();
     });
   }
 

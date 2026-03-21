@@ -10388,6 +10388,10 @@ body:not(.is-home-screen) .bg-layer {
     transform var(--ui-speed) var(--ui-ease);
 }
 
+.sokoban-board-frame[data-game-swipe-zone] {
+  touch-action: manipulation;
+}
+
 .sokoban-board-frame::before {
   content: "";
   position: absolute;
@@ -10714,97 +10718,137 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 760px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-sokoban {
-    width: min(100%, calc(100vw - 12px));
-    gap: 9px;
+    width: min(100%, calc(100vw - 10px));
+    gap: 8px;
+  }
+
+  .app-shell:not(.app-shell-home) .game-screen-sokoban .topbar {
+    padding: 12px;
+  }
+
+  .app-shell:not(.app-shell-home) .game-screen-sokoban .board-wrap {
+    padding: 0;
   }
 
   .sokoban-shell {
-    width: min(100%, 680px);
-    gap: 9px;
+    width: min(100%, 720px);
+    gap: 8px;
   }
 
   .sokoban-hud {
-    padding: 11px;
-    gap: 7px;
-  }
-
-  .sokoban-mode-pill {
-    min-height: 24px;
-    padding: 0 9px;
-    font-size: 0.64rem;
-  }
-
-  .sokoban-level-subtitle {
-    font-size: 0.78rem;
-  }
-
-  .sokoban-note {
-    font-size: 0.84rem;
-  }
-
-  .sokoban-live-grid {
+    padding: 9px 10px;
     gap: 6px;
   }
 
-  .sokoban-stat {
-    padding: 7px 8px;
-    border-radius: 13px;
+  .sokoban-mode-row {
+    gap: 6px;
   }
 
-  .sokoban-stat-label {
+  .sokoban-mode-pill {
+    min-height: 22px;
+    padding: 0 8px;
     font-size: 0.62rem;
   }
 
+  .sokoban-level-subtitle {
+    font-size: 0.76rem;
+  }
+
+  .sokoban-note {
+    font-size: 0.79rem;
+    line-height: 1.32;
+  }
+
+  .sokoban-live-grid {
+    gap: 5px;
+  }
+
+  .sokoban-stat {
+    padding: 6px 7px;
+    border-radius: 12px;
+  }
+
+  .sokoban-stat-label {
+    font-size: 0.6rem;
+  }
+
   .sokoban-stat-value {
-    font-size: 0.88rem;
+    font-size: 0.84rem;
   }
 
   .sokoban-board-frame {
-    padding: 8px;
+    padding: 6px;
+    border-radius: 18px;
+  }
+
+  .sokoban-board-frame[data-game-swipe-zone] {
+    touch-action: none;
+    overscroll-behavior: contain;
+  }
+
+  .sokoban-board {
+    --sokoban-gap: clamp(3px, 0.8vw, 5px);
+    --sokoban-cell-size: clamp(48px, 12vw, 66px);
+  }
+
+  .sokoban-cell {
+    border-radius: clamp(10px, 2.2vw, 14px);
   }
 
   .sokoban-controls {
-    padding: 9px 10px;
-    gap: 7px;
+    padding: 8px 10px;
+    gap: 5px;
   }
 
   .sokoban-controls-head {
-    grid-template-columns: minmax(0, 1fr) auto;
-    gap: 5px;
-    align-items: center;
+    gap: 8px;
+    align-items: start;
   }
 
   .sokoban-controls-copy {
     gap: 2px;
   }
 
+  .sokoban-controls-title {
+    font-size: 0.88rem;
+  }
+
   .sokoban-controls-note,
   .sokoban-controls-hint {
-    font-size: 0.76rem;
+    font-size: 0.72rem;
+    line-height: 1.35;
   }
 
   .sokoban-control-pad {
-    width: min(100%, 180px);
-    gap: 5px;
+    display: none;
   }
 
   .sokoban-control-gap,
   .sokoban-control-btn {
-    min-height: 40px;
+    display: none;
   }
 
-  .sokoban-control-btn {
-    font-size: 0.96rem;
+  .sokoban-undo-btn {
+    min-width: 96px;
+    min-height: 34px;
+    height: 34px;
+    padding: 0 12px;
+    font-size: 0.78rem;
   }
 
   .app-shell:not(.app-shell-home) .game-screen-sokoban .actions-bottom {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
+    margin-top: 0;
   }
 
   .app-shell:not(.app-shell-home) .game-screen-sokoban .actions-bottom .btn {
+    width: 100%;
+    min-width: 0;
     min-height: 36px;
     height: 36px;
-    padding: 0 12px;
-    font-size: 0.82rem;
+    padding: 0 8px;
+    font-size: 0.76rem;
   }
 }

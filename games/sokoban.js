@@ -42,12 +42,13 @@ const LEVELS = [
     label: "Nivel 4",
     subtitle: "Esquina interna",
     board: [
-      "########",
-      "#  .   #",
-      "#  $   #",
-      "## #$@ #",
-      "#   .  #",
-      "########"
+      "#########",
+      "#   .   #",
+      "#   $   #",
+      "# # #$  #",
+      "#  .@   #",
+      "#       #",
+      "#########"
     ]
   },
   {
@@ -55,12 +56,13 @@ const LEVELS = [
     label: "Nivel 5",
     subtitle: "Cierre en cadena",
     board: [
-      "#########",
-      "#   .   #",
-      "#   $   #",
-      "# .$$@. #",
-      "#       #",
-      "#########"
+      "##########",
+      "#   .    #",
+      "#  $$    #",
+      "# # .@$  #",
+      "#   .    #",
+      "#        #",
+      "##########"
     ]
   }
 ];
@@ -94,11 +96,6 @@ function normalizeLevelId(value) {
 
 function getLevelMeta(levelId) {
   return LEVEL_BY_ID.get(normalizeLevelId(levelId));
-}
-
-function getNextLevelMeta(levelId) {
-  const current = getLevelMeta(levelId);
-  return LEVELS[current.index + 1] ? getLevelMeta(LEVELS[current.index + 1].id) : null;
 }
 
 function cellIndex(row, col, cols) {
@@ -172,20 +169,6 @@ function buildLevelState(levelId) {
   };
 }
 
-function buildNextLevelState(currentState) {
-  const nextLevel = getNextLevelMeta(currentState.levelId);
-  if (!nextLevel) {
-    return null;
-  }
-
-  const nextState = buildLevelState(nextLevel.id);
-  return {
-    ...nextState,
-    lastAction: "level-advance",
-    note: `${currentState.levelLabel} completado. Empieza ${nextLevel.label}.`
-  };
-}
-
 function snapshotState(state) {
   return {
     playerCell: state.playerCell,
@@ -207,11 +190,6 @@ function buildBlockedState(state, message) {
 
 function buildMoveState(state, nextPlayerCell, nextBoxes, message, lastAction) {
   const remainingGoals = countRemainingGoals(nextBoxes, state.targets);
-  const nextLevelState = remainingGoals === 0 ? buildNextLevelState(state) : null;
-  if (nextLevelState) {
-    return nextLevelState;
-  }
-
   const nextStatus = remainingGoals === 0 ? "won" : "playing";
 
   return {
@@ -415,7 +393,7 @@ function renderBoardGrid(state) {
       : `${state.levelLabel}. ${state.remainingGoals} ${state.remainingGoals === 1 ? "caja pendiente" : "cajas pendientes"}.`;
 
   return `
-    <div class="${boardClass}">
+    <div class="${boardClass}" data-game-swipe-zone="sokoban">
       <div
         class="sokoban-board"
         role="img"
@@ -446,11 +424,11 @@ function renderDirectionButton(direction, canAct) {
 function renderControls(state, canAct) {
   const controlsClass = `sokoban-controls card${state.status === "won" ? " is-complete" : ""}${state.lastAction === "blocked" ? " is-blocked" : ""}`;
   const title = state.status === "won" ? "Nivel resuelto" : "Mover";
-  const note = state.status === "won" ? "Tablero congelado hasta reiniciar" : "Flechas, WASD o táctil";
+  const note = state.status === "won" ? "Tablero congelado hasta reiniciar" : "Desliza en móvil o usa teclado";
   const hint =
     state.status === "won"
-      ? "Usa Reiniciar partida o Jugar otra vez para repetir la secuencia."
-      : "Deshaz si una caja queda mal colocada.";
+      ? "Usa Reiniciar partida o Jugar otra vez para repetir este nivel."
+      : "Desliza sobre el tablero. Deshaz si una caja queda mal colocada.";
 
   return `
     <section class="${controlsClass}">
@@ -513,7 +491,7 @@ export const sokobanGame = {
     { title: "Movimiento", text: "El jugador se mueve en cuatro direcciones cuando la siguiente celda está libre." },
     { title: "Empuje", text: "Solo puedes empujar una caja si la celda que queda detrás está libre." },
     { title: "Bloqueos", text: "Si hay pared, borde o una segunda caja detrás, el movimiento se bloquea." },
-    { title: "Control", text: "Puedes jugar con flechas, WASD, los botones táctiles y deshacer el último paso." }
+    { title: "Control", text: "Puedes jugar con flechas, WASD, deslizando sobre el tablero en móvil y deshacer el último paso." }
   ],
   getDefaultOptions() {
     return {
@@ -615,6 +593,28 @@ export const sokobanGame = {
 
     return null;
   },
+  getTouchAction({ startX, startY, endX, endY, canAct, state }) {
+    if (!canAct || !state || state.status === "won") {
+      return null;
+    }
+
+    const deltaX = endX - startX;
+    const deltaY = endY - startY;
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+    const majorAxis = Math.max(absX, absY);
+    const minorAxis = Math.min(absX, absY);
+
+    if (majorAxis < 34 || minorAxis > majorAxis * 0.72) {
+      return null;
+    }
+
+    if (absX > absY) {
+      return { type: "move", direction: deltaX < 0 ? "left" : "right" };
+    }
+
+    return { type: "move", direction: deltaY < 0 ? "up" : "down" };
+  },
   renderCardIllustration() {
     return `
       <div class="game-illustration" aria-hidden="true">
@@ -691,7 +691,7 @@ export const sokobanGame = {
   formatResult({ state }) {
     return {
       title: `${state.levelLabel} completado`,
-      subtitle: `${state.levelSubtitle} · ${state.moveCount} movimientos · secuencia completada. Pulsa Jugar otra vez para reiniciar desde el nivel inicial.`,
+      subtitle: `${state.levelSubtitle} · ${state.moveCount} movimientos · tablero congelado. Pulsa Jugar otra vez para reiniciarlo.`,
       iconText: "✓",
       iconClass: "win"
     };
