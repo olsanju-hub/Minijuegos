@@ -9444,19 +9444,19 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-shell {
-  width: min(100%, 860px);
+  width: min(100%, calc(var(--traffic-road-max, 390px) + 318px + 14px));
   margin: 0 auto;
   display: grid;
-  grid-template-columns: minmax(0, 390px) minmax(280px, 340px);
+  grid-template-columns: minmax(0, var(--traffic-road-max, 390px)) minmax(250px, 318px);
   justify-content: center;
   align-items: start;
-  gap: 16px;
+  gap: 14px;
 }
 
 .traffic-road-frame {
-  width: min(100%, 390px);
+  width: min(100%, var(--traffic-road-max, 390px));
   margin: 0 auto;
-  padding: 14px;
+  padding: 12px;
   border-radius: 30px;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.8), transparent 55%),
@@ -9469,13 +9469,12 @@ body:not(.is-home-screen) .bg-layer {
 
 .traffic-road {
   --traffic-road-pad-y: 14px;
-  --traffic-road-pad-x: 22px;
-  --traffic-lane-gap: 10px;
+  --traffic-road-pad-x: 20px;
   --traffic-scroll-px: 0px;
   --traffic-lane-change-ms: 210ms;
   position: relative;
   width: 100%;
-  height: clamp(480px, 72vh, 640px);
+  height: clamp(472px, 70vh, 648px);
   border-radius: 24px;
   overflow: hidden;
   touch-action: pan-y;
@@ -9533,7 +9532,7 @@ body:not(.is-home-screen) .bg-layer {
   position: absolute;
   top: 14px;
   bottom: 14px;
-  width: 4px;
+  width: 3px;
   border-radius: 999px;
   background:
     repeating-linear-gradient(
@@ -9544,14 +9543,7 @@ body:not(.is-home-screen) .bg-layer {
   background-position: center var(--traffic-scroll-px);
   opacity: 0.92;
   z-index: 2;
-}
-
-.traffic-lane-divider.is-left {
-  left: calc(33.333% - 2px);
-}
-
-.traffic-lane-divider.is-right {
-  left: calc(66.666% - 2px);
+  transform: translateX(-50%);
 }
 
 .traffic-entities {
@@ -9565,9 +9557,9 @@ body:not(.is-home-screen) .bg-layer {
   position: absolute;
   top: calc(var(--traffic-y, 0) * 100%);
   left: 0;
-  width: calc((100% - var(--traffic-lane-gap) - var(--traffic-lane-gap)) / 3);
+  width: calc(100% / var(--traffic-lane-count, 3));
   height: 18%;
-  transform: translate3d(calc(var(--traffic-lane, 0) * (100% + var(--traffic-lane-gap))), 0, 0);
+  transform: translate3d(calc(var(--traffic-lane, 0) * 100%), 0, 0);
   will-change: top, transform;
   backface-visibility: hidden;
 }
@@ -9588,12 +9580,14 @@ body:not(.is-home-screen) .bg-layer {
   height: 26%;
 }
 
-.traffic-entity[data-traffic-kind="player"] {
+.traffic-entity[data-traffic-kind="player-car"],
+.traffic-entity[data-traffic-kind="player-bike"] {
   z-index: 4;
   transition: transform var(--traffic-lane-change-ms) cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .traffic-player-car,
+.traffic-player-bike,
 .traffic-rival-car,
 .traffic-rival-truck {
   position: absolute;
@@ -9604,74 +9598,119 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-player-car {
-  inset: 0 11%;
-  border-radius: 22px 22px 17px 17px / 30px 30px 18px 18px;
+  inset: 2% 16% 4%;
+  border-radius: 24px 24px 17px 17px / 31px 31px 18px 18px;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 18%),
-    linear-gradient(180deg, #79b6ff 0%, #4d86fa 54%, #315fd6 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 16%),
+    linear-gradient(180deg, #8fc2ff 0%, #4f8aff 46%, #2d61d6 100%);
   border: 1px solid rgba(42, 81, 168, 0.84);
 }
 
 .traffic-player-car::before {
   content: "";
   position: absolute;
-  top: 11%;
-  left: 23%;
-  right: 23%;
-  height: 42%;
-  border-radius: 12px 12px 9px 9px / 14px 14px 9px 9px;
+  top: 12%;
+  left: 20%;
+  right: 20%;
+  height: 40%;
+  border-radius: 13px 13px 10px 10px / 15px 15px 10px 10px;
   background:
-    linear-gradient(180deg, rgba(238, 249, 255, 0.98) 0 42%, rgba(172, 205, 236, 0.94) 42% 58%, rgba(232, 245, 255, 0.96) 58% 100%);
+    linear-gradient(180deg, rgba(241, 250, 255, 0.98) 0 42%, rgba(175, 208, 238, 0.94) 42% 58%, rgba(232, 245, 255, 0.96) 58% 100%);
   box-shadow:
     0 0 0 2px rgba(35, 78, 150, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.62);
 }
 
-.traffic-rival-car::after {
-  content: "";
-  position: absolute;
-  left: 18%;
-  right: 18%;
-  bottom: 16%;
-  height: 14%;
-  border-radius: 999px;
-  background: rgba(18, 26, 31, 0.15);
-}
-
 .traffic-player-car::after {
   content: "";
   position: absolute;
-  left: 12%;
-  right: 12%;
-  top: 56%;
-  height: 23%;
-  border-radius: 999px 999px 12px 12px / 16px 16px 10px 10px;
+  left: 8%;
+  right: 8%;
+  top: 54%;
+  bottom: 10%;
+  border-radius: 18px 18px 12px 12px / 18px 18px 10px 10px;
   background:
-    radial-gradient(circle at 16% 54%, rgba(17, 24, 31, 0.22) 0 10%, transparent 11%),
-    radial-gradient(circle at 84% 54%, rgba(17, 24, 31, 0.22) 0 10%, transparent 11%),
-    linear-gradient(180deg, rgba(26, 48, 98, 0.2), rgba(14, 24, 36, 0.08) 58%, rgba(12, 20, 31, 0.18));
+    radial-gradient(circle at 18% 72%, rgba(17, 24, 31, 0.24) 0 10%, transparent 11%),
+    radial-gradient(circle at 82% 72%, rgba(17, 24, 31, 0.24) 0 10%, transparent 11%),
+    linear-gradient(180deg, rgba(21, 44, 94, 0.2), rgba(14, 24, 36, 0.08) 44%, rgba(12, 20, 31, 0.18));
+}
+
+.traffic-player-bike {
+  inset: 4% 28% 6%;
+  border-radius: 999px 999px 14px 14px / 28px 28px 10px 10px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.28) 0%, rgba(255, 255, 255, 0) 16%),
+    linear-gradient(180deg, #8fc2ff 0%, #4f8aff 42%, #264fb2 100%);
+  border: 1px solid rgba(42, 81, 168, 0.84);
+}
+
+.traffic-player-bike::before {
+  content: "";
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 14%;
+  height: 38%;
+  border-radius: 14px 14px 12px 12px / 18px 18px 12px 12px;
+  background:
+    linear-gradient(180deg, rgba(242, 250, 255, 0.96), rgba(188, 219, 246, 0.9) 58%, rgba(235, 246, 255, 0.88));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.68),
+    0 0 0 2px rgba(35, 78, 150, 0.12);
+}
+
+.traffic-player-bike::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 4%;
+  width: 144%;
+  height: 92%;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 50% 8%, rgba(17, 24, 31, 0.3) 0 7%, transparent 8%),
+    radial-gradient(circle at 23% 84%, rgba(17, 24, 31, 0.86) 0 13%, transparent 14%),
+    radial-gradient(circle at 77% 84%, rgba(17, 24, 31, 0.86) 0 13%, transparent 14%),
+    linear-gradient(180deg, transparent 0 28%, rgba(15, 28, 53, 0.24) 28% 62%, transparent 62%),
+    radial-gradient(circle at 50% 44%, rgba(16, 32, 62, 0.84) 0 13%, transparent 14%);
 }
 
 .traffic-rival-car {
-  inset: 0 14%;
-  border-radius: 18px;
-  background: linear-gradient(180deg, #ff9a64 0%, #ea6647 100%);
+  inset: 3% 18% 5%;
+  border-radius: 20px 20px 15px 15px / 26px 26px 16px 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 18%),
+    linear-gradient(180deg, #ff9a64 0%, #ea6647 100%);
   border: 1px solid rgba(162, 68, 49, 0.82);
 }
 
 .traffic-rival-car::before {
   content: "";
   position: absolute;
-  top: 14%;
-  left: 24%;
-  right: 24%;
-  height: 24%;
-  border-radius: 9px;
-  background: rgba(226, 245, 255, 0.92);
+  top: 15%;
+  left: 22%;
+  right: 22%;
+  height: 28%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(236, 248, 255, 0.94), rgba(187, 210, 225, 0.9));
+}
+
+.traffic-rival-car::after {
+  content: "";
+  position: absolute;
+  left: 10%;
+  right: 10%;
+  top: 55%;
+  bottom: 11%;
+  border-radius: 16px 16px 10px 10px / 16px 16px 8px 8px;
+  background:
+    radial-gradient(circle at 16% 72%, rgba(17, 24, 31, 0.22) 0 10%, transparent 11%),
+    radial-gradient(circle at 84% 72%, rgba(17, 24, 31, 0.22) 0 10%, transparent 11%),
+    linear-gradient(180deg, rgba(127, 53, 33, 0.12), rgba(127, 53, 33, 0) 30%);
 }
 
 .traffic-rival-truck {
-  inset: 0 16%;
+  inset: 2% 18% 4%;
   border-radius: 18px 18px 12px 12px / 22px 22px 12px 12px;
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 14%),
@@ -9717,6 +9756,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-entity.is-collision .traffic-player-car,
+.traffic-entity.is-collision .traffic-player-bike,
 .traffic-entity.is-collision .traffic-rival-car,
 .traffic-entity.is-collision .traffic-rival-truck {
   box-shadow:
@@ -9758,13 +9798,12 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-side {
-  display: grid;
-  gap: 10px;
+  display: block;
 }
 
 .traffic-side-card {
   border-radius: 24px;
-  padding: 16px;
+  padding: 14px;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.82), transparent 58%),
     linear-gradient(180deg, rgba(255, 249, 238, 0.98) 0%, rgba(246, 236, 220, 0.98) 100%);
@@ -9776,19 +9815,19 @@ body:not(.is-home-screen) .bg-layer {
 
 .traffic-status-card {
   display: grid;
-  gap: 14px;
+  gap: 12px;
 }
 
 .traffic-hud-main {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(140px, 158px);
-  gap: 12px;
+  grid-template-columns: minmax(0, 1fr) minmax(136px, 152px);
+  gap: 10px;
   align-items: start;
 }
 
 .traffic-hud-copy {
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .traffic-status-card h4 {
@@ -9796,16 +9835,16 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-side-card h4 {
-  margin: 0 0 8px;
-  font-size: 1.04rem;
+  margin: 0;
+  font-size: 1rem;
   color: #233042;
 }
 
 .traffic-mode-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
-  margin-bottom: 10px;
+  gap: 6px;
+  margin-bottom: 4px;
 }
 
 .traffic-mode-pill {
@@ -9828,10 +9867,10 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-side-note {
-  margin: 0 0 10px;
+  margin: 0;
   color: #61727f;
   line-height: 1.4;
-  font-size: 0.92rem;
+  font-size: 0.88rem;
 }
 
 .traffic-objective-note,
@@ -9845,16 +9884,17 @@ body:not(.is-home-screen) .bg-layer {
 
 .traffic-primary-btn {
   width: 100%;
+  min-height: 42px;
 }
 
 .traffic-live-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  gap: 6px;
 }
 
 .traffic-live-grid .traffic-stat {
-  padding: 11px;
+  padding: 9px 10px;
   min-height: 0;
 }
 
@@ -9865,7 +9905,7 @@ body:not(.is-home-screen) .bg-layer {
 
 .traffic-fallback-block {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .traffic-control-hint {
@@ -9884,8 +9924,8 @@ body:not(.is-home-screen) .bg-layer {
 .traffic-stat {
   display: grid;
   gap: 3px;
-  border-radius: 18px;
-  padding: 12px;
+  border-radius: 14px;
+  padding: 9px 10px;
   background: rgba(255, 255, 255, 0.7);
   border: 1px solid rgba(214, 199, 173, 0.72);
 }
@@ -9897,7 +9937,7 @@ body:not(.is-home-screen) .bg-layer {
 
 .traffic-stat-label {
   color: #71818e;
-  font-size: 0.76rem;
+  font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
   text-transform: uppercase;
@@ -9905,17 +9945,16 @@ body:not(.is-home-screen) .bg-layer {
 
 .traffic-stat-value {
   color: #233042;
-  font-size: 1rem;
+  font-size: 0.94rem;
   line-height: 1.15;
 }
 
 .traffic-secondary-card {
   display: grid;
-  gap: 10px;
-  padding-top: 14px;
-  box-shadow:
-    0 12px 24px rgba(162, 145, 110, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(209, 190, 158, 0.58);
+  box-shadow: none;
 }
 
 .traffic-secondary-head {
@@ -9935,26 +9974,25 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-secondary-grid {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 8px;
 }
 
 .traffic-secondary-grid .traffic-stat {
-  flex: 1 1 132px;
   gap: 2px;
-  padding: 10px 11px;
-  border-radius: 16px;
+  padding: 8px 9px;
+  border-radius: 13px;
   background: rgba(255, 255, 255, 0.58);
   box-shadow: none;
 }
 
 .traffic-secondary-grid .traffic-stat-label {
-  font-size: 0.7rem;
+  font-size: 0.64rem;
 }
 
 .traffic-secondary-grid .traffic-stat-value {
-  font-size: 0.92rem;
+  font-size: 0.82rem;
 }
 
 .traffic-control-row {
@@ -9980,13 +10018,13 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-shell {
-    width: min(100%, 560px);
+    width: min(100%, calc(var(--traffic-road-max, 468px) + 2px));
     grid-template-columns: 1fr;
     gap: 10px;
   }
 
   .traffic-road-frame {
-    width: min(100%, 408px);
+    width: min(100%, var(--traffic-road-max, 468px));
     padding: 10px;
     border-radius: 22px;
   }
@@ -9994,13 +10032,8 @@ body:not(.is-home-screen) .bg-layer {
   .traffic-road {
     --traffic-road-pad-y: 12px;
     --traffic-road-pad-x: 18px;
-    --traffic-lane-gap: 9px;
-    height: clamp(392px, 58vh, 520px);
+    height: clamp(380px, 56vh, 520px);
     border-radius: 18px;
-  }
-
-  .traffic-side {
-    grid-template-columns: 1fr;
   }
 
   .traffic-side-card {
@@ -10009,28 +10042,24 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-hud-main {
-    grid-template-columns: minmax(0, 1fr) minmax(168px, 188px);
-  }
-
-  .traffic-secondary-grid .traffic-stat {
-    flex-basis: 120px;
+    grid-template-columns: minmax(0, 1fr) minmax(156px, 176px);
   }
 
   .app-shell:not(.app-shell-home) .game-screen-trafico .actions-bottom {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 8px;
     margin-top: 0;
   }
 
   .app-shell:not(.app-shell-home) .game-screen-trafico .actions-bottom .btn {
-    flex: 0 1 auto;
-    width: auto;
+    width: 100%;
+    min-width: 0;
     min-height: 40px;
     height: 40px;
     padding: 0 12px;
-    border-radius: 999px;
+    border-radius: 14px;
     font-size: 0.85rem;
-    white-space: nowrap;
   }
 }
 
@@ -10046,39 +10075,42 @@ body:not(.is-home-screen) .bg-layer {
 
   .traffic-shell {
     width: min(100%, 100%);
-    gap: 8px;
+    gap: 6px;
   }
 
   .traffic-road-frame {
-    width: min(100%, 352px);
-    padding: 8px;
+    width: min(100%, var(--traffic-road-max, 352px));
+    padding: 6px;
     border-radius: 18px;
   }
 
   .traffic-road {
     --traffic-road-pad-y: 10px;
-    --traffic-road-pad-x: 16px;
-    --traffic-lane-gap: 8px;
-    height: clamp(340px, 52vh, 430px);
+    --traffic-road-pad-x: 14px;
+    height: clamp(304px, 46vh, 390px);
     border-radius: 16px;
   }
 
   .traffic-road-flow {
-    inset: 8px 14px;
+    inset: 8px 12px;
   }
 
   .traffic-player-car {
-    inset: 0 10%;
-    border-radius: 18px 18px 14px 14px / 25px 25px 16px 16px;
+    inset: 3% 18% 5%;
+    border-radius: 18px 18px 14px 14px / 24px 24px 15px 15px;
+  }
+
+  .traffic-player-bike {
+    inset: 5% 30% 7%;
   }
 
   .traffic-rival-car {
-    inset: 0 12%;
-    border-radius: 14px;
+    inset: 4% 20% 6%;
+    border-radius: 14px 14px 11px 11px / 18px 18px 12px 12px;
   }
 
   .traffic-rival-truck {
-    inset: 0 14%;
+    inset: 3% 20% 5%;
     border-radius: 16px 16px 10px 10px / 19px 19px 10px 10px;
   }
 
@@ -10092,21 +10124,21 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-side {
-    gap: 8px;
+    gap: 0;
   }
 
   .traffic-side-card {
     border-radius: 16px;
-    padding: 12px;
+    padding: 10px;
   }
 
   .traffic-hud-main {
-    grid-template-columns: 1fr;
-    gap: 10px;
+    grid-template-columns: minmax(0, 1fr) minmax(128px, 136px);
+    gap: 8px;
   }
 
   .traffic-hud-copy {
-    gap: 6px;
+    gap: 4px;
   }
 
   .traffic-status-card [data-traffic-player-name] {
@@ -10115,30 +10147,30 @@ body:not(.is-home-screen) .bg-layer {
 
   .traffic-mode-row {
     margin-bottom: 0;
-    gap: 6px;
+    gap: 5px;
   }
 
   .traffic-mode-pill {
-    min-height: 26px;
-    padding: 0 9px;
-    font-size: 0.66rem;
+    min-height: 24px;
+    padding: 0 8px;
+    font-size: 0.6rem;
   }
 
   .traffic-live-grid {
-    gap: 7px;
+    gap: 5px;
   }
 
   .traffic-live-grid .traffic-stat {
-    padding: 10px;
-    border-radius: 14px;
+    padding: 7px 8px;
+    border-radius: 12px;
   }
 
   .traffic-live-grid .traffic-stat-label {
-    font-size: 0.72rem;
+    font-size: 0.62rem;
   }
 
   .traffic-live-grid .traffic-stat-value {
-    font-size: 0.96rem;
+    font-size: 0.84rem;
   }
 
   .traffic-event-note {
@@ -10150,7 +10182,7 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-primary-btn {
-    min-height: 42px;
+    min-height: 38px;
   }
 
   .traffic-fallback-block {
@@ -10162,8 +10194,8 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-secondary-card {
-    gap: 8px;
-    padding-top: 10px;
+    gap: 6px;
+    padding-top: 8px;
   }
 
   .traffic-secondary-head .traffic-side-note {
@@ -10171,22 +10203,21 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .traffic-secondary-grid {
-    gap: 6px;
+    gap: 4px;
   }
 
   .traffic-secondary-grid .traffic-stat {
-    flex: 1 1 calc(50% - 6px);
     min-width: 0;
-    padding: 8px 9px;
-    border-radius: 13px;
+    padding: 6px 7px;
+    border-radius: 10px;
   }
 
   .traffic-secondary-grid .traffic-stat-label {
-    font-size: 0.66rem;
+    font-size: 0.55rem;
   }
 
   .traffic-secondary-grid .traffic-stat-value {
-    font-size: 0.84rem;
+    font-size: 0.72rem;
   }
 
   .traffic-control-row {
@@ -10200,19 +10231,19 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .app-shell:not(.app-shell-home) .game-screen-trafico .actions-bottom {
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
   }
 
   .app-shell:not(.app-shell-home) .game-screen-trafico .actions-bottom .btn {
-    flex: 0 1 auto;
-    width: auto;
+    width: 100%;
+    min-width: 0;
     min-height: 36px;
     height: 36px;
-    padding: 0 10px;
-    border-radius: 999px;
-    font-size: 0.8rem;
-    white-space: nowrap;
+    padding: 0 8px;
+    border-radius: 12px;
+    font-size: 0.74rem;
   }
 }
 

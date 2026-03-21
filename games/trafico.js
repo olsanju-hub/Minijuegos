@@ -1,4 +1,11 @@
-const LANE_COUNT = 3;
+const MOBILE_MAX_WIDTH = 760;
+const TABLET_MAX_WIDTH = 1180;
+const WIDE_DESKTOP_MIN_WIDTH = 1480;
+const WIDE_DESKTOP_MIN_HEIGHT = 760;
+const MOBILE_LANE_COUNT = 3;
+const TABLET_LANE_COUNT = 4;
+const DESKTOP_LANE_COUNT = 4;
+const WIDE_DESKTOP_LANE_COUNT = 5;
 const VISIBLE_STEPS = 8;
 const STEP_DISTANCE = 1 / VISIBLE_STEPS;
 const PLAYER_Y = 0.8;
@@ -16,6 +23,8 @@ const ROAD_SCROLL_PX_PER_STEP = 96;
 const TRAJECTORY_SLICE_DISTANCE = STEP_DISTANCE / 4;
 const TRAJECTORY_LOOKAHEAD_DISTANCE = PLAYER_CENTER_Y - SPAWN_Y + TRUCK_HEIGHT + STEP_DISTANCE;
 const TRAJECTORY_BUFFER_Y = 0.028;
+const SAFE_SPAWN_LOOKAHEAD_STEPS = 3;
+const MIN_LANE_CHANGE_SLICES = 2;
 const TRUCK_SPAWN_CHANCE = 0.16;
 const TRUCK_MIN_DIFFICULTY = 2;
 
@@ -28,15 +37,6 @@ const OBJECTIVE_TARGETS = Object.freeze({
 const STORAGE_KEY_BEST_TIME = "minijuegos:trafico:best-time-ms";
 const BASE_TICK_MS = 720;
 const MIN_TICK_MS = 460;
-
-const PATTERN_POOLS = Object.freeze([
-  Object.freeze([[], [], [0], [1], [2], [0, 2], [0], [1], [2]]),
-  Object.freeze([[], [0], [1], [2], [0, 2], [0], [2], [0, 2], [1]]),
-  Object.freeze([[], [0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2]]),
-  Object.freeze([[0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2], []]),
-  Object.freeze([[0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2], [0], [2]]),
-  Object.freeze([[0], [1], [2], [0, 2], [0], [2], [0, 2], [1], [0, 2], [0], [2], []])
-]);
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>\"']/g, (char) => {
@@ -79,6 +79,10 @@ function normalizeMode(value) {
 
 function normalizeObjectiveType(value) {
   return ["distance", "overtakes", "pickups"].includes(value) ? value : "distance";
+}
+
+function normalizeVehicleType(value) {
+  return value === "bike" ? "bike" : "car";
 }
 
 function objectiveLabel(type) {
@@ -195,16 +199,121 @@ function currentTravelSteps(state) {
   return state.distance + state.stepProgress;
 }
 
-function computeTickMs(distance) {
-  const stage = Math.min(PATTERN_POOLS.length - 1, Math.floor(distance / 8));
+function laneIndices(laneCount) {
+  return Array.from({ length: laneCount }, (_, lane) => lane);
+}
+
+function buildWeightedRows(weightedRows, row, copies = 1) {
+  for (let copy = 0; copy < copies; copy += 1) {
+    weightedRows.push(Object.freeze([...row]));
+  }
+}
+
+function combinations(values, size, startIndex = 0, prefix = [], result = []) {
+  if (prefix.length === size) {
+    result.push(prefix);
+    return result;
+  }
+
+  for (let index = startIndex; index <= values.length - (size - prefix.length); index += 1) {
+    combinations(values, size, index + 1, [...prefix, values[index]], result);
+  }
+
+  return result;
+}
+
+function buildPatternPool(laneCount, difficultyLevel) {
+  const lanes = laneIndices(laneCount);
+  const weightedRows = [];
+  const maxPatternSize = laneCount >= 5 && difficultyLevel >= 4 ? 3 : 2;
+
+  buildWeightedRows(weightedRows, [], Math.max(1, 3 - Math.min(difficultyLevel, 2)));
+
+  for (const lane of lanes) {
+    buildWeightedRows(weightedRows, [lane], difficultyLevel >= 2 ? 2 : 3);
+  }
+
+  if (difficultyLevel >= 1) {
+    for (const pair of combinations(lanes, 2)) {
+      const spread = pair[1] - pair[0];
+      if (spread > 1) {
+        buildWeightedRows(weightedRows, pair, 2);
+      } else if (difficultyLevel >= 2) {
+        buildWeightedRows(weightedRows, pair, 1);
+      }
+    }
+  }
+
+  if (maxPatternSize >= 3) {
+    for (const triplet of combinations(lanes, 3)) {
+      const hasDoubleGap = triplet[1] - triplet[0] > 1 || triplet[2] - triplet[1] > 1;
+      if (hasDoubleGap) {
+        buildWeightedRows(weightedRows, triplet, 1);
+      }
+    }
+  }
+
+  return weightedRows;
+}
+
+function resolveTrafficProfile() {
+  if (typeof window === "undefined") {
+    return {
+      id: "desktop",
+      laneCount: DESKTOP_LANE_COUNT,
+      roadMaxWidth: 520
+    };
+  }
+
+  const viewportWidth = Math.max(0, window.innerWidth || 0);
+  const viewportHeight = Math.max(0, window.innerHeight || 0);
+
+  if (viewportWidth <= MOBILE_MAX_WIDTH) {
+    return {
+      id: "mobile",
+      laneCount: MOBILE_LANE_COUNT,
+      roadMaxWidth: 352
+    };
+  }
+
+  if (viewportWidth <= TABLET_MAX_WIDTH) {
+    return {
+      id: "tablet",
+      laneCount: TABLET_LANE_COUNT,
+      roadMaxWidth: 468
+    };
+  }
+
+  if (viewportWidth >= WIDE_DESKTOP_MIN_WIDTH && viewportHeight >= WIDE_DESKTOP_MIN_HEIGHT) {
+    return {
+      id: "desktop-wide",
+      laneCount: WIDE_DESKTOP_LANE_COUNT,
+      roadMaxWidth: 620
+    };
+  }
+
   return {
-    difficultyLevel: stage,
-    tickMs: Math.max(MIN_TICK_MS, BASE_TICK_MS - stage * 36)
+    id: "desktop",
+    laneCount: DESKTOP_LANE_COUNT,
+    roadMaxWidth: 520
   };
 }
 
-function isValidLane(lane) {
-  return lane >= 0 && lane < LANE_COUNT;
+function initialPlayerLane(laneCount) {
+  return Math.max(0, Math.floor(laneCount / 2));
+}
+
+function computeTickMs(distance, laneCount) {
+  const stage = Math.min(5, Math.floor(distance / 8));
+  const lanePressure = Math.max(0, laneCount - MOBILE_LANE_COUNT);
+  return {
+    difficultyLevel: stage,
+    tickMs: Math.max(MIN_TICK_MS, BASE_TICK_MS - stage * 36 - lanePressure * 14)
+  };
+}
+
+function isValidLane(lane, laneCount) {
+  return lane >= 0 && lane < laneCount;
 }
 
 function threatBand(entity) {
@@ -216,7 +325,11 @@ function projectedThreat(entity, distanceOffset) {
   if (entity.type !== "rival") {
     return false;
   }
-  const futureCenter = entityCenterY(entity) + distanceOffset;
+  const spawnDistance = (entity.spawnStep || 0) * STEP_DISTANCE;
+  if (distanceOffset + 1e-9 < spawnDistance) {
+    return false;
+  }
+  const futureCenter = entityCenterY(entity) + (distanceOffset - spawnDistance);
   return Math.abs(futureCenter - playerCenterY()) <= threatBand(entity);
 }
 
@@ -228,58 +341,101 @@ function blockedLanesAtOffset(entities, distanceOffset) {
   );
 }
 
-function buildReachableLanes(entities, startLane) {
+function addReachableState(states, lane, cooldown) {
+  const key = String(lane);
+  const current = states.get(key);
+  if (current === undefined || cooldown < current) {
+    states.set(key, cooldown);
+  }
+}
+
+function buildReachableLanes(entities, startLane, laneCount, extraLookaheadSteps = 0) {
   const initialBlocked = blockedLanesAtOffset(entities, 0);
-  let reachable = new Set(
-    [startLane - 1, startLane, startLane + 1].filter((lane) => isValidLane(lane) && !initialBlocked.has(lane))
-  );
+  const reachable = new Map();
+
+  if (!initialBlocked.has(startLane)) {
+    addReachableState(reachable, startLane, 0);
+  }
+
+  for (const lane of [startLane - 1, startLane + 1]) {
+    if (isValidLane(lane, laneCount) && !initialBlocked.has(lane)) {
+      addReachableState(reachable, lane, MIN_LANE_CHANGE_SLICES);
+    }
+  }
 
   if (reachable.size === 0) {
     return null;
   }
 
-  // Valida una pequeña trayectoria real: desde la posicion actual o una alcanzable
-  // inmediatamente hasta que los nuevos rivales pasan por la zona del jugador.
-  const totalSlices = Math.ceil(TRAJECTORY_LOOKAHEAD_DISTANCE / TRAJECTORY_SLICE_DISTANCE);
+  const totalLookaheadDistance = TRAJECTORY_LOOKAHEAD_DISTANCE + Math.max(0, extraLookaheadSteps) * STEP_DISTANCE;
+  const totalSlices = Math.ceil(totalLookaheadDistance / TRAJECTORY_SLICE_DISTANCE);
   for (let slice = 1; slice <= totalSlices; slice += 1) {
     const blocked = blockedLanesAtOffset(entities, slice * TRAJECTORY_SLICE_DISTANCE);
 
-    if (blocked.size >= LANE_COUNT) {
+    if (blocked.size >= laneCount) {
       return null;
     }
 
-    const next = new Set();
-    for (const lane of reachable) {
-      for (const candidate of [lane - 1, lane, lane + 1]) {
-        if (!isValidLane(candidate)) {
+    const next = new Map();
+    for (const [laneKey, cooldown] of reachable) {
+      const lane = Number(laneKey);
+      const relaxedCooldown = Math.max(0, cooldown - 1);
+
+      if (!blocked.has(lane)) {
+        addReachableState(next, lane, relaxedCooldown);
+      }
+
+      if (cooldown > 0) {
+        continue;
+      }
+
+      for (const candidate of [lane - 1, lane + 1]) {
+        if (!isValidLane(candidate, laneCount) || blocked.has(candidate)) {
           continue;
         }
-        if (!blocked.has(candidate)) {
-          next.add(candidate);
-        }
+        addReachableState(next, candidate, MIN_LANE_CHANGE_SLICES);
       }
     }
 
     if (next.size === 0) {
       return null;
     }
-    reachable = next;
+    reachable.clear();
+    for (const [laneKey, cooldown] of next) {
+      reachable.set(laneKey, cooldown);
+    }
   }
 
   return reachable;
 }
 
-function isSafeSpawn(entities, playerLane) {
-  return Boolean(buildReachableLanes(entities, playerLane));
+function buildScenarioEntities(baseEntities, plannedRows) {
+  const current = baseEntities.map((entity) => ({ ...entity, spawnStep: 0 }));
+
+  plannedRows.forEach((row, stepIndex) => {
+    for (const entity of row) {
+      current.push({
+        ...entity,
+        spawnStep: stepIndex
+      });
+    }
+  });
+
+  return current;
 }
 
-function buildRivalCandidates(state, pattern, difficultyLevel, baseEntities) {
+function isPlayableScenario(baseEntities, playerLane, plannedRows, laneCount) {
+  const scenarioEntities = buildScenarioEntities(baseEntities, plannedRows);
+  return Boolean(buildReachableLanes(scenarioEntities, playerLane, laneCount, plannedRows.length - 1));
+}
+
+function buildRivalCandidates(state, pattern, difficultyLevel, currentPreviewEntities) {
   const baseCars = pattern.map((lane) => createPreviewEntity("rival", lane, SPAWN_Y, "car"));
 
   if (
     pattern.length !== 1 ||
     difficultyLevel < TRUCK_MIN_DIFFICULTY ||
-    baseEntities.some((entity) => entity.type === "rival" && entity.variant === "truck") ||
+    currentPreviewEntities.some((entity) => entity.type === "rival" && entity.variant === "truck") ||
     nextRandom(state) >= TRUCK_SPAWN_CHANCE
   ) {
     return [baseCars];
@@ -291,7 +447,53 @@ function buildRivalCandidates(state, pattern, difficultyLevel, baseEntities) {
   ];
 }
 
-function maybeSpawnPickup(state, baseEntities, spawnVehicles, playerLane) {
+function choosePlayableVehicleRow(state, baseEntities, playerLane, laneCount, difficultyLevel, mustRest) {
+  const patternPool = mustRest ? [[], [], []] : buildPatternPool(laneCount, difficultyLevel);
+  const orderedPatterns = shuffleWithState(state, patternPool);
+
+  const supportsFutureWindow = (plannedRows, remainingDepth) => {
+    if (remainingDepth <= 0) {
+      return true;
+    }
+
+    const futurePatterns = shuffleWithState(state, buildPatternPool(laneCount, difficultyLevel));
+    for (const pattern of futurePatterns) {
+      const futureCandidates = buildRivalCandidates(state, pattern, difficultyLevel, [
+        ...baseEntities,
+        ...plannedRows.flat()
+      ]);
+
+      for (const vehicles of futureCandidates) {
+        const nextRows = [...plannedRows, vehicles];
+        if (!isPlayableScenario(baseEntities, playerLane, nextRows, laneCount)) {
+          continue;
+        }
+        if (supportsFutureWindow(nextRows, remainingDepth - 1)) {
+          return true;
+        }
+      }
+    }
+
+    return false;
+  };
+
+  for (const pattern of orderedPatterns) {
+    const rivalCandidates = buildRivalCandidates(state, pattern, difficultyLevel, baseEntities);
+    for (const vehicles of rivalCandidates) {
+      const plannedRows = [vehicles];
+      if (!isPlayableScenario(baseEntities, playerLane, plannedRows, laneCount)) {
+        continue;
+      }
+      if (supportsFutureWindow(plannedRows, SAFE_SPAWN_LOOKAHEAD_STEPS - 1)) {
+        return vehicles;
+      }
+    }
+  }
+
+  return [];
+}
+
+function maybeSpawnPickup(state, baseEntities, spawnVehicles, playerLane, laneCount) {
   const hasActivePickup = baseEntities.some((entity) => entity.type === "pickup");
   if (hasActivePickup || state.pickupCooldown > 0) {
     return null;
@@ -304,7 +506,7 @@ function maybeSpawnPickup(state, baseEntities, spawnVehicles, playerLane) {
 
   const freeLanes = shuffleWithState(
     state,
-    Array.from({ length: LANE_COUNT }, (_, lane) => lane).filter(
+    laneIndices(laneCount).filter(
       (lane) => !spawnVehicles.some((entity) => entity.lane === lane)
     )
   );
@@ -316,7 +518,7 @@ function maybeSpawnPickup(state, baseEntities, spawnVehicles, playerLane) {
       ...spawnVehicles,
       candidate
     ];
-    if (isSafeSpawn(nextEntities, playerLane)) {
+    if (isPlayableScenario(nextEntities, playerLane, [], laneCount)) {
       return candidate;
     }
   }
@@ -324,27 +526,10 @@ function maybeSpawnPickup(state, baseEntities, spawnVehicles, playerLane) {
   return null;
 }
 
-function chooseSpawn(state, baseEntities, playerLane) {
+function chooseSpawn(state, baseEntities, playerLane, laneCount) {
   const mustRest = state.respiteTicks > 0 || state.spawnStreak >= 3;
-  const stage = clamp(state.difficultyLevel, 0, PATTERN_POOLS.length - 1);
-  const patternPool = mustRest ? [[], [], [], []] : PATTERN_POOLS[stage];
-  const orderedPatterns = shuffleWithState(state, patternPool);
-
-  let selectedVehicles = [];
-
-  outerLoop:
-  for (const pattern of orderedPatterns) {
-    const rivalCandidates = buildRivalCandidates(state, pattern, stage, baseEntities);
-    for (const vehicles of rivalCandidates) {
-      const nextEntities = [...baseEntities, ...vehicles];
-      if (isSafeSpawn(nextEntities, playerLane)) {
-        selectedVehicles = vehicles;
-        break outerLoop;
-      }
-    }
-  }
-
-  const pickup = maybeSpawnPickup(state, baseEntities, selectedVehicles, playerLane);
+  const selectedVehicles = choosePlayableVehicleRow(state, baseEntities, playerLane, laneCount, state.difficultyLevel, mustRest);
+  const pickup = maybeSpawnPickup(state, baseEntities, selectedVehicles, playerLane, laneCount);
   return {
     cars: selectedVehicles.map((entity) => createEntity(state, "rival", entity.lane, SPAWN_Y, entity.variant || "car")),
     pickup: pickup ? createEntity(state, "pickup", pickup.lane, pickup.y) : null
@@ -354,15 +539,21 @@ function chooseSpawn(state, baseEntities, playerLane) {
 function buildFreshState(options) {
   const normalizedMode = normalizeMode(options?.mode);
   const normalizedObjective = normalizeObjectiveType(options?.objectiveType);
-  const difficulty = computeTickMs(0);
+  const vehicleType = normalizeVehicleType(options?.vehicleType);
+  const profile = resolveTrafficProfile();
+  const difficulty = computeTickMs(0, profile.laneCount);
   const randomSeed = ((Date.now() & 0xffffffff) ^ Math.floor(Math.random() * 4294967295)) >>> 0;
 
   return {
     mode: normalizedMode,
     objectiveType: normalizedObjective,
+    vehicleType,
+    viewportProfile: profile.id,
+    laneCount: profile.laneCount,
+    roadMaxWidth: profile.roadMaxWidth,
     objectiveTarget: getObjectiveTarget(normalizedObjective),
     status: "ready",
-    playerLane: 1,
+    playerLane: initialPlayerLane(profile.laneCount),
     entities: [],
     distance: 0,
     overtakes: 0,
@@ -399,7 +590,7 @@ function setPauseState(state) {
 }
 
 function updateDerivedStats(state) {
-  const difficulty = computeTickMs(state.distance);
+  const difficulty = computeTickMs(state.distance, state.laneCount);
   state.difficultyLevel = difficulty.difficultyLevel;
   state.tickMs = difficulty.tickMs;
 }
@@ -479,7 +670,7 @@ function findCollision(state) {
 }
 
 function applySpawnStep(state) {
-  const spawn = chooseSpawn(state, state.entities, state.playerLane);
+  const spawn = chooseSpawn(state, state.entities, state.playerLane, state.laneCount);
   state.entities.push(...spawn.cars);
 
   if (spawn.pickup) {
@@ -601,7 +792,7 @@ function buildRenderableEntities(state) {
   return [
     {
       id: "player",
-      kind: "player",
+      kind: state.vehicleType === "bike" ? "player-bike" : "player-car",
       lane: state.playerLane,
       y: PLAYER_Y,
       isCollision: Boolean(state.lastCollision)
@@ -617,8 +808,11 @@ function buildRenderableEntities(state) {
 }
 
 function entityVisualClass(kind) {
-  if (kind === "player") {
+  if (kind === "player-car") {
     return "traffic-player-car";
+  }
+  if (kind === "player-bike") {
+    return "traffic-player-bike";
   }
   if (kind === "pickup") {
     return "traffic-pickup-coin";
@@ -632,6 +826,21 @@ function entityVisualClass(kind) {
 function roadScrollPx(state) {
   const loop = ROAD_SCROLL_PX_PER_STEP;
   return ((currentTravelSteps(state) * loop) % loop).toFixed(2);
+}
+
+function roadStyleVars(state) {
+  const laneChangeMs = state.vehicleType === "bike" ? 176 : 210;
+  return `--traffic-scroll-px:${roadScrollPx(state)}px;--traffic-lane-count:${state.laneCount};--traffic-road-max:${state.roadMaxWidth}px;--traffic-lane-change-ms:${laneChangeMs}ms;`;
+}
+
+function renderLaneDividers(state) {
+  return laneIndices(state.laneCount)
+    .slice(1)
+    .map(
+      (lane) =>
+        `<span class="traffic-lane-divider" style="left:${((lane / state.laneCount) * 100).toFixed(4)}%;" aria-hidden="true"></span>`
+    )
+    .join("");
 }
 
 function renderTrafficEntity(entity) {
@@ -653,11 +862,10 @@ function renderRoad(state) {
 
   return `
     <div class="traffic-road-frame">
-      <div class="traffic-road" data-traffic-road style="--traffic-scroll-px:${roadScrollPx(state)}px;">
+      <div class="traffic-road" data-traffic-road style="${roadStyleVars(state)}">
         <div class="traffic-road-surface">
           <div class="traffic-road-flow" aria-hidden="true"></div>
-          <span class="traffic-lane-divider is-left" aria-hidden="true"></span>
-          <span class="traffic-lane-divider is-right" aria-hidden="true"></span>
+          ${renderLaneDividers(state)}
           <div class="traffic-entities" data-traffic-entities>${entities}</div>
         </div>
         ${renderStatusOverlay(state)}
@@ -734,6 +942,7 @@ function renderSidePanel(state, players, canAct) {
   const primaryButtonAction = state.status === "ready" ? "start-run" : "toggle-pause";
   const primaryButtonLabel =
     state.status === "ready" ? "Empezar" : state.status === "paused" ? "Reanudar" : "Pausa";
+  const vehicleLabel = state.vehicleType === "bike" ? "Moto" : "Coche";
 
   return `
     <aside class="traffic-side">
@@ -743,6 +952,7 @@ function renderSidePanel(state, players, canAct) {
             <div class="traffic-mode-row">
               <span class="traffic-mode-pill" data-traffic-mode-label>${escapeHtml(modeLabel(state.mode))}</span>
               <span class="traffic-mode-pill is-soft" data-traffic-status-label>${escapeHtml(statusLabel(state.status))}</span>
+              <span class="traffic-mode-pill is-soft">${escapeHtml(vehicleLabel)}</span>
             </div>
             <h4 data-traffic-player-name>${escapeHtml(activePlayer ? activePlayer.name : "Jugador")}</h4>
             <p class="traffic-side-note traffic-objective-note" data-traffic-note="objective">${escapeHtml(objectiveProgressText(state))}</p>
@@ -762,14 +972,13 @@ function renderSidePanel(state, players, canAct) {
           </button>
           ${renderFallbackControls(state, canAct)}
         </div>
-      </article>
-
-      <article class="traffic-side-card traffic-secondary-card">
-        <div class="traffic-secondary-head">
-          <h4>Detalle</h4>
-          <p class="traffic-side-note">Metricas secundarias</p>
+        <div class="traffic-secondary-card">
+          <div class="traffic-secondary-head">
+            <h4>Detalle</h4>
+            <p class="traffic-side-note">Metricas secundarias</p>
+          </div>
+          ${renderSecondaryStats(state)}
         </div>
-        ${renderSecondaryStats(state)}
       </article>
     </aside>
   `;
@@ -930,27 +1139,30 @@ export const traficoGame = {
   hideDefaultPlayerChips: true,
   rules: [
     { title: "Objetivo", text: "Cambia de carril y evita el trafico. En Infinito gana quien mas tiempo aguanta; en Objetivos debes completar una meta corta." },
-    { title: "Flujo", text: "La carretera avanza de forma continua. El coche del jugador sigue limitado a tres carriles logicos." },
+    { title: "Flujo", text: "La carretera avanza de forma continua. El numero de carriles se adapta al espacio util del dispositivo y se mantiene durante la carrera." },
     { title: "Colision", text: "Si un coche rival coincide con tu carril y tu zona de impacto, la partida termina al instante." },
     { title: "Monedas", text: "Solo aparece una moneda activa a la vez. Suma puntuacion y cuenta para el objetivo de Recogidas." },
-    { title: "Adelantamientos", text: "Un adelantamiento cuenta cuando un coche rival sale por abajo de la carretera sin chocar contigo." }
+    { title: "Vehiculo", text: "Puedes jugar con coche o moto. Ambos usan las mismas reglas base de colision y carriles." }
   ],
   getDefaultOptions() {
     return {
       mode: "infinite",
-      objectiveType: "distance"
+      objectiveType: "distance",
+      vehicleType: "car"
     };
   },
   normalizeOptions(options = {}) {
     const mode = normalizeMode(options.mode);
     return {
       mode,
-      objectiveType: normalizeObjectiveType(options.objectiveType)
+      objectiveType: normalizeObjectiveType(options.objectiveType),
+      vehicleType: normalizeVehicleType(options.vehicleType)
     };
   },
   renderConfigPanel({ options }) {
     const mode = normalizeMode(options?.mode);
     const objectiveType = normalizeObjectiveType(options?.objectiveType);
+    const vehicleType = normalizeVehicleType(options?.vehicleType);
 
     return `
       <div class="block">
@@ -975,6 +1187,15 @@ export const traficoGame = {
           `
           : ""
       }
+
+      <div class="block">
+        <h3 class="block-title">Vehiculo</h3>
+        <p class="block-sub">Cambia la silueta del jugador sin alterar las reglas base.</p>
+        <div class="player-count-row">
+          <button class="pill ${vehicleType === "car" ? "is-active" : ""}" data-action="set-game-option" data-option="vehicleType" data-value="car">Coche</button>
+          <button class="pill ${vehicleType === "bike" ? "is-active" : ""}" data-action="set-game-option" data-option="vehicleType" data-value="bike">Moto</button>
+        </div>
+      </div>
     `;
   },
   createInitialState({ options }) {
@@ -1038,7 +1259,7 @@ export const traficoGame = {
       if (next.status !== "playing") {
         return { ok: false, reason: "invalid" };
       }
-      next.playerLane = clamp(next.playerLane - 1, 0, LANE_COUNT - 1);
+      next.playerLane = clamp(next.playerLane - 1, 0, next.laneCount - 1);
       return { ok: true, state: next };
     }
 
@@ -1046,7 +1267,7 @@ export const traficoGame = {
       if (next.status !== "playing") {
         return { ok: false, reason: "invalid" };
       }
-      next.playerLane = clamp(next.playerLane + 1, 0, LANE_COUNT - 1);
+      next.playerLane = clamp(next.playerLane + 1, 0, next.laneCount - 1);
       return { ok: true, state: next };
     }
 
@@ -1090,7 +1311,13 @@ export const traficoGame = {
   },
   renderBoard({ state, players, canAct }) {
     return `
-      <section class="traffic-shell" data-traffic-root>
+      <section
+        class="traffic-shell"
+        data-traffic-root
+        data-traffic-profile="${escapeHtml(state.viewportProfile)}"
+        data-traffic-lanes="${escapeHtml(String(state.laneCount))}"
+        style="--traffic-road-max:${state.roadMaxWidth}px;--traffic-lane-count:${state.laneCount};"
+      >
         ${renderRoad(state)}
         ${renderSidePanel(state, players, canAct)}
       </section>
