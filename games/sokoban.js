@@ -96,6 +96,11 @@ function getLevelMeta(levelId) {
   return LEVEL_BY_ID.get(normalizeLevelId(levelId));
 }
 
+function getNextLevelMeta(levelId) {
+  const current = getLevelMeta(levelId);
+  return LEVELS[current.index + 1] ? getLevelMeta(LEVELS[current.index + 1].id) : null;
+}
+
 function cellIndex(row, col, cols) {
   return row * cols + col;
 }
@@ -167,6 +172,20 @@ function buildLevelState(levelId) {
   };
 }
 
+function buildNextLevelState(currentState) {
+  const nextLevel = getNextLevelMeta(currentState.levelId);
+  if (!nextLevel) {
+    return null;
+  }
+
+  const nextState = buildLevelState(nextLevel.id);
+  return {
+    ...nextState,
+    lastAction: "level-advance",
+    note: `${currentState.levelLabel} completado. Empieza ${nextLevel.label}.`
+  };
+}
+
 function snapshotState(state) {
   return {
     playerCell: state.playerCell,
@@ -188,6 +207,11 @@ function buildBlockedState(state, message) {
 
 function buildMoveState(state, nextPlayerCell, nextBoxes, message, lastAction) {
   const remainingGoals = countRemainingGoals(nextBoxes, state.targets);
+  const nextLevelState = remainingGoals === 0 ? buildNextLevelState(state) : null;
+  if (nextLevelState) {
+    return nextLevelState;
+  }
+
   const nextStatus = remainingGoals === 0 ? "won" : "playing";
 
   return {
@@ -425,7 +449,7 @@ function renderControls(state, canAct) {
   const note = state.status === "won" ? "Tablero congelado hasta reiniciar" : "Flechas, WASD o táctil";
   const hint =
     state.status === "won"
-      ? "Usa Reiniciar partida o Jugar otra vez para repetir este nivel."
+      ? "Usa Reiniciar partida o Jugar otra vez para repetir la secuencia."
       : "Deshaz si una caja queda mal colocada.";
 
   return `
@@ -667,7 +691,7 @@ export const sokobanGame = {
   formatResult({ state }) {
     return {
       title: `${state.levelLabel} completado`,
-      subtitle: `${state.levelSubtitle} · ${state.moveCount} movimientos · tablero congelado. Pulsa Jugar otra vez para reiniciarlo.`,
+      subtitle: `${state.levelSubtitle} · ${state.moveCount} movimientos · secuencia completada. Pulsa Jugar otra vez para reiniciar desde el nivel inicial.`,
       iconText: "✓",
       iconClass: "win"
     };
