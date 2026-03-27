@@ -714,8 +714,8 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-controls-head {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 10px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 8px;
   align-items: start;
 }
 
@@ -748,11 +748,13 @@ const SOKOBAN_STYLES = String.raw`
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
-  justify-content: flex-end;
+  justify-content: stretch;
 }
 
 .sokoban-undo-btn,
 .sokoban-reset-btn {
+  flex: 1 1 0;
+  min-width: 0;
   min-height: 38px;
   height: 38px;
   padding: 0 14px;
@@ -1725,7 +1727,7 @@ export const sokobanGame = {
   renderCardIllustration() {
     return `
       <div class="game-illustration" aria-hidden="true">
-        <svg class="game-illustration-svg" viewBox="0 0 160 94" preserveAspectRatio="xMidYMid meet" role="presentation">
+        <svg class="game-illustration-svg" viewBox="0 0 160 100" preserveAspectRatio="xMidYMid meet" role="presentation">
           <defs>
             <linearGradient id="sokoBg" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#fff5e8" />
@@ -1745,7 +1747,7 @@ export const sokobanGame = {
             </linearGradient>
           </defs>
           <rect x="18" y="10" width="124" height="74" rx="18" fill="url(#sokoBg)" stroke="#d9c2a1" />
-          <g transform="translate(32 20)">
+          <g transform="translate(32 15)">
             <rect x="0" y="0" width="96" height="54" rx="14" fill="#e3cfb0" stroke="#c8ad84" />
             <g transform="translate(8 7)">
               <rect x="0" y="0" width="16" height="16" rx="4" fill="url(#sokoWall)" />

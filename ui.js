@@ -427,10 +427,10 @@ export function createUI({ appElement, toastElement }) {
       `,
       memory: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
-          <rect x="4" y="4" width="40" height="40" rx="11" fill="#f4eff9" stroke="#d7cee9" stroke-width="1.5" />
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#eef4fb" stroke="#cddae7" stroke-width="1.5" />
           <g transform="translate(11 9)">
             <g transform="rotate(-8 9 12)">
-              <rect x="0" y="3" width="16" height="22" rx="5" fill="#8ea9ff" stroke="#708ce6" />
+              <rect x="0" y="3" width="16" height="22" rx="5" fill="#93bcff" stroke="#7097d8" />
               <path d="M4 12H12M8 8V20" stroke="rgba(255,255,255,0.36)" stroke-width="2.3" stroke-linecap="round" />
             </g>
             <g transform="translate(10)">
@@ -481,11 +481,11 @@ export function createUI({ appElement, toastElement }) {
           </g>
           <rect x="21" y="21" width="6" height="6" rx="2" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.9" />
           <rect x="21" y="28" width="6" height="6" rx="2" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.9" />
-          <circle cx="24" cy="24" r="3.3" fill="none" stroke="#63aa70" stroke-width="1.8" />
-          <rect x="24.5" y="20.5" width="9" height="9" rx="2.4" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
-          <path d="M24.5 25H33.5M29 20.5V29.5" stroke="rgba(255,255,255,0.34)" stroke-width="0.9" />
-          <circle cx="30.5" cy="31.5" r="4.5" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.2" />
-          <circle cx="29.3" cy="29.8" r="1.2" fill="#eef6ff" />
+          <circle cx="22.5" cy="24" r="3.3" fill="none" stroke="#63aa70" stroke-width="1.8" />
+          <rect x="21.5" y="20.5" width="9" height="9" rx="2.4" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
+          <path d="M21.5 25H30.5M26 20.5V29.5" stroke="rgba(255,255,255,0.34)" stroke-width="0.9" />
+          <circle cx="28.8" cy="29.2" r="4.2" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.2" />
+          <circle cx="27.7" cy="27.6" r="1.1" fill="#eef6ff" />
         </svg>
       `
     };
@@ -571,8 +571,8 @@ export function createUI({ appElement, toastElement }) {
           energy: "Pistas cortas y riesgo medido."
         },
         memory: {
-          accent: "#8b9dff",
-          glow: "rgba(139, 157, 255, 0.24)",
+          accent: "#74a8ff",
+          glow: "rgba(116, 168, 255, 0.24)",
           description: "Memoria visual",
           icon: "PJ",
           energy: "Destapa, recuerda y empareja."

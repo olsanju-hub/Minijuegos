@@ -29,10 +29,10 @@ const MEMORY_STYLES = String.raw`
   gap: 10px;
   padding: 16px 18px;
   border-radius: 24px;
-  border: 1px solid rgba(205, 198, 225, 0.84);
+  border: 1px solid rgba(203, 214, 223, 0.84);
   background:
-    radial-gradient(circle at 12% 0%, rgba(177, 193, 255, 0.22), rgba(177, 193, 255, 0) 26%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(244, 241, 252, 0.98) 100%);
+    radial-gradient(circle at 12% 0%, rgba(158, 196, 255, 0.2), rgba(158, 196, 255, 0) 26%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(243, 247, 251, 0.98) 100%);
   box-shadow:
     0 18px 34px rgba(61, 74, 120, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.82);
@@ -64,8 +64,8 @@ const MEMORY_STYLES = String.raw`
   min-height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  background: rgba(96, 121, 214, 0.12);
-  color: #556fcb;
+  background: rgba(87, 137, 222, 0.12);
+  color: #4b7abd;
   font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -85,7 +85,7 @@ const MEMORY_STYLES = String.raw`
 
 .memory-note {
   margin: 0;
-  color: #61708a;
+  color: #627181;
   font-size: 0.88rem;
   line-height: 1.42;
 }
@@ -111,12 +111,12 @@ const MEMORY_STYLES = String.raw`
   gap: 3px;
   padding: 10px 12px;
   border-radius: 16px;
-  border: 1px solid rgba(208, 201, 226, 0.88);
+  border: 1px solid rgba(209, 216, 223, 0.88);
   background: rgba(255, 255, 255, 0.74);
 }
 
 .memory-stat-label {
-  color: #7c88a1;
+  color: #748294;
   font-size: 0.66rem;
   font-weight: 800;
   letter-spacing: 0.05em;
@@ -130,18 +130,32 @@ const MEMORY_STYLES = String.raw`
 }
 
 .memory-board-frame {
+  position: relative;
+  overflow: hidden;
   padding: 14px;
   border-radius: 30px;
-  border: 1px solid rgba(203, 194, 224, 0.88);
+  border: 1px solid rgba(205, 214, 221, 0.88);
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0) 52%),
-    linear-gradient(180deg, rgba(247, 244, 252, 0.98) 0%, rgba(236, 232, 245, 0.98) 100%);
+    linear-gradient(180deg, rgba(246, 249, 251, 0.98) 0%, rgba(234, 240, 237, 0.98) 100%);
   box-shadow:
     0 24px 42px rgba(65, 71, 118, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
+.memory-board-frame::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 18% 14%, rgba(162, 184, 255, 0.13), rgba(162, 184, 255, 0) 24%),
+    radial-gradient(circle at 82% 82%, rgba(177, 214, 196, 0.12), rgba(177, 214, 196, 0) 24%);
+}
+
 .memory-board {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(var(--memory-cols), minmax(0, 1fr));
   gap: 10px;
@@ -155,6 +169,7 @@ const MEMORY_STYLES = String.raw`
   background: transparent;
   cursor: pointer;
   perspective: 1200px;
+  isolation: isolate;
 }
 
 .memory-card[disabled] {
@@ -163,10 +178,15 @@ const MEMORY_STYLES = String.raw`
 
 .memory-card-inner {
   position: relative;
+  display: block;
   width: 100%;
   height: 100%;
   transform-style: preserve-3d;
   transition: transform 240ms cubic-bezier(0.22, 0.74, 0.34, 1);
+}
+
+.memory-card:not([disabled]):hover .memory-card-inner {
+  transform: translateY(-2px) scale(1.01);
 }
 
 .memory-card.is-open .memory-card-inner {
@@ -178,18 +198,19 @@ const MEMORY_STYLES = String.raw`
   inset: 0;
   display: grid;
   place-items: center;
+  box-sizing: border-box;
   border-radius: 22px;
   backface-visibility: hidden;
   overflow: hidden;
 }
 
 .memory-card-front {
-  border: 1px solid rgba(173, 185, 232, 0.92);
+  border: 1px solid rgba(158, 186, 227, 0.92);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0) 28%),
-    linear-gradient(180deg, #9eb7ff 0%, #6d8ff2 100%);
+    linear-gradient(180deg, #9fc2ff 0%, #6f9be4 100%);
   box-shadow:
-    0 12px 18px rgba(79, 104, 192, 0.18),
+    0 12px 18px rgba(79, 121, 192, 0.18),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -214,13 +235,21 @@ const MEMORY_STYLES = String.raw`
 
 .memory-card-back {
   transform: rotateY(180deg);
-  border: 1px solid rgba(214, 206, 225, 0.92);
+  border: 1px solid rgba(214, 205, 191, 0.92);
   background:
     radial-gradient(circle at 24% 18%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0) 30%),
     linear-gradient(180deg, #fffdf8 0%, #f1ebdf 100%);
   box-shadow:
     0 12px 18px rgba(63, 58, 75, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.7);
+}
+
+.memory-card-back::before {
+  content: "";
+  position: absolute;
+  inset: 16%;
+  border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0));
 }
 
 .memory-card.is-match .memory-card-back {
@@ -250,6 +279,18 @@ const MEMORY_STYLES = String.raw`
   font-weight: 900;
   letter-spacing: 0.14em;
   text-transform: uppercase;
+}
+
+.memory-card:focus-visible {
+  outline: none;
+}
+
+.memory-card:focus-visible .memory-card-front,
+.memory-card:focus-visible .memory-card-back {
+  box-shadow:
+    0 0 0 3px rgba(111, 155, 228, 0.28),
+    0 12px 18px rgba(79, 121, 192, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
 @media (max-width: 900px) {
@@ -471,20 +512,21 @@ function renderCard(state, card, index) {
   return `
     <button
       class="${className}"
+      type="button"
       data-action="game-action"
       data-game-action="flip-card"
       data-card="${index}"
       aria-label="${open ? `Carta ${card.symbol}` : "Carta oculta"}"
       ${disabled ? "disabled" : ""}
     >
-      <span class="memory-card-inner">
-        <span class="memory-card-face memory-card-front">
+      <div class="memory-card-inner">
+        <div class="memory-card-face memory-card-front">
           <span class="memory-card-badge">MG</span>
-        </span>
-        <span class="memory-card-face memory-card-back">
+        </div>
+        <div class="memory-card-face memory-card-back">
           <span class="memory-symbol">${escapeHtml(card.symbol)}</span>
-        </span>
-      </span>
+        </div>
+      </div>
     </button>
   `;
 }
@@ -666,18 +708,18 @@ export const parejasGame = {
         <svg class="game-illustration-svg" viewBox="0 0 160 94" preserveAspectRatio="xMidYMid meet" role="presentation">
           <defs>
             <linearGradient id="memoryCardFront" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#9db6ff" />
-              <stop offset="100%" stop-color="#6b8cf1" />
+              <stop offset="0%" stop-color="#9fc2ff" />
+              <stop offset="100%" stop-color="#6f9be4" />
             </linearGradient>
             <linearGradient id="memoryCardBack" x1="0" y1="0" x2="0" y2="1">
               <stop offset="0%" stop-color="#fffdf9" />
               <stop offset="100%" stop-color="#efe8dc" />
             </linearGradient>
           </defs>
-          <rect x="18" y="12" width="124" height="70" rx="22" fill="#f4eff9" stroke="#d7cee9" />
+          <rect x="18" y="12" width="124" height="70" rx="22" fill="#eef4fb" stroke="#d0dbe6" />
           <g transform="translate(34 20)">
             <g transform="rotate(-9 22 27)">
-              <rect x="0" y="0" width="44" height="54" rx="13" fill="url(#memoryCardFront)" stroke="#7c98f3" />
+              <rect x="0" y="0" width="44" height="54" rx="13" fill="url(#memoryCardFront)" stroke="#7499d9" />
               <path d="M12 16H32M22 8V46" stroke="rgba(255,255,255,0.34)" stroke-width="5" stroke-linecap="round" />
             </g>
             <g transform="translate(24 2)">
