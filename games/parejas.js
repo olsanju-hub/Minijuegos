@@ -205,12 +205,12 @@ const MEMORY_STYLES = String.raw`
 }
 
 .memory-card-front {
-  border: 1px solid rgba(158, 186, 227, 0.92);
+  border: 1px solid rgba(154, 187, 156, 0.94);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.84) 0%, rgba(255, 255, 255, 0) 28%),
-    linear-gradient(180deg, #9fc2ff 0%, #6f9be4 100%);
+    linear-gradient(180deg, #d9ead2 0%, #88ab8a 100%);
   box-shadow:
-    0 12px 18px rgba(79, 121, 192, 0.18),
+    0 12px 18px rgba(71, 105, 82, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
@@ -219,7 +219,7 @@ const MEMORY_STYLES = String.raw`
   content: "";
   position: absolute;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.26);
+  background: rgba(250, 246, 236, 0.26);
 }
 
 .memory-card-front::before {
@@ -274,7 +274,7 @@ const MEMORY_STYLES = String.raw`
 .memory-card-badge {
   position: relative;
   z-index: 1;
-  color: rgba(255, 255, 255, 0.88);
+  color: rgba(255, 250, 240, 0.9);
   font-size: 1.22rem;
   font-weight: 900;
   letter-spacing: 0.14em;
@@ -288,8 +288,8 @@ const MEMORY_STYLES = String.raw`
 .memory-card:focus-visible .memory-card-front,
 .memory-card:focus-visible .memory-card-back {
   box-shadow:
-    0 0 0 3px rgba(111, 155, 228, 0.28),
-    0 12px 18px rgba(79, 121, 192, 0.18),
+    0 0 0 3px rgba(117, 164, 122, 0.26),
+    0 12px 18px rgba(71, 105, 82, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.5);
 }
 
