@@ -372,12 +372,6 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-piece {
   cursor: pointer;
-  transform-origin: center;
-  transition: transform 140ms ease, filter 140ms ease;
-}
-
-.football-piece.is-clickable:hover .football-piece-core {
-  transform: scale(1.05);
 }
 
 .football-piece.is-team-0 .football-piece-core {
@@ -394,6 +388,11 @@ const FOOTBALL_STYLES = String.raw`
   stroke-width: 4.2;
   paint-order: stroke;
   filter: drop-shadow(0 8px 10px rgba(39, 43, 48, 0.2));
+  transition: filter 140ms ease, stroke-width 140ms ease;
+}
+
+.football-piece.is-clickable:hover .football-piece-core {
+  filter: drop-shadow(0 10px 14px rgba(39, 43, 48, 0.24));
 }
 
 .football-piece-detail {
@@ -406,18 +405,16 @@ const FOOTBALL_STYLES = String.raw`
     drop-shadow(0 0 0 rgba(0, 0, 0, 0));
 }
 
-.football-piece.is-turn-team.is-clickable {
-  animation: footballTurnPulse 2200ms ease-in-out infinite;
-}
-
 @keyframes footballTurnPulse {
   0%,
   100% {
-    transform: scale(1);
+    opacity: 0.46;
+    stroke-width: 6;
   }
 
   50% {
-    transform: scale(1.03);
+    opacity: 0.9;
+    stroke-width: 8;
   }
 }
 
@@ -429,6 +426,7 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-piece.is-turn-team .football-turn-ring {
   opacity: 1;
+  animation: footballTurnPulse 2200ms ease-in-out infinite;
 }
 
 .football-piece.is-team-0 .football-turn-ring {

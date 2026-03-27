@@ -7587,7 +7587,8 @@ body:not(.is-home-screen) .bg-layer {
   border: 0;
   background: transparent;
   border-radius: 20px;
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: pointer;
 }
 
 .home-game-card-icon-button:focus-visible {
@@ -7757,11 +7758,6 @@ body:not(.is-home-screen) .bg-layer {
 @media (max-width: 1280px) {
   .home-game-card-actions {
     display: none;
-  }
-
-  .home-game-card-icon-button {
-    pointer-events: auto;
-    cursor: pointer;
   }
 
   .home-game-card-icon {
