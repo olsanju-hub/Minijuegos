@@ -1048,7 +1048,7 @@ function completionNote(status, levelNumber, totalLevels, moveCount) {
   if (status === "campaign-complete") {
     return `Has completado los ${totalLevels} niveles en esta secuencia.`;
   }
-  return `Nivel ${levelNumber} completado en ${moveCount} movimientos.`;
+  return `Nivel ${levelNumber} completado en ${moveCount} movimientos. Pasando al siguiente almacen...`;
 }
 
 function buildLevelState(levelId, message = "") {
@@ -1391,22 +1391,19 @@ function renderBoardCell(index, state, boxSet) {
 }
 
 function renderStageOverlay(state, canAct) {
-  if (!isCompleteStatus(state.status)) {
+  if (state.status !== "campaign-complete") {
     return "";
   }
 
-  const isFinal = state.status === "campaign-complete";
-  const title = isFinal ? "Campana completada" : `${state.levelLabel} completado`;
-  const text = isFinal
-    ? `Has cerrado la secuencia de ${state.totalLevels} niveles. Puedes repetir el ultimo o volver al primero.`
-    : `Buen trabajo. La secuencia continua en el ${LEVELS[state.levelIndex + 1].label.toLowerCase()}.`;
-  const primaryAction = isFinal ? "restart-campaign" : "next-level";
-  const primaryLabel = isFinal ? "Volver al nivel 1" : "Siguiente nivel";
+  const title = "Campana completada";
+  const text = `Has cerrado la secuencia de ${state.totalLevels} niveles. Puedes repetir el ultimo o volver al primero.`;
+  const primaryAction = "restart-campaign";
+  const primaryLabel = "Volver al nivel 1";
 
   return `
     <div class="sokoban-stage-overlay">
       <div class="sokoban-stage-card">
-        <p class="sokoban-stage-kicker">${isFinal ? "Secuencia cerrada" : "Nivel superado"}</p>
+        <p class="sokoban-stage-kicker">Secuencia cerrada</p>
         <h3 class="sokoban-stage-title">${escapeHtml(title)}</h3>
         <p class="sokoban-stage-text">${escapeHtml(text)}</p>
         <div class="sokoban-stage-meta">
@@ -1481,11 +1478,12 @@ function renderDirectionButton(direction, canAct, state) {
 
 function renderControls(state, canAct) {
   const controlsClass = `sokoban-controls${isCompleteStatus(state.status) ? " is-complete" : ""}${state.lastAction === "blocked" ? " is-blocked" : ""}`;
-  const title = isCompleteStatus(state.status) ? "Opciones del nivel" : "Controles";
+  const autoAdvancing = state.status === "level-complete";
+  const title = isCompleteStatus(state.status) ? "Estado del nivel" : "Controles";
   const note = isCompleteStatus(state.status)
     ? state.status === "campaign-complete"
       ? "La secuencia ha terminado. Puedes repetir el nivel o volver al principio."
-      : "Pulsa Siguiente nivel para continuar o repite este tablero."
+      : "Nivel resuelto. El siguiente tablero se abre automaticamente."
     : "Desliza sobre el tablero o usa el pad. Cada accion ejecuta un solo movimiento.";
   const hint = isCompleteStatus(state.status)
     ? "El tablero queda en vista para que puedas releer la solucion."
@@ -1503,7 +1501,7 @@ function renderControls(state, canAct) {
             class="btn btn-secondary sokoban-undo-btn"
             data-action="game-action"
             data-game-action="undo-move"
-            ${!canAct || state.status !== "playing" || state.history.length === 0 ? "disabled" : ""}
+            ${!canAct || state.status !== "playing" || state.history.length === 0 || autoAdvancing ? "disabled" : ""}
           >
             Deshacer
           </button>
@@ -1511,7 +1509,7 @@ function renderControls(state, canAct) {
             class="btn btn-secondary sokoban-reset-btn"
             data-action="game-action"
             data-game-action="restart-level"
-            ${!canAct ? "disabled" : ""}
+            ${!canAct || autoAdvancing ? "disabled" : ""}
           >
             Reiniciar
           </button>

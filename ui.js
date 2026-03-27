@@ -189,6 +189,8 @@ export function createUI({ appElement, toastElement }) {
   let minesTimerInFlight = false;
   let memoryResolveTimerId = null;
   let memoryResolveInFlight = false;
+  let sokobanAutoNextTimerId = null;
+  let sokobanAutoNextInFlight = false;
   let homeSwipeStartX = null;
   let trafficSwipeState = null;
   let trafficSwipeInFlight = false;
@@ -1140,6 +1142,66 @@ export function createUI({ appElement, toastElement }) {
     );
   }
 
+  function shouldRunSokobanAutoNext(vm = currentVm) {
+    return Boolean(
+      vm?.screen === "game" &&
+      vm?.game?.id === "sokoban" &&
+      vm?.session?.state?.status === "level-complete" &&
+      typeof onAction === "function"
+    );
+  }
+
+  function clearSokobanAutoNextLoop() {
+    if (sokobanAutoNextTimerId) {
+      window.clearTimeout(sokobanAutoNextTimerId);
+      sokobanAutoNextTimerId = null;
+    }
+    sokobanAutoNextInFlight = false;
+  }
+
+  function syncSokobanAutoNextLoop(vm) {
+    if (!shouldRunSokobanAutoNext(vm)) {
+      clearSokobanAutoNextLoop();
+      return;
+    }
+
+    if (sokobanAutoNextTimerId) {
+      return;
+    }
+
+    sokobanAutoNextTimerId = window.setTimeout(async () => {
+      sokobanAutoNextTimerId = null;
+
+      if (!shouldRunSokobanAutoNext()) {
+        clearSokobanAutoNextLoop();
+        return;
+      }
+
+      if (sokobanAutoNextInFlight) {
+        syncSokobanAutoNextLoop(currentVm);
+        return;
+      }
+
+      sokobanAutoNextInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "next-level",
+            nowMs: Date.now()
+          }
+        });
+      } finally {
+        sokobanAutoNextInFlight = false;
+        if (!shouldRunSokobanAutoNext()) {
+          clearSokobanAutoNextLoop();
+        } else {
+          syncSokobanAutoNextLoop(currentVm);
+        }
+      }
+    }, 650);
+  }
+
   function clearMemoryResolveLoop() {
     if (memoryResolveTimerId) {
       window.clearTimeout(memoryResolveTimerId);
@@ -1198,6 +1260,7 @@ export function createUI({ appElement, toastElement }) {
     syncTrafficTickLoop(vm);
     syncMinesTimerLoop(vm);
     syncMemoryResolveLoop(vm);
+    syncSokobanAutoNextLoop(vm);
   }
 
   function showToast(message, duration = 2200) {
