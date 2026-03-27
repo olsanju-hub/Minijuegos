@@ -40,6 +40,14 @@ function normalizeActionPayload(target) {
     };
   }
 
+  if (actionType === "flip-card") {
+    return {
+      type: "flip-card",
+      card: Number(target.dataset.card),
+      nowMs: Date.now()
+    };
+  }
+
   if (actionType === "set-interaction-mode") {
     return {
       type: "set-interaction-mode",
@@ -179,6 +187,8 @@ export function createUI({ appElement, toastElement }) {
   let trafficDispatchInFlight = false;
   let minesTimerId = null;
   let minesTimerInFlight = false;
+  let memoryResolveTimerId = null;
+  let memoryResolveInFlight = false;
   let homeSwipeStartX = null;
   let trafficSwipeState = null;
   let trafficSwipeInFlight = false;
@@ -415,6 +425,25 @@ export function createUI({ appElement, toastElement }) {
           <text x="15" y="30.5" text-anchor="middle" font-size="7.1" font-weight="800" fill="#6f5137">✹</text>
         </svg>
       `,
+      memory: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#f4eff9" stroke="#d7cee9" stroke-width="1.5" />
+          <g transform="translate(11 9)">
+            <g transform="rotate(-8 9 12)">
+              <rect x="0" y="3" width="16" height="22" rx="5" fill="#8ea9ff" stroke="#708ce6" />
+              <path d="M4 12H12M8 8V20" stroke="rgba(255,255,255,0.36)" stroke-width="2.3" stroke-linecap="round" />
+            </g>
+            <g transform="translate(10)">
+              <rect x="0" y="0" width="16" height="22" rx="5" fill="#fffdf9" stroke="#d7d0c5" />
+              <text x="8" y="15" text-anchor="middle" font-size="9">🦊</text>
+            </g>
+            <g transform="translate(18 4) rotate(9 8 11)">
+              <rect x="0" y="0" width="16" height="22" rx="5" fill="#fffdf9" stroke="#d7d0c5" />
+              <text x="8" y="15" text-anchor="middle" font-size="9">🐻</text>
+            </g>
+          </g>
+        </svg>
+      `,
       sokoban: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
           <defs>
@@ -540,6 +569,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Minas y banderas",
           icon: "BM",
           energy: "Pistas cortas y riesgo medido."
+        },
+        memory: {
+          accent: "#8b9dff",
+          glow: "rgba(139, 157, 255, 0.24)",
+          description: "Memoria visual",
+          icon: "PJ",
+          energy: "Destapa, recuerda y empareja."
         },
         sokoban: {
           accent: "#e39b57",
@@ -1094,9 +1130,74 @@ export function createUI({ appElement, toastElement }) {
     }, 1000);
   }
 
+  function shouldRunMemoryResolve(vm = currentVm) {
+    return Boolean(
+      vm?.screen === "game" &&
+      vm?.game?.id === "memory" &&
+      vm?.session?.state?.status === "resolving" &&
+      Number.isFinite(vm?.session?.state?.resolveAtMs) &&
+      typeof onAction === "function"
+    );
+  }
+
+  function clearMemoryResolveLoop() {
+    if (memoryResolveTimerId) {
+      window.clearTimeout(memoryResolveTimerId);
+      memoryResolveTimerId = null;
+    }
+    memoryResolveInFlight = false;
+  }
+
+  function syncMemoryResolveLoop(vm) {
+    if (!shouldRunMemoryResolve(vm)) {
+      clearMemoryResolveLoop();
+      return;
+    }
+
+    if (memoryResolveTimerId) {
+      return;
+    }
+
+    const resolveAtMs = Number(vm.session.state.resolveAtMs);
+    const delayMs = Math.max(0, resolveAtMs - Date.now());
+
+    memoryResolveTimerId = window.setTimeout(async () => {
+      memoryResolveTimerId = null;
+
+      if (!shouldRunMemoryResolve()) {
+        clearMemoryResolveLoop();
+        return;
+      }
+
+      if (memoryResolveInFlight) {
+        syncMemoryResolveLoop(currentVm);
+        return;
+      }
+
+      memoryResolveInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "resolve-mismatch",
+            nowMs: Date.now()
+          }
+        });
+      } finally {
+        memoryResolveInFlight = false;
+        if (!shouldRunMemoryResolve()) {
+          clearMemoryResolveLoop();
+        } else {
+          syncMemoryResolveLoop(currentVm);
+        }
+      }
+    }, delayMs);
+  }
+
   function syncGameLoops(vm) {
     syncTrafficTickLoop(vm);
     syncMinesTimerLoop(vm);
+    syncMemoryResolveLoop(vm);
   }
 
   function showToast(message, duration = 2200) {
@@ -1184,6 +1285,10 @@ export function createUI({ appElement, toastElement }) {
       }
 
       if (action === "set-game-option") {
+        if (target instanceof HTMLSelectElement) {
+          return;
+        }
+
         await onAction("set-game-option", {
           key: String(target.dataset.option || ""),
           value: target.dataset.value,
@@ -1217,6 +1322,23 @@ export function createUI({ appElement, toastElement }) {
       if (field === "player-name") {
         onField("player-name", target.value, { index: Number(target.dataset.index) });
       }
+    });
+
+    document.addEventListener("change", async (event) => {
+      const target = event.target;
+      if (!target || !(target instanceof HTMLElement) || !onAction) {
+        return;
+      }
+
+      if (target.dataset.action !== "set-game-option") {
+        return;
+      }
+
+      await onAction("set-game-option", {
+        key: String(target.dataset.option || ""),
+        value: "value" in target ? target.value : target.dataset.value,
+        valueType: String(target.dataset.valueType || "string")
+      });
     });
 
     document.addEventListener("keydown", (event) => {

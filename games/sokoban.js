@@ -331,6 +331,14 @@ const SOKOBAN_STYLES = String.raw`
   place-items: center;
   padding: clamp(8px, 1.4vw, 16px);
   overflow: hidden;
+  border-radius: clamp(22px, 3vw, 30px);
+  border: 1px solid rgba(205, 192, 169, 0.92);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0) 56%),
+    linear-gradient(180deg, rgba(250, 247, 240, 0.98) 0%, rgba(237, 228, 211, 0.98) 100%);
+  box-shadow:
+    0 22px 38px rgba(35, 56, 48, 0.11),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
   transition:
     box-shadow var(--ui-speed) var(--ui-ease),
     border-color var(--ui-speed) var(--ui-ease),
@@ -347,8 +355,8 @@ const SOKOBAN_STYLES = String.raw`
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 64%),
-    radial-gradient(circle at 50% 108%, rgba(221, 194, 150, 0.18), rgba(221, 194, 150, 0) 56%);
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 62%),
+    radial-gradient(circle at 50% 108%, rgba(205, 187, 154, 0.18), rgba(205, 187, 154, 0) 56%);
 }
 
 .sokoban-board-frame.is-blocked {
@@ -370,9 +378,10 @@ const SOKOBAN_STYLES = String.raw`
 .sokoban-board {
   --sokoban-gap: clamp(3px, 0.55vw, 6px);
   --sokoban-cell-size: clamp(44px, 6.8vw, 84px);
-  display: block;
-  grid-template-columns: none;
-  gap: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--sokoban-cols), minmax(0, var(--sokoban-cell-size)));
+  grid-template-rows: repeat(var(--sokoban-rows), minmax(0, var(--sokoban-cell-size)));
+  gap: var(--sokoban-gap);
   position: relative;
   width: min(100%, calc((var(--sokoban-cols) * var(--sokoban-cell-size)) + ((var(--sokoban-cols) - 1) * var(--sokoban-gap))));
   height: calc((var(--sokoban-rows) * var(--sokoban-cell-size)) + ((var(--sokoban-rows) - 1) * var(--sokoban-gap)));
@@ -382,6 +391,7 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-grid,
 .sokoban-entities {
+  grid-area: 1 / 1;
   display: grid;
   grid-template-columns: repeat(var(--sokoban-cols), minmax(0, var(--sokoban-cell-size)));
   grid-template-rows: repeat(var(--sokoban-rows), minmax(0, var(--sokoban-cell-size)));
@@ -406,7 +416,7 @@ const SOKOBAN_STYLES = String.raw`
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 14px;
+  border-radius: 13px;
   overflow: hidden;
 }
 
@@ -417,44 +427,43 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-cell.is-floor .sokoban-tile {
-  border: 1px solid #d7c7aa;
+  border: 1px solid #d8ccb8;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, #fffefb 0%, #efe6d2 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0) 30%),
+    linear-gradient(180deg, #fffdfa 0%, #efe6d8 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.78),
-    inset 0 -2px 0 rgba(206, 190, 159, 0.36);
+    inset 0 1px 0 rgba(255, 255, 255, 0.82),
+    inset 0 -2px 0 rgba(203, 191, 169, 0.34);
 }
 
 .sokoban-cell.is-wall .sokoban-tile {
-  border: 1px solid #af7a49;
+  border: 1px solid #b98758;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 22%),
-    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 8px, rgba(119, 77, 35, 0.02) 8px 16px),
-    linear-gradient(180deg, #d39d6b 0%, #b87944 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 24%),
+    linear-gradient(180deg, #ddb188 0%, #c18a58 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -2px 0 rgba(126, 82, 48, 0.34);
+    inset 0 -2px 0 rgba(138, 95, 58, 0.32);
 }
 
 .sokoban-goal {
   position: absolute;
-  inset: 19%;
+  inset: 21%;
   border-radius: 50%;
-  border: 2px dashed rgba(96, 168, 110, 0.92);
+  border: 2px solid rgba(97, 164, 109, 0.92);
   background:
-    radial-gradient(circle, rgba(167, 228, 169, 0.34) 0 38%, rgba(167, 228, 169, 0) 39% 100%);
+    radial-gradient(circle, rgba(166, 225, 171, 0.34) 0 42%, rgba(166, 225, 171, 0) 43% 100%);
   box-shadow:
-    inset 0 0 0 2px rgba(255, 255, 255, 0.34),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.44),
     0 0 0 1px rgba(86, 148, 93, 0.08);
 }
 
 .sokoban-goal::before {
   content: "";
   position: absolute;
-  inset: 34%;
+  inset: 37%;
   border-radius: 50%;
-  background: rgba(96, 168, 110, 0.22);
+  background: rgba(96, 168, 110, 0.18);
 }
 
 .sokoban-cell.has-box-on-target .sokoban-goal {
@@ -472,13 +481,12 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-piece {
-  position: relative;
-  width: 100%;
-  height: 100%;
+  position: absolute;
+  inset: 0;
   display: grid;
   place-items: center;
-  overflow: hidden;
-  border-radius: clamp(11px, 1.2vw, 14px);
+  overflow: visible;
+  border-radius: 0;
   will-change: transform;
   animation: sokobanEntityStep 150ms cubic-bezier(0.24, 0.8, 0.26, 1);
 }
@@ -514,16 +522,26 @@ const SOKOBAN_STYLES = String.raw`
   }
 }
 
+.sokoban-box-wrap,
+.sokoban-player {
+  width: 60%;
+  height: 60%;
+  display: grid;
+  place-items: center;
+  align-self: center;
+  justify-self: center;
+}
+
 .sokoban-box {
-  width: 64%;
-  height: 64%;
-  border-radius: 10px;
+  width: 100%;
+  height: 100%;
+  border-radius: 12px;
   border: 1px solid rgba(160, 103, 48, 0.94);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 18%),
-    linear-gradient(135deg, #f1bf76 0%, #ca843d 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 22%),
+    linear-gradient(180deg, #efbd74 0%, #d48a45 100%);
   box-shadow:
-    0 6px 10px rgba(92, 62, 30, 0.14),
+    0 8px 12px rgba(92, 62, 30, 0.16),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
   position: relative;
 }
@@ -532,10 +550,10 @@ const SOKOBAN_STYLES = String.raw`
   content: "";
   position: absolute;
   inset: 17%;
-  border-radius: 7px;
+  border-radius: 8px;
   background:
-    linear-gradient(180deg, rgba(183, 113, 48, 0.18), rgba(183, 113, 48, 0) 34%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(125, 77, 31, 0.08));
+    linear-gradient(180deg, rgba(183, 113, 48, 0.12), rgba(183, 113, 48, 0) 36%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(125, 77, 31, 0.06));
 }
 
 .sokoban-box::after {
@@ -552,8 +570,8 @@ const SOKOBAN_STYLES = String.raw`
   position: absolute;
   top: 23%;
   left: 24%;
-  width: 6px;
-  height: 6px;
+  width: clamp(4px, 0.66vw, 6px);
+  height: clamp(4px, 0.66vw, 6px);
   border-radius: 50%;
   background: rgba(130, 82, 38, 0.46);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
@@ -568,18 +586,11 @@ const SOKOBAN_STYLES = String.raw`
   border-color: rgba(96, 145, 78, 0.96);
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 18%),
-    linear-gradient(135deg, #d8cb71 0%, #7faf5a 100%);
+    linear-gradient(180deg, #dce28f 0%, #8fb45d 100%);
   box-shadow:
-    0 6px 12px rgba(90, 129, 70, 0.14),
-    0 0 0 3px rgba(130, 184, 103, 0.16),
+    0 8px 14px rgba(90, 129, 70, 0.14),
+    0 0 0 3px rgba(130, 184, 103, 0.14),
     inset 0 1px 0 rgba(255, 255, 255, 0.28);
-}
-
-.sokoban-player {
-  width: 58%;
-  height: 58%;
-  display: grid;
-  place-items: center;
 }
 
 .sokoban-player-core {
@@ -588,17 +599,17 @@ const SOKOBAN_STYLES = String.raw`
   border-radius: 50%;
   border: 1px solid rgba(46, 90, 190, 0.96);
   background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.84) 0 12%, rgba(255, 255, 255, 0) 13%),
-    linear-gradient(180deg, #8dbcff 0%, #4f81ef 100%);
+    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.86) 0 14%, rgba(255, 255, 255, 0) 15%),
+    linear-gradient(180deg, #8fb8ff 0%, #5985e9 100%);
   box-shadow:
-    0 6px 10px rgba(49, 92, 192, 0.16),
+    0 8px 12px rgba(49, 92, 192, 0.17),
     inset 0 1px 0 rgba(255, 255, 255, 0.52);
 }
 
 .sokoban-piece.is-targeted .sokoban-player-core {
   box-shadow:
-    0 6px 10px rgba(49, 92, 192, 0.16),
-    0 0 0 4px rgba(103, 170, 115, 0.14),
+    0 8px 12px rgba(49, 92, 192, 0.17),
+    0 0 0 4px rgba(103, 170, 115, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.56);
 }
 
@@ -945,10 +956,21 @@ const SOKOBAN_STYLES = String.raw`
     font-size: 0.78rem;
   }
 
-  .sokoban-control-pad,
-  .sokoban-control-gap,
+  .sokoban-control-pad {
+    width: min(100%, 168px);
+    gap: 5px;
+  }
+
+  .sokoban-control-gap {
+    display: block;
+    min-height: 36px;
+  }
+
   .sokoban-control-btn {
-    display: none;
+    min-height: 36px;
+    height: 36px;
+    border-radius: 12px;
+    font-size: 0.94rem;
   }
 }
 `;
@@ -1260,11 +1282,6 @@ function restartCampaignState() {
   return buildLevelState(LEVELS[0].id, "Campana reiniciada. Empieza desde el primer almacen.");
 }
 
-function levelSummary(level) {
-  const targetCount = level.board.join("").split("").filter((char) => char === "." || char === "+" || char === "*").length;
-  return `${level.label} · ${targetCount} ${targetCount === 1 ? "caja" : "cajas"}`;
-}
-
 function renderStat(label, value, tone = "") {
   const className = tone ? `sokoban-stat ${tone}` : "sokoban-stat";
   return `
@@ -1329,6 +1346,8 @@ function renderBoardCell(index, state, boxSet) {
   const isTarget = state.targets[index];
   const hasBox = boxSet.has(index);
   const hasPlayer = state.playerCell === index;
+  const boxMoving = Boolean(state.motion && state.motion.boxTo === index);
+  const playerMoving = Boolean(state.motion && state.motion.playerTo === index);
 
   const classes = ["sokoban-cell", isWall ? "is-wall" : "is-floor"];
 
@@ -1346,67 +1365,27 @@ function renderBoardCell(index, state, boxSet) {
     <div class="${classes.join(" ")}" aria-hidden="true">
       <span class="sokoban-tile"></span>
       ${!isWall && isTarget ? '<span class="sokoban-goal"></span>' : ""}
+      ${hasBox
+        ? `
+          <span class="sokoban-piece${boxMoving ? " is-moving" : ""}${isTarget ? " is-targeted" : ""}">
+            <span class="sokoban-box-wrap">
+              <span class="sokoban-box">
+                <span class="sokoban-box-rivet"></span>
+                <span class="sokoban-box-rivet is-right"></span>
+              </span>
+            </span>
+          </span>
+        `
+        : ""}
+      ${hasPlayer
+        ? `
+          <span class="sokoban-piece${playerMoving ? " is-moving" : ""}${isTarget ? " is-targeted" : ""}">
+            <span class="sokoban-player"><span class="sokoban-player-core"></span></span>
+          </span>
+        `
+        : ""}
     </div>
   `;
-}
-
-function renderEntityStyle(cell, cols, deltaRow, deltaCol) {
-  const { row, col } = cellCoords(cell, cols);
-  return `grid-column:${col + 1};grid-row:${row + 1};--sokoban-delta-x:${deltaCol};--sokoban-delta-y:${deltaRow};`;
-}
-
-function motionDelta(fromCell, toCell, cols) {
-  if (fromCell === null || toCell === null || fromCell === undefined || toCell === undefined) {
-    return { row: 0, col: 0 };
-  }
-
-  const from = cellCoords(fromCell, cols);
-  const to = cellCoords(toCell, cols);
-
-  return {
-    row: from.row - to.row,
-    col: from.col - to.col
-  };
-}
-
-function renderPlayerEntity(state) {
-  const playerCell = state.playerCell;
-  const isTargeted = state.targets[playerCell];
-  const isMoving = Boolean(state.motion && state.motion.playerTo === playerCell);
-  const delta = isMoving ? motionDelta(state.motion.playerFrom, state.motion.playerTo, state.cols) : { row: 0, col: 0 };
-
-  return `
-    <span
-      class="sokoban-piece${isMoving ? " is-moving" : ""}${isTargeted ? " is-targeted" : ""}"
-      style="${renderEntityStyle(playerCell, state.cols, delta.row, delta.col)}"
-      aria-hidden="true"
-    >
-      <span class="sokoban-player"><span class="sokoban-player-core"></span></span>
-    </span>
-  `;
-}
-
-function renderBoxEntities(state) {
-  return state.boxes
-    .map((boxCell) => {
-      const isTargeted = state.targets[boxCell];
-      const isMoving = Boolean(state.motion && state.motion.boxTo === boxCell);
-      const delta = isMoving ? motionDelta(state.motion.boxFrom, state.motion.boxTo, state.cols) : { row: 0, col: 0 };
-
-      return `
-        <span
-          class="sokoban-piece${isMoving ? " is-moving" : ""}${isTargeted ? " is-targeted" : ""}"
-          style="${renderEntityStyle(boxCell, state.cols, delta.row, delta.col)}"
-          aria-hidden="true"
-        >
-          <span class="sokoban-box">
-            <span class="sokoban-box-rivet"></span>
-            <span class="sokoban-box-rivet is-right"></span>
-          </span>
-        </span>
-      `;
-    })
-    .join("");
 }
 
 function renderStageOverlay(state, canAct) {
@@ -1476,13 +1455,7 @@ function renderBoardGrid(state, canAct) {
         aria-label="${escapeHtml(summary)}"
         style="--sokoban-cols:${state.cols};--sokoban-rows:${state.rows};"
       >
-        <div class="sokoban-grid">
-          ${Array.from({ length: state.rows * state.cols }, (_, index) => renderBoardCell(index, state, boxSet)).join("")}
-        </div>
-        <div class="sokoban-entities">
-          ${renderBoxEntities(state)}
-          ${renderPlayerEntity(state)}
-        </div>
+        ${Array.from({ length: state.rows * state.cols }, (_, index) => renderBoardCell(index, state, boxSet)).join("")}
         ${renderStageOverlay(state, canAct)}
       </div>
     </div>
@@ -1511,10 +1484,10 @@ function renderControls(state, canAct) {
     ? state.status === "campaign-complete"
       ? "La secuencia ha terminado. Puedes repetir el nivel o volver al principio."
       : "Pulsa Siguiente nivel para continuar o repite este tablero."
-    : "Desliza sobre el tablero. Cada gesto ejecuta un solo movimiento.";
+    : "Desliza sobre el tablero o usa el pad. Cada accion ejecuta un solo movimiento.";
   const hint = isCompleteStatus(state.status)
     ? "El tablero queda en vista para que puedas releer la solucion."
-    : "En movil manda el swipe; fuera de movil puedes usar teclado o este pad.";
+    : "En movil puedes alternar entre swipe y pad; fuera de movil tambien funciona con teclado.";
 
   return `
     <section class="${controlsClass}">
@@ -1599,25 +1572,28 @@ export const sokobanGame = {
   },
   renderConfigPanel({ options }) {
     const currentLevel = normalizeLevelId(options?.level);
+    const currentMeta = getLevelMeta(currentLevel);
 
     return `
       <div class="block">
         <h3 class="block-title">Inicio de campana</h3>
         <p class="block-sub">La secuencia continua hasta el nivel 10 desde el punto que elijas.</p>
-        <div class="player-count-row">
-          ${LEVELS.map((level) => {
-            return `
-              <button
-                class="pill ${currentLevel === level.id ? "is-active" : ""}"
-                data-action="set-game-option"
-                data-option="level"
-                data-value="${escapeHtml(level.id)}"
-              >
-                ${escapeHtml(levelSummary(level))}
-              </button>
-            `;
-          }).join("")}
-        </div>
+        <label class="field">
+          <span class="field-label">Nivel inicial</span>
+          <select
+            class="select"
+            data-action="set-game-option"
+            data-option="level"
+            aria-label="Seleccionar nivel inicial de Sokoban"
+          >
+            ${LEVELS.map((level) => `
+              <option value="${escapeHtml(level.id)}" ${currentLevel === level.id ? "selected" : ""}>
+                ${escapeHtml(`${level.label} · ${level.subtitle}`)}
+              </option>
+            `).join("")}
+          </select>
+        </label>
+        <p class="info-line">Empiezas en ${escapeHtml(currentMeta.label)}. ${escapeHtml(currentMeta.subtitle)}.</p>
       </div>
     `;
   },

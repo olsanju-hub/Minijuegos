@@ -7525,6 +7525,12 @@ body:not(.is-home-screen) .bg-layer {
     linear-gradient(180deg, #f8f3e6 0%, #eadcc1 100%);
 }
 
+.home-game-card.is-memory {
+  background:
+    radial-gradient(circle at 86% 14%, rgba(139, 157, 255, 0.28), rgba(255, 255, 255, 0) 28%),
+    linear-gradient(180deg, #f5f0ff 0%, #e8defb 100%);
+}
+
 .home-game-card.is-sokoban {
   background:
     radial-gradient(circle at 86% 14%, rgba(227, 155, 87, 0.3), rgba(255, 255, 255, 0) 28%),
@@ -7645,6 +7651,10 @@ body:not(.is-home-screen) .bg-layer {
 
 .home-game-card-icon.is-buscaminas {
   background: linear-gradient(180deg, #79a9ff 0%, #4b76d6 100%);
+}
+
+.home-game-card-icon.is-memory {
+  background: linear-gradient(180deg, #9eaeff 0%, #738df1 100%);
 }
 
 .home-game-card-icon.is-sokoban {

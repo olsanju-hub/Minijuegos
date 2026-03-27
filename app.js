@@ -8,6 +8,7 @@ import { escalerasSerpientesGame } from "./games/escaleras-serpientes.js";
 import { traficoGame } from "./games/trafico.js";
 import { buscaminasGame } from "./games/buscaminas.js";
 import { sokobanGame } from "./games/sokoban.js";
+import { parejasGame } from "./games/parejas.js";
 
 const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
@@ -27,6 +28,7 @@ engine.registerGame(escalerasSerpientesGame);
 engine.registerGame(traficoGame);
 engine.registerGame(buscaminasGame);
 engine.registerGame(sokobanGame);
+engine.registerGame(parejasGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {
