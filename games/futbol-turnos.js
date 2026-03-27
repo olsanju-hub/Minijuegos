@@ -49,7 +49,20 @@ const TEAM_META = Object.freeze([
 
 const FOOTBALL_STYLES = String.raw`
 .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
-  width: min(1240px, 100%);
+  width: min(1400px, 100%);
+  gap: 14px;
+}
+
+.game-screen-futbol-turnos .topbar {
+  padding: 12px 14px;
+}
+
+.game-screen-futbol-turnos .topbar-title {
+  font-size: clamp(1.34rem, 2.1vw, 1.86rem);
+}
+
+.game-screen-futbol-turnos .topbar-sub {
+  font-size: 0.94rem;
 }
 
 .game-screen-futbol-turnos .board-wrap {
@@ -59,23 +72,24 @@ const FOOTBALL_STYLES = String.raw`
 
 .game-screen-futbol-turnos .actions-bottom {
   justify-content: center;
+  gap: 10px;
 }
 
 .game-screen-futbol-turnos .actions-bottom .btn {
-  min-width: 172px;
+  min-width: 158px;
 }
 
 .football-shell {
-  width: min(100%, 1120px);
+  width: 100%;
   margin: 0 auto;
   display: grid;
-  gap: 14px;
+  gap: 10px;
 }
 
 .football-hud {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.94fr) minmax(0, 1fr);
-  gap: 12px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(250px, 0.72fr) minmax(0, 0.92fr);
+  gap: 10px;
   align-items: stretch;
 }
 
@@ -83,7 +97,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-card {
   position: relative;
   overflow: hidden;
-  border-radius: 26px;
+  border-radius: 22px;
   border: 1px solid rgba(209, 196, 171, 0.82);
   background:
     radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 34%),
@@ -96,7 +110,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-card {
   display: grid;
   gap: 10px;
-  padding: 16px 18px;
+  padding: 12px 14px;
 }
 
 .football-team-card::before,
@@ -157,7 +171,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-name {
   margin: 0;
   color: #233026;
-  font-size: 1rem;
+  font-size: 0.94rem;
   font-weight: 760;
   letter-spacing: -0.03em;
 }
@@ -165,7 +179,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-role {
   margin: 2px 0 0;
   color: #6d766d;
-  font-size: 0.78rem;
+  font-size: 0.74rem;
 }
 
 .football-score {
@@ -173,7 +187,7 @@ const FOOTBALL_STYLES = String.raw`
   z-index: 1;
   margin: 0;
   color: #182425;
-  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-size: clamp(1.78rem, 3.2vw, 2.16rem);
   font-weight: 860;
   line-height: 0.95;
   letter-spacing: -0.06em;
@@ -189,8 +203,8 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-status-card {
   display: grid;
-  gap: 12px;
-  padding: 16px 18px;
+  gap: 10px;
+  padding: 12px 14px;
 }
 
 .football-status-card::before {
@@ -230,15 +244,15 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-title {
   margin: 0;
   color: #213029;
-  font-size: 1.04rem;
+  font-size: 0.98rem;
   font-weight: 760;
 }
 
 .football-status-note {
   margin: 0;
   color: #657367;
-  font-size: 0.86rem;
-  line-height: 1.4;
+  font-size: 0.78rem;
+  line-height: 1.32;
 }
 
 .football-power-meter {
@@ -291,21 +305,21 @@ const FOOTBALL_STYLES = String.raw`
 .football-meta-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
+  min-height: 26px;
   padding: 0 10px;
   border-radius: 999px;
   border: 1px solid rgba(212, 202, 184, 0.86);
   background: rgba(255, 255, 255, 0.62);
   color: #46554a;
-  font-size: 0.74rem;
+  font-size: 0.7rem;
   font-weight: 720;
 }
 
 .football-stage {
   position: relative;
   overflow: hidden;
-  padding: 18px;
-  border-radius: 34px;
+  padding: 12px;
+  border-radius: 30px;
   border: 1px solid rgba(210, 198, 172, 0.82);
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 36%),
@@ -479,7 +493,7 @@ const FOOTBALL_STYLES = String.raw`
   margin: 0;
   text-align: center;
   color: #637264;
-  font-size: 0.88rem;
+  font-size: 0.8rem;
   line-height: 1.42;
 }
 
@@ -509,12 +523,12 @@ const FOOTBALL_STYLES = String.raw`
   }
 
   .football-shell {
-    gap: 12px;
+    gap: 10px;
   }
 
   .football-stage {
-    padding: 12px;
-    border-radius: 28px;
+    padding: 10px;
+    border-radius: 26px;
   }
 
   .football-team-card,
@@ -533,7 +547,7 @@ const FOOTBALL_STYLES = String.raw`
   }
 
   .football-footer-note {
-    font-size: 0.82rem;
+    font-size: 0.76rem;
   }
 }
 `;
