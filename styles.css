@@ -7537,6 +7537,12 @@ body:not(.is-home-screen) .bg-layer {
     linear-gradient(180deg, #fff4e6 0%, #f2dec2 100%);
 }
 
+.home-game-card.is-futbol-turnos {
+  background:
+    radial-gradient(circle at 86% 14%, rgba(108, 171, 126, 0.28), rgba(255, 255, 255, 0) 28%),
+    linear-gradient(180deg, #f5f7ef 0%, #e2ead8 100%);
+}
+
 .home-game-card.is-active {
   transform: translateY(-2px);
   box-shadow:
@@ -7661,6 +7667,10 @@ body:not(.is-home-screen) .bg-layer {
   background: linear-gradient(180deg, #f0b16a 0%, #d8873d 100%);
 }
 
+.home-game-card-icon.is-futbol-turnos {
+  background: linear-gradient(180deg, #84bf94 0%, #5d9671 100%);
+}
+
 .home-game-card.is-sokoban .home-game-card-icon {
   display: none;
 }
@@ -7671,6 +7681,19 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .home-game-card.is-sokoban .home-game-card-glyph svg {
+  filter: saturate(1.02) contrast(1.02);
+}
+
+.home-game-card.is-futbol-turnos .home-game-card-icon {
+  display: none;
+}
+
+.home-game-card.is-futbol-turnos .home-game-card-glyph {
+  display: block;
+  background: linear-gradient(180deg, #f9faef 0%, #e7edd9 100%);
+}
+
+.home-game-card.is-futbol-turnos .home-game-card-glyph svg {
   filter: saturate(1.02) contrast(1.02);
 }
 

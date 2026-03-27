@@ -182,6 +182,9 @@ export function createUI({ appElement, toastElement }) {
   let homeActiveIndex = 0;
   let homeDrawerOpen = false;
   let homeMotionDir = 0;
+  let footballTickFrame = null;
+  let footballLastFrameAt = 0;
+  let footballDispatchInFlight = false;
   let trafficTickFrame = null;
   let trafficLastFrameAt = 0;
   let trafficDispatchInFlight = false;
@@ -454,12 +457,12 @@ export function createUI({ appElement, toastElement }) {
               <stop offset="100%" stop-color="#f1e1c5" />
             </linearGradient>
             <linearGradient id="sokGlyphBoard" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#f3e4ca" />
-              <stop offset="100%" stop-color="#e3ccaa" />
+              <stop offset="0%" stop-color="#f4e6cf" />
+              <stop offset="100%" stop-color="#e4cda9" />
             </linearGradient>
             <linearGradient id="sokGlyphWall" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#d7ad80" />
-              <stop offset="100%" stop-color="#b88453" />
+              <stop offset="0%" stop-color="#d8b287" />
+              <stop offset="100%" stop-color="#ba8758" />
             </linearGradient>
             <linearGradient id="sokGlyphBox" x1="0" y1="0" x2="1" y2="1">
               <stop offset="0%" stop-color="#efbe76" />
@@ -471,23 +474,49 @@ export function createUI({ appElement, toastElement }) {
             </linearGradient>
           </defs>
           <rect x="4" y="4" width="40" height="40" rx="11" fill="url(#sokGlyphFrame)" stroke="#dcc5a3" stroke-width="1.5" />
-          <rect x="9" y="9" width="30" height="30" rx="9" fill="#f8efdf" stroke="#dfc8a6" stroke-width="1" />
-          <rect x="12" y="12" width="24" height="24" rx="7" fill="url(#sokGlyphBoard)" stroke="#d1b185" stroke-width="1" />
+          <rect x="8.5" y="8.5" width="31" height="31" rx="9.5" fill="#f8efdf" stroke="#dfc8a6" stroke-width="1" />
+          <rect x="11.5" y="11.5" width="25" height="25" rx="7.5" fill="url(#sokGlyphBoard)" stroke="#d1b185" stroke-width="1" />
           <g fill="url(#sokGlyphWall)">
-            <rect x="14" y="14" width="6" height="6" rx="2" />
-            <rect x="21" y="14" width="6" height="6" rx="2" />
-            <rect x="28" y="14" width="6" height="6" rx="2" />
-            <rect x="14" y="21" width="6" height="6" rx="2" />
-            <rect x="28" y="21" width="6" height="6" rx="2" />
-            <rect x="14" y="28" width="6" height="6" rx="2" />
+            <rect x="14" y="14" width="5.5" height="5.5" rx="1.8" />
+            <rect x="20.5" y="14" width="5.5" height="5.5" rx="1.8" />
+            <rect x="27" y="14" width="5.5" height="5.5" rx="1.8" />
+            <rect x="14" y="20.5" width="5.5" height="5.5" rx="1.8" />
+            <rect x="27" y="20.5" width="5.5" height="5.5" rx="1.8" />
+            <rect x="14" y="27" width="5.5" height="5.5" rx="1.8" />
+            <rect x="20.5" y="27" width="5.5" height="5.5" rx="1.8" />
+            <rect x="27" y="27" width="5.5" height="5.5" rx="1.8" />
           </g>
-          <rect x="21" y="21" width="6" height="6" rx="2" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.9" />
-          <rect x="21" y="28" width="6" height="6" rx="2" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.9" />
-          <circle cx="22.5" cy="24" r="3.3" fill="none" stroke="#63aa70" stroke-width="1.8" />
-          <rect x="21.5" y="20.5" width="9" height="9" rx="2.4" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
-          <path d="M21.5 25H30.5M26 20.5V29.5" stroke="rgba(255,255,255,0.34)" stroke-width="0.9" />
-          <circle cx="28.8" cy="29.2" r="4.2" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.2" />
-          <circle cx="27.7" cy="27.6" r="1.1" fill="#eef6ff" />
+          <rect x="20.5" y="20.5" width="5.5" height="5.5" rx="1.8" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
+          <rect x="20.5" y="27" width="5.5" height="5.5" rx="1.8" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
+          <circle cx="23.25" cy="23.25" r="2.8" fill="none" stroke="#63aa70" stroke-width="1.7" />
+          <rect x="20.8" y="20.7" width="8.4" height="8.4" rx="2.2" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
+          <path d="M20.8 24.9H29.2M25 20.7V29.1" stroke="rgba(255,255,255,0.34)" stroke-width="0.85" />
+          <circle cx="29.2" cy="29.1" r="4.15" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.15" />
+          <circle cx="28" cy="27.5" r="1.05" fill="#eef6ff" />
+        </svg>
+      `,
+      "futbol-turnos": `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="ftGlyphFrame" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fff8ec" />
+              <stop offset="100%" stop-color="#f1debc" />
+            </linearGradient>
+            <linearGradient id="ftGlyphPitch" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#dff2de" />
+              <stop offset="100%" stop-color="#9fc8a0" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="url(#ftGlyphFrame)" stroke="#dcc4a1" stroke-width="1.5" />
+          <rect x="8" y="9" width="32" height="30" rx="9" fill="url(#ftGlyphPitch)" stroke="#8cb08e" stroke-width="1.1" />
+          <path d="M24 9V39M8 24H40M18 24a6 6 0 1 0 12 0a6 6 0 1 0 -12 0Z" fill="none" stroke="rgba(250,251,246,0.92)" stroke-width="1.6" />
+          <rect x="5" y="17" width="4" height="14" rx="2.4" fill="#f6f0e3" stroke="#d6c3a4" stroke-width="0.8" />
+          <rect x="39" y="17" width="4" height="14" rx="2.4" fill="#f6f0e3" stroke="#d6c3a4" stroke-width="0.8" />
+          <circle cx="17" cy="18" r="4.2" fill="#e6775d" stroke="#bf5a43" stroke-width="1.3" />
+          <circle cx="15.7" cy="16.4" r="1.1" fill="#fff4ef" />
+          <circle cx="31" cy="30" r="4.2" fill="#4f84ea" stroke="#355fb9" stroke-width="1.3" />
+          <circle cx="29.7" cy="28.4" r="1.1" fill="#eef4ff" />
+          <circle cx="24" cy="24" r="2.6" fill="#fffaf1" stroke="#d4c19d" stroke-width="1.1" />
         </svg>
       `
     };
@@ -585,6 +614,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Cajas y objetivos",
           icon: "SK",
           energy: "Empuja, ordena y no te encierres."
+        },
+        "futbol-turnos": {
+          accent: "#6cab7e",
+          glow: "rgba(108, 171, 126, 0.24)",
+          description: "Dispara, rebota y marca",
+          icon: "FT",
+          energy: "Futbol tactico por impulsos."
         }
       };
 
@@ -952,6 +988,35 @@ export function createUI({ appElement, toastElement }) {
     return Boolean(appElement.querySelector(".board-wrap"));
   }
 
+  function buildBoardBindingContext(vm) {
+    return {
+      state: vm.session?.state || null,
+      players: vm.session?.players || [],
+      options: vm.session?.options || {},
+      canAct: vm.canAct,
+      uiState: vm.uiState,
+      dispatchGameAction(action) {
+        if (typeof onAction !== "function") {
+          return Promise.resolve();
+        }
+        return onAction("game-action", { action });
+      }
+    };
+  }
+
+  function syncBoardBinding(vm = currentVm) {
+    if (!vm || vm.screen !== "game" || typeof vm.game?.bindBoardElement !== "function") {
+      return;
+    }
+
+    const boardWrap = appElement.querySelector(".board-wrap");
+    if (!boardWrap) {
+      return;
+    }
+
+    vm.game.bindBoardElement(boardWrap, buildBoardBindingContext(vm));
+  }
+
   function render(vm) {
     if (canPatchCurrentGame(vm)) {
       const boardWrap = appElement.querySelector(".board-wrap");
@@ -970,6 +1035,7 @@ export function createUI({ appElement, toastElement }) {
         document.body.classList.toggle("is-home-screen", false);
         appElement.classList.toggle("app-shell-home", false);
         syncGameLoops(vm);
+        syncBoardBinding(vm);
         return;
       }
     }
@@ -997,6 +1063,78 @@ export function createUI({ appElement, toastElement }) {
     appElement.classList.toggle("app-shell-home", vm.screen === "home");
     appElement.innerHTML = html;
     syncGameLoops(vm);
+    syncBoardBinding(vm);
+  }
+
+  function shouldRunFootballLoop(vm = currentVm) {
+    return Boolean(
+      vm?.screen === "game" &&
+      vm?.game?.id === "futbol-turnos" &&
+      (vm?.session?.state?.phase === "resolving" || vm?.session?.state?.phase === "goal") &&
+      typeof onAction === "function"
+    );
+  }
+
+  function clearFootballTickLoop() {
+    if (footballTickFrame) {
+      window.cancelAnimationFrame(footballTickFrame);
+      footballTickFrame = null;
+    }
+    footballLastFrameAt = 0;
+    footballDispatchInFlight = false;
+  }
+
+  function queueFootballFrame() {
+    if (footballTickFrame || !shouldRunFootballLoop()) {
+      return;
+    }
+
+    footballTickFrame = window.requestAnimationFrame(async (timestamp) => {
+      footballTickFrame = null;
+
+      if (!shouldRunFootballLoop()) {
+        clearFootballTickLoop();
+        return;
+      }
+
+      if (!footballLastFrameAt) {
+        footballLastFrameAt = timestamp;
+      }
+
+      const deltaMs = Math.min(64, Math.max(0, timestamp - footballLastFrameAt));
+      footballLastFrameAt = timestamp;
+
+      if (footballDispatchInFlight || deltaMs <= 0) {
+        queueFootballFrame();
+        return;
+      }
+
+      footballDispatchInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "tick",
+            deltaMs,
+            nowMs: Date.now()
+          }
+        });
+      } finally {
+        footballDispatchInFlight = false;
+        if (shouldRunFootballLoop()) {
+          queueFootballFrame();
+        }
+      }
+    });
+  }
+
+  function syncFootballTickLoop(vm) {
+    if (!shouldRunFootballLoop(vm)) {
+      clearFootballTickLoop();
+      return;
+    }
+
+    queueFootballFrame();
   }
 
   function shouldRunTrafficLoop(vm = currentVm) {
@@ -1257,6 +1395,7 @@ export function createUI({ appElement, toastElement }) {
   }
 
   function syncGameLoops(vm) {
+    syncFootballTickLoop(vm);
     syncTrafficTickLoop(vm);
     syncMinesTimerLoop(vm);
     syncMemoryResolveLoop(vm);
