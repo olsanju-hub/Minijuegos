@@ -328,3 +328,33 @@ Quiero:
 - intervención mínima
 - integración real con Minijuegos
 - y un resultado coherente con el motor y con la app
+
+## Bitacora de cambios
+- 2026-03-28: se integró `Billar` como juego horizontal-first dentro del motor existente, usando el flujo `home -> config -> game` y sin tocar `engine.js`.
+- 2026-03-28: se añadió una variante reutilizable de shell para móvil horizontal y fullscreen degradado en `ui.js` y `styles.css`, aplicada a `Futbol por turnos`, `Tanques` y `Billar`.
+- 2026-03-28: `Futbol por turnos` pasó a usar HUD overlay compacto y acciones secundarias fuera del flujo estructural en landscape móvil para que el campo gane protagonismo real.
+- 2026-03-28: `Tanques` pasó a usar strip superior y controles compactos fuera del flujo normal en landscape móvil, reduciendo ayuda y bloques textuales para que el escenario mande.
+- 2026-03-28: `Billar` pasó a usar HUD overlay compacto y mesa dominante en landscape móvil, manteniendo el apuntado directo visible y sin scroll de partida.
+
+## Estructura real de la app
+- `app.js`
+  - registra los juegos disponibles
+  - inicializa el motor y la UI
+  - conecta el catálogo con los módulos de `games/`
+- `engine.js`
+  - conserva el flujo `home -> config -> game`
+  - mantiene la sesión de partida, jugadores, opciones y resultado
+  - despacha acciones del sistema y del juego sin conocer el render visual
+- `ui.js`
+  - renderiza home, config, game, reglas y resultado
+  - conecta eventos de botones, inputs y tablero
+  - mantiene loops de actualización para juegos temporales
+  - aloja el shell compartido de partida y sus variantes responsive
+- `styles.css`
+  - define la familia visual compartida de Minijuegos
+  - contiene componentes globales, responsive común y shell base
+  - solo debe usarse para capas compartidas o ajustes globales justificados
+- `games/*.js`
+  - cada archivo define un juego integrado, no una miniapp separada
+  - debe aportar reglas, estado inicial, opciones, render, binding y resultado
+  - puede incluir estilos encapsulados si el juego lo necesita, sin romper la app

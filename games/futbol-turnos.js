@@ -605,7 +605,7 @@ const FOOTBALL_STYLES = String.raw`
   }
 }
 
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 1180px) and (max-height: 1366px) and (orientation: portrait) {
   .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
     width: min(100%, calc(100vw - 8px));
     min-height: calc(100dvh - 10px);
@@ -703,6 +703,68 @@ const FOOTBALL_STYLES = String.raw`
     padding: 0 10px;
     font-size: 0.76rem;
   }
+}
+
+body.game-landscape-mobile-active .game-screen-futbol-turnos .board-wrap {
+  padding: 0;
+}
+
+body.game-landscape-mobile-active .football-shell {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+}
+
+body.game-landscape-mobile-active .football-hud {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 16;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  grid-template-columns: minmax(78px, 0.6fr) minmax(0, 1.08fr) minmax(78px, 0.6fr);
+  gap: 4px;
+}
+
+body.game-landscape-mobile-active .football-team-card,
+body.game-landscape-mobile-active .football-status-card {
+  padding: 6px 8px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(255, 252, 248, 0.92) 0%, rgba(246, 238, 226, 0.9) 100%);
+  box-shadow:
+    0 10px 18px rgba(52, 48, 41, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+body.game-landscape-mobile-active .football-team-name {
+  font-size: 0.72rem;
+}
+
+body.game-landscape-mobile-active .football-score {
+  font-size: 1.16rem;
+}
+
+body.game-landscape-mobile-active .football-status-title {
+  font-size: 0.7rem;
+}
+
+body.game-landscape-mobile-active .football-status-note,
+body.game-landscape-mobile-active .football-meta-row {
+  display: none;
+}
+
+body.game-landscape-mobile-active .football-stage {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border-radius: 24px;
+}
+
+body.game-landscape-mobile-active .football-field {
+  width: 100%;
+  height: 100%;
 }
 `;
 
@@ -1742,6 +1804,8 @@ export const futbolTurnosGame = {
   hidePlayerNames: true,
   hideGlobalTurnMessage: true,
   hideDefaultPlayerChips: true,
+  useLandscapeMobileShell: true,
+  allowFullscreen: true,
   rules: [
     { title: "Objetivo", text: "Marca mas goles que el rival empujando una sola ficha por turno." },
     { title: "Disparo", text: "Selecciona una ficha de tu equipo, tira de ella hacia atras y sueltala para impulsarla." },

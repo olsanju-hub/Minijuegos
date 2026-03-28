@@ -711,7 +711,7 @@ const TANKS_STYLES = String.raw`
   }
 }
 
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 1180px) and (max-height: 1366px) and (orientation: portrait) {
   .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
     width: min(100%, calc(100vw - 8px));
     min-height: calc(100dvh - 10px);
@@ -840,6 +840,134 @@ const TANKS_STYLES = String.raw`
   .tanks-footer {
     display: none;
   }
+}
+
+body.game-landscape-mobile-active .game-screen-tanques .board-wrap {
+  padding: 0;
+}
+
+body.game-landscape-mobile-active .tanks-shell {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+}
+
+body.game-landscape-mobile-active .tanks-strip {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 16;
+  width: min(100%, 780px);
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 0.92fr) minmax(170px, 0.72fr) minmax(0, 0.92fr);
+  gap: 4px;
+}
+
+body.game-landscape-mobile-active .tanks-team-card,
+body.game-landscape-mobile-active .tanks-status-card {
+  padding: 6px 8px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(255, 252, 247, 0.92) 0%, rgba(245, 236, 223, 0.9) 100%);
+  box-shadow:
+    0 10px 18px rgba(52, 48, 41, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+body.game-landscape-mobile-active .tanks-team-name {
+  font-size: 0.72rem;
+}
+
+body.game-landscape-mobile-active .tanks-team-role,
+body.game-landscape-mobile-active .tanks-status-note,
+body.game-landscape-mobile-active .tanks-status-meta {
+  display: none;
+}
+
+body.game-landscape-mobile-active .tanks-health {
+  font-size: 1.18rem;
+}
+
+body.game-landscape-mobile-active .tanks-health-track {
+  margin-top: 6px;
+  height: 7px;
+}
+
+body.game-landscape-mobile-active .tanks-status-tag {
+  min-height: 20px;
+  padding: 0 8px;
+  font-size: 0.56rem;
+}
+
+body.game-landscape-mobile-active .tanks-status-copy {
+  gap: 2px;
+  margin-top: 6px;
+}
+
+body.game-landscape-mobile-active .tanks-status-title {
+  font-size: 0.72rem;
+}
+
+body.game-landscape-mobile-active .tanks-stage {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border-radius: 24px;
+}
+
+body.game-landscape-mobile-active .tanks-field {
+  width: 100%;
+  height: 100%;
+}
+
+body.game-landscape-mobile-active .tanks-controls {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 18;
+  width: min(100%, 620px);
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 0;
+}
+
+body.game-landscape-mobile-active .tanks-control {
+  gap: 4px;
+  padding: 6px 8px;
+  border-radius: 16px;
+  background:
+    linear-gradient(180deg, rgba(255, 252, 247, 0.88) 0%, rgba(248, 240, 228, 0.84) 100%);
+  box-shadow:
+    0 10px 18px rgba(46, 42, 36, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+}
+
+body.game-landscape-mobile-active .tanks-control-label,
+body.game-landscape-mobile-active .tanks-control-value {
+  font-size: 0.56rem;
+}
+
+body.game-landscape-mobile-active .tanks-range-row {
+  gap: 6px;
+}
+
+body.game-landscape-mobile-active .tanks-step {
+  min-width: 28px;
+  height: 28px;
+  border-radius: 10px;
+}
+
+body.game-landscape-mobile-active .tanks-fire {
+  min-width: 108px;
+  min-height: 48px;
+  height: auto;
+  border-radius: 16px;
+  align-self: stretch;
+}
+
+body.game-landscape-mobile-active .tanks-footer {
+  display: none;
 }
 `;
 
@@ -1893,6 +2021,8 @@ export const tanquesGame = {
   maxPlayers: 2,
   hideGlobalTurnMessage: true,
   hideDefaultPlayerChips: true,
+  useLandscapeMobileShell: true,
+  allowFullscreen: true,
   rules: [
     { title: "Objetivo", text: "Gana quien deja la vida rival en cero antes de caer." },
     { title: "Turno", text: "En cada turno ajustas angulo y potencia, y luego disparas una sola vez." },

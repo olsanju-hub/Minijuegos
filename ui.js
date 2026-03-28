@@ -277,7 +277,14 @@ export function createUI({ appElement, toastElement }) {
     return delta;
   }
 
-  function renderTopbar({ leftAction, leftLabel, title, subtitle, showRules = false }) {
+  function renderTopbar({ leftAction, leftLabel, title, subtitle, showRules = false, showFullscreen = false }) {
+    const actionButtons = [
+      showRules ? '<button class="btn-icon" data-action="open-rules" aria-label="Abrir reglas">?</button>' : "",
+      showFullscreen ? '<button class="btn-icon btn-icon-text" data-action="toggle-fullscreen" aria-label="Alternar pantalla completa">Full</button>' : ""
+    ]
+      .filter(Boolean)
+      .join("");
+
     return `
       <header class="topbar">
         <div class="topbar-main">
@@ -287,7 +294,7 @@ export function createUI({ appElement, toastElement }) {
             ${subtitle ? `<p class="topbar-sub">${escapeHtml(subtitle)}</p>` : ""}
           </div>
         </div>
-        ${showRules ? '<div class="topbar-actions"><button class="btn-icon" data-action="open-rules" aria-label="Abrir reglas">?</button></div>' : ""}
+        ${actionButtons ? `<div class="topbar-actions">${actionButtons}</div>` : ""}
       </header>
     `;
   }
@@ -917,15 +924,21 @@ export function createUI({ appElement, toastElement }) {
     const activeSlot = game.getTurnSlot(session.state);
     const active = session.players.find((player) => player.slot === activeSlot);
     const showTurnMessage = !game.hideGlobalTurnMessage;
+    const screenClasses = ["screen", "game-layout", `game-screen-${escapeHtml(game.id)}`];
+
+    if (game.useLandscapeMobileShell) {
+      screenClasses.push("game-screen-landscape-mobile-shell");
+    }
 
     return `
-      <section class="screen game-layout game-screen-${escapeHtml(game.id)}">
+      <section class="${screenClasses.join(" ")}">
         ${renderTopbar({
           leftAction: "game-back",
           leftLabel: "Volver",
           title: game.name,
           subtitle: session.modeLabel,
-          showRules: true
+          showRules: true,
+          showFullscreen: Boolean(game.allowFullscreen)
         })}
 
         ${
@@ -956,6 +969,18 @@ export function createUI({ appElement, toastElement }) {
                 ${renderPlayerChips(session, game)}
               </section>
             `
+        }
+
+        ${
+          game.useLandscapeMobileShell
+            ? `
+              <nav class="game-quick-actions" aria-label="Acciones de partida">
+                <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
+                <button class="btn btn-secondary" data-action="new-game">Nueva</button>
+                <button class="btn btn-ghost" data-action="go-home">Inicio</button>
+              </nav>
+            `
+            : ""
         }
 
         <section class="actions-bottom">
@@ -1119,6 +1144,7 @@ export function createUI({ appElement, toastElement }) {
         currentVm = vm;
         document.body.classList.toggle("is-home-screen", false);
         appElement.classList.toggle("app-shell-home", false);
+        syncLandscapeShellState(vm);
         syncGameLoops(vm);
         syncBoardBinding(vm);
         return;
@@ -1147,6 +1173,7 @@ export function createUI({ appElement, toastElement }) {
     document.body.classList.toggle("is-home-screen", vm.screen === "home");
     appElement.classList.toggle("app-shell-home", vm.screen === "home");
     appElement.innerHTML = html;
+    syncLandscapeShellState(vm);
     if (previousScreen !== vm.screen) {
       window.scrollTo(0, 0);
     }
@@ -1653,6 +1680,89 @@ export function createUI({ appElement, toastElement }) {
     }, duration);
   }
 
+  function isCompactLandscapeViewport() {
+    return window.matchMedia("(orientation: landscape) and (max-width: 1180px) and (max-height: 900px)").matches;
+  }
+
+  function syncViewportVars() {
+    const viewport = window.visualViewport;
+    const width = Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 0);
+    const height = Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
+    document.documentElement.style.setProperty("--app-dvw", `${width}px`);
+    document.documentElement.style.setProperty("--app-dvh", `${height}px`);
+  }
+
+  function currentGameUsesLandscapeShell(vm = currentVm) {
+    return Boolean(vm?.screen === "game" && vm?.game?.useLandscapeMobileShell);
+  }
+
+  function canUseFullscreen() {
+    return Boolean(
+      document.fullscreenEnabled ||
+        document.webkitFullscreenEnabled ||
+        appElement.requestFullscreen ||
+        appElement.webkitRequestFullscreen
+    );
+  }
+
+  function isGameFullscreen() {
+    return document.fullscreenElement === appElement || document.webkitFullscreenElement === appElement;
+  }
+
+  async function requestAppFullscreen() {
+    if (typeof appElement.requestFullscreen === "function") {
+      await appElement.requestFullscreen().catch(() => {});
+      return;
+    }
+
+    if (typeof appElement.webkitRequestFullscreen === "function") {
+      appElement.webkitRequestFullscreen();
+    }
+  }
+
+  async function exitAppFullscreen() {
+    if (document.fullscreenElement && typeof document.exitFullscreen === "function") {
+      await document.exitFullscreen().catch(() => {});
+      return;
+    }
+
+    if (document.webkitFullscreenElement && typeof document.webkitExitFullscreen === "function") {
+      document.webkitExitFullscreen();
+    }
+  }
+
+  async function toggleGameFullscreen() {
+    if (!canUseFullscreen()) {
+      showToast("Pantalla completa no disponible en este navegador.");
+      return;
+    }
+
+    if (isGameFullscreen()) {
+      await exitAppFullscreen();
+      return;
+    }
+
+    await requestAppFullscreen();
+  }
+
+  function syncLandscapeShellState(vm = currentVm) {
+    syncViewportVars();
+
+    const active = currentGameUsesLandscapeShell(vm);
+    const compactLandscape = active && isCompactLandscapeViewport();
+    const fullscreen = active && isGameFullscreen();
+
+    document.body.classList.toggle("game-landscape-shell-active", active);
+    document.body.classList.toggle("game-landscape-mobile-active", compactLandscape);
+    document.body.classList.toggle("game-fullscreen-active", fullscreen);
+    appElement.classList.toggle("app-shell-game-landscape", active);
+    appElement.classList.toggle("app-shell-game-landscape-mobile", compactLandscape);
+
+    if (!active && isGameFullscreen()) {
+      exitAppFullscreen().catch(() => {});
+    }
+  }
+
   function bind({ onAction: actionHandler, onField: fieldHandler, onOverlayClose: overlayHandler }) {
     onAction = actionHandler;
     onField = fieldHandler;
@@ -1711,6 +1821,11 @@ export function createUI({ appElement, toastElement }) {
       if (action === "open-game") {
         homeDrawerOpen = false;
         await onAction("open-game", { gameId: target.dataset.gameId || "" });
+        return;
+      }
+
+      if (action === "toggle-fullscreen") {
+        await toggleGameFullscreen();
         return;
       }
 
@@ -2020,6 +2135,13 @@ export function createUI({ appElement, toastElement }) {
       clearTrafficSwipeState();
       clearGameSwipeState();
     });
+
+    syncViewportVars();
+    window.addEventListener("resize", () => syncLandscapeShellState(currentVm));
+    window.addEventListener("orientationchange", () => syncLandscapeShellState(currentVm));
+    document.addEventListener("fullscreenchange", () => syncLandscapeShellState(currentVm));
+    document.addEventListener("webkitfullscreenchange", () => syncLandscapeShellState(currentVm));
+    window.visualViewport?.addEventListener("resize", () => syncLandscapeShellState(currentVm));
   }
 
   return {

@@ -547,7 +547,7 @@ body:has(.screen.game-screen-billar) {
   }
 }
 
-@media (max-width: 900px) and (orientation: portrait) {
+@media (max-width: 1180px) and (max-height: 1366px) and (orientation: portrait) {
   .app-shell:not(.app-shell-home) .screen.game-screen-billar {
     width: min(100%, calc(100vw - 8px));
     min-height: calc(100dvh - 10px);
@@ -666,6 +666,83 @@ body:has(.screen.game-screen-billar) {
   .app-shell:not(.app-shell-home) .game-screen-billar .actions-bottom {
     display: none;
   }
+}
+
+body.game-landscape-mobile-active .game-screen-billar .board-wrap {
+  padding: 0;
+}
+
+body.game-landscape-mobile-active .billar-shell {
+  position: relative;
+  height: 100%;
+  min-height: 0;
+  gap: 0;
+}
+
+body.game-landscape-mobile-active .billar-hud {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 16;
+  width: min(100%, 760px);
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 0.86fr) minmax(160px, 0.72fr) minmax(0, 0.86fr);
+  gap: 4px;
+}
+
+body.game-landscape-mobile-active .billar-player-card,
+body.game-landscape-mobile-active .billar-status-card {
+  padding: 6px 8px;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(255, 252, 246, 0.92) 0%, rgba(245, 236, 223, 0.9) 100%);
+  box-shadow:
+    0 10px 18px rgba(51, 46, 39, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+}
+
+body.game-landscape-mobile-active .billar-player-name {
+  font-size: 0.72rem;
+}
+
+body.game-landscape-mobile-active .billar-player-role,
+body.game-landscape-mobile-active .billar-status-note {
+  display: none;
+}
+
+body.game-landscape-mobile-active .billar-score {
+  font-size: 1.2rem;
+}
+
+body.game-landscape-mobile-active .billar-status-eyebrow {
+  font-size: 0.54rem;
+}
+
+body.game-landscape-mobile-active .billar-status-title {
+  font-size: 0.72rem;
+}
+
+body.game-landscape-mobile-active .billar-status-pill {
+  min-height: 20px;
+  padding: 0 8px;
+  font-size: 0.54rem;
+}
+
+body.game-landscape-mobile-active .billar-stage {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border-radius: 24px;
+}
+
+body.game-landscape-mobile-active .billar-table {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
 }
 `;
 
@@ -1687,6 +1764,8 @@ export const billarGame = {
   maxPlayers: 2,
   hideGlobalTurnMessage: true,
   hideDefaultPlayerChips: true,
+  useLandscapeMobileShell: true,
+  allowFullscreen: true,
   rules: [
     { title: "Objetivo", text: "Gana quien emboca 3 bolas objetivo antes que el rival." },
     { title: "Turno", text: "Si metes una bola valida, sumas y vuelves a tirar. Si no entra ninguna, cambia el turno." },
