@@ -307,6 +307,58 @@ const FOOTBALL_STYLES = String.raw`
     radial-gradient(circle at 86% 84%, rgba(229, 122, 98, 0.08), rgba(229, 122, 98, 0) 26%);
 }
 
+.football-orientation-note {
+  display: none;
+}
+
+.football-orientation-card {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 420px);
+  margin: 0 auto;
+  padding: 20px 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(210, 197, 171, 0.84);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 238, 226, 0.98) 100%);
+  box-shadow:
+    0 18px 28px rgba(54, 48, 40, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+  text-align: center;
+}
+
+.football-orientation-eyebrow {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 24px;
+  margin: 0 auto;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(72, 116, 95, 0.1);
+  color: #47695a;
+  font-size: 0.64rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.football-orientation-title {
+  margin: 0;
+  color: #213029;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.football-orientation-copy {
+  margin: 0;
+  color: #607065;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
 .football-field {
   position: relative;
   z-index: 1;
@@ -550,6 +602,106 @@ const FOOTBALL_STYLES = String.raw`
     line-height: 1.12;
     white-space: normal;
     text-align: center;
+  }
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
+    width: min(100%, calc(100vw - 8px));
+    min-height: calc(100dvh - 10px);
+  }
+
+  .game-screen-futbol-turnos .board-wrap {
+    padding: 0;
+  }
+
+  .game-screen-futbol-turnos .actions-bottom {
+    display: none;
+  }
+
+  .football-shell {
+    display: none;
+  }
+
+  .football-orientation-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: clamp(280px, 56dvh, 420px);
+  }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 760px) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
+    width: min(100%, calc(100vw - 8px));
+    min-height: calc(100dvh - 8px);
+    gap: 4px;
+    padding: 4px 0 8px;
+  }
+
+  .game-screen-futbol-turnos .topbar {
+    padding: 6px 10px;
+  }
+
+  .game-screen-futbol-turnos .topbar-sub {
+    display: none;
+  }
+
+  .game-screen-futbol-turnos .board-wrap {
+    padding: 0;
+  }
+
+  .football-shell {
+    gap: 4px;
+  }
+
+  .football-hud {
+    grid-template-columns: minmax(92px, 0.62fr) minmax(0, 1.42fr) minmax(92px, 0.62fr);
+    gap: 4px;
+  }
+
+  .football-team-card,
+  .football-status-card {
+    padding: 6px 8px;
+    border-radius: 14px;
+  }
+
+  .football-team-name {
+    font-size: 0.7rem;
+  }
+
+  .football-score {
+    font-size: 1.14rem;
+  }
+
+  .football-status-title {
+    font-size: 0.7rem;
+  }
+
+  .football-status-note {
+    display: none;
+  }
+
+  .football-meta-pill {
+    min-height: 18px;
+    padding: 0 6px;
+    font-size: 0.54rem;
+  }
+
+  .football-stage {
+    padding: 3px;
+    border-radius: 18px;
+  }
+
+  .game-screen-futbol-turnos .actions-bottom {
+    gap: 6px;
+  }
+
+  .game-screen-futbol-turnos .actions-bottom .btn {
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    font-size: 0.76rem;
   }
 }
 `;
@@ -1338,6 +1490,13 @@ function renderHud(state) {
 
 function renderShell(state, canAct) {
   return `
+    <section class="football-orientation-note" aria-live="polite">
+      <article class="football-orientation-card">
+        <span class="football-orientation-eyebrow">Mejor en horizontal</span>
+        <h3 class="football-orientation-title">Gira el dispositivo</h3>
+        <p class="football-orientation-copy">El campo gana mucho mas espacio en paisaje y las jugadas se leen mejor.</p>
+      </article>
+    </section>
     <section class="football-shell" data-football-root data-football-phase="${escapeHtml(state.phase)}">
       ${renderHud(state)}
       <section class="football-stage">

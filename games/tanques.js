@@ -320,6 +320,58 @@ const TANKS_STYLES = String.raw`
     radial-gradient(circle at 86% 86%, rgba(225, 135, 99, 0.08), rgba(225, 135, 99, 0) 28%);
 }
 
+.tanks-orientation-note {
+  display: none;
+}
+
+.tanks-orientation-card {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 430px);
+  margin: 0 auto;
+  padding: 20px 18px;
+  border-radius: 24px;
+  border: 1px solid rgba(210, 197, 171, 0.84);
+  background:
+    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 34%),
+    linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 238, 226, 0.98) 100%);
+  box-shadow:
+    0 18px 28px rgba(54, 48, 40, 0.12),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+  text-align: center;
+}
+
+.tanks-orientation-eyebrow {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 24px;
+  margin: 0 auto;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(72, 116, 95, 0.1);
+  color: #47695a;
+  font-size: 0.64rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tanks-orientation-title {
+  margin: 0;
+  color: #213029;
+  font-size: 1.02rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+.tanks-orientation-copy {
+  margin: 0;
+  color: #607065;
+  font-size: 0.84rem;
+  line-height: 1.4;
+}
+
 .tanks-field {
   position: relative;
   z-index: 1;
@@ -656,6 +708,137 @@ const TANKS_STYLES = String.raw`
   .tanks-fire {
     width: 100%;
     min-width: 0;
+  }
+}
+
+@media (max-width: 900px) and (orientation: portrait) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
+    width: min(100%, calc(100vw - 8px));
+    min-height: calc(100dvh - 10px);
+  }
+
+  .game-screen-tanques .board-wrap {
+    padding: 0;
+  }
+
+  .game-screen-tanques .actions-bottom {
+    display: none;
+  }
+
+  .tanks-shell {
+    display: none;
+  }
+
+  .tanks-orientation-note {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: clamp(280px, 56dvh, 420px);
+  }
+}
+
+@media (max-width: 1024px) and (orientation: landscape) and (max-height: 760px) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
+    width: min(100%, calc(100vw - 8px));
+    min-height: calc(100dvh - 8px);
+    gap: 6px;
+    padding: 4px 0 8px;
+  }
+
+  .game-screen-tanques .topbar {
+    padding: 6px 10px;
+  }
+
+  .game-screen-tanques .topbar-sub {
+    display: none;
+  }
+
+  .game-screen-tanques .board-wrap {
+    padding: 0;
+  }
+
+  .game-screen-tanques .actions-bottom {
+    gap: 6px;
+  }
+
+  .game-screen-tanques .actions-bottom .btn {
+    min-width: 0;
+    height: 38px;
+    padding: 0 10px;
+    font-size: 0.76rem;
+  }
+
+  .tanks-shell {
+    gap: 6px;
+  }
+
+  .tanks-strip {
+    grid-template-columns: minmax(0, 0.88fr) minmax(188px, 0.72fr) minmax(0, 0.88fr);
+    gap: 6px;
+  }
+
+  .tanks-team-card,
+  .tanks-status-card {
+    padding: 8px 10px;
+    border-radius: 18px;
+  }
+
+  .tanks-team-name {
+    font-size: 0.8rem;
+  }
+
+  .tanks-team-role {
+    font-size: 0.64rem;
+  }
+
+  .tanks-health {
+    font-size: 1.4rem;
+  }
+
+  .tanks-health-track {
+    margin-top: 8px;
+    height: 8px;
+  }
+
+  .tanks-status-pill {
+    min-height: 22px;
+    padding: 0 8px;
+    font-size: 0.62rem;
+  }
+
+  .tanks-stage {
+    padding: 8px;
+    border-radius: 20px;
+  }
+
+  .tanks-controls {
+    gap: 8px;
+    margin-top: 8px;
+  }
+
+  .tanks-control {
+    gap: 6px;
+    padding: 8px 10px;
+    border-radius: 16px;
+  }
+
+  .tanks-control-label,
+  .tanks-control-value {
+    font-size: 0.64rem;
+  }
+
+  .tanks-step {
+    min-width: 32px;
+    height: 32px;
+  }
+
+  .tanks-fire {
+    min-width: 128px;
+    border-radius: 16px;
+  }
+
+  .tanks-footer {
+    display: none;
   }
 }
 `;
@@ -1499,6 +1682,13 @@ function renderShell(state, players, canAct) {
         { slot: 1, name: "Jugador 2" }
       ];
   return `
+    <section class="tanks-orientation-note" aria-live="polite">
+      <article class="tanks-orientation-card">
+        <span class="tanks-orientation-eyebrow">Mejor en horizontal</span>
+        <h3 class="tanks-orientation-title">Gira el dispositivo</h3>
+        <p class="tanks-orientation-copy">En paisaje el terreno gana mucho mas ancho y el tiro se ajusta mejor.</p>
+      </article>
+    </section>
     <section class="tanks-shell">
       <div class="tanks-strip">
         ${renderTankCard(safePlayers[0], state.tanks[0], state.turnSlot === 0 && !state.result)}
