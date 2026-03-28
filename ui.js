@@ -185,6 +185,9 @@ export function createUI({ appElement, toastElement }) {
   let footballTickFrame = null;
   let footballLastFrameAt = 0;
   let footballDispatchInFlight = false;
+  let billiardsTickFrame = null;
+  let billiardsLastFrameAt = 0;
+  let billiardsDispatchInFlight = false;
   let tankTickTimerId = null;
   let tankLastTickAt = 0;
   let tankDispatchInFlight = false;
@@ -452,6 +455,36 @@ export function createUI({ appElement, toastElement }) {
           </g>
         </svg>
       `,
+      billar: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="billarGlyphWood" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#fff6e8" />
+              <stop offset="100%" stop-color="#ecd8b3" />
+            </linearGradient>
+            <linearGradient id="billarGlyphFelt" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#76aa8c" />
+              <stop offset="100%" stop-color="#3a654f" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="url(#billarGlyphWood)" stroke="#dcc4a1" stroke-width="1.5" />
+          <rect x="8.5" y="11" width="31" height="26" rx="8.8" fill="#966c40" stroke="#6d4d2a" stroke-width="1.1" />
+          <rect x="12" y="14.2" width="24" height="19.6" rx="5.8" fill="url(#billarGlyphFelt)" stroke="#dce9dd" stroke-width="0.9" />
+          <g fill="#2a211a">
+            <circle cx="12" cy="14.2" r="3"></circle>
+            <circle cx="24" cy="14.2" r="2.6"></circle>
+            <circle cx="36" cy="14.2" r="3"></circle>
+            <circle cx="12" cy="33.8" r="3"></circle>
+            <circle cx="24" cy="33.8" r="2.6"></circle>
+            <circle cx="36" cy="33.8" r="3"></circle>
+          </g>
+          <path d="M17 24H23.3" stroke="rgba(255,255,255,0.74)" stroke-width="2.2" stroke-linecap="round" />
+          <circle cx="15.4" cy="24" r="3.4" fill="#fffaf1" stroke="#d8c6a2" stroke-width="1" />
+          <circle cx="28.2" cy="24" r="3.4" fill="#e68166" stroke="#bc5d43" stroke-width="1" />
+          <circle cx="31.9" cy="20.2" r="3.4" fill="#78a6ec" stroke="#4e79bf" stroke-width="1" />
+          <circle cx="31.9" cy="27.8" r="3.4" fill="#f0c568" stroke="#c29435" stroke-width="1" />
+        </svg>
+      `,
       sokoban: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
           <defs>
@@ -643,6 +676,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Memoria visual",
           icon: "PJ",
           energy: "Destapa, recuerda y empareja."
+        },
+        billar: {
+          accent: "#6cab7e",
+          glow: "rgba(108, 171, 126, 0.24)",
+          description: "Apunta, rebota y emboca",
+          icon: "BL",
+          energy: "Mesa corta, turnos y troneras."
         },
         sokoban: {
           accent: "#e39b57",
@@ -1061,6 +1101,8 @@ export function createUI({ appElement, toastElement }) {
   }
 
   function render(vm) {
+    const previousScreen = currentVm?.screen || null;
+
     if (canPatchCurrentGame(vm)) {
       const boardWrap = appElement.querySelector(".board-wrap");
       const patched = boardWrap
@@ -1105,6 +1147,9 @@ export function createUI({ appElement, toastElement }) {
     document.body.classList.toggle("is-home-screen", vm.screen === "home");
     appElement.classList.toggle("app-shell-home", vm.screen === "home");
     appElement.innerHTML = html;
+    if (previousScreen !== vm.screen) {
+      window.scrollTo(0, 0);
+    }
     syncGameLoops(vm);
     syncBoardBinding(vm);
   }
@@ -1178,6 +1223,77 @@ export function createUI({ appElement, toastElement }) {
     }
 
     queueFootballFrame();
+  }
+
+  function shouldRunBilliardsLoop(vm = currentVm) {
+    return Boolean(
+      vm?.screen === "game" &&
+      vm?.game?.id === "billar" &&
+      vm?.session?.state?.phase === "rolling" &&
+      typeof onAction === "function"
+    );
+  }
+
+  function clearBilliardsTickLoop() {
+    if (billiardsTickFrame) {
+      window.cancelAnimationFrame(billiardsTickFrame);
+      billiardsTickFrame = null;
+    }
+    billiardsLastFrameAt = 0;
+    billiardsDispatchInFlight = false;
+  }
+
+  function queueBilliardsFrame() {
+    if (billiardsTickFrame || !shouldRunBilliardsLoop()) {
+      return;
+    }
+
+    billiardsTickFrame = window.requestAnimationFrame(async (timestamp) => {
+      billiardsTickFrame = null;
+
+      if (!shouldRunBilliardsLoop()) {
+        clearBilliardsTickLoop();
+        return;
+      }
+
+      if (!billiardsLastFrameAt) {
+        billiardsLastFrameAt = timestamp;
+      }
+
+      const deltaMs = Math.min(64, Math.max(0, timestamp - billiardsLastFrameAt));
+      billiardsLastFrameAt = timestamp;
+
+      if (billiardsDispatchInFlight || deltaMs <= 0) {
+        queueBilliardsFrame();
+        return;
+      }
+
+      billiardsDispatchInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "tick",
+            deltaMs,
+            nowMs: Date.now()
+          }
+        });
+      } finally {
+        billiardsDispatchInFlight = false;
+        if (shouldRunBilliardsLoop()) {
+          queueBilliardsFrame();
+        }
+      }
+    });
+  }
+
+  function syncBilliardsTickLoop(vm) {
+    if (!shouldRunBilliardsLoop(vm)) {
+      clearBilliardsTickLoop();
+      return;
+    }
+
+    queueBilliardsFrame();
   }
 
   function shouldRunTankLoop(vm = currentVm) {
@@ -1511,6 +1627,7 @@ export function createUI({ appElement, toastElement }) {
 
   function syncGameLoops(vm) {
     syncFootballTickLoop(vm);
+    syncBilliardsTickLoop(vm);
     syncTankTickLoop(vm);
     syncTrafficTickLoop(vm);
     syncMinesTimerLoop(vm);
