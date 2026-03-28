@@ -490,12 +490,11 @@ export function createUI({ appElement, toastElement }) {
             <rect x="26.8" y="26.8" width="5.2" height="5.2" rx="1.7" />
           </g>
           <rect x="20.4" y="20.4" width="5.2" height="5.2" rx="1.7" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
-          <rect x="20.4" y="26.8" width="5.2" height="5.2" rx="1.7" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
-          <circle cx="23" cy="23" r="2.75" fill="none" stroke="#63aa70" stroke-width="1.65" />
-          <rect x="20.2" y="19.9" width="7.9" height="7.9" rx="2.1" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
-          <path d="M20.2 23.85H28.1M24.15 19.9V27.8" stroke="rgba(255,255,255,0.34)" stroke-width="0.82" />
-          <circle cx="28.95" cy="23" r="4.05" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.15" />
-          <circle cx="27.8" cy="21.55" r="1.02" fill="#eef6ff" />
+          <circle cx="18.6" cy="23" r="2.65" fill="none" stroke="#63aa70" stroke-width="1.65" />
+          <rect x="20.25" y="19.45" width="7.5" height="7.5" rx="2.05" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
+          <path d="M20.25 23.2H27.75M24 19.45V26.95" stroke="rgba(255,255,255,0.34)" stroke-width="0.8" />
+          <circle cx="29.35" cy="23" r="3.6" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.15" />
+          <circle cx="28.2" cy="21.65" r="0.98" fill="#eef6ff" />
         </svg>
       `,
       "futbol-turnos": `

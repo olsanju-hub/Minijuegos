@@ -7693,6 +7693,8 @@ body:not(.is-home-screen) .bg-layer {
 
 .home-game-card.is-sokoban .home-game-card-glyph svg {
   filter: saturate(1.02) contrast(1.02);
+  transform: translateY(-0.5px) scale(0.97);
+  transform-origin: center;
 }
 
 .home-game-card.is-tanques .home-game-card-icon {

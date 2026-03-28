@@ -23,6 +23,7 @@ const MAX_PROJECTILE_SPEED = 900;
 const GRAVITY = 620;
 const PROJECTILE_STEP_MS = 8;
 const MAX_FRAME_MS = 120;
+const PREVIEW_TIME_SECONDS = 0.42;
 const IMPACT_DURATION_MS = 780;
 
 const DAMAGE_RADIUS = 138;
@@ -477,18 +478,18 @@ const TANKS_STYLES = String.raw`
 
 .tanks-preview-line {
   fill: none;
-  stroke: rgba(82, 111, 96, 0.92);
-  stroke-width: 5.6;
+  stroke: rgba(82, 111, 96, 0.82);
+  stroke-width: 4.8;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 0 0 18 12;
-  filter: drop-shadow(0 7px 10px rgba(34, 53, 45, 0.16));
+  stroke-dasharray: 0 0 12 10;
+  filter: drop-shadow(0 6px 8px rgba(34, 53, 45, 0.12));
 }
 
 .tanks-preview-impact {
-  fill: rgba(255, 255, 255, 0.84);
-  stroke: rgba(89, 118, 103, 0.92);
-  stroke-width: 3.2;
+  fill: rgba(255, 255, 255, 0.78);
+  stroke: rgba(89, 118, 103, 0.84);
+  stroke-width: 2.8;
 }
 
 .tanks-controls {
@@ -877,10 +878,15 @@ function previewTrajectory(tank, terrain, angle = tank.angle, power = tank.power
   points.push({ x, y });
 
   for (let step = 0; step < 120; step += 1) {
-    const dt = 0.07;
+    const dt = 0.06;
     const nextX = x + vx * dt;
     const nextY = y + vy * dt;
     vy += GRAVITY * dt;
+
+    if (step * dt >= PREVIEW_TIME_SECONDS) {
+      points.push({ x: nextX, y: nextY });
+      break;
+    }
 
     if (nextX < 0 || nextX > FIELD_WIDTH || nextY > FIELD_HEIGHT) {
       points.push({
@@ -1414,7 +1420,6 @@ function renderPreview(state) {
   return `
     <g class="tanks-preview" aria-hidden="true">
       <path class="tanks-preview-line" d="${path}" data-tank-preview-path></path>
-      <circle class="tanks-preview-impact" cx="${round(impact.x, 2)}" cy="${round(impact.y, 2)}" r="7.6" data-tank-preview-impact></circle>
     </g>
   `;
 }
@@ -1580,14 +1585,14 @@ function updatePreview(boardWrap, state, angle, power) {
   const pathNode = boardWrap.querySelector("[data-tank-preview-path]");
   const impactNode = boardWrap.querySelector("[data-tank-preview-impact]");
   const currentTank = state.tanks[state.turnSlot];
-  if (!currentTank || !pathNode || !impactNode) {
+  if (!currentTank || !pathNode) {
     return;
   }
   const points = previewTrajectory(currentTank, state.terrain, angle, power);
   const path = trajectoryPath(points);
   const impact = points[points.length - 1];
   pathNode.setAttribute("d", path || "");
-  if (impact) {
+  if (impact && impactNode) {
     impactNode.setAttribute("cx", String(round(impact.x, 2)));
     impactNode.setAttribute("cy", String(round(impact.y, 2)));
   }

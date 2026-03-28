@@ -49,20 +49,20 @@ const TEAM_META = Object.freeze([
 
 const FOOTBALL_STYLES = String.raw`
 .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
-  width: min(1400px, 100%);
-  gap: 14px;
+  width: min(1640px, calc(100vw - 14px));
+  gap: 8px;
 }
 
 .game-screen-futbol-turnos .topbar {
-  padding: 12px 14px;
+  padding: 9px 11px;
 }
 
 .game-screen-futbol-turnos .topbar-title {
-  font-size: clamp(1.34rem, 2.1vw, 1.86rem);
+  font-size: clamp(1.18rem, 1.8vw, 1.62rem);
 }
 
 .game-screen-futbol-turnos .topbar-sub {
-  font-size: 0.94rem;
+  font-size: 0.82rem;
 }
 
 .game-screen-futbol-turnos .board-wrap {
@@ -72,24 +72,24 @@ const FOOTBALL_STYLES = String.raw`
 
 .game-screen-futbol-turnos .actions-bottom {
   justify-content: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .game-screen-futbol-turnos .actions-bottom .btn {
-  min-width: 158px;
+  min-width: 144px;
 }
 
 .football-shell {
   width: 100%;
   margin: 0 auto;
   display: grid;
-  gap: 10px;
+  gap: 8px;
 }
 
 .football-hud {
   display: grid;
-  grid-template-columns: minmax(0, 0.92fr) minmax(250px, 0.72fr) minmax(0, 0.92fr);
-  gap: 10px;
+  grid-template-columns: minmax(112px, 0.76fr) minmax(0, 1.18fr) minmax(112px, 0.76fr);
+  gap: 6px;
   align-items: stretch;
 }
 
@@ -97,20 +97,22 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-card {
   position: relative;
   overflow: hidden;
-  border-radius: 22px;
+  border-radius: 20px;
   border: 1px solid rgba(209, 196, 171, 0.82);
   background:
     radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 34%),
     linear-gradient(180deg, rgba(255, 253, 248, 0.96) 0%, rgba(246, 238, 226, 0.98) 100%);
   box-shadow:
-    0 18px 32px rgba(52, 48, 41, 0.1),
+    0 14px 24px rgba(52, 48, 41, 0.09),
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
 .football-team-card {
-  display: grid;
-  gap: 10px;
-  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px;
 }
 
 .football-team-card::before,
@@ -139,20 +141,19 @@ const FOOTBALL_STYLES = String.raw`
   z-index: 1;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 10px;
 }
 
 .football-team-badge {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   min-width: 0;
 }
 
 .football-team-dot {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border-radius: 999px;
   flex: 0 0 auto;
   box-shadow:
@@ -171,15 +172,13 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-name {
   margin: 0;
   color: #233026;
-  font-size: 0.94rem;
-  font-weight: 760;
+  font-size: 0.82rem;
+  font-weight: 780;
   letter-spacing: -0.03em;
 }
 
 .football-team-role {
-  margin: 2px 0 0;
-  color: #6d766d;
-  font-size: 0.74rem;
+  display: none;
 }
 
 .football-score {
@@ -187,7 +186,7 @@ const FOOTBALL_STYLES = String.raw`
   z-index: 1;
   margin: 0;
   color: #182425;
-  font-size: clamp(1.78rem, 3.2vw, 2.16rem);
+  font-size: clamp(1.36rem, 2.5vw, 1.82rem);
   font-weight: 860;
   line-height: 0.95;
   letter-spacing: -0.06em;
@@ -196,15 +195,17 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-card.is-active {
   border-color: rgba(118, 170, 141, 0.74);
   box-shadow:
-    0 20px 36px rgba(49, 64, 55, 0.12),
+    0 18px 30px rgba(49, 64, 55, 0.11),
     inset 0 1px 0 rgba(255, 255, 255, 0.84),
     0 0 0 3px rgba(111, 171, 140, 0.12);
 }
 
 .football-status-card {
-  display: grid;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 10px;
-  padding: 12px 14px;
+  padding: 8px 10px;
 }
 
 .football-status-card::before {
@@ -218,12 +219,12 @@ const FOOTBALL_STYLES = String.raw`
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  min-height: 28px;
-  padding: 0 10px;
+  min-height: 22px;
+  padding: 0 8px;
   border-radius: 999px;
   background: rgba(72, 116, 95, 0.1);
   color: #47695a;
-  font-size: 0.68rem;
+  font-size: 0.6rem;
   font-weight: 820;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -238,94 +239,59 @@ const FOOTBALL_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 4px;
+  gap: 2px;
+  min-width: 0;
 }
 
 .football-status-title {
   margin: 0;
   color: #213029;
-  font-size: 0.98rem;
-  font-weight: 760;
+  font-size: 0.9rem;
+  font-weight: 770;
+  letter-spacing: -0.03em;
 }
 
 .football-status-note {
   margin: 0;
   color: #657367;
-  font-size: 0.78rem;
-  line-height: 1.32;
-}
-
-.football-power-meter {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  gap: 6px;
-}
-
-.football-power-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.football-power-label,
-.football-power-value {
-  color: #5f7066;
-  font-size: 0.72rem;
-  font-weight: 760;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-}
-
-.football-power-track {
-  position: relative;
+  font-size: 0.7rem;
+  line-height: 1.25;
+  white-space: nowrap;
   overflow: hidden;
-  height: 10px;
-  border-radius: 999px;
-  background: rgba(173, 184, 173, 0.24);
-  box-shadow: inset 0 1px 2px rgba(20, 39, 34, 0.08);
-}
-
-.football-power-fill {
-  position: absolute;
-  inset: 0 auto 0 0;
-  width: var(--football-power, 0%);
-  border-radius: inherit;
-  background: linear-gradient(90deg, #76b48f 0%, #4d86e9 100%);
-  transition: width 90ms linear;
+  text-overflow: ellipsis;
 }
 
 .football-meta-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  align-items: center;
+  gap: 6px;
+  flex: 0 0 auto;
 }
 
 .football-meta-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 26px;
-  padding: 0 10px;
+  min-height: 22px;
+  padding: 0 8px;
   border-radius: 999px;
   border: 1px solid rgba(212, 202, 184, 0.86);
   background: rgba(255, 255, 255, 0.62);
   color: #46554a;
-  font-size: 0.7rem;
-  font-weight: 720;
+  font-size: 0.64rem;
+  font-weight: 760;
 }
 
 .football-stage {
   position: relative;
   overflow: hidden;
-  padding: 12px;
-  border-radius: 30px;
+  padding: 6px;
+  border-radius: 28px;
   border: 1px solid rgba(210, 198, 172, 0.82);
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 36%),
     linear-gradient(180deg, rgba(253, 250, 242, 0.98) 0%, rgba(247, 239, 225, 0.98) 100%);
   box-shadow:
-    0 28px 44px rgba(54, 48, 40, 0.12),
+    0 24px 36px rgba(54, 48, 40, 0.12),
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
@@ -470,11 +436,17 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-aim-line {
-  stroke: rgba(83, 113, 97, 0.92);
-  stroke-width: 8;
   stroke-linecap: round;
-  stroke-dasharray: 0 0 18 12;
-  filter: drop-shadow(0 6px 10px rgba(34, 53, 45, 0.14));
+  filter: drop-shadow(0 6px 10px rgba(34, 53, 45, 0.12));
+}
+
+.football-aim-line.is-pull {
+  stroke: rgba(72, 105, 90, 0.26);
+}
+
+.football-aim-line.is-vector {
+  stroke: rgba(83, 113, 97, 0.92);
+  stroke-linecap: round;
 }
 
 .football-aim-anchor {
@@ -484,21 +456,9 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-aim-tip {
-  fill: rgba(84, 119, 101, 0.18);
+  fill: rgba(84, 119, 101, 0.22);
   stroke: rgba(84, 119, 101, 0.92);
   stroke-width: 3.2;
-}
-
-.football-footer-note {
-  margin: 0;
-  text-align: center;
-  color: #637264;
-  font-size: 0.8rem;
-  line-height: 1.42;
-}
-
-.football-footer-note strong {
-  color: #274338;
 }
 
 .football-config-grid {
@@ -508,46 +468,79 @@ const FOOTBALL_STYLES = String.raw`
 
 @media (max-width: 980px) {
   .football-hud {
-    grid-template-columns: 1fr;
-  }
-
-  .football-team-card {
-    grid-template-columns: minmax(0, 1fr) auto;
-    align-items: center;
+    grid-template-columns: minmax(94px, 0.72fr) minmax(0, 1.04fr) minmax(94px, 0.72fr);
+    gap: 5px;
   }
 }
 
 @media (max-width: 760px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
-    width: min(100%, calc(100vw - 20px));
+    width: min(100%, calc(100vw - 10px));
   }
 
   .football-shell {
-    gap: 10px;
+    gap: 5px;
   }
 
   .football-stage {
-    padding: 10px;
-    border-radius: 26px;
+    padding: 4px;
+    border-radius: 20px;
   }
 
   .football-team-card,
   .football-status-card {
-    padding: 14px;
-    border-radius: 22px;
+    padding: 7px 8px;
+    border-radius: 16px;
+  }
+
+  .football-team-name {
+    font-size: 0.72rem;
+  }
+
+  .football-score {
+    font-size: 1.26rem;
+  }
+
+  .football-status-card {
+    gap: 6px;
+  }
+
+  .football-status-title {
+    font-size: 0.74rem;
+  }
+
+  .football-status-note {
+    display: none;
+  }
+
+  .football-meta-pill {
+    min-height: 20px;
+    padding: 0 7px;
+    font-size: 0.58rem;
+  }
+
+  .game-screen-futbol-turnos .topbar {
+    padding: 8px 10px;
+  }
+
+  .game-screen-futbol-turnos .topbar-title {
+    font-size: 1.06rem;
+  }
+
+  .game-screen-futbol-turnos .topbar-sub {
+    font-size: 0.74rem;
   }
 
   .game-screen-futbol-turnos .actions-bottom {
-    gap: 10px;
+    gap: 6px;
   }
 
   .game-screen-futbol-turnos .actions-bottom .btn {
     min-width: 0;
     flex: 1 1 0;
-  }
-
-  .football-footer-note {
-    font-size: 0.76rem;
+    height: 40px;
+    padding: 0 10px;
+    font-size: 0.9rem;
   }
 }
 `;
@@ -567,6 +560,11 @@ function escapeHtml(value) {
 
 function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
+}
+
+function round(value, decimals = 0) {
+  const factor = 10 ** decimals;
+  return Math.round(value * factor) / factor;
 }
 
 function ensureFootballStyles() {
@@ -721,31 +719,31 @@ function buildStatusCopy(state) {
   if (state.phase === "finished" && Number.isInteger(state.winnerSlot)) {
     return {
       eyebrow: "Partido cerrado",
-      title: `Gana ${teamMeta(state.winnerSlot).name}`,
-      note: `Marcador final ${state.score[0]} - ${state.score[1]}. Reinicia la partida o vuelve al catalogo.`
+      title: `Gana ${teamMeta(state.winnerSlot).short}`,
+      note: `Final ${state.score[0]} - ${state.score[1]}`
     };
   }
 
   if (state.phase === "goal" && state.goalEvent) {
     return {
       eyebrow: "Gol",
-      title: `Gol de ${teamMeta(state.goalEvent.scorerSlot).name}`,
-      note: "Se recoloca el campo y saca el equipo que recibio el gol."
+      title: `Gol de ${teamMeta(state.goalEvent.scorerSlot).short}`,
+      note: "Saque rival en curso"
     };
   }
 
   if (state.phase === "resolving") {
     return {
       eyebrow: "Jugada en curso",
-      title: "Esperando a que el campo quede en reposo",
-      note: "Los rebotes y choques cierran solos el turno cuando todo se detiene."
+      title: "Esperando el reposo",
+      note: "Rebotes y choques activos"
     };
   }
 
   return {
     eyebrow: `Turno ${state.turnNumber}`,
-    title: `Juega ${teamMeta(state.turnSlot).name}`,
-    note: "Tira de una ficha hacia atras y sueltala para disparar con direccion y potencia."
+    title: `Juega ${teamMeta(state.turnSlot).short}`,
+    note: `Primero a ${state.goalsToWin}`
   };
 }
 
@@ -1296,53 +1294,34 @@ function renderHud(state) {
   return `
     <section class="football-hud">
       <article class="football-team-card is-team-0 ${state.turnSlot === 0 && state.phase === "ready" ? "is-active" : ""}">
-        <div class="football-team-card-head">
-          <div class="football-team-badge">
-            <span class="football-team-dot" aria-hidden="true"></span>
-            <div>
-              <h3 class="football-team-name">${escapeHtml(leftTeam.name)}</h3>
-              <p class="football-team-role">Ataca a la derecha</p>
-            </div>
+        <div class="football-team-badge">
+          <span class="football-team-dot" aria-hidden="true"></span>
+          <div>
+            <h3 class="football-team-name">${escapeHtml(leftTeam.short)}</h3>
           </div>
-          <p class="football-score">${state.score[0]}</p>
         </div>
+        <p class="football-score">${state.score[0]}</p>
       </article>
 
       <article class="football-status-card">
-        <div class="football-status-top">
-          <span class="football-status-eyebrow ${state.phase === "goal" ? "football-status-goal" : ""}" data-football-status-eyebrow>${escapeHtml(status.eyebrow)}</span>
-          <span class="football-meta-pill">${escapeHtml(formatModeLabel(state))}</span>
-        </div>
         <div class="football-status-copy">
+          <span class="football-status-eyebrow ${state.phase === "goal" ? "football-status-goal" : ""}" data-football-status-eyebrow>${escapeHtml(status.eyebrow)}</span>
           <h3 class="football-status-title" data-football-status-title>${escapeHtml(status.title)}</h3>
           <p class="football-status-note" data-football-status-note>${escapeHtml(status.note)}</p>
         </div>
-        <div class="football-power-meter">
-          <div class="football-power-row">
-            <span class="football-power-label">Potencia</span>
-            <span class="football-power-value" data-football-power-value>Lista</span>
-          </div>
-          <div class="football-power-track">
-            <div class="football-power-fill" data-football-power-fill></div>
-          </div>
-        </div>
         <div class="football-meta-row">
-          <span class="football-meta-pill">Marcador ${state.score[0]} - ${state.score[1]}</span>
-          <span class="football-meta-pill">Jugada ${state.turnNumber}</span>
+          <span class="football-meta-pill">A ${state.goalsToWin}</span>
         </div>
       </article>
 
       <article class="football-team-card is-team-1 ${state.turnSlot === 1 && state.phase === "ready" ? "is-active" : ""}">
-        <div class="football-team-card-head">
-          <div class="football-team-badge">
-            <span class="football-team-dot" aria-hidden="true"></span>
-            <div>
-              <h3 class="football-team-name">${escapeHtml(rightTeam.name)}</h3>
-              <p class="football-team-role">Ataca a la izquierda</p>
-            </div>
+        <div class="football-team-badge">
+          <span class="football-team-dot" aria-hidden="true"></span>
+          <div>
+            <h3 class="football-team-name">${escapeHtml(rightTeam.short)}</h3>
           </div>
-          <p class="football-score">${state.score[1]}</p>
         </div>
+        <p class="football-score">${state.score[1]}</p>
       </article>
     </section>
   `;
@@ -1355,9 +1334,6 @@ function renderShell(state, canAct) {
       <section class="football-stage">
         ${renderField(state, canAct)}
       </section>
-      <p class="football-footer-note">
-        <strong>Como jugar:</strong> elige una ficha del equipo activo, arrastrala hacia atras para apuntar y sueltala.
-      </p>
     </section>
   `;
 }
@@ -1392,14 +1368,25 @@ function clampPullPoint(anchor, point) {
 function renderAimGuide(anchor, handlePoint, power01) {
   const pullX = anchor.x - handlePoint.x;
   const pullY = anchor.y - handlePoint.y;
-  const tipX = anchor.x + pullX * 0.28;
-  const tipY = anchor.y + pullY * 0.28;
-  const haloRadius = 18 + power01 * 30;
+  const pullDistance = Math.hypot(pullX, pullY) || 1;
+  const dirX = pullX / pullDistance;
+  const dirY = pullY / pullDistance;
+  const guideLength = 24 + power01 * 48;
+  const tipX = anchor.x + dirX * guideLength;
+  const tipY = anchor.y + dirY * guideLength;
+  const haloRadius = 15 + power01 * 18;
+  const tone = power01 >= 0.72 ? "#de765b" : power01 >= 0.38 ? "#d2a049" : "#6da888";
+  const softTone = power01 >= 0.72 ? "rgba(222,118,91,0.24)" : power01 >= 0.38 ? "rgba(210,160,73,0.22)" : "rgba(109,168,136,0.22)";
+  const pullWidth = 5 + power01 * 7;
+  const vectorWidth = 4.4 + power01 * 5.8;
+  const dash = Math.max(7, 16 - power01 * 7);
 
   return `
-    <line class="football-aim-line" x1="${handlePoint.x}" y1="${handlePoint.y}" x2="${anchor.x}" y2="${anchor.y}"></line>
-    <circle class="football-aim-anchor" cx="${anchor.x}" cy="${anchor.y}" r="${haloRadius * 0.42}"></circle>
-    <circle class="football-aim-tip" cx="${tipX}" cy="${tipY}" r="${12 + power01 * 10}"></circle>
+    <line class="football-aim-line is-pull" x1="${handlePoint.x}" y1="${handlePoint.y}" x2="${anchor.x}" y2="${anchor.y}" style="stroke:${softTone};stroke-width:${round(pullWidth + 6, 2)}"></line>
+    <line class="football-aim-line is-pull" x1="${handlePoint.x}" y1="${handlePoint.y}" x2="${anchor.x}" y2="${anchor.y}" style="stroke:${tone};stroke-width:${round(pullWidth, 2)};stroke-dasharray:${round(dash, 2)} 10"></line>
+    <line class="football-aim-line is-vector" x1="${anchor.x}" y1="${anchor.y}" x2="${round(tipX, 2)}" y2="${round(tipY, 2)}" style="stroke:${tone};stroke-width:${round(vectorWidth, 2)}"></line>
+    <circle class="football-aim-anchor" cx="${anchor.x}" cy="${anchor.y}" r="${round(haloRadius * 0.42, 2)}" style="stroke:${tone}"></circle>
+    <circle class="football-aim-tip" cx="${round(tipX, 2)}" cy="${round(tipY, 2)}" r="${round(8 + power01 * 7, 2)}" style="fill:${softTone};stroke:${tone}"></circle>
   `;
 }
 
@@ -1411,13 +1398,11 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
 
   const svg = root.querySelector("[data-football-field]");
   const aimLayer = root.querySelector("[data-football-aim-layer]");
-  const powerFill = root.querySelector("[data-football-power-fill]");
-  const powerValue = root.querySelector("[data-football-power-value]");
   const statusEyebrow = root.querySelector("[data-football-status-eyebrow]");
   const statusTitle = root.querySelector("[data-football-status-title]");
   const statusNote = root.querySelector("[data-football-status-note]");
 
-  if (!svg || !aimLayer || !powerFill || !powerValue || !statusEyebrow || !statusTitle || !statusNote) {
+  if (!svg || !aimLayer || !statusEyebrow || !statusTitle || !statusNote) {
     return;
   }
 
@@ -1427,8 +1412,6 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
   let drag = null;
 
   function resetMeter() {
-    powerFill.style.setProperty("--football-power", "0%");
-    powerValue.textContent = state.phase === "ready" ? "Lista" : "Bloqueada";
     statusEyebrow.textContent = baseStatus.eyebrow;
     statusEyebrow.classList.toggle("football-status-goal", state.phase === "goal");
     statusTitle.textContent = baseStatus.title;
@@ -1453,16 +1436,14 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     const power01 = clamp(pullDistance / MAX_DRAG_DISTANCE, 0, 1);
 
     aimLayer.innerHTML = renderAimGuide(drag.anchor, handlePoint, power01);
-    powerFill.style.setProperty("--football-power", `${Math.round(power01 * 100)}%`);
-    powerValue.textContent = `${Math.round(power01 * 100)}%`;
     statusEyebrow.textContent = "Apuntando";
     statusEyebrow.classList.remove("football-status-goal");
-    statusTitle.textContent = `Disparo de ${teamMeta(drag.team).short}`;
+    statusTitle.textContent = `Disparo de ${teamMeta(drag.team).short} · ${Math.round(power01 * 100)}%`;
     statusNote.textContent = power01 >= 0.72
-      ? "Tiro fuerte y mas dificil de recolocar."
+      ? "Potencia alta"
       : power01 >= 0.34
-        ? "Potencia equilibrada para pase, rebote o remate."
-        : "Tiro corto para recolocar la jugada.";
+        ? "Potencia media"
+        : "Potencia corta";
   }
 
   async function releaseShot(event, cancelled = false) {
