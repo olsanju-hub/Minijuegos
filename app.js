@@ -10,6 +10,7 @@ import { buscaminasGame } from "./games/buscaminas.js";
 import { sokobanGame } from "./games/sokoban.js";
 import { parejasGame } from "./games/parejas.js";
 import { futbolTurnosGame } from "./games/futbol-turnos.js";
+import { tanquesGame } from "./games/tanques.js";
 
 const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
@@ -31,6 +32,7 @@ engine.registerGame(buscaminasGame);
 engine.registerGame(sokobanGame);
 engine.registerGame(parejasGame);
 engine.registerGame(futbolTurnosGame);
+engine.registerGame(tanquesGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {

@@ -185,6 +185,9 @@ export function createUI({ appElement, toastElement }) {
   let footballTickFrame = null;
   let footballLastFrameAt = 0;
   let footballDispatchInFlight = false;
+  let tankTickTimerId = null;
+  let tankLastTickAt = 0;
+  let tankDispatchInFlight = false;
   let trafficTickFrame = null;
   let trafficLastFrameAt = 0;
   let trafficDispatchInFlight = false;
@@ -457,15 +460,15 @@ export function createUI({ appElement, toastElement }) {
               <stop offset="100%" stop-color="#f1e1c5" />
             </linearGradient>
             <linearGradient id="sokGlyphBoard" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#f4e6cf" />
-              <stop offset="100%" stop-color="#e4cda9" />
+              <stop offset="0%" stop-color="#f6ead4" />
+              <stop offset="100%" stop-color="#e5cfab" />
             </linearGradient>
             <linearGradient id="sokGlyphWall" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#d8b287" />
-              <stop offset="100%" stop-color="#ba8758" />
+              <stop offset="0%" stop-color="#dcb58a" />
+              <stop offset="100%" stop-color="#bd8956" />
             </linearGradient>
             <linearGradient id="sokGlyphBox" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#efbe76" />
+              <stop offset="0%" stop-color="#efbf78" />
               <stop offset="100%" stop-color="#cf8741" />
             </linearGradient>
             <linearGradient id="sokGlyphPlayer" x1="0" y1="0" x2="1" y2="1">
@@ -477,22 +480,22 @@ export function createUI({ appElement, toastElement }) {
           <rect x="8.5" y="8.5" width="31" height="31" rx="9.5" fill="#f8efdf" stroke="#dfc8a6" stroke-width="1" />
           <rect x="11.5" y="11.5" width="25" height="25" rx="7.5" fill="url(#sokGlyphBoard)" stroke="#d1b185" stroke-width="1" />
           <g fill="url(#sokGlyphWall)">
-            <rect x="14" y="14" width="5.5" height="5.5" rx="1.8" />
-            <rect x="20.5" y="14" width="5.5" height="5.5" rx="1.8" />
-            <rect x="27" y="14" width="5.5" height="5.5" rx="1.8" />
-            <rect x="14" y="20.5" width="5.5" height="5.5" rx="1.8" />
-            <rect x="27" y="20.5" width="5.5" height="5.5" rx="1.8" />
-            <rect x="14" y="27" width="5.5" height="5.5" rx="1.8" />
-            <rect x="20.5" y="27" width="5.5" height="5.5" rx="1.8" />
-            <rect x="27" y="27" width="5.5" height="5.5" rx="1.8" />
+            <rect x="14" y="14" width="5.2" height="5.2" rx="1.7" />
+            <rect x="20.4" y="14" width="5.2" height="5.2" rx="1.7" />
+            <rect x="26.8" y="14" width="5.2" height="5.2" rx="1.7" />
+            <rect x="14" y="20.4" width="5.2" height="5.2" rx="1.7" />
+            <rect x="26.8" y="20.4" width="5.2" height="5.2" rx="1.7" />
+            <rect x="14" y="26.8" width="5.2" height="5.2" rx="1.7" />
+            <rect x="20.4" y="26.8" width="5.2" height="5.2" rx="1.7" />
+            <rect x="26.8" y="26.8" width="5.2" height="5.2" rx="1.7" />
           </g>
-          <rect x="20.5" y="20.5" width="5.5" height="5.5" rx="1.8" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
-          <rect x="20.5" y="27" width="5.5" height="5.5" rx="1.8" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
-          <circle cx="23.25" cy="23.25" r="2.8" fill="none" stroke="#63aa70" stroke-width="1.7" />
-          <rect x="20.8" y="20.7" width="8.4" height="8.4" rx="2.2" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
-          <path d="M20.8 24.9H29.2M25 20.7V29.1" stroke="rgba(255,255,255,0.34)" stroke-width="0.85" />
-          <circle cx="29.2" cy="29.1" r="4.15" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.15" />
-          <circle cx="28" cy="27.5" r="1.05" fill="#eef6ff" />
+          <rect x="20.4" y="20.4" width="5.2" height="5.2" rx="1.7" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
+          <rect x="20.4" y="26.8" width="5.2" height="5.2" rx="1.7" fill="#fffaf1" stroke="#d5c4a5" stroke-width="0.8" />
+          <circle cx="23" cy="23" r="2.75" fill="none" stroke="#63aa70" stroke-width="1.65" />
+          <rect x="20.2" y="19.9" width="7.9" height="7.9" rx="2.1" fill="url(#sokGlyphBox)" stroke="#aa7038" stroke-width="1" />
+          <path d="M20.2 23.85H28.1M24.15 19.9V27.8" stroke="rgba(255,255,255,0.34)" stroke-width="0.82" />
+          <circle cx="28.95" cy="23" r="4.05" fill="url(#sokGlyphPlayer)" stroke="#3a66cb" stroke-width="1.15" />
+          <circle cx="27.8" cy="21.55" r="1.02" fill="#eef6ff" />
         </svg>
       `,
       "futbol-turnos": `
@@ -517,6 +520,40 @@ export function createUI({ appElement, toastElement }) {
           <circle cx="31" cy="30" r="4.2" fill="#4f84ea" stroke="#355fb9" stroke-width="1.3" />
           <circle cx="29.7" cy="28.4" r="1.1" fill="#eef4ff" />
           <circle cx="24" cy="24" r="2.6" fill="#fffaf1" stroke="#d4c19d" stroke-width="1.1" />
+        </svg>
+      `,
+      tanques: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="tankGlyphSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#edf7ff" />
+              <stop offset="100%" stop-color="#eef2e6" />
+            </linearGradient>
+            <linearGradient id="tankGlyphGround" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#dfc88f" />
+              <stop offset="100%" stop-color="#bc945c" />
+            </linearGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#fff7ea" stroke="#dcc4a1" stroke-width="1.5" />
+          <rect x="8" y="8.5" width="32" height="31" rx="9.5" fill="url(#tankGlyphSky)" stroke="#dccfb7" stroke-width="1" />
+          <circle cx="15" cy="15" r="4.4" fill="rgba(248,232,180,0.86)" />
+          <path d="M8 39V28.5C13.2 25.6 18 25.7 22.2 28.4C26.9 31.4 31.2 31.4 35.8 28.2C37.3 27.2 38.6 26.7 40 26.5V39Z" fill="url(#tankGlyphGround)" stroke="#a98753" stroke-width="1.15" />
+          <path d="M22 25.5Q24.7 18.7 29.4 16.2" fill="none" stroke="rgba(84,111,96,0.92)" stroke-width="1.9" stroke-dasharray="3.4 3.8" stroke-linecap="round" />
+          <circle cx="29.4" cy="16.2" r="1.9" fill="#fff9ef" stroke="#cab48b" stroke-width="0.85" />
+          <g transform="translate(15.8 28.8)">
+            <ellipse cx="0" cy="5.8" rx="7.8" ry="2.6" fill="rgba(45,41,37,0.12)" />
+            <rect x="-6.6" y="1.2" width="13.2" height="4.8" rx="2.2" fill="#685b48" />
+            <rect x="-5.3" y="-4.4" width="10.6" height="5.8" rx="2.6" fill="#de7559" stroke="#b3543d" stroke-width="0.95" />
+            <line x1="0.8" y1="-4.8" x2="8.6" y2="-8.2" stroke="#6e675e" stroke-width="2.8" stroke-linecap="round" />
+            <circle cx="0" cy="-4.8" r="3.2" fill="#de7559" stroke="#b3543d" stroke-width="0.95" />
+          </g>
+          <g transform="translate(32.2 29.2)">
+            <ellipse cx="0" cy="5.8" rx="7.8" ry="2.6" fill="rgba(45,41,37,0.12)" />
+            <rect x="-6.6" y="1.2" width="13.2" height="4.8" rx="2.2" fill="#685b48" />
+            <rect x="-5.3" y="-4.4" width="10.6" height="5.8" rx="2.6" fill="#5a87e8" stroke="#375eb8" stroke-width="0.95" />
+            <line x1="-0.8" y1="-4.8" x2="-8.6" y2="-7.8" stroke="#6e675e" stroke-width="2.8" stroke-linecap="round" />
+            <circle cx="0" cy="-4.8" r="3.2" fill="#5a87e8" stroke="#375eb8" stroke-width="0.95" />
+          </g>
         </svg>
       `
     };
@@ -621,6 +658,13 @@ export function createUI({ appElement, toastElement }) {
           description: "Dispara, rebota y marca",
           icon: "FT",
           energy: "Futbol tactico por impulsos."
+        },
+        tanques: {
+          accent: "#d78963",
+          glow: "rgba(215, 137, 99, 0.24)",
+          description: "Apunta, dispara y resiste",
+          icon: "TK",
+          energy: "Artilleria por turnos con tiro parabólico."
         }
       };
 
@@ -1137,6 +1181,78 @@ export function createUI({ appElement, toastElement }) {
     queueFootballFrame();
   }
 
+  function shouldRunTankLoop(vm = currentVm) {
+    return Boolean(
+      vm?.screen === "game" &&
+      vm?.game?.id === "tanques" &&
+      (vm?.session?.state?.phase === "projectile" || vm?.session?.state?.phase === "impact") &&
+      typeof onAction === "function"
+    );
+  }
+
+  function clearTankTickLoop() {
+    if (tankTickTimerId) {
+      window.clearTimeout(tankTickTimerId);
+      tankTickTimerId = null;
+    }
+    tankLastTickAt = 0;
+    tankDispatchInFlight = false;
+  }
+
+  function queueTankFrame() {
+    if (tankTickTimerId || !shouldRunTankLoop()) {
+      return;
+    }
+
+    tankTickTimerId = window.setTimeout(async () => {
+      tankTickTimerId = null;
+
+      if (!shouldRunTankLoop()) {
+        clearTankTickLoop();
+        return;
+      }
+
+      const now = performance.now();
+      if (!tankLastTickAt) {
+        tankLastTickAt = now - 16;
+      }
+
+      const deltaMs = Math.min(160, Math.max(0, now - tankLastTickAt));
+      tankLastTickAt = now;
+
+      if (tankDispatchInFlight || deltaMs <= 0) {
+        queueTankFrame();
+        return;
+      }
+
+      tankDispatchInFlight = true;
+
+      try {
+        await onAction("game-action", {
+          action: {
+            type: "tick",
+            deltaMs,
+            nowMs: Date.now()
+          }
+        });
+      } finally {
+        tankDispatchInFlight = false;
+        if (shouldRunTankLoop()) {
+          queueTankFrame();
+        }
+      }
+    }, 16);
+  }
+
+  function syncTankTickLoop(vm) {
+    if (!shouldRunTankLoop(vm)) {
+      clearTankTickLoop();
+      return;
+    }
+
+    queueTankFrame();
+  }
+
   function shouldRunTrafficLoop(vm = currentVm) {
     return Boolean(
       vm?.screen === "game" &&
@@ -1396,6 +1512,7 @@ export function createUI({ appElement, toastElement }) {
 
   function syncGameLoops(vm) {
     syncFootballTickLoop(vm);
+    syncTankTickLoop(vm);
     syncTrafficTickLoop(vm);
     syncMinesTimerLoop(vm);
     syncMemoryResolveLoop(vm);
