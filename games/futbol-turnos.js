@@ -49,20 +49,20 @@ const TEAM_META = Object.freeze([
 
 const FOOTBALL_STYLES = String.raw`
 .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
-  width: min(1640px, calc(100vw - 14px));
-  gap: 8px;
+  width: min(1680px, calc(100vw - 10px));
+  gap: 6px;
 }
 
 .game-screen-futbol-turnos .topbar {
-  padding: 9px 11px;
+  padding: 8px 10px;
 }
 
 .game-screen-futbol-turnos .topbar-title {
-  font-size: clamp(1.18rem, 1.8vw, 1.62rem);
+  font-size: clamp(1.14rem, 1.7vw, 1.54rem);
 }
 
 .game-screen-futbol-turnos .topbar-sub {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
 }
 
 .game-screen-futbol-turnos .board-wrap {
@@ -72,24 +72,26 @@ const FOOTBALL_STYLES = String.raw`
 
 .game-screen-futbol-turnos .actions-bottom {
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .game-screen-futbol-turnos .actions-bottom .btn {
-  min-width: 144px;
+  min-width: 132px;
+  height: 42px;
+  padding: 0 14px;
 }
 
 .football-shell {
   width: 100%;
   margin: 0 auto;
   display: grid;
-  gap: 8px;
+  gap: 6px;
 }
 
 .football-hud {
   display: grid;
-  grid-template-columns: minmax(112px, 0.76fr) minmax(0, 1.18fr) minmax(112px, 0.76fr);
-  gap: 6px;
+  grid-template-columns: minmax(104px, 0.7fr) minmax(0, 1.36fr) minmax(104px, 0.7fr);
+  gap: 5px;
   align-items: stretch;
 }
 
@@ -97,13 +99,13 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-card {
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
+  border-radius: 18px;
   border: 1px solid rgba(209, 196, 171, 0.82);
   background:
     radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 34%),
     linear-gradient(180deg, rgba(255, 253, 248, 0.96) 0%, rgba(246, 238, 226, 0.98) 100%);
   box-shadow:
-    0 14px 24px rgba(52, 48, 41, 0.09),
+    0 10px 18px rgba(52, 48, 41, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
@@ -111,8 +113,8 @@ const FOOTBALL_STYLES = String.raw`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 8px;
-  padding: 8px 10px;
+  gap: 7px;
+  padding: 7px 9px;
 }
 
 .football-team-card::before,
@@ -152,8 +154,8 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-team-dot {
-  width: 14px;
-  height: 14px;
+  width: 13px;
+  height: 13px;
   border-radius: 999px;
   flex: 0 0 auto;
   box-shadow:
@@ -172,7 +174,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-name {
   margin: 0;
   color: #233026;
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   font-weight: 780;
   letter-spacing: -0.03em;
 }
@@ -186,7 +188,7 @@ const FOOTBALL_STYLES = String.raw`
   z-index: 1;
   margin: 0;
   color: #182425;
-  font-size: clamp(1.36rem, 2.5vw, 1.82rem);
+  font-size: clamp(1.26rem, 2.25vw, 1.7rem);
   font-weight: 860;
   line-height: 0.95;
   letter-spacing: -0.06em;
@@ -195,17 +197,17 @@ const FOOTBALL_STYLES = String.raw`
 .football-team-card.is-active {
   border-color: rgba(118, 170, 141, 0.74);
   box-shadow:
-    0 18px 30px rgba(49, 64, 55, 0.11),
+    0 14px 22px rgba(49, 64, 55, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.84),
-    0 0 0 3px rgba(111, 171, 140, 0.12);
+    0 0 0 2px rgba(111, 171, 140, 0.1);
 }
 
 .football-status-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  padding: 8px 10px;
+  gap: 8px;
+  padding: 7px 9px;
 }
 
 .football-status-card::before {
@@ -219,12 +221,12 @@ const FOOTBALL_STYLES = String.raw`
   z-index: 1;
   display: inline-flex;
   align-items: center;
-  min-height: 22px;
-  padding: 0 8px;
+  min-height: 20px;
+  padding: 0 7px;
   border-radius: 999px;
   background: rgba(72, 116, 95, 0.1);
   color: #47695a;
-  font-size: 0.6rem;
+  font-size: 0.56rem;
   font-weight: 820;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -239,14 +241,14 @@ const FOOTBALL_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 2px;
+  gap: 1px;
   min-width: 0;
 }
 
 .football-status-title {
   margin: 0;
   color: #213029;
-  font-size: 0.9rem;
+  font-size: 0.84rem;
   font-weight: 770;
   letter-spacing: -0.03em;
 }
@@ -254,7 +256,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-note {
   margin: 0;
   color: #657367;
-  font-size: 0.7rem;
+  font-size: 0.66rem;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
@@ -271,27 +273,27 @@ const FOOTBALL_STYLES = String.raw`
 .football-meta-pill {
   display: inline-flex;
   align-items: center;
-  min-height: 22px;
-  padding: 0 8px;
+  min-height: 20px;
+  padding: 0 7px;
   border-radius: 999px;
   border: 1px solid rgba(212, 202, 184, 0.86);
   background: rgba(255, 255, 255, 0.62);
   color: #46554a;
-  font-size: 0.64rem;
+  font-size: 0.58rem;
   font-weight: 760;
 }
 
 .football-stage {
   position: relative;
   overflow: hidden;
-  padding: 6px;
-  border-radius: 28px;
+  padding: 4px;
+  border-radius: 24px;
   border: 1px solid rgba(210, 198, 172, 0.82);
   background:
     radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 36%),
     linear-gradient(180deg, rgba(253, 250, 242, 0.98) 0%, rgba(247, 239, 225, 0.98) 100%);
   box-shadow:
-    0 24px 36px rgba(54, 48, 40, 0.12),
+    0 18px 28px rgba(54, 48, 40, 0.1),
     inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
@@ -468,45 +470,46 @@ const FOOTBALL_STYLES = String.raw`
 
 @media (max-width: 980px) {
   .football-hud {
-    grid-template-columns: minmax(94px, 0.72fr) minmax(0, 1.04fr) minmax(94px, 0.72fr);
-    gap: 5px;
+    grid-template-columns: minmax(88px, 0.64fr) minmax(0, 1.32fr) minmax(88px, 0.64fr);
+    gap: 4px;
   }
 }
 
 @media (max-width: 760px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
-    width: min(100%, calc(100vw - 10px));
+    width: min(100%, calc(100vw - 8px));
+    gap: 4px;
   }
 
   .football-shell {
-    gap: 5px;
+    gap: 4px;
   }
 
   .football-stage {
-    padding: 4px;
-    border-radius: 20px;
+    padding: 3px;
+    border-radius: 18px;
   }
 
   .football-team-card,
   .football-status-card {
-    padding: 7px 8px;
-    border-radius: 16px;
+    padding: 6px 7px;
+    border-radius: 14px;
   }
 
   .football-team-name {
-    font-size: 0.72rem;
+    font-size: 0.68rem;
   }
 
   .football-score {
-    font-size: 1.26rem;
+    font-size: 1.16rem;
   }
 
   .football-status-card {
-    gap: 6px;
+    gap: 5px;
   }
 
   .football-status-title {
-    font-size: 0.74rem;
+    font-size: 0.68rem;
   }
 
   .football-status-note {
@@ -514,33 +517,39 @@ const FOOTBALL_STYLES = String.raw`
   }
 
   .football-meta-pill {
-    min-height: 20px;
-    padding: 0 7px;
-    font-size: 0.58rem;
+    min-height: 18px;
+    padding: 0 6px;
+    font-size: 0.54rem;
   }
 
   .game-screen-futbol-turnos .topbar {
-    padding: 8px 10px;
+    padding: 7px 9px;
+    align-items: center;
   }
 
   .game-screen-futbol-turnos .topbar-title {
-    font-size: 1.06rem;
+    font-size: 1rem;
   }
 
   .game-screen-futbol-turnos .topbar-sub {
-    font-size: 0.74rem;
+    display: none;
   }
 
   .game-screen-futbol-turnos .actions-bottom {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 6px;
   }
 
   .game-screen-futbol-turnos .actions-bottom .btn {
     min-width: 0;
-    flex: 1 1 0;
-    height: 40px;
-    padding: 0 10px;
-    font-size: 0.9rem;
+    flex: 0 0 auto;
+    height: 48px;
+    padding: 0 8px;
+    font-size: 0.8rem;
+    line-height: 1.12;
+    white-space: normal;
+    text-align: center;
   }
 }
 `;
@@ -1438,12 +1447,12 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     aimLayer.innerHTML = renderAimGuide(drag.anchor, handlePoint, power01);
     statusEyebrow.textContent = "Apuntando";
     statusEyebrow.classList.remove("football-status-goal");
-    statusTitle.textContent = `Disparo de ${teamMeta(drag.team).short} · ${Math.round(power01 * 100)}%`;
+    statusTitle.textContent = `${teamMeta(drag.team).short} · ${Math.round(power01 * 100)}%`;
     statusNote.textContent = power01 >= 0.72
-      ? "Potencia alta"
+      ? "Fuerte"
       : power01 >= 0.34
-        ? "Potencia media"
-        : "Potencia corta";
+        ? "Media"
+        : "Corta";
   }
 
   async function releaseShot(event, cancelled = false) {
