@@ -440,9 +440,21 @@ export function createUI({ appElement, toastElement }) {
             <rect x="19" y="26" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
             <rect x="26" y="26" width="6" height="6" rx="1.6" fill="#fffefb" stroke="#ccc0a8" />
           </g>
-          <text x="21.9" y="23.5" text-anchor="middle" font-size="7.8" font-weight="800" fill="#2f69d3">1</text>
-          <text x="30" y="30.5" text-anchor="middle" font-size="7.6" font-weight="800" fill="#cc553f">⚑</text>
-          <text x="15" y="30.5" text-anchor="middle" font-size="7.1" font-weight="800" fill="#6f5137">✹</text>
+          <circle cx="22" cy="22" r="1.4" fill="#2f69d3" />
+          <circle cx="22" cy="18.8" r="1.05" fill="#2f69d3" />
+          <path d="M29.4 25.5V32.5" stroke="#8d6447" stroke-width="1.5" stroke-linecap="round" />
+          <path d="M29.4 25.8L34 27.7L29.4 29.7Z" fill="#de6a51" stroke="#b95039" stroke-width="0.7" stroke-linejoin="round" />
+          <circle cx="15" cy="29.7" r="1.9" fill="#6f5137" />
+          <g stroke="#6f5137" stroke-width="1.15" stroke-linecap="round">
+            <line x1="15" y1="25.7" x2="15" y2="27.2" />
+            <line x1="15" y1="32.2" x2="15" y2="33.7" />
+            <line x1="10.9" y1="29.7" x2="12.4" y2="29.7" />
+            <line x1="17.6" y1="29.7" x2="19.1" y2="29.7" />
+            <line x1="12" y1="26.7" x2="13.1" y2="27.8" />
+            <line x1="16.9" y1="31.6" x2="18" y2="32.7" />
+            <line x1="12" y1="32.7" x2="13.1" y2="31.6" />
+            <line x1="16.9" y1="27.8" x2="18" y2="26.7" />
+          </g>
         </svg>
       `,
       memory: `
@@ -455,11 +467,14 @@ export function createUI({ appElement, toastElement }) {
             </g>
             <g transform="translate(10)">
               <rect x="0" y="0" width="16" height="22" rx="5" fill="#fffdf9" stroke="#d7d0c5" />
-              <text x="8" y="15" text-anchor="middle" font-size="9">🦊</text>
+              <circle cx="8" cy="10" r="4.1" fill="#f0c568" stroke="#c89a34" stroke-width="0.9" />
+              <circle cx="8" cy="10" r="1.35" fill="#fff5d4" />
+              <path d="M8 14.7L11.9 18.6L8 22.5L4.1 18.6Z" fill="#e68166" stroke="#bc5d43" stroke-width="0.9" />
             </g>
             <g transform="translate(18 4) rotate(9 8 11)">
               <rect x="0" y="0" width="16" height="22" rx="5" fill="#fffdf9" stroke="#d7d0c5" />
-              <text x="8" y="15" text-anchor="middle" font-size="9">🐻</text>
+              <path d="M8 6.6L10 10.6L14.4 11.2L11.2 14.2L12 18.5L8 16.4L4 18.5L4.8 14.2L1.6 11.2L6 10.6Z" fill="#78a6ec" stroke="#4e79bf" stroke-width="0.9" stroke-linejoin="round" />
+              <rect x="4.4" y="18" width="7.2" height="2.5" rx="1.2" fill="#78b38a" stroke="#4b8761" stroke-width="0.9" />
             </g>
           </g>
         </svg>
@@ -750,7 +765,9 @@ export function createUI({ appElement, toastElement }) {
 
     const activeProfile = profileForGame(activeGame);
     const gameCountLabel = `${games.length} juegos`;
-    const playerSpreadLabel = games.length > 1 ? "Local y familiar" : activeProfile.playersText;
+    const activeGameLabel = activeGame ? activeGame.name : "Listo para jugar";
+    const heroTitle = games.length > 1 ? "Una sola app para jugar" : "Partida lista";
+    const heroText = "Elige, configura y juega en local sin salir del mismo sistema.";
 
     return `
       <section class="screen home-screen home-library-screen is-catalog">
@@ -765,7 +782,7 @@ export function createUI({ appElement, toastElement }) {
           </div>
           <div class="home-library-header-note">
             <span class="home-note-pill">${escapeHtml(gameCountLabel)}</span>
-            <span class="home-note-pill is-soft">${escapeHtml(playerSpreadLabel)}</span>
+            <span class="home-note-pill is-soft">${escapeHtml(activeGameLabel)}</span>
           </div>
         </header>
 
@@ -777,12 +794,11 @@ export function createUI({ appElement, toastElement }) {
             <div class="home-hero-overlay">
               <div class="home-hero-panel">
                 <p class="home-hero-kicker">Partidas rapidas en el mismo dispositivo</p>
-                <h2 class="home-hero-title">Minijuegos</h2>
-                <p class="home-hero-text">Juegos de mesa, tablero, logica y fisica resueltos dentro de una sola app familiar.</p>
-                <div class="home-hero-chip-row">
-                  <span class="home-hero-chip">${escapeHtml(gameCountLabel)}</span>
-                  <span class="home-hero-chip">${escapeHtml(playerSpreadLabel)}</span>
-                  <span class="home-hero-chip">${escapeHtml(activeGame ? activeGame.name : "Listo para jugar")}</span>
+                <h2 class="home-hero-title">${escapeHtml(heroTitle)}</h2>
+                <p class="home-hero-text">${escapeHtml(heroText)}</p>
+                <div class="home-hero-focus">
+                  <span class="home-hero-focus-label">Destacado</span>
+                  <strong class="home-hero-focus-value">${escapeHtml(activeGameLabel)}</strong>
                 </div>
               </div>
             </div>
@@ -795,7 +811,7 @@ export function createUI({ appElement, toastElement }) {
               <p class="home-games-kicker">Catalogo</p>
               <h2 class="home-games-title">Elige una partida</h2>
             </div>
-            <p class="home-games-subtitle">Todos los juegos comparten la misma app, el mismo flujo y un arranque directo.</p>
+            <p class="home-games-subtitle">Todos arrancan con el mismo flujo: elegir, configurar y jugar.</p>
           </div>
 
           <section class="home-games-grid" aria-label="Catalogo de juegos">
@@ -817,7 +833,6 @@ export function createUI({ appElement, toastElement }) {
                         data-game-id="${game.id}"
                         aria-label="Jugar a ${escapeHtml(game.name)}"
                       >
-                        <span class="home-game-card-icon is-${escapeHtml(game.id)}">${escapeHtml(profile.icon)}</span>
                         <span class="home-game-card-glyph is-${escapeHtml(game.id)}" aria-hidden="true">${renderHomeGameGlyph(game.id)}</span>
                       </button>
                       <div class="home-game-card-meta">
