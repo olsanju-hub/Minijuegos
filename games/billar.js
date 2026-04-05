@@ -115,14 +115,15 @@ body:has(.screen.game-screen-billar) {
 .billar-stage {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  border: 1px solid rgba(206, 193, 168, 0.84);
+  border-radius: 22px;
+  border: 1px solid rgba(201, 191, 174, 0.78);
   background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(245, 236, 223, 0.98) 100%);
+    linear-gradient(180deg, rgba(255, 253, 249, 0.88) 0%, rgba(246, 241, 234, 0.74) 100%);
   box-shadow:
-    0 18px 30px rgba(51, 46, 39, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 16px 30px rgba(39, 34, 29, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.02);
+  -webkit-backdrop-filter: blur(16px) saturate(1.02);
 }
 
 .billar-player-card,
@@ -152,11 +153,11 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-player-card.is-active {
-  border-color: rgba(113, 165, 136, 0.74);
+  border-color: rgba(106, 154, 129, 0.6);
   box-shadow:
-    0 22px 34px rgba(52, 60, 53, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.86),
-    0 0 0 3px rgba(113, 165, 136, 0.1);
+    0 16px 28px rgba(43, 53, 47, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 0 0 2px rgba(109, 160, 136, 0.08);
 }
 
 .billar-player-head {
@@ -264,8 +265,8 @@ body:has(.screen.game-screen-billar) {
 
 .billar-status-note {
   margin: 0;
-  color: #667468;
-  font-size: 0.72rem;
+  color: #68756b;
+  font-size: 0.7rem;
   line-height: 1.28;
 }
 
@@ -278,8 +279,8 @@ body:has(.screen.game-screen-billar) {
   min-height: 24px;
   padding: 0 10px;
   border-radius: 999px;
-  background: rgba(96, 129, 112, 0.1);
-  color: #4d6d5d;
+  background: rgba(96, 129, 112, 0.08);
+  color: #566c61;
   font-size: 0.64rem;
   font-weight: 820;
   letter-spacing: 0.08em;
@@ -288,7 +289,7 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-stage {
-  padding: 10px;
+  padding: 8px;
 }
 
 .billar-stage::before {
@@ -361,8 +362,8 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-table-frame {
-  fill: #f6ecd8;
-  stroke: #d2bb93;
+  fill: #f4eee1;
+  stroke: #cfbf9f;
   stroke-width: 2.2;
 }
 
@@ -692,13 +693,11 @@ body.game-landscape-mobile-active .billar-hud {
 body.game-landscape-mobile-active .billar-player-card,
 body.game-landscape-mobile-active .billar-status-card {
   padding: 6px 8px;
-  border-radius: 16px;
-  background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 252, 246, 0.92) 0%, rgba(245, 236, 223, 0.9) 100%);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.84) 0%, rgba(246, 241, 234, 0.74) 100%);
   box-shadow:
-    0 10px 18px rgba(51, 46, 39, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 8px 16px rgba(39, 34, 29, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
 }
 
 body.game-landscape-mobile-active .billar-player-name {

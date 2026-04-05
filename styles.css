@@ -6475,6 +6475,187 @@ body:not(.is-home-screen) .bg-layer {
   display: none;
 }
 
+.app-shell:not(.app-shell-home) .screen.game-layout {
+  gap: 14px;
+  align-items: stretch;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: calc(var(--app-dvh, 100dvh) - 28px);
+}
+
+.game-shell-body {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  min-height: 0;
+}
+
+.game-status-band {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.54fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: stretch;
+}
+
+.game-status-band.is-single {
+  grid-template-columns: minmax(0, 560px);
+}
+
+.game-status-card {
+  display: grid;
+  gap: 10px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-radius: 24px;
+  border: 1px solid var(--surface-stroke);
+  background:
+    linear-gradient(180deg, rgba(255, 252, 248, 0.84) 0%, rgba(245, 240, 233, 0.68) 100%);
+  box-shadow:
+    0 12px 24px rgba(31, 28, 24, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(18px) saturate(1.04);
+  -webkit-backdrop-filter: blur(18px) saturate(1.04);
+}
+
+.game-status-label {
+  color: var(--text-sub);
+  font-size: 0.68rem;
+  font-weight: 760;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.game-status-text {
+  margin: 0;
+  color: var(--text-main);
+  font-size: clamp(0.96rem, 1.55vw, 1.14rem);
+  font-weight: 650;
+  letter-spacing: -0.03em;
+}
+
+.game-status-emphasis {
+  color: var(--game-status-tone, var(--text-main));
+  font-weight: 760;
+}
+
+.player-chip-list-compact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.player-chip-list-compact .player-chip {
+  min-height: 40px;
+  padding: 7px 12px;
+  border-radius: 16px;
+  box-shadow:
+    0 8px 16px rgba(31, 28, 24, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.62);
+}
+
+.player-chip-list-compact .player-token {
+  width: 20px;
+  height: 20px;
+}
+
+.player-chip-list-compact .player-name {
+  max-width: 112px;
+  font-size: 0.84rem;
+}
+
+.game-stage-layout {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 118px;
+  gap: 14px;
+  min-height: 0;
+  align-items: stretch;
+}
+
+.game-stage-layout.is-immersive {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.game-stage-main {
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+}
+
+.game-stage-layout:not(.is-immersive) .game-stage-main {
+  padding: clamp(14px, 2vw, 18px);
+  border-radius: 32px;
+  border: 1px solid var(--surface-stroke);
+  background:
+    linear-gradient(180deg, rgba(255, 252, 248, 0.9) 0%, rgba(245, 240, 233, 0.72) 100%);
+  box-shadow:
+    0 18px 36px rgba(31, 28, 24, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(18px) saturate(1.04);
+  -webkit-backdrop-filter: blur(18px) saturate(1.04);
+}
+
+.game-stage-layout .board-wrap {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.game-stage-layout.is-immersive .board-wrap {
+  display: block;
+  overflow: hidden;
+}
+
+.game-floating-actions {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+  width: 118px;
+}
+
+.game-floating-actions .btn {
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  height: auto;
+  padding: 10px 12px;
+  border-radius: 16px;
+  font-size: 0.78rem;
+  letter-spacing: -0.01em;
+}
+
+.game-floating-actions .btn-ghost {
+  border-color: var(--surface-stroke);
+  background: rgba(255, 255, 255, 0.46);
+  color: var(--text-main);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 8px 18px rgba(31, 28, 24, 0.05);
+}
+
+.game-stage-layout.is-immersive .game-floating-actions {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  bottom: auto;
+  z-index: 24;
+  width: auto;
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.game-stage-layout.is-immersive .game-floating-actions .btn {
+  min-width: 108px;
+  background: rgba(255, 252, 248, 0.78);
+  box-shadow:
+    0 12px 22px rgba(31, 28, 24, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  backdrop-filter: blur(18px) saturate(1.04);
+  -webkit-backdrop-filter: blur(18px) saturate(1.04);
+  pointer-events: auto;
+}
+
 .overlay {
   background: rgba(26, 24, 22, 0.18);
   backdrop-filter: blur(12px);
@@ -6810,6 +6991,11 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 @media (max-width: 760px) {
+  .app-shell:not(.app-shell-home) .screen.game-layout {
+    min-height: calc(var(--app-dvh, 100dvh) - 24px);
+    gap: 10px;
+  }
+
   .topbar,
   .app-shell:not(.app-shell-home) .topbar {
     align-items: flex-start;
@@ -6830,6 +7016,42 @@ body:not(.is-home-screen) .bg-layer {
     width: 100%;
     justify-content: center;
     text-align: center;
+  }
+
+  .game-shell-body {
+    gap: 10px;
+  }
+
+  .game-status-band,
+  .game-status-band.is-single {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .game-status-card {
+    padding: 12px 14px;
+    border-radius: 20px;
+  }
+
+  .game-status-text {
+    font-size: 0.94rem;
+  }
+
+  .player-chip-list-compact .player-chip {
+    flex: 1 1 calc(50% - 6px);
+  }
+
+  .game-stage-layout:not(.is-immersive) {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .game-stage-layout:not(.is-immersive) .game-stage-main {
+    padding: 12px;
+    border-radius: 24px;
+  }
+
+  .game-stage-layout:not(.is-immersive) .game-floating-actions {
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .action-row .btn,
@@ -6853,6 +7075,24 @@ body:not(.is-home-screen) .bg-layer {
   .parchis-side-card,
   .modal {
     border-radius: 24px;
+  }
+}
+
+@media (max-width: 760px) and (orientation: portrait) {
+  .game-stage-layout.is-immersive {
+    gap: 10px;
+  }
+
+  .game-stage-layout.is-immersive .game-floating-actions {
+    position: static;
+    width: 100%;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    transform: none;
+    pointer-events: auto;
+  }
+
+  .game-stage-layout.is-immersive .game-floating-actions .btn {
+    min-width: 0;
   }
 }
 
@@ -6893,6 +7133,17 @@ body:not(.is-home-screen) .bg-layer {
     box-sizing: border-box;
   }
 
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-shell-body,
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-shell-body {
+    position: absolute;
+    top: calc(env(safe-area-inset-top, 0px) + 56px);
+    left: calc(env(safe-area-inset-left, 0px) + 8px);
+    right: calc(env(safe-area-inset-right, 0px) + 8px);
+    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    display: block;
+    min-height: 0;
+  }
+
   body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .topbar,
   body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .topbar {
     position: absolute;
@@ -6914,6 +7165,7 @@ body:not(.is-home-screen) .bg-layer {
       inset 0 1px 0 rgba(255, 255, 255, 0.72);
     backdrop-filter: blur(18px) saturate(1.04);
     -webkit-backdrop-filter: blur(18px) saturate(1.04);
+    box-sizing: border-box;
   }
 
   body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .topbar-main,
@@ -6959,45 +7211,61 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .turn-message,
-  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .player-chip-list,
-  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .actions-bottom,
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-status-band,
   body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .turn-message,
-  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .player-chip-list,
-  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .actions-bottom {
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-status-band {
     display: none;
+  }
+
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-stage-layout,
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-stage-layout {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+  }
+
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-stage-main,
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-stage-main {
+    width: 100%;
+    height: 100%;
+    min-height: 0;
   }
 
   body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .board-wrap,
   body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .board-wrap {
     position: absolute;
-    top: calc(env(safe-area-inset-top, 0px) + 56px);
-    left: calc(env(safe-area-inset-left, 0px) + 8px);
-    right: calc(env(safe-area-inset-right, 0px) + 8px);
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    inset: 0;
     display: block;
     width: auto;
     height: auto;
     min-height: 0;
     padding: 0;
     overflow: hidden;
+    box-sizing: border-box;
   }
 
-  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-quick-actions {
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-floating-actions,
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-floating-actions {
     position: absolute;
-    left: calc(env(safe-area-inset-left, 0px) + 8px);
-    bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
+    right: 0;
+    top: 50%;
+    bottom: auto;
     z-index: 42;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, auto));
     gap: 6px;
-    align-items: center;
+    width: auto;
+    transform: translateY(-50%);
+    pointer-events: none;
   }
 
-  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-quick-actions .btn {
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-floating-actions .btn,
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-floating-actions .btn {
     min-width: 0;
     min-height: 34px;
     height: 34px;
-    padding: 0 10px;
+    padding: 0 12px;
     border-radius: 14px;
     font-size: 0.72rem;
     box-shadow:
@@ -7005,9 +7273,12 @@ body:not(.is-home-screen) .bg-layer {
       inset 0 1px 0 rgba(255, 255, 255, 0.68);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
+    box-sizing: border-box;
+    pointer-events: auto;
   }
 
-  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-quick-actions .btn-ghost {
+  body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-floating-actions .btn-ghost,
+  body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-floating-actions .btn-ghost {
     border-color: rgba(212, 199, 176, 0.62);
     background: rgba(255, 252, 248, 0.76);
     box-shadow:

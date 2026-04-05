@@ -113,14 +113,15 @@ const TANKS_STYLES = String.raw`
 .tanks-stage {
   position: relative;
   overflow: hidden;
-  border-radius: 24px;
-  border: 1px solid rgba(208, 194, 168, 0.82);
+  border-radius: 22px;
+  border: 1px solid rgba(201, 191, 174, 0.78);
   background:
-    radial-gradient(circle at 16% 0%, rgba(255, 255, 255, 0.74), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 252, 247, 0.98) 0%, rgba(245, 236, 223, 0.98) 100%);
+    linear-gradient(180deg, rgba(255, 253, 249, 0.88) 0%, rgba(246, 241, 234, 0.74) 100%);
   box-shadow:
-    0 20px 34px rgba(52, 48, 41, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 16px 30px rgba(39, 34, 29, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.02);
+  -webkit-backdrop-filter: blur(16px) saturate(1.02);
 }
 
 .tanks-team-card,
@@ -150,11 +151,11 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-team-card.is-active {
-  border-color: rgba(116, 167, 137, 0.8);
+  border-color: rgba(106, 154, 129, 0.62);
   box-shadow:
-    0 24px 38px rgba(55, 63, 51, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84),
-    0 0 0 3px rgba(110, 169, 139, 0.12);
+    0 18px 30px rgba(43, 53, 47, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 0 0 2px rgba(109, 160, 136, 0.08);
 }
 
 .tanks-card-head,
@@ -283,8 +284,8 @@ const TANKS_STYLES = String.raw`
 
 .tanks-status-note {
   margin: 0;
-  color: #667267;
-  font-size: 0.79rem;
+  color: #68746c;
+  font-size: 0.76rem;
   line-height: 1.34;
 }
 
@@ -303,15 +304,15 @@ const TANKS_STYLES = String.raw`
   min-height: 26px;
   padding: 0 10px;
   border-radius: 999px;
-  border: 1px solid rgba(212, 202, 184, 0.86);
-  background: rgba(255, 255, 255, 0.62);
-  color: #46554a;
+  border: 1px solid rgba(205, 197, 182, 0.72);
+  background: rgba(255, 255, 255, 0.54);
+  color: #516159;
   font-size: 0.7rem;
   font-weight: 720;
 }
 
 .tanks-stage {
-  padding: 12px;
+  padding: 10px;
 }
 
 .tanks-stage::before {
@@ -531,11 +532,11 @@ const TANKS_STYLES = String.raw`
 .tanks-preview-line {
   fill: none;
   stroke: rgba(82, 111, 96, 0.82);
-  stroke-width: 4.8;
+  stroke-width: 4.2;
   stroke-linecap: round;
   stroke-linejoin: round;
   stroke-dasharray: 0 0 12 10;
-  filter: drop-shadow(0 6px 8px rgba(34, 53, 45, 0.12));
+  filter: drop-shadow(0 5px 8px rgba(34, 53, 45, 0.1));
 }
 
 .tanks-preview-impact {
@@ -550,17 +551,20 @@ const TANKS_STYLES = String.raw`
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 10px;
-  margin-top: 12px;
+  margin-top: 10px;
 }
 
 .tanks-control {
   display: grid;
-  gap: 8px;
-  padding: 12px 14px;
-  border-radius: 20px;
-  border: 1px solid rgba(212, 201, 180, 0.82);
+  gap: 7px;
+  padding: 10px 12px;
+  border-radius: 18px;
+  border: 1px solid rgba(204, 195, 179, 0.76);
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.76) 0%, rgba(248, 240, 228, 0.88) 100%);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(247, 241, 233, 0.86) 100%);
+  box-shadow:
+    0 10px 18px rgba(39, 34, 29, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.66);
 }
 
 .tanks-control-head {
@@ -592,7 +596,7 @@ const TANKS_STYLES = String.raw`
   padding: 0;
   border: 1px solid rgba(212, 200, 177, 0.88);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.76);
+  background: rgba(255, 255, 255, 0.68);
   color: #425247;
   font-size: 1rem;
   font-weight: 820;
@@ -866,13 +870,11 @@ body.game-landscape-mobile-active .tanks-strip {
 body.game-landscape-mobile-active .tanks-team-card,
 body.game-landscape-mobile-active .tanks-status-card {
   padding: 6px 8px;
-  border-radius: 16px;
-  background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 252, 247, 0.92) 0%, rgba(245, 236, 223, 0.9) 100%);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.84) 0%, rgba(246, 241, 234, 0.74) 100%);
   box-shadow:
-    0 10px 18px rgba(52, 48, 41, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 8px 16px rgba(39, 34, 29, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
 }
 
 body.game-landscape-mobile-active .tanks-team-name {
@@ -935,12 +937,12 @@ body.game-landscape-mobile-active .tanks-controls {
 body.game-landscape-mobile-active .tanks-control {
   gap: 4px;
   padding: 6px 8px;
-  border-radius: 16px;
+  border-radius: 14px;
   background:
-    linear-gradient(180deg, rgba(255, 252, 247, 0.88) 0%, rgba(248, 240, 228, 0.84) 100%);
+    linear-gradient(180deg, rgba(255, 253, 249, 0.82) 0%, rgba(247, 241, 233, 0.8) 100%);
   box-shadow:
-    0 10px 18px rgba(46, 42, 36, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+    0 8px 16px rgba(39, 34, 29, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
 }
 
 body.game-landscape-mobile-active .tanks-control-label,

@@ -99,14 +99,15 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-card {
   position: relative;
   overflow: hidden;
-  border-radius: 18px;
-  border: 1px solid rgba(209, 196, 171, 0.82);
+  border-radius: 16px;
+  border: 1px solid rgba(201, 192, 174, 0.78);
   background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 253, 248, 0.96) 0%, rgba(246, 238, 226, 0.98) 100%);
+    linear-gradient(180deg, rgba(255, 253, 249, 0.88) 0%, rgba(246, 241, 234, 0.72) 100%);
   box-shadow:
-    0 10px 18px rgba(52, 48, 41, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 10px 20px rgba(39, 34, 29, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  backdrop-filter: blur(16px) saturate(1.02);
+  -webkit-backdrop-filter: blur(16px) saturate(1.02);
 }
 
 .football-team-card {
@@ -114,7 +115,7 @@ const FOOTBALL_STYLES = String.raw`
   align-items: center;
   justify-content: space-between;
   gap: 7px;
-  padding: 7px 9px;
+  padding: 8px 10px;
 }
 
 .football-team-card::before,
@@ -195,11 +196,11 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-team-card.is-active {
-  border-color: rgba(118, 170, 141, 0.74);
+  border-color: rgba(106, 154, 129, 0.62);
   box-shadow:
-    0 14px 22px rgba(49, 64, 55, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84),
-    0 0 0 2px rgba(111, 171, 140, 0.1);
+    0 12px 24px rgba(43, 53, 47, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.74),
+    0 0 0 2px rgba(109, 160, 136, 0.08);
 }
 
 .football-status-card {
@@ -207,7 +208,7 @@ const FOOTBALL_STYLES = String.raw`
   align-items: center;
   justify-content: space-between;
   gap: 8px;
-  padding: 7px 9px;
+  padding: 8px 10px;
 }
 
 .football-status-card::before {
@@ -224,9 +225,9 @@ const FOOTBALL_STYLES = String.raw`
   min-height: 20px;
   padding: 0 7px;
   border-radius: 999px;
-  background: rgba(72, 116, 95, 0.1);
-  color: #47695a;
-  font-size: 0.56rem;
+  background: rgba(72, 116, 95, 0.08);
+  color: #52685e;
+  font-size: 0.54rem;
   font-weight: 820;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -248,15 +249,15 @@ const FOOTBALL_STYLES = String.raw`
 .football-status-title {
   margin: 0;
   color: #213029;
-  font-size: 0.84rem;
-  font-weight: 770;
+  font-size: 0.82rem;
+  font-weight: 760;
   letter-spacing: -0.03em;
 }
 
 .football-status-note {
   margin: 0;
-  color: #657367;
-  font-size: 0.66rem;
+  color: #6a766d;
+  font-size: 0.64rem;
   line-height: 1.25;
   white-space: nowrap;
   overflow: hidden;
@@ -276,9 +277,9 @@ const FOOTBALL_STYLES = String.raw`
   min-height: 20px;
   padding: 0 7px;
   border-radius: 999px;
-  border: 1px solid rgba(212, 202, 184, 0.86);
-  background: rgba(255, 255, 255, 0.62);
-  color: #46554a;
+  border: 1px solid rgba(205, 197, 182, 0.72);
+  background: rgba(255, 255, 255, 0.54);
+  color: #516159;
   font-size: 0.58rem;
   font-weight: 760;
 }
@@ -286,15 +287,14 @@ const FOOTBALL_STYLES = String.raw`
 .football-stage {
   position: relative;
   overflow: hidden;
-  padding: 4px;
-  border-radius: 24px;
-  border: 1px solid rgba(210, 198, 172, 0.82);
+  padding: 3px;
+  border-radius: 22px;
+  border: 1px solid rgba(206, 195, 174, 0.76);
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0) 36%),
-    linear-gradient(180deg, rgba(253, 250, 242, 0.98) 0%, rgba(247, 239, 225, 0.98) 100%);
+    linear-gradient(180deg, rgba(255, 252, 247, 0.92) 0%, rgba(246, 240, 231, 0.82) 100%);
   box-shadow:
-    0 18px 28px rgba(54, 48, 40, 0.1),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 16px 30px rgba(43, 38, 33, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 .football-stage::before {
@@ -371,8 +371,8 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-field-frame {
-  fill: #f8efdd;
-  stroke: #d7c29c;
+  fill: #f6f1e7;
+  stroke: #d3c3a7;
   stroke-width: 2;
 }
 
@@ -421,12 +421,12 @@ const FOOTBALL_STYLES = String.raw`
 .football-piece-core {
   stroke-width: 4.2;
   paint-order: stroke;
-  filter: drop-shadow(0 8px 10px rgba(39, 43, 48, 0.2));
+  filter: drop-shadow(0 5px 8px rgba(39, 43, 48, 0.16));
   transition: filter 140ms ease, stroke-width 140ms ease;
 }
 
 .football-piece.is-clickable:hover .football-piece-core {
-  filter: drop-shadow(0 10px 14px rgba(39, 43, 48, 0.24));
+  filter: drop-shadow(0 8px 10px rgba(39, 43, 48, 0.2));
 }
 
 .football-piece-detail {
@@ -729,13 +729,11 @@ body.game-landscape-mobile-active .football-hud {
 body.game-landscape-mobile-active .football-team-card,
 body.game-landscape-mobile-active .football-status-card {
   padding: 6px 8px;
-  border-radius: 16px;
-  background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 252, 248, 0.92) 0%, rgba(246, 238, 226, 0.9) 100%);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.84) 0%, rgba(246, 241, 234, 0.74) 100%);
   box-shadow:
-    0 10px 18px rgba(52, 48, 41, 0.08),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 8px 16px rgba(39, 34, 29, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.68);
 }
 
 body.game-landscape-mobile-active .football-team-name {

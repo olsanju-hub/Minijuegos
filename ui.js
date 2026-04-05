@@ -277,10 +277,12 @@ export function createUI({ appElement, toastElement }) {
     return delta;
   }
 
-  function renderTopbar({ leftAction, leftLabel, title, subtitle, showRules = false, showFullscreen = false }) {
+  function renderTopbar({ leftAction, leftLabel, title, subtitle, showRules = false, showFullscreen = false, fullscreenActive = false }) {
     const actionButtons = [
       showRules ? '<button class="btn-icon" data-action="open-rules" aria-label="Abrir reglas">?</button>' : "",
-      showFullscreen ? '<button class="btn-icon btn-icon-text" data-action="toggle-fullscreen" aria-label="Alternar pantalla completa">Full</button>' : ""
+      showFullscreen
+        ? `<button class="btn-icon btn-icon-text" data-action="toggle-fullscreen" aria-label="${fullscreenActive ? "Salir de pantalla completa" : "Entrar en pantalla completa"}">${fullscreenActive ? "Salir" : "Full"}</button>`
+        : ""
     ]
       .filter(Boolean)
       .join("");
@@ -913,6 +915,49 @@ export function createUI({ appElement, toastElement }) {
       .join("");
   }
 
+  function renderGameStatusBand({ session, game, showTurnMessage, turnText, active }) {
+    const sections = [];
+
+    if (showTurnMessage) {
+      const label = game.getResult(session.state)
+        ? "Resultado"
+        : game.useCustomTurnMessage
+          ? "Estado"
+          : "Turno";
+      const text = game.getResult(session.state) || game.useCustomTurnMessage
+        ? escapeHtml(turnText)
+        : `Turno de <span class="game-status-emphasis" style="--game-status-tone:${active ? active.identity.color : "#233042"}">${escapeHtml(active ? active.name : "Jugador")}</span>`;
+
+      sections.push(`
+        <article class="game-status-card game-status-card-primary">
+          <span class="game-status-label">${escapeHtml(label)}</span>
+          <p class="game-status-text">${text}</p>
+        </article>
+      `);
+    }
+
+    if (!game.hideDefaultPlayerChips) {
+      sections.push(`
+        <article class="game-status-card game-status-card-chips">
+          <span class="game-status-label">Jugadores</span>
+          <div class="player-chip-list player-chip-list-compact">
+            ${renderPlayerChips(session, game)}
+          </div>
+        </article>
+      `);
+    }
+
+    if (sections.length === 0) {
+      return "";
+    }
+
+    return `
+      <section class="game-status-band ${sections.length === 1 ? "is-single" : ""}">
+        ${sections.join("")}
+      </section>
+    `;
+  }
+
   function renderGame(vm) {
     const session = vm.session;
     const game = vm.game;
@@ -925,10 +970,14 @@ export function createUI({ appElement, toastElement }) {
     const active = session.players.find((player) => player.slot === activeSlot);
     const showTurnMessage = !game.hideGlobalTurnMessage;
     const screenClasses = ["screen", "game-layout", `game-screen-${escapeHtml(game.id)}`];
+    const stageLayoutClasses = ["game-stage-layout"];
 
     if (game.useLandscapeMobileShell) {
       screenClasses.push("game-screen-landscape-mobile-shell");
+      stageLayoutClasses.push("is-immersive");
     }
+
+    const fullscreenActive = Boolean(game.allowFullscreen) && isGameFullscreen();
 
     return `
       <section class="${screenClasses.join(" ")}">
@@ -938,56 +987,33 @@ export function createUI({ appElement, toastElement }) {
           title: game.name,
           subtitle: session.modeLabel,
           showRules: true,
-          showFullscreen: Boolean(game.allowFullscreen)
+          showFullscreen: Boolean(game.allowFullscreen),
+          fullscreenActive
         })}
 
-        ${
-          showTurnMessage
-            ? `<p class="turn-message">${
-                game.getResult(session.state) || game.useCustomTurnMessage
-                  ? escapeHtml(turnText)
-                  : `Turno de <span class="turn-player" style="color:${active ? active.identity.color : "#233042"}">${escapeHtml(active ? active.name : "Jugador")}</span>`
-              }</p>`
-            : ""
-        }
+        <div class="game-shell-body">
+          ${renderGameStatusBand({ session, game, showTurnMessage, turnText, active })}
 
-        <section class="board-wrap">
-          ${game.renderBoard({
-            state: session.state,
-            players: session.players,
-            options: session.options,
-            canAct: vm.canAct,
-            uiState: vm.uiState
-          })}
-        </section>
-
-        ${
-          game.hideDefaultPlayerChips
-            ? ""
-            : `
-              <section class="player-chip-list">
-                ${renderPlayerChips(session, game)}
+          <div class="${stageLayoutClasses.join(" ")}">
+            <div class="game-stage-main">
+              <section class="board-wrap">
+                ${game.renderBoard({
+                  state: session.state,
+                  players: session.players,
+                  options: session.options,
+                  canAct: vm.canAct,
+                  uiState: vm.uiState
+                })}
               </section>
-            `
-        }
+            </div>
 
-        ${
-          game.useLandscapeMobileShell
-            ? `
-              <nav class="game-quick-actions" aria-label="Acciones de partida">
-                <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
-                <button class="btn btn-secondary" data-action="new-game">Nueva</button>
-                <button class="btn btn-ghost" data-action="go-home">Inicio</button>
-              </nav>
-            `
-            : ""
-        }
-
-        <section class="actions-bottom">
-          <button class="btn btn-secondary" data-action="restart-game">Reiniciar partida</button>
-          <button class="btn btn-secondary" data-action="new-game">Nueva partida</button>
-          <button class="btn btn-ghost" data-action="go-home">Volver al inicio</button>
-        </section>
+            <nav class="game-floating-actions" aria-label="Acciones de partida">
+              <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
+              <button class="btn btn-secondary" data-action="new-game">Nueva</button>
+              <button class="btn btn-ghost" data-action="go-home">Inicio</button>
+            </nav>
+          </div>
+        </div>
       </section>
     `;
   }
@@ -1711,13 +1737,24 @@ export function createUI({ appElement, toastElement }) {
 
   async function requestAppFullscreen() {
     if (typeof appElement.requestFullscreen === "function") {
-      await appElement.requestFullscreen().catch(() => {});
-      return;
+      try {
+        await appElement.requestFullscreen();
+        return true;
+      } catch {
+        return false;
+      }
     }
 
     if (typeof appElement.webkitRequestFullscreen === "function") {
-      appElement.webkitRequestFullscreen();
+      try {
+        appElement.webkitRequestFullscreen();
+        return true;
+      } catch {
+        return false;
+      }
     }
+
+    return false;
   }
 
   async function exitAppFullscreen() {
@@ -1742,7 +1779,21 @@ export function createUI({ appElement, toastElement }) {
       return;
     }
 
-    await requestAppFullscreen();
+    const entered = await requestAppFullscreen();
+    if (!entered) {
+      showToast("Tu navegador solo permite pantalla completa tras un gesto compatible.");
+    }
+  }
+
+  async function maybeEnterGameFullscreenFromGesture() {
+    if (!currentVm?.game?.allowFullscreen || !isCompactLandscapeViewport() || isGameFullscreen() || !canUseFullscreen()) {
+      return;
+    }
+
+    const entered = await requestAppFullscreen();
+    if (!entered) {
+      showToast("Si tu navegador lo bloquea, puedes entrar con el boton Full.", 2600);
+    }
   }
 
   function syncLandscapeShellState(vm = currentVm) {
@@ -1831,6 +1882,12 @@ export function createUI({ appElement, toastElement }) {
 
       if (action === "select-player-count") {
         await onAction("select-player-count", { playerCount: Number(target.dataset.playerCount) });
+        return;
+      }
+
+      if (action === "config-continue") {
+        await maybeEnterGameFullscreenFromGesture();
+        await onAction("config-continue", {});
         return;
       }
 
