@@ -1805,12 +1805,6 @@ function renderField(state) {
 }
 
 function renderShell(state, players, canAct) {
-  const safePlayers = Array.isArray(players) && players.length >= 2
-    ? players
-    : [
-        { slot: 0, name: "Jugador 1" },
-        { slot: 1, name: "Jugador 2" }
-      ];
   return `
     <section class="tanks-orientation-note" aria-live="polite">
       <article class="tanks-orientation-card">
@@ -1820,15 +1814,9 @@ function renderShell(state, players, canAct) {
       </article>
     </section>
     <section class="tanks-shell">
-      <div class="tanks-strip">
-        ${renderTankCard(safePlayers[0], state.tanks[0], state.turnSlot === 0 && !state.result)}
-        ${renderStatusCard(state, safePlayers)}
-        ${renderTankCard(safePlayers[1], state.tanks[1], state.turnSlot === 1 && !state.result)}
-      </div>
       <section class="tanks-stage">
         ${renderField(state)}
         ${renderControls(state, canAct)}
-        <p class="tanks-footer"><strong>Consejo:</strong> los impactos directos hacen mucho mas dano, pero un buen tiro alto puede caer justo detras de la loma rival.</p>
       </section>
     </section>
   `;
@@ -2056,6 +2044,10 @@ export const tanquesGame = {
   },
   getTurnMessage({ state, players }) {
     return buildStatusCopy(state, players).title;
+  },
+  getShellSubtitle({ state, players }) {
+    const status = buildStatusCopy(state, players);
+    return `Vida ${state.tanks[0].health} - ${state.tanks[1].health} · ${status.title}`;
   },
   applyAction({ state, action, actorSlot }) {
     if (!action || typeof action.type !== "string") {

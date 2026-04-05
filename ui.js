@@ -277,8 +277,27 @@ export function createUI({ appElement, toastElement }) {
     return delta;
   }
 
-  function renderTopbar({ leftAction, leftLabel, title, subtitle, showRules = false, showFullscreen = false, fullscreenActive = false }) {
+  function renderTopbar({
+    leftAction,
+    leftLabel,
+    title,
+    subtitle,
+    showRules = false,
+    showFullscreen = false,
+    fullscreenActive = false,
+    extraActions = []
+  }) {
     const actionButtons = [
+      ...extraActions.map((action) => {
+        const className = escapeHtml(action.className || "btn-icon btn-icon-text");
+        const label = escapeHtml(action.label || "");
+        const ariaLabel = escapeHtml(action.ariaLabel || action.label || "");
+        const actionName = escapeHtml(action.action || "");
+        if (!actionName || !label) {
+          return "";
+        }
+        return `<button class="${className}" data-action="${actionName}" aria-label="${ariaLabel}">${label}</button>`;
+      }),
       showRules ? '<button class="btn-icon" data-action="open-rules" aria-label="Abrir reglas">?</button>' : "",
       showFullscreen
         ? `<button class="btn-icon btn-icon-text" data-action="toggle-fullscreen" aria-label="${fullscreenActive ? "Salir de pantalla completa" : "Entrar en pantalla completa"}">${fullscreenActive ? "Salir" : "Full"}</button>`
@@ -639,10 +658,6 @@ export function createUI({ appElement, toastElement }) {
       `;
     }
     const games = getHomeCatalog(vm);
-    const activeIndex = normalizeHomeIndex(vm);
-    const activeGame = games[activeIndex];
-    const motionClass = homeMotionDir > 0 ? "is-motion-next" : homeMotionDir < 0 ? "is-motion-prev" : "";
-    homeMotionDir = 0;
 
     function profileForGame(game) {
       const map = {
@@ -650,106 +665,80 @@ export function createUI({ appElement, toastElement }) {
           accent: "#56bcff",
           glow: "rgba(86, 188, 255, 0.24)",
           tag: "Mesa",
-          description: "Clasico rapido",
-          icon: "XO",
-          energy: "Tres marcas y victoria."
+          description: "Clasico rapido"
         },
         connect4: {
           accent: "#ff9d3d",
           glow: "rgba(255, 157, 61, 0.24)",
           tag: "Mesa",
-          description: "Conecta y gana",
-          icon: "4R",
-          energy: "Fichas, columnas y remontadas."
+          description: "Conecta y gana"
         },
         damas: {
           accent: "#ff5d86",
           glow: "rgba(255, 93, 134, 0.22)",
           tag: "Mesa",
-          description: "Captura obligatoria",
-          icon: "DM",
-          energy: "Tacto fino y cadenas de captura."
+          description: "Captura obligatoria"
         },
         parchis: {
           accent: "#83d44f",
           glow: "rgba(131, 212, 79, 0.22)",
           tag: "Tablero",
-          description: "Clasico de fichas",
-          icon: "P",
-          energy: "Caos familiar del bueno."
+          description: "Clasico de fichas"
         },
         "escaleras-serpientes": {
           accent: "#79c95a",
           glow: "rgba(121, 201, 90, 0.24)",
           tag: "Tablero",
-          description: "Sube y esquiva",
-          icon: "ES",
-          energy: "Dados, rebotes y serpientes."
+          description: "Sube y esquiva"
         },
         trafico: {
           accent: "#62a8ff",
           glow: "rgba(98, 168, 255, 0.22)",
           tag: "Reflejos",
-          description: "Carriles y reflejos",
-          icon: "TR",
-          energy: "Coches, monedas y escapadas."
+          description: "Carriles y reflejos"
         },
         buscaminas: {
           accent: "#5b93ff",
           glow: "rgba(91, 147, 255, 0.24)",
           tag: "Logica",
-          description: "Minas y banderas",
-          icon: "BM",
-          energy: "Pistas cortas y riesgo medido."
+          description: "Minas y banderas"
         },
         memory: {
           accent: "#74a8ff",
           glow: "rgba(116, 168, 255, 0.24)",
           tag: "Memoria",
-          description: "Memoria visual",
-          icon: "PJ",
-          energy: "Destapa, recuerda y empareja."
+          description: "Memoria visual"
         },
         billar: {
           accent: "#6cab7e",
           glow: "rgba(108, 171, 126, 0.24)",
           tag: "Fisica",
-          description: "Apunta, rebota y emboca",
-          icon: "BL",
-          energy: "Mesa corta, turnos y troneras."
+          description: "Apunta, rebota y emboca"
         },
         sokoban: {
           accent: "#e39b57",
           glow: "rgba(227, 155, 87, 0.24)",
           tag: "Puzzle",
-          description: "Cajas y objetivos",
-          icon: "SK",
-          energy: "Empuja, ordena y no te encierres."
+          description: "Cajas y objetivos"
         },
         "futbol-turnos": {
           accent: "#6cab7e",
           glow: "rgba(108, 171, 126, 0.24)",
           tag: "Fisica",
-          description: "Dispara, rebota y marca",
-          icon: "FT",
-          energy: "Futbol tactico por impulsos."
+          description: "Dispara, rebota y marca"
         },
         tanques: {
           accent: "#d78963",
           glow: "rgba(215, 137, 99, 0.24)",
           tag: "Fisica",
-          description: "Apunta, dispara y resiste",
-          icon: "TK",
-          energy: "Artilleria por turnos con tiro parabólico."
+          description: "Apunta, dispara y resiste"
         }
       };
 
       const base = map[game?.id] || {
         accent: "#56bcff",
         glow: "rgba(86, 188, 255, 0.24)",
-        description: "Partida familiar",
-        icon: "*",
-        energy: "Listo para jugar."
+        description: "Partida familiar"
       };
 
       const playersText =
@@ -763,11 +752,7 @@ export function createUI({ appElement, toastElement }) {
       };
     }
 
-    const activeProfile = profileForGame(activeGame);
     const gameCountLabel = `${games.length} juegos`;
-    const activeGameLabel = activeGame ? activeGame.name : "Listo para jugar";
-    const heroTitle = games.length > 1 ? "Una sola app para jugar" : "Partida lista";
-    const heroText = "Elige, configura y juega en local sin salir del mismo sistema.";
 
     return `
       <section class="screen home-screen home-library-screen is-catalog">
@@ -782,25 +767,20 @@ export function createUI({ appElement, toastElement }) {
           </div>
           <div class="home-library-header-note">
             <span class="home-note-pill">${escapeHtml(gameCountLabel)}</span>
-            <span class="home-note-pill is-soft">${escapeHtml(activeGameLabel)}</span>
           </div>
         </header>
 
         <section class="home-hero-stage">
-          <article class="card home-family-hero ${motionClass}">
+          <article class="card home-family-hero">
             <div class="home-family-art">
-              <img class="home-family-art-image" src="./assets/home-hero-family.png" alt="Imagen principal familiar de Minijuegos" />
-            </div>
-            <div class="home-hero-overlay">
-              <div class="home-hero-panel">
-                <p class="home-hero-kicker">Partidas rapidas en el mismo dispositivo</p>
-                <h2 class="home-hero-title">${escapeHtml(heroTitle)}</h2>
-                <p class="home-hero-text">${escapeHtml(heroText)}</p>
-                <div class="home-hero-focus">
-                  <span class="home-hero-focus-label">Destacado</span>
-                  <strong class="home-hero-focus-value">${escapeHtml(activeGameLabel)}</strong>
-                </div>
-              </div>
+              <img
+                class="home-family-art-image"
+                src="./assets/home-hero-family.png"
+                alt="Imagen principal familiar de Minijuegos"
+                width="1536"
+                height="1024"
+                fetchpriority="high"
+              />
             </div>
           </article>
         </section>
@@ -811,44 +791,28 @@ export function createUI({ appElement, toastElement }) {
               <p class="home-games-kicker">Catalogo</p>
               <h2 class="home-games-title">Elige una partida</h2>
             </div>
-            <p class="home-games-subtitle">Todos arrancan con el mismo flujo: elegir, configurar y jugar.</p>
+            <p class="home-games-subtitle">${escapeHtml(gameCountLabel)} listos para abrir. Toca una tarjeta para configurar y jugar.</p>
           </div>
 
           <section class="home-games-grid" aria-label="Catalogo de juegos">
             ${games
-              .map((game, index) => {
+              .map((game) => {
                 const profile = profileForGame(game);
                 return `
-                  <article class="card home-game-card is-${escapeHtml(game.id)} ${index === activeIndex ? "is-active" : ""}" style="--home-game-accent:${profile.accent};--home-game-glow:${profile.glow}">
+                  <article class="card home-game-card is-${escapeHtml(game.id)}" style="--home-game-accent:${profile.accent};--home-game-glow:${profile.glow}">
                     <button
                       class="home-game-card-hit"
-                      data-action="home-select"
-                      data-home-index="${index}"
-                      aria-label="Seleccionar ${escapeHtml(game.name)}"
+                      data-action="open-game"
+                      data-game-id="${game.id}"
+                      aria-label="Abrir ${escapeHtml(game.name)}"
                     ></button>
                     <div class="home-game-card-top">
-                      <button
-                        class="home-game-card-icon-button"
-                        data-action="open-game"
-                        data-game-id="${game.id}"
-                        aria-label="Jugar a ${escapeHtml(game.name)}"
-                      >
-                        <span class="home-game-card-glyph is-${escapeHtml(game.id)}" aria-hidden="true">${renderHomeGameGlyph(game.id)}</span>
-                      </button>
-                      <div class="home-game-card-meta">
-                        <span class="home-game-card-tag">${escapeHtml(profile.tag || "Juego")}</span>
-                        <span class="home-game-card-players">${escapeHtml(profile.playersText)}</span>
-                      </div>
-                    </div>
-                    <div class="home-game-card-media">
-                      ${game.renderCardIllustration ? game.renderCardIllustration() : '<div class="game-illustration"></div>'}
+                      <span class="home-game-card-glyph is-${escapeHtml(game.id)}" aria-hidden="true">${renderHomeGameGlyph(game.id)}</span>
+                      <span class="home-game-card-tag">${escapeHtml(profile.tag || "Juego")}</span>
                     </div>
                     <div class="home-game-card-copy">
                       <h3 class="home-game-card-title">${escapeHtml(game.name)}</h3>
-                      <p class="home-game-card-subtitle">${escapeHtml(profile.energy || profile.description || game.tagline || "Listo para jugar")}</p>
-                    </div>
-                    <div class="home-game-card-actions">
-                      <button class="btn btn-primary" data-action="open-game" data-game-id="${game.id}">Jugar</button>
+                      <p class="home-game-card-subtitle">${escapeHtml(game.tagline || profile.description || "Partida local")}</p>
                     </div>
                   </article>
                 `;
@@ -1031,6 +995,24 @@ export function createUI({ appElement, toastElement }) {
     const showTurnMessage = !game.hideGlobalTurnMessage;
     const screenClasses = ["screen", "game-layout", `game-screen-${escapeHtml(game.id)}`];
     const stageLayoutClasses = ["game-stage-layout"];
+    const result = game.getResult(session.state);
+    const topbarSubtitle = typeof game.getShellSubtitle === "function"
+      ? game.getShellSubtitle({
+          state: session.state,
+          players: session.players,
+          options: session.options
+        })
+      : game.useLandscapeMobileShell
+        ? ""
+        : showTurnMessage
+          ? result
+            ? result.type === "win" ? "Partida terminada" : "Resultado listo"
+            : game.useCustomTurnMessage
+              ? turnText
+              : active
+                ? `Turno de ${active.name}`
+                : turnText
+          : "";
 
     if (game.useLandscapeMobileShell) {
       screenClasses.push("game-screen-landscape-mobile-shell");
@@ -1045,15 +1027,21 @@ export function createUI({ appElement, toastElement }) {
           leftAction: "game-back",
           leftLabel: "Volver",
           title: game.name,
-          subtitle: session.modeLabel,
+          subtitle: topbarSubtitle,
           showRules: true,
           showFullscreen: Boolean(game.allowFullscreen),
-          fullscreenActive
+          fullscreenActive,
+          extraActions: [
+            {
+              action: "restart-game",
+              label: "Reiniciar",
+              ariaLabel: "Reiniciar partida",
+              className: "btn-icon btn-icon-text"
+            }
+          ]
         })}
 
         <div class="game-shell-body">
-          ${renderGameStatusBand({ session, game, showTurnMessage, turnText, active })}
-
           <div class="${stageLayoutClasses.join(" ")}">
             <div class="game-stage-main">
               <section class="board-wrap">
@@ -1066,12 +1054,6 @@ export function createUI({ appElement, toastElement }) {
                 })}
               </section>
             </div>
-
-            <nav class="game-floating-actions" aria-label="Acciones de partida">
-              <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
-              <button class="btn btn-secondary" data-action="new-game">Nueva</button>
-              <button class="btn btn-ghost" data-action="go-home">Inicio</button>
-            </nav>
           </div>
         </div>
       </section>

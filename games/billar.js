@@ -1548,7 +1548,6 @@ function renderShell(state, players, canAct) {
       </article>
     </section>
     <section class="billar-shell" data-billar-root data-billar-phase="${escapeHtml(state.phase)}">
-      ${renderHud(state, players)}
       <section class="billar-stage">
         ${renderTable(state, canAct)}
       </section>
@@ -1619,7 +1618,7 @@ function bindBoardElement(boardWrap, { state, players, canAct, dispatchGameActio
   const statusTitle = root.querySelector("[data-billar-status-title]");
   const statusNote = root.querySelector("[data-billar-status-note]");
 
-  if (!svg || !cueHit || !aimLayer || !statusEyebrow || !statusTitle || !statusNote) {
+  if (!svg || !cueHit || !aimLayer) {
     return;
   }
 
@@ -1628,9 +1627,15 @@ function bindBoardElement(boardWrap, { state, players, canAct, dispatchGameActio
   let drag = null;
 
   function resetStatus() {
-    statusEyebrow.textContent = baseStatus.eyebrow;
-    statusTitle.textContent = baseStatus.title;
-    statusNote.textContent = baseStatus.note;
+    if (statusEyebrow) {
+      statusEyebrow.textContent = baseStatus.eyebrow;
+    }
+    if (statusTitle) {
+      statusTitle.textContent = baseStatus.title;
+    }
+    if (statusNote) {
+      statusNote.textContent = baseStatus.note;
+    }
   }
 
   function clearAim() {
@@ -1651,9 +1656,15 @@ function bindBoardElement(boardWrap, { state, players, canAct, dispatchGameActio
     const power01 = clamp(pullDistance / MAX_DRAG_DISTANCE, 0, 1);
 
     aimLayer.innerHTML = renderAimGuide(drag.anchor, handlePoint, power01);
-    statusEyebrow.textContent = "Apuntando";
-    statusTitle.textContent = `${playerName(players, state.turnSlot)} · ${Math.round(power01 * 100)}%`;
-    statusNote.textContent = power01 >= 0.72 ? "Golpe fuerte" : power01 >= 0.38 ? "Golpe medio" : "Golpe corto";
+    if (statusEyebrow) {
+      statusEyebrow.textContent = "Apuntando";
+    }
+    if (statusTitle) {
+      statusTitle.textContent = `${playerName(players, state.turnSlot)} · ${Math.round(power01 * 100)}%`;
+    }
+    if (statusNote) {
+      statusNote.textContent = power01 >= 0.72 ? "Golpe fuerte" : power01 >= 0.38 ? "Golpe medio" : "Golpe corto";
+    }
   }
 
   async function releaseShot(event, cancelled = false) {
@@ -1796,6 +1807,10 @@ export const billarGame = {
   },
   getTurnMessage({ state, players }) {
     return buildStatusCopy(state, players).title;
+  },
+  getShellSubtitle({ state, players }) {
+    const status = buildStatusCopy(state, players);
+    return `Marcador ${state.points[0]} - ${state.points[1]} · ${status.title}`;
   },
   applyAction({ state, action, actorSlot }) {
     if (!action || typeof action.type !== "string") {

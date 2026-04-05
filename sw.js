@@ -1,4 +1,4 @@
-const CACHE_NAME = "minijuegos-shell-v14";
+const CACHE_NAME = "minijuegos-shell-v15";
 const UPDATE_MESSAGE_TYPE = "minijuegos:sw-activated";
 const SCOPE_URL = new URL(self.registration.scope);
 const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;

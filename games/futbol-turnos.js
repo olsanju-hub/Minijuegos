@@ -1558,7 +1558,6 @@ function renderShell(state, canAct) {
       </article>
     </section>
     <section class="football-shell" data-football-root data-football-phase="${escapeHtml(state.phase)}">
-      ${renderHud(state)}
       <section class="football-stage">
         ${renderField(state, canAct)}
       </section>
@@ -1630,7 +1629,7 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
   const statusTitle = root.querySelector("[data-football-status-title]");
   const statusNote = root.querySelector("[data-football-status-note]");
 
-  if (!svg || !aimLayer || !statusEyebrow || !statusTitle || !statusNote) {
+  if (!svg || !aimLayer) {
     return;
   }
 
@@ -1640,10 +1639,16 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
   let drag = null;
 
   function resetMeter() {
-    statusEyebrow.textContent = baseStatus.eyebrow;
-    statusEyebrow.classList.toggle("football-status-goal", state.phase === "goal");
-    statusTitle.textContent = baseStatus.title;
-    statusNote.textContent = baseStatus.note;
+    if (statusEyebrow) {
+      statusEyebrow.textContent = baseStatus.eyebrow;
+      statusEyebrow.classList.toggle("football-status-goal", state.phase === "goal");
+    }
+    if (statusTitle) {
+      statusTitle.textContent = baseStatus.title;
+    }
+    if (statusNote) {
+      statusNote.textContent = baseStatus.note;
+    }
   }
 
   function clearAimLayer() {
@@ -1664,14 +1669,20 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     const power01 = clamp(pullDistance / MAX_DRAG_DISTANCE, 0, 1);
 
     aimLayer.innerHTML = renderAimGuide(drag.anchor, handlePoint, power01);
-    statusEyebrow.textContent = "Apuntando";
-    statusEyebrow.classList.remove("football-status-goal");
-    statusTitle.textContent = `${teamMeta(drag.team).short} · ${Math.round(power01 * 100)}%`;
-    statusNote.textContent = power01 >= 0.72
-      ? "Fuerte"
-      : power01 >= 0.34
-        ? "Media"
-        : "Corta";
+    if (statusEyebrow) {
+      statusEyebrow.textContent = "Apuntando";
+      statusEyebrow.classList.remove("football-status-goal");
+    }
+    if (statusTitle) {
+      statusTitle.textContent = `${teamMeta(drag.team).short} · ${Math.round(power01 * 100)}%`;
+    }
+    if (statusNote) {
+      statusNote.textContent = power01 >= 0.72
+        ? "Fuerte"
+        : power01 >= 0.34
+          ? "Media"
+          : "Corta";
+    }
   }
 
   async function releaseShot(event, cancelled = false) {
@@ -1844,6 +1855,10 @@ export const futbolTurnosGame = {
   getTurnMessage({ state }) {
     const status = buildStatusCopy(state);
     return status.title;
+  },
+  getShellSubtitle({ state }) {
+    const status = buildStatusCopy(state);
+    return `Marcador ${state.score[0]} - ${state.score[1]} · ${status.title}`;
   },
   applyAction({ state, action, actorSlot }) {
     if (!action || typeof action.type !== "string") {

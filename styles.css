@@ -12484,3 +12484,307 @@ body:not(.is-home-screen) .bg-layer {
     border-radius: 22px;
   }
 }
+
+/* ===== Audit pass: compact home, direct opening, stage-first game shell ===== */
+.home-library-screen {
+  gap: 16px;
+}
+
+.home-library-header {
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.home-library-header-note {
+  justify-content: flex-end;
+}
+
+.home-note-pill.is-soft,
+.home-hero-overlay,
+.home-hero-panel,
+.home-hero-focus,
+.home-game-card-media,
+.home-game-card-actions,
+.home-game-card-players {
+  display: none !important;
+}
+
+.home-hero-stage {
+  padding-top: 0;
+}
+
+.home-family-hero {
+  padding: 0;
+  border-radius: 28px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: #ffffff;
+  box-shadow: 0 18px 34px rgba(15, 23, 42, 0.06);
+}
+
+.home-family-art {
+  height: clamp(196px, 31vh, 340px);
+  border-radius: inherit;
+  background: #eef2f7;
+}
+
+.home-family-art::after {
+  display: none;
+}
+
+.home-family-art-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 24%;
+}
+
+.home-games-section {
+  gap: 14px;
+}
+
+.home-games-heading {
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  text-align: left;
+}
+
+.home-games-title {
+  padding: 0;
+  font-size: clamp(1.72rem, 4.8vw, 2.8rem);
+  line-height: 0.94;
+  letter-spacing: -0.065em;
+  transform: none;
+  text-wrap: balance;
+}
+
+.home-games-subtitle {
+  max-width: 40ch;
+  color: #64748b;
+}
+
+.home-games-grid {
+  gap: 12px;
+}
+
+.home-game-card {
+  min-height: 146px;
+  padding: 14px;
+  gap: 12px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.94) 100%);
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.home-game-card::after {
+  display: none;
+}
+
+.home-game-card::before {
+  inset: 0 auto auto 14px;
+  width: 54px;
+}
+
+.home-game-card.is-active {
+  transform: none;
+  border-color: rgba(15, 23, 42, 0.08);
+  box-shadow:
+    0 14px 28px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.home-game-card-hit {
+  z-index: 4;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.home-game-card:has(.home-game-card-hit:focus-visible) {
+  border-color: rgba(37, 99, 235, 0.24);
+  box-shadow:
+    0 0 0 4px rgba(37, 99, 235, 0.1),
+    0 14px 28px rgba(15, 23, 42, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.88);
+}
+
+.home-game-card-top,
+.home-game-card-copy {
+  position: relative;
+  z-index: 2;
+}
+
+.home-game-card-top {
+  align-items: flex-start;
+}
+
+.home-game-card-glyph {
+  display: block;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  box-shadow:
+    0 10px 18px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+}
+
+.home-game-card-tag {
+  min-height: 30px;
+  padding: 0 10px;
+  color: #0f172a;
+}
+
+.home-game-card-copy {
+  display: grid;
+  gap: 4px;
+  margin-top: auto;
+}
+
+.home-game-card-title {
+  margin: 0;
+  text-wrap: balance;
+}
+
+.home-game-card-subtitle {
+  margin: 0;
+  font-size: 0.8rem;
+  line-height: 1.32;
+  color: #64748b;
+}
+
+.app-shell:not(.app-shell-home) .screen.game-layout {
+  gap: 12px;
+}
+
+.game-shell-body {
+  display: flex;
+  min-height: 0;
+}
+
+.game-status-band,
+.game-floating-actions,
+.football-hud,
+.billar-hud,
+.tanks-strip,
+.football-team-card,
+.football-status-card,
+.billar-player-card,
+.billar-status-card,
+.tanks-team-card,
+.tanks-status-card,
+.tanks-footer {
+  display: none !important;
+}
+
+.game-stage-layout,
+.game-stage-layout.is-immersive {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
+  width: 100%;
+  min-height: 0;
+}
+
+.game-stage-main {
+  min-height: 0;
+}
+
+.topbar-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.topbar-sub,
+.app-shell:not(.app-shell-home) .topbar-sub {
+  min-width: 0;
+  max-width: 52ch;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.football-shell,
+.billar-shell,
+.tanks-shell {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+@media (max-width: 760px) {
+  .home-library-header {
+    padding: 12px 14px;
+    align-items: flex-start;
+  }
+
+  .home-library-header-note {
+    justify-content: flex-start;
+  }
+
+  .home-family-hero {
+    border-radius: 24px;
+  }
+
+  .home-family-art {
+    height: 172px;
+  }
+
+  .home-games-heading {
+    gap: 8px;
+  }
+
+  .home-games-title {
+    font-size: clamp(1.6rem, 8.2vw, 2.34rem);
+  }
+
+  .home-games-subtitle {
+    max-width: none;
+    font-size: 0.84rem;
+    line-height: 1.36;
+  }
+
+  .home-games-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .home-game-card {
+    min-height: 126px;
+    padding: 12px;
+    gap: 10px;
+    border-radius: 18px;
+  }
+
+  .home-game-card-glyph {
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .home-game-card-tag {
+    min-height: 26px;
+    padding: 0 8px;
+    font-size: 0.58rem;
+  }
+
+  .home-game-card-subtitle {
+    display: none;
+  }
+
+  .home-game-card-title {
+    font-size: 0.96rem;
+    line-height: 1.1;
+  }
+
+  .topbar-actions {
+    gap: 6px;
+  }
+
+  .topbar-sub,
+  .app-shell:not(.app-shell-home) .topbar-sub {
+    max-width: 26ch;
+  }
+}
