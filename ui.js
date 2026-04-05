@@ -611,7 +611,8 @@ export function createUI({ appElement, toastElement }) {
             <div class="home-catalog-brand">
               <div class="home-catalog-icon" aria-hidden="true"><span></span><span></span><span></span></div>
               <div class="home-catalog-title-wrap">
-                <h1 class="home-catalog-title home-catalog-title-playful" aria-label="Minijuegos">${renderPlayfulTitle("Minijuegos")}</h1>
+                <h1 class="home-catalog-title" aria-label="Minijuegos">Minijuegos</h1>
+                <p class="home-catalog-subtitle">Catalogo familiar en local</p>
                 <p class="home-catalog-signature">Flia. Olivero Escorcia</p>
               </div>
             </div>
@@ -633,6 +634,7 @@ export function createUI({ appElement, toastElement }) {
         tictactoe: {
           accent: "#56bcff",
           glow: "rgba(86, 188, 255, 0.24)",
+          tag: "Mesa",
           description: "Clasico rapido",
           icon: "XO",
           energy: "Tres marcas y victoria."
@@ -640,6 +642,7 @@ export function createUI({ appElement, toastElement }) {
         connect4: {
           accent: "#ff9d3d",
           glow: "rgba(255, 157, 61, 0.24)",
+          tag: "Mesa",
           description: "Conecta y gana",
           icon: "4R",
           energy: "Fichas, columnas y remontadas."
@@ -647,6 +650,7 @@ export function createUI({ appElement, toastElement }) {
         damas: {
           accent: "#ff5d86",
           glow: "rgba(255, 93, 134, 0.22)",
+          tag: "Mesa",
           description: "Captura obligatoria",
           icon: "DM",
           energy: "Tacto fino y cadenas de captura."
@@ -654,6 +658,7 @@ export function createUI({ appElement, toastElement }) {
         parchis: {
           accent: "#83d44f",
           glow: "rgba(131, 212, 79, 0.22)",
+          tag: "Tablero",
           description: "Clasico de fichas",
           icon: "P",
           energy: "Caos familiar del bueno."
@@ -661,6 +666,7 @@ export function createUI({ appElement, toastElement }) {
         "escaleras-serpientes": {
           accent: "#79c95a",
           glow: "rgba(121, 201, 90, 0.24)",
+          tag: "Tablero",
           description: "Sube y esquiva",
           icon: "ES",
           energy: "Dados, rebotes y serpientes."
@@ -668,6 +674,7 @@ export function createUI({ appElement, toastElement }) {
         trafico: {
           accent: "#62a8ff",
           glow: "rgba(98, 168, 255, 0.22)",
+          tag: "Reflejos",
           description: "Carriles y reflejos",
           icon: "TR",
           energy: "Coches, monedas y escapadas."
@@ -675,6 +682,7 @@ export function createUI({ appElement, toastElement }) {
         buscaminas: {
           accent: "#5b93ff",
           glow: "rgba(91, 147, 255, 0.24)",
+          tag: "Logica",
           description: "Minas y banderas",
           icon: "BM",
           energy: "Pistas cortas y riesgo medido."
@@ -682,6 +690,7 @@ export function createUI({ appElement, toastElement }) {
         memory: {
           accent: "#74a8ff",
           glow: "rgba(116, 168, 255, 0.24)",
+          tag: "Memoria",
           description: "Memoria visual",
           icon: "PJ",
           energy: "Destapa, recuerda y empareja."
@@ -689,6 +698,7 @@ export function createUI({ appElement, toastElement }) {
         billar: {
           accent: "#6cab7e",
           glow: "rgba(108, 171, 126, 0.24)",
+          tag: "Fisica",
           description: "Apunta, rebota y emboca",
           icon: "BL",
           energy: "Mesa corta, turnos y troneras."
@@ -696,6 +706,7 @@ export function createUI({ appElement, toastElement }) {
         sokoban: {
           accent: "#e39b57",
           glow: "rgba(227, 155, 87, 0.24)",
+          tag: "Puzzle",
           description: "Cajas y objetivos",
           icon: "SK",
           energy: "Empuja, ordena y no te encierres."
@@ -703,6 +714,7 @@ export function createUI({ appElement, toastElement }) {
         "futbol-turnos": {
           accent: "#6cab7e",
           glow: "rgba(108, 171, 126, 0.24)",
+          tag: "Fisica",
           description: "Dispara, rebota y marca",
           icon: "FT",
           energy: "Futbol tactico por impulsos."
@@ -710,6 +722,7 @@ export function createUI({ appElement, toastElement }) {
         tanques: {
           accent: "#d78963",
           glow: "rgba(215, 137, 99, 0.24)",
+          tag: "Fisica",
           description: "Apunta, dispara y resiste",
           icon: "TK",
           energy: "Artilleria por turnos con tiro parabólico."
@@ -745,7 +758,8 @@ export function createUI({ appElement, toastElement }) {
           <div class="home-catalog-brand">
             <div class="home-catalog-icon" aria-hidden="true"><span></span><span></span><span></span></div>
             <div class="home-catalog-title-wrap">
-              <h1 class="home-catalog-title home-catalog-title-playful" aria-label="Minijuegos">${renderPlayfulTitle("Minijuegos")}</h1>
+              <h1 class="home-catalog-title" aria-label="Minijuegos">Minijuegos</h1>
+              <p class="home-catalog-subtitle">Catalogo familiar en local</p>
               <p class="home-catalog-signature">Flia. Olivero Escorcia</p>
             </div>
           </div>
@@ -760,13 +774,28 @@ export function createUI({ appElement, toastElement }) {
             <div class="home-family-art">
               <img class="home-family-art-image" src="./assets/home-hero-family.png" alt="Imagen principal familiar de Minijuegos" />
             </div>
+            <div class="home-hero-overlay">
+              <div class="home-hero-panel">
+                <p class="home-hero-kicker">Partidas rapidas en el mismo dispositivo</p>
+                <h2 class="home-hero-title">Minijuegos</h2>
+                <p class="home-hero-text">Juegos de mesa, tablero, logica y fisica resueltos dentro de una sola app familiar.</p>
+                <div class="home-hero-chip-row">
+                  <span class="home-hero-chip">${escapeHtml(gameCountLabel)}</span>
+                  <span class="home-hero-chip">${escapeHtml(playerSpreadLabel)}</span>
+                  <span class="home-hero-chip">${escapeHtml(activeGame ? activeGame.name : "Listo para jugar")}</span>
+                </div>
+              </div>
+            </div>
           </article>
         </section>
 
         <section class="home-games-section" id="home-games-section">
           <div class="home-games-heading">
-            <h2 class="home-games-title" aria-label="Minijuegos">${renderPlayfulTitle("Minijuegos")}</h2>
-            <p class="home-games-subtitle">Juegos rápidos, familiares y listos para jugar en el mismo dispositivo.</p>
+            <div class="home-games-heading-copy">
+              <p class="home-games-kicker">Catalogo</p>
+              <h2 class="home-games-title">Elige una partida</h2>
+            </div>
+            <p class="home-games-subtitle">Todos los juegos comparten la misma app, el mismo flujo y un arranque directo.</p>
           </div>
 
           <section class="home-games-grid" aria-label="Catalogo de juegos">
@@ -791,14 +820,17 @@ export function createUI({ appElement, toastElement }) {
                         <span class="home-game-card-icon is-${escapeHtml(game.id)}">${escapeHtml(profile.icon)}</span>
                         <span class="home-game-card-glyph is-${escapeHtml(game.id)}" aria-hidden="true">${renderHomeGameGlyph(game.id)}</span>
                       </button>
-                      <span class="home-game-card-players">${escapeHtml(profile.playersText)}</span>
+                      <div class="home-game-card-meta">
+                        <span class="home-game-card-tag">${escapeHtml(profile.tag || "Juego")}</span>
+                        <span class="home-game-card-players">${escapeHtml(profile.playersText)}</span>
+                      </div>
                     </div>
                     <div class="home-game-card-media">
                       ${game.renderCardIllustration ? game.renderCardIllustration() : '<div class="game-illustration"></div>'}
                     </div>
                     <div class="home-game-card-copy">
                       <h3 class="home-game-card-title">${escapeHtml(game.name)}</h3>
-                      <p class="home-game-card-subtitle">${escapeHtml(profile.description || game.tagline || "Listo para jugar")}</p>
+                      <p class="home-game-card-subtitle">${escapeHtml(profile.energy || profile.description || game.tagline || "Listo para jugar")}</p>
                     </div>
                     <div class="home-game-card-actions">
                       <button class="btn btn-primary" data-action="open-game" data-game-id="${game.id}">Jugar</button>
@@ -864,7 +896,7 @@ export function createUI({ appElement, toastElement }) {
       : "";
 
     return `
-      <section class="screen">
+      <section class="screen config-screen">
         ${renderTopbar({
           leftAction: "go-home",
           leftLabel: "Volver",
@@ -873,20 +905,33 @@ export function createUI({ appElement, toastElement }) {
           showRules: true
         })}
 
-        <section class="card config-card">
-          <div class="block">
-            <h3 class="block-title">Modo de juego</h3>
-            <p class="info-line">Partida local en este dispositivo.</p>
+        <section class="card config-card config-card-modern">
+          <header class="config-hero">
+            <div class="config-hero-media">
+              ${game.renderCardIllustration ? game.renderCardIllustration() : '<div class="game-illustration"></div>'}
+            </div>
+            <div class="config-hero-copy">
+              <span class="config-badge">Configuracion</span>
+              <h3 class="config-title">${escapeHtml(game.name)}</h3>
+              <p class="config-tagline">${escapeHtml(game.tagline || "Partida local lista para empezar.")}</p>
+            </div>
+          </header>
+
+          <div class="config-stack">
+            <div class="block">
+              <h3 class="block-title">Modo de juego</h3>
+              <p class="info-line">Partida local en este dispositivo.</p>
+            </div>
+
+            <div class="block">
+              <h3 class="block-title">Numero de jugadores</h3>
+              ${playersRow}
+            </div>
+
+            ${namesBlock}
+
+            ${gameConfigPanel}
           </div>
-
-          <div class="block">
-            <h3 class="block-title">Numero de jugadores</h3>
-            ${playersRow}
-          </div>
-
-          ${namesBlock}
-
-          ${gameConfigPanel}
 
           <p class="form-error">${escapeHtml(vm.config.error || "")}</p>
 
