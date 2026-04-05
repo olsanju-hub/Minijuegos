@@ -9988,11 +9988,11 @@ body:not(.is-home-screen) .bg-layer {
   padding: 12px;
   border-radius: 30px;
   background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.8), transparent 55%),
-    linear-gradient(180deg, rgba(255, 248, 236, 0.98) 0%, rgba(246, 236, 220, 0.98) 100%);
-  border: 1px solid rgba(209, 190, 158, 0.72);
+    radial-gradient(circle at top, rgba(255, 255, 255, 0.82), transparent 55%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow:
-    0 18px 34px rgba(162, 145, 110, 0.18),
+    0 18px 34px rgba(15, 23, 42, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.86);
 }
 
@@ -10007,8 +10007,8 @@ body:not(.is-home-screen) .bg-layer {
   border-radius: 24px;
   overflow: hidden;
   touch-action: pan-y;
-  background: linear-gradient(180deg, #44525b 0%, #313c43 100%);
-  border: 1px solid rgba(40, 50, 56, 0.9);
+  background: linear-gradient(180deg, #27323a 0%, #111827 100%);
+  border: 1px solid rgba(15, 23, 42, 0.92);
 }
 
 .traffic-shell[data-traffic-profile="mobile"] .traffic-road,
@@ -10020,9 +10020,9 @@ body:not(.is-home-screen) .bg-layer {
   position: absolute;
   inset: 0;
   background:
-    linear-gradient(90deg, #d8c39d 0 10px, transparent 10px calc(100% - 10px), #d8c39d calc(100% - 10px) 100%),
-    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 20%, transparent 78%, rgba(0, 0, 0, 0.08)),
-    linear-gradient(180deg, #44525b 0%, #313c43 100%);
+    linear-gradient(90deg, #cbd5e1 0 10px, transparent 10px calc(100% - 10px), #cbd5e1 calc(100% - 10px) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.08), transparent 18%, transparent 80%, rgba(0, 0, 0, 0.12)),
+    linear-gradient(180deg, #27323a 0%, #111827 100%);
 }
 
 .traffic-road-surface::before,
@@ -10053,12 +10053,12 @@ body:not(.is-home-screen) .bg-layer {
   background:
     repeating-linear-gradient(
       180deg,
-      rgba(255, 255, 255, 0.05) 0 24px,
+      rgba(255, 255, 255, 0.04) 0 24px,
       rgba(255, 255, 255, 0) 24px 54px
     ),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 28%, rgba(0, 0, 0, 0.06) 100%);
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0) 28%, rgba(0, 0, 0, 0.08) 100%);
   transform: translateY(calc(var(--traffic-scroll-px) * 0.55));
-  opacity: 0.5;
+  opacity: 0.38;
   z-index: 1;
 }
 
@@ -10071,7 +10071,7 @@ body:not(.is-home-screen) .bg-layer {
   background:
     repeating-linear-gradient(
       180deg,
-      rgba(247, 239, 223, 0.92) 0 26px,
+      rgba(248, 250, 252, 0.88) 0 26px,
       transparent 26px 54px
     );
   background-position: center var(--traffic-scroll-px);
@@ -10308,7 +10308,7 @@ body:not(.is-home-screen) .bg-layer {
   gap: 8px;
   padding: 22px;
   text-align: center;
-  background: linear-gradient(180deg, rgba(24, 31, 37, 0.16) 0%, rgba(24, 31, 37, 0.52) 100%);
+  background: linear-gradient(180deg, rgba(15, 23, 42, 0.18) 0%, rgba(15, 23, 42, 0.58) 100%);
   z-index: 4;
 }
 
@@ -10340,10 +10340,10 @@ body:not(.is-home-screen) .bg-layer {
   padding: 14px;
   background:
     radial-gradient(circle at top, rgba(255, 255, 255, 0.82), transparent 58%),
-    linear-gradient(180deg, rgba(255, 249, 238, 0.98) 0%, rgba(246, 236, 220, 0.98) 100%);
-  border: 1px solid rgba(209, 190, 158, 0.72);
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+  border: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow:
-    0 16px 28px rgba(162, 145, 110, 0.14),
+    0 16px 28px rgba(15, 23, 42, 0.08),
     inset 0 1px 0 rgba(255, 255, 255, 0.82);
 }
 
@@ -10387,8 +10387,8 @@ body:not(.is-home-screen) .bg-layer {
   min-height: 30px;
   padding: 0 11px;
   border-radius: 999px;
-  background: rgba(62, 123, 245, 0.14);
-  color: #2e5fc9;
+  background: rgba(59, 130, 246, 0.12);
+  color: #1d4ed8;
   font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.06em;
@@ -10396,8 +10396,8 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .traffic-mode-pill.is-soft {
-  background: rgba(85, 102, 128, 0.12);
-  color: #526276;
+  background: rgba(51, 65, 85, 0.08);
+  color: #475569;
 }
 
 .traffic-side-note {
@@ -10460,13 +10460,13 @@ body:not(.is-home-screen) .bg-layer {
   gap: 3px;
   border-radius: 14px;
   padding: 9px 10px;
-  background: rgba(255, 255, 255, 0.7);
-  border: 1px solid rgba(214, 199, 173, 0.72);
+  background: rgba(255, 255, 255, 0.76);
+  border: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .traffic-stat.is-time,
 .traffic-stat.is-record {
-  background: rgba(235, 243, 255, 0.78);
+  background: rgba(239, 246, 255, 0.9);
 }
 
 .traffic-stat-label {
@@ -10487,7 +10487,7 @@ body:not(.is-home-screen) .bg-layer {
   display: grid;
   gap: 8px;
   padding-top: 12px;
-  border-top: 1px solid rgba(209, 190, 158, 0.58);
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
   box-shadow: none;
 }
 

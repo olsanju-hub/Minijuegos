@@ -382,25 +382,38 @@ const FOOTBALL_STYLES = String.raw`
   stroke-width: 1.8;
 }
 
+.football-pitch-grid {
+  fill: url(#footballPitchPattern);
+  opacity: 0.16;
+}
+
 .football-field-grain {
-  opacity: 0.2;
+  opacity: 0.1;
 }
 
 .football-goal-net {
-  fill: rgba(246, 239, 225, 0.88);
-  stroke: #d6c3a5;
+  fill: rgba(240, 247, 244, 0.42);
+  stroke: rgba(214, 223, 219, 0.78);
   stroke-width: 1.5;
 }
 
 .football-goal-grid {
-  stroke: rgba(198, 181, 158, 0.72);
-  stroke-width: 1.4;
+  stroke: rgba(226, 235, 231, 0.42);
+  stroke-width: 1.2;
+}
+
+.football-goal-frame {
+  fill: none;
+  stroke: rgba(242, 248, 245, 0.94);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
 .football-pitch-mark {
   fill: none;
-  stroke: rgba(248, 247, 242, 0.92);
-  stroke-width: 5;
+  stroke: rgba(248, 247, 242, 0.72);
+  stroke-width: 4;
   stroke-linecap: round;
 }
 
@@ -1399,25 +1412,28 @@ function renderCardIllustration() {
       <svg class="game-illustration-svg" viewBox="0 0 160 98" preserveAspectRatio="xMidYMid meet" role="presentation">
         <defs>
           <linearGradient id="footballCardPitch" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#dff1de" />
-            <stop offset="100%" stop-color="#9ec79f" />
+            <stop offset="0%" stop-color="#1b7a5f" />
+            <stop offset="100%" stop-color="#0f4f3f" />
           </linearGradient>
           <linearGradient id="footballCardFrame" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#fff8eb" />
-            <stop offset="100%" stop-color="#f0dec0" />
+            <stop offset="0%" stop-color="#f8f5ef" />
+            <stop offset="100%" stop-color="#e2ddd2" />
           </linearGradient>
+          <pattern id="footballCardPattern" width="12" height="12" patternUnits="userSpaceOnUse">
+            <rect width="12" height="12" fill="transparent"></rect>
+            <path d="M 6 0 V 12 M 0 6 H 12" stroke="rgba(255,255,255,0.12)" stroke-width="0.8"></path>
+          </pattern>
         </defs>
-        <rect x="16" y="12" width="128" height="74" rx="22" fill="url(#footballCardFrame)" stroke="#dcc4a0" />
-        <rect x="26" y="22" width="108" height="54" rx="18" fill="url(#footballCardPitch)" stroke="#8db28d" />
-        <rect x="20" y="38" width="12" height="22" rx="4" fill="#f9f3e6" stroke="#d4c3a3" />
-        <rect x="128" y="38" width="12" height="22" rx="4" fill="#f9f3e6" stroke="#d4c3a3" />
-        <path d="M52 22V76M80 22V76M108 22V76" stroke="rgba(255,255,255,0.12)" stroke-width="12" />
-        <path d="M80 22V76M26 49H134M58 49a22 22 0 1 0 44 0a22 22 0 1 0 -44 0Z" fill="none" stroke="rgba(249,251,246,0.92)" stroke-width="2.4" />
-        <circle cx="58" cy="36" r="8" fill="#e6775d" stroke="#bf5a43" stroke-width="2" />
-        <circle cx="50.8" cy="33.4" r="2.1" fill="rgba(255,255,255,0.86)" />
-        <circle cx="102" cy="62" r="8" fill="#4f84ea" stroke="#355fb9" stroke-width="2" />
-        <circle cx="94.8" cy="59.4" r="2.1" fill="rgba(255,255,255,0.86)" />
-        <circle cx="82" cy="49" r="4.9" fill="#fffaf1" stroke="#d4c29f" stroke-width="1.4" />
+        <rect x="16" y="12" width="128" height="74" rx="22" fill="url(#footballCardFrame)" stroke="rgba(15,23,42,0.18)" />
+        <rect x="24" y="20" width="112" height="58" rx="18" fill="#0f172a" stroke="#111827" />
+        <rect x="28" y="24" width="104" height="50" rx="16" fill="url(#footballCardPitch)" stroke="rgba(226,232,240,0.56)" />
+        <rect x="28" y="24" width="104" height="50" rx="16" fill="url(#footballCardPattern)" opacity="0.5" />
+        <path d="M80 24V74M28 49H132M58 49a22 22 0 1 0 44 0a22 22 0 1 0 -44 0Z" fill="none" stroke="rgba(248,250,252,0.72)" stroke-width="2.2" />
+        <path d="M28 35H40V63H28M132 35H120V63H132" fill="none" stroke="rgba(248,250,252,0.72)" stroke-width="2.2" />
+        <path d="M24 40H28V58H24M136 40H132V58H136" fill="none" stroke="rgba(248,250,252,0.82)" stroke-width="2.2" stroke-linecap="round" />
+        <circle cx="56" cy="37" r="7.8" fill="#e6775d" stroke="#bf5a43" stroke-width="1.8" />
+        <circle cx="104" cy="61" r="7.8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.8" />
+        <circle cx="80" cy="49" r="4.8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.2" />
       </svg>
     </div>
   `;
@@ -1458,13 +1474,17 @@ function renderField(state, canAct) {
     >
       <defs>
         <linearGradient id="footballPitchFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#dbf0da" />
-          <stop offset="100%" stop-color="#9ac49b" />
+          <stop offset="0%" stop-color="#1d7c62" />
+          <stop offset="100%" stop-color="#104b3c" />
         </linearGradient>
+        <pattern id="footballPitchPattern" width="32" height="32" patternUnits="userSpaceOnUse">
+          <path d="M16 0V32M0 16H32" stroke="rgba(255,255,255,0.1)" stroke-width="1"></path>
+        </pattern>
       </defs>
 
       <rect class="football-field-frame" x="${-GOAL_DEPTH}" y="0" width="${FIELD_WIDTH + GOAL_DEPTH * 2}" height="${FIELD_HEIGHT}" rx="42"></rect>
       <rect class="football-field-pitch" x="0" y="18" width="${FIELD_WIDTH}" height="${FIELD_HEIGHT - 36}" rx="34"></rect>
+      <rect class="football-pitch-grid" x="0" y="18" width="${FIELD_WIDTH}" height="${FIELD_HEIGHT - 36}" rx="34"></rect>
       <g class="football-field-grain">
         <rect x="34" y="30" width="${FIELD_WIDTH - 68}" height="${(FIELD_HEIGHT - 60) / 3}" rx="24" fill="rgba(255,255,255,0.055)"></rect>
         <rect x="34" y="${30 + (FIELD_HEIGHT - 60) / 3}" width="${FIELD_WIDTH - 68}" height="${(FIELD_HEIGHT - 60) / 3}" rx="24" fill="rgba(0,0,0,0.032)"></rect>
@@ -1474,6 +1494,8 @@ function renderField(state, canAct) {
       <g aria-hidden="true">
         <rect class="football-goal-net" x="${-GOAL_DEPTH + 10}" y="${goalTop}" width="${GOAL_DEPTH - 10}" height="${GOAL_MOUTH_HEIGHT}" rx="12"></rect>
         <rect class="football-goal-net" x="${FIELD_WIDTH}" y="${goalTop}" width="${GOAL_DEPTH - 10}" height="${GOAL_MOUTH_HEIGHT}" rx="12"></rect>
+        <path class="football-goal-frame" d="M0 ${goalTop}H${-GOAL_DEPTH + 12}V${goalBottom}H0"></path>
+        <path class="football-goal-frame" d="M${FIELD_WIDTH} ${goalTop}H${FIELD_WIDTH + GOAL_DEPTH - 12}V${goalBottom}H${FIELD_WIDTH}"></path>
         ${Array.from({ length: 5 }, (_, index) => {
           const y = goalTop + index * (GOAL_MOUTH_HEIGHT / 4);
           return `<line class="football-goal-grid" x1="${-GOAL_DEPTH + 12}" y1="${y}" x2="0" y2="${y}"></line>`;
@@ -1493,6 +1515,8 @@ function renderField(state, canAct) {
       <path class="football-pitch-mark" d="M${FIELD_WIDTH} ${FIELD_HEIGHT / 2 - 82}H${FIELD_WIDTH - 64}V${FIELD_HEIGHT / 2 + 82}H${FIELD_WIDTH}"></path>
       <circle class="football-pitch-mark" cx="148" cy="${FIELD_HEIGHT / 2}" r="4"></circle>
       <circle class="football-pitch-mark" cx="${FIELD_WIDTH - 148}" cy="${FIELD_HEIGHT / 2}" r="4"></circle>
+      <path class="football-pitch-mark" d="M118 ${FIELD_HEIGHT / 2 - 64}A76 76 0 0 1 118 ${FIELD_HEIGHT / 2 + 64}"></path>
+      <path class="football-pitch-mark" d="M${FIELD_WIDTH - 118} ${FIELD_HEIGHT / 2 - 64}A76 76 0 0 0 ${FIELD_WIDTH - 118} ${FIELD_HEIGHT / 2 + 64}"></path>
 
       <g data-football-aim-layer></g>
 

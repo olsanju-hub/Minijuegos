@@ -384,12 +384,21 @@ body:has(.screen.game-screen-billar) {
   stroke-width: 1.5;
 }
 
+.billar-felt-grid {
+  fill: url(#billarFeltPattern);
+  opacity: 0.14;
+}
+
 .billar-felt-glow {
-  opacity: 0.22;
+  opacity: 0.14;
 }
 
 .billar-pocket {
   fill: #2a211a;
+}
+
+.billar-pocket-mouth {
+  fill: rgba(18, 23, 30, 0.42);
 }
 
 .billar-pocket-inner {
@@ -398,6 +407,19 @@ body:has(.screen.game-screen-billar) {
 
 .billar-diamond {
   fill: rgba(250, 246, 236, 0.78);
+}
+
+.billar-head-string {
+  fill: none;
+  stroke: rgba(235, 244, 239, 0.34);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+}
+
+.billar-table-spot {
+  fill: rgba(244, 249, 246, 0.82);
+  stroke: rgba(50, 73, 60, 0.3);
+  stroke-width: 1.8;
 }
 
 .billar-ball {
@@ -1387,31 +1409,38 @@ function renderCardIllustration() {
     <div class="game-illustration" aria-hidden="true">
       <svg class="game-illustration-svg" viewBox="0 0 160 94" preserveAspectRatio="xMidYMid meet" role="presentation">
         <defs>
-          <linearGradient id="billarCardWood" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stop-color="#f6ebd7" />
-            <stop offset="100%" stop-color="#e2cb9f" />
+          <linearGradient id="billarCardFrame" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f7f5f0" />
+            <stop offset="100%" stop-color="#ded7ca" />
           </linearGradient>
           <linearGradient id="billarCardFelt" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#6fa788" />
-            <stop offset="100%" stop-color="#355d4a" />
+            <stop offset="0%" stop-color="#0f5d4d" />
+            <stop offset="100%" stop-color="#08382e" />
           </linearGradient>
+          <pattern id="billarCardPattern" width="10" height="10" patternUnits="userSpaceOnUse">
+            <circle cx="2" cy="2" r="0.9" fill="rgba(255,255,255,0.2)" />
+          </pattern>
         </defs>
-        <rect x="12" y="10" width="136" height="74" rx="24" fill="url(#billarCardWood)" stroke="#d4b88b"></rect>
-        <rect x="20" y="18" width="120" height="58" rx="18" fill="#9c7446" stroke="#6d4f2d"></rect>
-        <rect x="30" y="26" width="100" height="42" rx="14" fill="url(#billarCardFelt)" stroke="#dfe8df" stroke-width="1"></rect>
-        <g fill="#2a211a">
-          <circle cx="30" cy="26" r="5.2"></circle>
-          <circle cx="80" cy="26" r="4.8"></circle>
-          <circle cx="130" cy="26" r="5.2"></circle>
-          <circle cx="30" cy="68" r="5.2"></circle>
-          <circle cx="80" cy="68" r="4.8"></circle>
-          <circle cx="130" cy="68" r="5.2"></circle>
+        <rect x="12" y="10" width="136" height="74" rx="24" fill="url(#billarCardFrame)" stroke="rgba(15,23,42,0.18)"></rect>
+        <rect x="20" y="18" width="120" height="58" rx="18" fill="#1f2937" stroke="#0f172a"></rect>
+        <rect x="28" y="24" width="104" height="46" rx="16" fill="url(#billarCardFelt)" stroke="rgba(226,232,240,0.56)" stroke-width="1.1"></rect>
+        <rect x="28" y="24" width="104" height="46" rx="16" fill="url(#billarCardPattern)" opacity="0.38"></rect>
+        <g fill="#020617">
+          <circle cx="28" cy="24" r="5.4"></circle>
+          <circle cx="80" cy="24" r="4.8"></circle>
+          <circle cx="132" cy="24" r="5.4"></circle>
+          <circle cx="28" cy="70" r="5.4"></circle>
+          <circle cx="80" cy="70" r="4.8"></circle>
+          <circle cx="132" cy="70" r="5.4"></circle>
         </g>
-        <path d="M50 47L72 47" stroke="rgba(255,255,255,0.72)" stroke-width="3.3" stroke-linecap="round"></path>
-        <circle cx="48" cy="47" r="5.8" fill="#fffaf1" stroke="#d9c6a2" stroke-width="1.4"></circle>
-        <circle cx="97" cy="47" r="5.8" fill="#e77f64" stroke="#bf5a43" stroke-width="1.4"></circle>
-        <circle cx="106" cy="40.4" r="5.8" fill="#79a7ec" stroke="#4e79bf" stroke-width="1.4"></circle>
-        <circle cx="106" cy="53.6" r="5.8" fill="#f0c568" stroke="#c29435" stroke-width="1.4"></circle>
+        <path d="M44 47L66 47" stroke="rgba(255,255,255,0.7)" stroke-width="2.8" stroke-linecap="round"></path>
+        <circle cx="42" cy="47" r="5.8" fill="#ffffff" stroke="#cbd5e1" stroke-width="1.4"></circle>
+        <g transform="translate(102 47)">
+          <circle cx="0" cy="0" r="5.6" fill="#f97316" stroke="#c2410c" stroke-width="1.2"></circle>
+          <circle cx="8" cy="-5.6" r="5.6" fill="#facc15" stroke="#ca8a04" stroke-width="1.2"></circle>
+          <circle cx="8" cy="5.6" r="5.6" fill="#60a5fa" stroke="#2563eb" stroke-width="1.2"></circle>
+          <circle cx="16" cy="0" r="5.6" fill="#fb7185" stroke="#e11d48" stroke-width="1.2"></circle>
+        </g>
       </svg>
     </div>
   `;
@@ -1508,22 +1537,35 @@ function renderTable(state, canAct) {
     <svg class="billar-table ${!isCueActive ? "is-disabled" : ""}" data-billar-table viewBox="0 0 ${TABLE_WIDTH} ${TABLE_HEIGHT}" preserveAspectRatio="xMidYMid meet" role="presentation" aria-label="Mesa de billar">
       <defs>
         <linearGradient id="billarFeltFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#699f82" />
-          <stop offset="100%" stop-color="#355a48" />
+          <stop offset="0%" stop-color="#11624f" />
+          <stop offset="100%" stop-color="#0a3b31" />
         </linearGradient>
+        <pattern id="billarFeltPattern" width="24" height="24" patternUnits="userSpaceOnUse">
+          <circle cx="4" cy="4" r="1.15" fill="rgba(255,255,255,0.18)"></circle>
+        </pattern>
       </defs>
 
       <rect class="billar-table-frame" x="22" y="22" width="${TABLE_WIDTH - 44}" height="${TABLE_HEIGHT - 44}" rx="48"></rect>
       <rect class="billar-rail" x="44" y="44" width="${TABLE_WIDTH - 88}" height="${TABLE_HEIGHT - 88}" rx="40"></rect>
       <rect class="billar-rail-inset" x="54" y="54" width="${TABLE_WIDTH - 108}" height="${TABLE_HEIGHT - 108}" rx="34"></rect>
       <rect class="billar-felt" x="${FELT_X}" y="${FELT_Y}" width="${FELT_WIDTH}" height="${FELT_HEIGHT}" rx="24"></rect>
+      <rect class="billar-felt-grid" x="${FELT_X}" y="${FELT_Y}" width="${FELT_WIDTH}" height="${FELT_HEIGHT}" rx="24"></rect>
       <ellipse class="billar-felt-glow" cx="${TABLE_WIDTH / 2}" cy="${TABLE_HEIGHT / 2}" rx="${FELT_WIDTH * 0.42}" ry="${FELT_HEIGHT * 0.36}" fill="rgba(255,255,255,0.16)"></ellipse>
+      <path class="billar-head-string" d="M ${round(FELT_X + FELT_WIDTH * 0.24, 2)} ${FELT_Y + 26} V ${FELT_Y + FELT_HEIGHT - 26}"></path>
+      <circle class="billar-table-spot" cx="${round(FELT_X + FELT_WIDTH * 0.24, 2)}" cy="${TABLE_HEIGHT / 2}" r="4.6"></circle>
+      <circle class="billar-table-spot" cx="${round(FELT_X + FELT_WIDTH * 0.74, 2)}" cy="${TABLE_HEIGHT / 2}" r="4.6"></circle>
 
       <g aria-hidden="true">
         ${diamonds}
       </g>
 
       <g aria-hidden="true">
+        <ellipse class="billar-pocket-mouth" cx="${FELT_X}" cy="${FELT_Y}" rx="${POCKET_RADIUS + 20}" ry="${POCKET_RADIUS + 13}"></ellipse>
+        <ellipse class="billar-pocket-mouth" cx="${FELT_X + FELT_WIDTH / 2}" cy="${FELT_Y}" rx="${POCKET_RADIUS + 18}" ry="${POCKET_RADIUS + 10}"></ellipse>
+        <ellipse class="billar-pocket-mouth" cx="${FELT_X + FELT_WIDTH}" cy="${FELT_Y}" rx="${POCKET_RADIUS + 20}" ry="${POCKET_RADIUS + 13}"></ellipse>
+        <ellipse class="billar-pocket-mouth" cx="${FELT_X}" cy="${FELT_Y + FELT_HEIGHT}" rx="${POCKET_RADIUS + 20}" ry="${POCKET_RADIUS + 13}"></ellipse>
+        <ellipse class="billar-pocket-mouth" cx="${FELT_X + FELT_WIDTH / 2}" cy="${FELT_Y + FELT_HEIGHT}" rx="${POCKET_RADIUS + 18}" ry="${POCKET_RADIUS + 10}"></ellipse>
+        <ellipse class="billar-pocket-mouth" cx="${FELT_X + FELT_WIDTH}" cy="${FELT_Y + FELT_HEIGHT}" rx="${POCKET_RADIUS + 20}" ry="${POCKET_RADIUS + 13}"></ellipse>
         <circle class="billar-pocket" cx="${FELT_X}" cy="${FELT_Y}" r="${POCKET_RADIUS + 8}"></circle>
         <circle class="billar-pocket" cx="${FELT_X + FELT_WIDTH / 2}" cy="${FELT_Y}" r="${POCKET_RADIUS + 5}"></circle>
         <circle class="billar-pocket" cx="${FELT_X + FELT_WIDTH}" cy="${FELT_Y}" r="${POCKET_RADIUS + 8}"></circle>

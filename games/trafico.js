@@ -974,8 +974,8 @@ function renderSidePanel(state, players, canAct) {
         </div>
         <div class="traffic-secondary-card">
           <div class="traffic-secondary-head">
-            <h4>Detalle</h4>
-            <p class="traffic-side-note">Metricas secundarias</p>
+            <h4>Telemetria</h4>
+            <p class="traffic-side-note">Metricas de carrera</p>
           </div>
           ${renderSecondaryStats(state)}
         </div>
@@ -1283,28 +1283,25 @@ export const traficoGame = {
         <svg class="game-illustration-svg" viewBox="0 0 160 94" preserveAspectRatio="xMidYMid meet" role="presentation">
           <defs>
             <linearGradient id="trafficRoad" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0%" stop-color="#41505a" />
-              <stop offset="100%" stop-color="#2f3940" />
+              <stop offset="0%" stop-color="#27323a" />
+              <stop offset="100%" stop-color="#111827" />
             </linearGradient>
-            <linearGradient id="trafficShoulder" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stop-color="#e9d8b5" />
-              <stop offset="100%" stop-color="#d8bf8f" />
+            <linearGradient id="trafficFrame" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="100%" stop-color="#e2e8f0" />
             </linearGradient>
           </defs>
-          <rect x="14" y="10" width="132" height="74" rx="18" fill="#f5ecdb" stroke="#dbc7a4" />
-          <rect x="28" y="14" width="104" height="66" rx="18" fill="url(#trafficRoad)" />
-          <rect x="22" y="14" width="8" height="66" rx="6" fill="url(#trafficShoulder)" />
-          <rect x="130" y="14" width="8" height="66" rx="6" fill="url(#trafficShoulder)" />
-          <path d="M62 18V76" stroke="#f7f0e0" stroke-width="2.8" stroke-dasharray="6 6" opacity="0.84" />
-          <path d="M98 18V76" stroke="#f7f0e0" stroke-width="2.8" stroke-dasharray="6 6" opacity="0.84" />
-          <rect x="37" y="22" width="18" height="26" rx="7" fill="#ff8051" />
-          <rect x="41.5" y="26" width="9" height="7" rx="2.5" fill="#dff3ff" opacity="0.82" />
-          <rect x="105" y="30" width="18" height="26" rx="7" fill="#5db06d" />
-          <rect x="109.5" y="34" width="9" height="7" rx="2.5" fill="#dff3ff" opacity="0.82" />
-          <rect x="69" y="52" width="22" height="29" rx="8" fill="#3f84ff" />
-          <rect x="74" y="57" width="12" height="8" rx="2.8" fill="#dff3ff" opacity="0.9" />
-          <circle cx="113" cy="67" r="8" fill="#f5c94f" stroke="#d39a1d" stroke-width="2" />
-          <circle cx="113" cy="67" r="3.1" fill="#fff6d3" />
+          <rect x="14" y="10" width="132" height="74" rx="18" fill="url(#trafficFrame)" stroke="rgba(15,23,42,0.14)" />
+          <rect x="24" y="14" width="112" height="66" rx="18" fill="url(#trafficRoad)" />
+          <rect x="24" y="14" width="8" height="66" rx="6" fill="#cbd5e1" />
+          <rect x="128" y="14" width="8" height="66" rx="6" fill="#cbd5e1" />
+          <path d="M52 18V76M80 18V76M108 18V76" stroke="#f8fafc" stroke-width="2.6" stroke-dasharray="6 6" opacity="0.78" />
+          <rect x="36" y="22" width="16" height="24" rx="7" fill="#f97316" />
+          <rect x="40" y="26" width="8" height="6" rx="2.2" fill="#dff3ff" opacity="0.82" />
+          <rect x="70" y="48" width="20" height="28" rx="8" fill="#3b82f6" />
+          <rect x="75" y="53" width="10" height="8" rx="2.4" fill="#dff3ff" opacity="0.88" />
+          <rect x="106" y="28" width="18" height="30" rx="7" fill="#f59e0b" />
+          <rect x="110" y="33" width="9" height="7" rx="2.3" fill="#dff3ff" opacity="0.82" />
         </svg>
       </div>
     `;

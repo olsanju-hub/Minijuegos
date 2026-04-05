@@ -312,13 +312,39 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-stage {
-  padding: 10px;
+  display: grid;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 8px;
+  min-height: 0;
+  padding: 8px;
+  border-radius: 22px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%);
+  box-shadow:
+    0 14px 30px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.84);
 }
 
 .tanks-stage::before {
   background:
-    radial-gradient(circle at 14% 12%, rgba(130, 171, 255, 0.08), rgba(130, 171, 255, 0) 22%),
-    radial-gradient(circle at 86% 86%, rgba(225, 135, 99, 0.08), rgba(225, 135, 99, 0) 28%);
+    radial-gradient(circle at 14% 12%, rgba(130, 171, 255, 0.06), rgba(130, 171, 255, 0) 20%),
+    radial-gradient(circle at 86% 86%, rgba(225, 135, 99, 0.05), rgba(225, 135, 99, 0) 24%);
+}
+
+.tanks-battlefield {
+  position: relative;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+  justify-content: stretch;
+}
+
+.tanks-controls-dock {
+  position: relative;
+  z-index: 1;
+  padding-top: 6px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
 }
 
 .tanks-orientation-note {
@@ -386,39 +412,40 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-field-frame {
-  fill: #f8efde;
-  stroke: #d8c39f;
+  fill: #f8fafc;
+  stroke: rgba(15, 23, 42, 0.18);
   stroke-width: 2;
 }
 
 .tanks-sky {
   fill: url(#tankSkyFill);
-  stroke: rgba(223, 210, 183, 0.94);
+  stroke: rgba(203, 213, 225, 0.92);
   stroke-width: 1.3;
 }
 
-.tanks-sun {
-  fill: rgba(250, 236, 182, 0.88);
+.tanks-grid {
+  fill: url(#tankGridPattern);
+  opacity: 0.18;
 }
 
-.tanks-cloud {
-  fill: rgba(255, 255, 255, 0.74);
+.tanks-horizon {
+  fill: rgba(203, 213, 225, 0.26);
 }
 
 .tanks-hill-back {
-  fill: #d7e7cf;
+  fill: rgba(148, 163, 184, 0.16);
 }
 
 .tanks-terrain {
   fill: url(#tankGroundFill);
-  stroke: #9b8c62;
-  stroke-width: 2.6;
+  stroke: rgba(71, 85, 105, 0.86);
+  stroke-width: 2.2;
 }
 
 .tanks-terrain-crest {
   fill: none;
-  stroke: rgba(255, 248, 232, 0.32);
-  stroke-width: 8;
+  stroke: rgba(248, 250, 252, 0.36);
+  stroke-width: 6;
   stroke-linecap: round;
 }
 
@@ -432,7 +459,7 @@ const TANKS_STYLES = String.raw`
 
 .tanks-active-ring {
   fill: none;
-  stroke-width: 7;
+  stroke-width: 5.5;
   opacity: 0;
 }
 
@@ -498,20 +525,20 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-barrel {
-  stroke: #6f6a61;
-  stroke-width: 8.8;
+  stroke: #475569;
+  stroke-width: 8;
   stroke-linecap: round;
 }
 
 .tanks-barrel-core {
-  stroke: #e7ddd0;
-  stroke-width: 3.1;
+  stroke: #e2e8f0;
+  stroke-width: 2.8;
   stroke-linecap: round;
 }
 
 .tanks-muzzle {
-  fill: #f9f4ed;
-  stroke: #d9c8ae;
+  fill: #f8fafc;
+  stroke: #cbd5e1;
   stroke-width: 2;
 }
 
@@ -531,17 +558,17 @@ const TANKS_STYLES = String.raw`
 
 .tanks-preview-line {
   fill: none;
-  stroke: rgba(82, 111, 96, 0.82);
-  stroke-width: 4.2;
+  stroke: rgba(51, 65, 85, 0.68);
+  stroke-width: 3;
   stroke-linecap: round;
   stroke-linejoin: round;
-  stroke-dasharray: 0 0 12 10;
-  filter: drop-shadow(0 5px 8px rgba(34, 53, 45, 0.1));
+  stroke-dasharray: 0 0 10 8;
+  filter: drop-shadow(0 4px 8px rgba(15, 23, 42, 0.08));
 }
 
 .tanks-preview-impact {
-  fill: rgba(255, 255, 255, 0.78);
-  stroke: rgba(89, 118, 103, 0.84);
+  fill: rgba(255, 255, 255, 0.72);
+  stroke: rgba(51, 65, 85, 0.74);
   stroke-width: 2.8;
 }
 
@@ -550,21 +577,18 @@ const TANKS_STYLES = String.raw`
   z-index: 1;
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: 10px;
-  margin-top: 10px;
+  gap: 8px;
+  margin-top: 0;
 }
 
 .tanks-control {
   display: grid;
-  gap: 7px;
+  gap: 6px;
   padding: 10px 12px;
-  border-radius: 18px;
-  border: 1px solid rgba(204, 195, 179, 0.76);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(247, 241, 233, 0.86) 100%);
-  box-shadow:
-    0 10px 18px rgba(39, 34, 29, 0.05),
-    inset 0 1px 0 rgba(255, 255, 255, 0.66);
+  border-radius: 16px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.78);
 }
 
 .tanks-control-head {
@@ -576,8 +600,8 @@ const TANKS_STYLES = String.raw`
 
 .tanks-control-label,
 .tanks-control-value {
-  color: #53665c;
-  font-size: 0.73rem;
+  color: #475569;
+  font-size: 0.68rem;
   font-weight: 780;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -591,14 +615,14 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-step {
-  min-width: 38px;
-  height: 38px;
+  min-width: 34px;
+  height: 34px;
   padding: 0;
-  border: 1px solid rgba(212, 200, 177, 0.88);
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.68);
-  color: #425247;
-  font-size: 1rem;
+  border: 1px solid rgba(15, 23, 42, 0.1);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #334155;
+  font-size: 0.94rem;
   font-weight: 820;
   cursor: pointer;
   transition: transform 140ms ease, box-shadow 140ms ease;
@@ -618,12 +642,13 @@ const TANKS_STYLES = String.raw`
 
 .tanks-range {
   width: 100%;
-  accent-color: #74a68c;
+  accent-color: #334155;
 }
 
 .tanks-fire {
-  min-width: 180px;
-  border-radius: 20px;
+  min-width: 148px;
+  min-height: 58px;
+  border-radius: 16px;
 }
 
 .tanks-fire:disabled {
@@ -701,7 +726,8 @@ const TANKS_STYLES = String.raw`
   }
 
   .tanks-stage {
-    padding: 10px;
+    gap: 8px;
+    padding: 8px;
     border-radius: 22px;
   }
 
@@ -811,13 +837,14 @@ const TANKS_STYLES = String.raw`
   }
 
   .tanks-stage {
-    padding: 8px;
+    gap: 6px;
+    padding: 6px;
     border-radius: 20px;
   }
 
   .tanks-controls {
-    gap: 8px;
-    margin-top: 8px;
+    gap: 6px;
+    margin-top: 0;
   }
 
   .tanks-control {
@@ -912,10 +939,26 @@ body.game-landscape-mobile-active .tanks-status-title {
 }
 
 body.game-landscape-mobile-active .tanks-stage {
-  position: absolute;
-  inset: 0;
+  position: relative;
+  inset: auto;
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 6px;
   padding: 0;
   border-radius: 24px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+body.game-landscape-mobile-active .tanks-controls-dock {
+  padding-top: 0;
+  border-top: 0;
+}
+
+body.game-landscape-mobile-active .tanks-battlefield {
+  min-height: 0;
 }
 
 body.game-landscape-mobile-active .tanks-field {
@@ -924,11 +967,11 @@ body.game-landscape-mobile-active .tanks-field {
 }
 
 body.game-landscape-mobile-active .tanks-controls {
-  position: absolute;
-  inset: auto 0 0;
+  position: relative;
+  inset: auto;
   z-index: 18;
-  width: min(100%, 620px);
-  margin: 0 auto;
+  width: 100%;
+  margin: 0;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
   gap: 6px;
   padding: 0;
@@ -938,11 +981,8 @@ body.game-landscape-mobile-active .tanks-control {
   gap: 4px;
   padding: 6px 8px;
   border-radius: 14px;
-  background:
-    linear-gradient(180deg, rgba(255, 253, 249, 0.82) 0%, rgba(247, 241, 233, 0.8) 100%);
-  box-shadow:
-    0 8px 16px rgba(39, 34, 29, 0.06),
-    inset 0 1px 0 rgba(255, 255, 255, 0.68);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
 body.game-landscape-mobile-active .tanks-control-label,
@@ -962,7 +1002,7 @@ body.game-landscape-mobile-active .tanks-step {
 
 body.game-landscape-mobile-active .tanks-fire {
   min-width: 108px;
-  min-height: 48px;
+  min-height: 44px;
   height: auto;
   border-radius: 16px;
   align-self: stretch;
@@ -1777,23 +1817,23 @@ function renderField(state) {
     <svg class="tanks-field ${state.phase === "ready" ? "" : "is-disabled"}" viewBox="0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Campo de tanques" data-tanks-svg>
       <defs>
         <linearGradient id="tankSkyFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#eaf5ff" />
-          <stop offset="62%" stop-color="#dcecf6" />
-          <stop offset="100%" stop-color="#eef1eb" />
+          <stop offset="0%" stop-color="#f8fafc" />
+          <stop offset="64%" stop-color="#e2e8f0" />
+          <stop offset="100%" stop-color="#cbd5e1" />
         </linearGradient>
         <linearGradient id="tankGroundFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#d6c089" />
-          <stop offset="100%" stop-color="#b18d56" />
+          <stop offset="0%" stop-color="#cbd5e1" />
+          <stop offset="100%" stop-color="#8f9bab" />
         </linearGradient>
+        <pattern id="tankGridPattern" width="34" height="34" patternUnits="userSpaceOnUse">
+          <path d="M 34 0 H 0 V 34" fill="none" stroke="rgba(15,23,42,0.08)" stroke-width="1"></path>
+        </pattern>
       </defs>
       <rect class="tanks-field-frame" x="${FIELD_FRAME_INSET}" y="${FIELD_FRAME_INSET}" width="${FIELD_WIDTH - FIELD_FRAME_INSET * 2}" height="${FIELD_HEIGHT - FIELD_FRAME_INSET * 2}" rx="32"></rect>
       <rect class="tanks-sky" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
-      <circle class="tanks-sun" cx="188" cy="112" r="44"></circle>
-      <ellipse class="tanks-cloud" cx="324" cy="112" rx="48" ry="18"></ellipse>
-      <ellipse class="tanks-cloud" cx="356" cy="100" rx="26" ry="12"></ellipse>
-      <ellipse class="tanks-cloud" cx="734" cy="134" rx="62" ry="20"></ellipse>
-      <ellipse class="tanks-cloud" cx="780" cy="120" rx="32" ry="12"></ellipse>
-      <path class="tanks-hill-back" d="M 0 ${FIELD_HEIGHT} L 0 402 C 118 360 210 352 312 384 C 420 418 534 426 650 384 C 756 346 840 352 1000 414 L 1000 ${FIELD_HEIGHT} Z"></path>
+      <rect class="tanks-grid" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
+      <rect class="tanks-horizon" x="${FIELD_FRAME_INSET + 8}" y="250" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="108"></rect>
+      <path class="tanks-hill-back" d="M 0 ${FIELD_HEIGHT} L 0 398 C 126 362 250 356 360 386 C 464 414 584 420 706 378 C 810 342 888 346 1000 392 L 1000 ${FIELD_HEIGHT} Z"></path>
       <path class="tanks-terrain" d="${terrainPathData}"></path>
       <path class="tanks-terrain-crest" d="${terrainCrest}"></path>
       ${renderPreview(state)}
@@ -1815,8 +1855,12 @@ function renderShell(state, players, canAct) {
     </section>
     <section class="tanks-shell">
       <section class="tanks-stage">
-        ${renderField(state)}
-        ${renderControls(state, canAct)}
+        <div class="tanks-battlefield">
+          ${renderField(state)}
+        </div>
+        <div class="tanks-controls-dock">
+          ${renderControls(state, canAct)}
+        </div>
       </section>
     </section>
   `;
@@ -1856,32 +1900,35 @@ function renderCardIllustration() {
       <svg class="game-illustration-svg" viewBox="0 0 160 94" preserveAspectRatio="xMidYMid meet" role="presentation">
         <defs>
           <linearGradient id="tankCardSky" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#eaf6ff" />
-            <stop offset="100%" stop-color="#edf1e7" />
+            <stop offset="0%" stop-color="#f8fafc" />
+            <stop offset="100%" stop-color="#dbe4ef" />
           </linearGradient>
           <linearGradient id="tankCardGround" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="#dcc58f" />
-            <stop offset="100%" stop-color="#bd9761" />
+            <stop offset="0%" stop-color="#cbd5e1" />
+            <stop offset="100%" stop-color="#94a3b8" />
           </linearGradient>
+          <pattern id="tankCardGrid" width="12" height="12" patternUnits="userSpaceOnUse">
+            <path d="M12 0H0V12" fill="none" stroke="rgba(15,23,42,0.08)" stroke-width="0.9"></path>
+          </pattern>
         </defs>
-        <rect x="16" y="10" width="128" height="74" rx="22" fill="#f7f0e2" stroke="#dcc7a4"></rect>
-        <rect x="22" y="16" width="116" height="62" rx="18" fill="url(#tankCardSky)" stroke="#dfd4c0"></rect>
-        <circle cx="42" cy="30" r="10" fill="rgba(248, 232, 180, 0.84)"></circle>
-        <path d="M22 78L22 56C40 52 52 52 66 58C82 65 98 66 112 58C122 52 128 52 138 56V78Z" fill="url(#tankCardGround)" stroke="#a78859" stroke-width="1.2"></path>
-        <path d="M74 53Q81 40 92 36" fill="none" stroke="rgba(86, 111, 95, 0.84)" stroke-width="2.3" stroke-dasharray="4 4" stroke-linecap="round"></path>
-        <circle cx="92" cy="36" r="2.4" fill="#fffaf0" stroke="#cab38a" stroke-width="1"></circle>
+        <rect x="16" y="10" width="128" height="74" rx="22" fill="#f8fafc" stroke="rgba(15,23,42,0.16)"></rect>
+        <rect x="22" y="16" width="116" height="62" rx="18" fill="url(#tankCardSky)" stroke="#dbe4ef"></rect>
+        <rect x="22" y="16" width="116" height="62" rx="18" fill="url(#tankCardGrid)" opacity="0.62"></rect>
+        <path d="M22 78L22 58C38 52 52 52 66 57C84 64 98 65 112 58C122 53 130 53 138 56V78Z" fill="url(#tankCardGround)" stroke="#64748b" stroke-width="1.1"></path>
+        <path d="M74 53Q81 40 92 36" fill="none" stroke="rgba(51,65,85,0.7)" stroke-width="2" stroke-dasharray="4 4" stroke-linecap="round"></path>
+        <circle cx="92" cy="36" r="2.4" fill="#fffaf0" stroke="#cbd5e1" stroke-width="1"></circle>
         <g transform="translate(48 58)">
           <ellipse cx="0" cy="8" rx="16" ry="4.6" fill="rgba(45,41,37,0.12)"></ellipse>
-          <rect x="-12" y="2" width="24" height="8" rx="3.5" fill="#675a47"></rect>
+          <rect x="-12" y="2" width="24" height="8" rx="3.5" fill="#475569"></rect>
           <rect x="-9" y="-6" width="18" height="10" rx="4" fill="#de7559" stroke="#b3543d" stroke-width="1.3"></rect>
-          <line x1="1" y1="-7" x2="16" y2="-13" stroke="#6e675e" stroke-width="4.2" stroke-linecap="round"></line>
+          <line x1="1" y1="-7" x2="16" y2="-13" stroke="#475569" stroke-width="4.2" stroke-linecap="round"></line>
           <circle cx="0" cy="-7" r="5.3" fill="#de7559" stroke="#b3543d" stroke-width="1.3"></circle>
         </g>
         <g transform="translate(112 58)">
           <ellipse cx="0" cy="8" rx="16" ry="4.6" fill="rgba(45,41,37,0.12)"></ellipse>
-          <rect x="-12" y="2" width="24" height="8" rx="3.5" fill="#675a47"></rect>
+          <rect x="-12" y="2" width="24" height="8" rx="3.5" fill="#475569"></rect>
           <rect x="-9" y="-6" width="18" height="10" rx="4" fill="#5a87e8" stroke="#375eb8" stroke-width="1.3"></rect>
-          <line x1="-1" y1="-7" x2="-16" y2="-12" stroke="#6e675e" stroke-width="4.2" stroke-linecap="round"></line>
+          <line x1="-1" y1="-7" x2="-16" y2="-12" stroke="#475569" stroke-width="4.2" stroke-linecap="round"></line>
           <circle cx="0" cy="-7" r="5.3" fill="#5a87e8" stroke="#375eb8" stroke-width="1.3"></circle>
         </g>
       </svg>
