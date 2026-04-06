@@ -81,8 +81,9 @@ body:has(.screen.game-screen-billar) {
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .board-wrap {
-  display: block;
+  display: flex;
   padding: 0;
+  min-height: 0;
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .actions-bottom {
@@ -99,8 +100,9 @@ body:has(.screen.game-screen-billar) {
 .billar-shell {
   width: 100%;
   margin: 0 auto;
-  display: grid;
-  gap: 8px;
+  display: flex;
+  min-height: 0;
+  height: 100%;
 }
 
 .billar-hud {
@@ -114,7 +116,12 @@ body:has(.screen.game-screen-billar) {
 .billar-status-card,
 .billar-stage {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  min-height: 0;
+  height: 100%;
   border-radius: 22px;
   border: 1px solid rgba(201, 191, 174, 0.78);
   background:
@@ -302,15 +309,20 @@ body:has(.screen.game-screen-billar) {
   position: relative;
   z-index: 1;
   display: block;
-  width: 100%;
+  width: min(100%, calc((var(--app-dvh, 100dvh) - 168px) * 1.744));
   height: auto;
+  max-height: calc(var(--app-dvh, 100dvh) - 168px);
+  margin: 0 auto;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
 }
 
 .billar-orientation-note {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(280px, 56dvh, 420px);
 }
 
 .billar-orientation-card {
@@ -1446,43 +1458,6 @@ function renderCardIllustration() {
   `;
 }
 
-function renderPlayerCard(slot, state, players) {
-  const active = state.turnSlot === slot && !state.result && state.phase === "ready";
-  const meta = teamMeta(slot);
-  return `
-    <article class="billar-player-card is-slot-${slot} ${active ? "is-active" : ""}">
-      <div class="billar-player-head">
-        <div class="billar-player-badge">
-          <span class="billar-player-dot" aria-hidden="true"></span>
-          <div>
-            <h3 class="billar-player-name">${escapeHtml(playerName(players, slot))}</h3>
-            <p class="billar-player-role">${escapeHtml(meta.short)}</p>
-          </div>
-        </div>
-        <p class="billar-score">${state.points[slot]}<small>/${WIN_SCORE}</small></p>
-      </div>
-    </article>
-  `;
-}
-
-function renderHud(state, players) {
-  const status = buildStatusCopy(state, players);
-  return `
-    <section class="billar-hud">
-      ${renderPlayerCard(0, state, players)}
-      <article class="billar-status-card">
-        <div class="billar-status-copy">
-          <span class="billar-status-eyebrow" data-billar-status-eyebrow>${escapeHtml(status.eyebrow)}</span>
-          <h3 class="billar-status-title" data-billar-status-title>${escapeHtml(status.title)}</h3>
-          <p class="billar-status-note" data-billar-status-note>${escapeHtml(status.note)}</p>
-        </div>
-        <span class="billar-status-pill">A ${WIN_SCORE}</span>
-      </article>
-      ${renderPlayerCard(1, state, players)}
-    </section>
-  `;
-}
-
 function renderTargetBall(ball) {
   const meta = targetMeta(ball.paletteIndex);
   return `
@@ -1580,15 +1555,20 @@ function renderTable(state, canAct) {
   `;
 }
 
-function renderShell(state, players, canAct) {
+function renderShell(state, canAct, uiState) {
+  if (uiState?.viewport?.isPortraitHandheld) {
+    return `
+      <section class="billar-orientation-note" aria-live="polite">
+        <article class="billar-orientation-card">
+          <span class="billar-orientation-eyebrow">Mejor en horizontal</span>
+          <h3 class="billar-orientation-title">Gira el dispositivo</h3>
+          <p class="billar-orientation-copy">La mesa necesita anchura real para apuntar bien y leer el tiro con claridad.</p>
+        </article>
+      </section>
+    `;
+  }
+
   return `
-    <section class="billar-orientation-note" aria-live="polite">
-      <article class="billar-orientation-card">
-        <span class="billar-orientation-eyebrow">Mejor en horizontal</span>
-        <h3 class="billar-orientation-title">Gira el dispositivo</h3>
-        <p class="billar-orientation-copy">La mesa necesita anchura real para apuntar bien y leer el tiro con claridad.</p>
-      </article>
-    </section>
     <section class="billar-shell" data-billar-root data-billar-phase="${escapeHtml(state.phase)}">
       <section class="billar-stage">
         ${renderTable(state, canAct)}
@@ -1656,34 +1636,17 @@ function bindBoardElement(boardWrap, { state, players, canAct, dispatchGameActio
   const svg = root.querySelector("[data-billar-table]");
   const cueHit = root.querySelector("[data-billar-cue-hit]");
   const aimLayer = root.querySelector("[data-billar-aim-layer]");
-  const statusEyebrow = root.querySelector("[data-billar-status-eyebrow]");
-  const statusTitle = root.querySelector("[data-billar-status-title]");
-  const statusNote = root.querySelector("[data-billar-status-note]");
 
   if (!svg || !cueHit || !aimLayer) {
     return;
   }
 
   root.dataset.bound = "true";
-  const baseStatus = buildStatusCopy(state, players);
   let drag = null;
-
-  function resetStatus() {
-    if (statusEyebrow) {
-      statusEyebrow.textContent = baseStatus.eyebrow;
-    }
-    if (statusTitle) {
-      statusTitle.textContent = baseStatus.title;
-    }
-    if (statusNote) {
-      statusNote.textContent = baseStatus.note;
-    }
-  }
 
   function clearAim() {
     aimLayer.innerHTML = "";
     drag = null;
-    resetStatus();
   }
 
   function updateAim() {
@@ -1698,15 +1661,6 @@ function bindBoardElement(boardWrap, { state, players, canAct, dispatchGameActio
     const power01 = clamp(pullDistance / MAX_DRAG_DISTANCE, 0, 1);
 
     aimLayer.innerHTML = renderAimGuide(drag.anchor, handlePoint, power01);
-    if (statusEyebrow) {
-      statusEyebrow.textContent = "Apuntando";
-    }
-    if (statusTitle) {
-      statusTitle.textContent = `${playerName(players, state.turnSlot)} · ${Math.round(power01 * 100)}%`;
-    }
-    if (statusNote) {
-      statusNote.textContent = power01 >= 0.72 ? "Golpe fuerte" : power01 >= 0.38 ? "Golpe medio" : "Golpe corto";
-    }
   }
 
   async function releaseShot(event, cancelled = false) {
@@ -1803,8 +1757,6 @@ function bindBoardElement(boardWrap, { state, players, canAct, dispatchGameActio
       clearAim();
     });
   });
-
-  resetStatus();
 }
 
 export const billarGame = {
@@ -1873,13 +1825,13 @@ export const billarGame = {
     ensureBilliardsStyles();
     return renderCardIllustration();
   },
-  renderBoard({ state, players, canAct }) {
+  renderBoard({ state, canAct, uiState }) {
     ensureBilliardsStyles();
-    return renderShell(state, players, canAct);
+    return renderShell(state, canAct, uiState);
   },
-  patchBoardElement(boardWrap, { state, players, canAct }) {
+  patchBoardElement(boardWrap, { state, canAct, uiState }) {
     ensureBilliardsStyles();
-    boardWrap.innerHTML = renderShell(state, players, canAct);
+    boardWrap.innerHTML = renderShell(state, canAct, uiState);
     return true;
   },
   bindBoardElement(boardWrap, ctx) {
@@ -1891,7 +1843,7 @@ export const billarGame = {
     return {
       title: `${playerName(players, winnerSlot)} gana`,
       subtitle: `Marcador final ${state.points[0]} - ${state.points[1]}. Mesa corta a ${WIN_SCORE} puntos.`,
-      iconText: "8",
+      iconText: "◉",
       iconClass: "win"
     };
   }

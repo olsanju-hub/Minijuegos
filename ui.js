@@ -320,18 +320,6 @@ export function createUI({ appElement, toastElement }) {
     `;
   }
 
-  function renderPlayfulTitle(text) {
-    const letters = String(text || "").split("");
-    return letters
-      .map((letter, index) => {
-        const tilt = [-7, -2, 4, -5, 6, -3, 5, -4, 3, -5, 4][index % 11];
-        const lift = [0, -6, 2, -4, 1, -3, 0, -5, 1, -2, 0][index % 11];
-        const spacer = letter === " " ? " is-space" : "";
-        return `<span class="home-title-letter${spacer}" style="--tilt:${tilt}deg;--lift:${lift}px">${letter === " " ? "&nbsp;" : escapeHtml(letter)}</span>`;
-      })
-      .join("");
-  }
-
   function renderHomeGameGlyph(gameId) {
     const glyphs = {
       tictactoe: `
@@ -939,64 +927,42 @@ export function createUI({ appElement, toastElement }) {
       .join("");
   }
 
-  function renderGameStatusBand({ session, game, showTurnMessage, turnText, active }) {
-    const sections = [];
+  function getViewportRenderState() {
+    const viewport = window.visualViewport;
+    const width = Math.round(viewport?.width || window.innerWidth || document.documentElement.clientWidth || 0);
+    const height = Math.round(viewport?.height || window.innerHeight || document.documentElement.clientHeight || 0);
+    const isPortraitHandheld = window.matchMedia("(max-width: 1180px) and (max-height: 1366px) and (orientation: portrait)").matches;
 
-    if (showTurnMessage) {
-      const label = game.getResult(session.state)
-        ? "Resultado"
-        : game.useCustomTurnMessage
-          ? "Estado"
-          : "Turno";
-      const text = game.getResult(session.state) || game.useCustomTurnMessage
-        ? escapeHtml(turnText)
-        : `Turno de <span class="game-status-emphasis" style="--game-status-tone:${active ? active.identity.color : "#233042"}">${escapeHtml(active ? active.name : "Jugador")}</span>`;
-
-      sections.push(`
-        <article class="game-status-card game-status-card-primary">
-          <span class="game-status-label">${escapeHtml(label)}</span>
-          <p class="game-status-text">${text}</p>
-        </article>
-      `);
-    }
-
-    if (!game.hideDefaultPlayerChips) {
-      sections.push(`
-        <article class="game-status-card game-status-card-chips">
-          <span class="game-status-label">Jugadores</span>
-          <div class="player-chip-list player-chip-list-compact">
-            ${renderPlayerChips(session, game)}
-          </div>
-        </article>
-      `);
-    }
-
-    if (sections.length === 0) {
-      return "";
-    }
-
-    return `
-      <section class="game-status-band ${sections.length === 1 ? "is-single" : ""}">
-        ${sections.join("")}
-      </section>
-    `;
+    return {
+      width,
+      height,
+      isCompactLandscape: isCompactLandscapeViewport(),
+      isCompactTouch: isCompactTouchViewport(),
+      isPortraitHandheld
+    };
   }
 
-  function renderGame(vm) {
-    const session = vm.session;
-    const game = vm.game;
+  function buildBoardUiState(vm) {
+    return {
+      ...(vm?.uiState || {}),
+      viewport: getViewportRenderState()
+    };
+  }
+
+  function buildGameTopbarSubtitle(vm) {
+    const session = vm?.session;
+    const game = vm?.game;
     if (!session || !game) {
-      return renderHome(vm);
+      return "";
     }
 
     const turnText = game.getTurnMessage({ state: session.state, players: session.players, options: session.options });
     const activeSlot = game.getTurnSlot(session.state);
     const active = session.players.find((player) => player.slot === activeSlot);
     const showTurnMessage = !game.hideGlobalTurnMessage;
-    const screenClasses = ["screen", "game-layout", `game-screen-${escapeHtml(game.id)}`];
-    const stageLayoutClasses = ["game-stage-layout"];
     const result = game.getResult(session.state);
-    const topbarSubtitle = typeof game.getShellSubtitle === "function"
+
+    return typeof game.getShellSubtitle === "function"
       ? game.getShellSubtitle({
           state: session.state,
           players: session.players,
@@ -1013,6 +979,46 @@ export function createUI({ appElement, toastElement }) {
                 ? `Turno de ${active.name}`
                 : turnText
           : "";
+  }
+
+  function syncPatchedGameChrome(vm) {
+    const titleNode = appElement.querySelector(".topbar-title");
+    if (titleNode && vm?.game?.name) {
+      titleNode.textContent = vm.game.name;
+    }
+
+    const copyNode = appElement.querySelector(".topbar-copy");
+    if (!copyNode) {
+      return;
+    }
+
+    const subtitle = buildGameTopbarSubtitle(vm);
+    const subtitleNode = copyNode.querySelector(".topbar-sub");
+
+    if (!subtitle) {
+      subtitleNode?.remove();
+      return;
+    }
+
+    if (subtitleNode) {
+      subtitleNode.textContent = subtitle;
+      return;
+    }
+
+    copyNode.insertAdjacentHTML("beforeend", `<p class="topbar-sub">${escapeHtml(subtitle)}</p>`);
+  }
+
+  function renderGame(vm) {
+    const session = vm.session;
+    const game = vm.game;
+    if (!session || !game) {
+      return renderHome(vm);
+    }
+
+    const boardUiState = buildBoardUiState(vm);
+    const screenClasses = ["screen", "game-layout", `game-screen-${escapeHtml(game.id)}`];
+    const stageLayoutClasses = ["game-stage-layout"];
+    const topbarSubtitle = buildGameTopbarSubtitle(vm);
 
     if (game.useLandscapeMobileShell) {
       screenClasses.push("game-screen-landscape-mobile-shell");
@@ -1050,7 +1056,7 @@ export function createUI({ appElement, toastElement }) {
                   players: session.players,
                   options: session.options,
                   canAct: vm.canAct,
-                  uiState: vm.uiState
+                  uiState: boardUiState
                 })}
               </section>
             </div>
@@ -1204,14 +1210,17 @@ export function createUI({ appElement, toastElement }) {
             players: vm.session.players,
             options: vm.session.options,
             canAct: vm.canAct,
-            uiState: vm.uiState
+            uiState: buildBoardUiState(vm)
           })
         : false;
 
       if (patched) {
         currentVm = vm;
         document.body.classList.toggle("is-home-screen", false);
+        document.body.classList.toggle("is-game-screen", true);
         appElement.classList.toggle("app-shell-home", false);
+        appElement.classList.toggle("app-shell-game", true);
+        syncPatchedGameChrome(vm);
         syncLandscapeShellState(vm);
         syncGameLoops(vm);
         syncBoardBinding(vm);
@@ -1239,7 +1248,9 @@ export function createUI({ appElement, toastElement }) {
     html += renderResult(vm);
 
     document.body.classList.toggle("is-home-screen", vm.screen === "home");
+    document.body.classList.toggle("is-game-screen", vm.screen === "game");
     appElement.classList.toggle("app-shell-home", vm.screen === "home");
+    appElement.classList.toggle("app-shell-game", vm.screen === "game");
     appElement.innerHTML = html;
     syncLandscapeShellState(vm);
     if (previousScreen !== vm.screen) {

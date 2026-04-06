@@ -1336,7 +1336,7 @@ export const traficoGame = {
       return {
         title: `Objetivo cumplido: ${objectiveLabel(state.objectiveType)}`,
         subtitle: `Distancia ${state.distance} · Adelantamientos ${state.overtakes} · Recogidas ${state.pickups}.`,
-        iconText: "✓",
+        iconText: "🏁",
         iconClass: "win"
       };
     }
@@ -1348,7 +1348,7 @@ export const traficoGame = {
       return {
         title: state.mode === "infinite" ? "Fin de la carrera" : "Objetivo fallido",
         subtitle,
-        iconText: "!",
+        iconText: "×",
         iconClass: "draw"
       };
     }

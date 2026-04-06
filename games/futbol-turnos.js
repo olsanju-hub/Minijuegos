@@ -66,8 +66,9 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .game-screen-futbol-turnos .board-wrap {
-  display: block;
+  display: flex;
   padding: 0;
+  min-height: 0;
 }
 
 .game-screen-futbol-turnos .actions-bottom {
@@ -84,8 +85,9 @@ const FOOTBALL_STYLES = String.raw`
 .football-shell {
   width: 100%;
   margin: 0 auto;
-  display: grid;
-  gap: 6px;
+  display: flex;
+  min-height: 0;
+  height: 100%;
 }
 
 .football-hud {
@@ -286,7 +288,12 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-stage {
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   overflow: hidden;
+  min-height: 0;
+  height: 100%;
   padding: 3px;
   border-radius: 22px;
   border: 1px solid rgba(206, 195, 174, 0.76);
@@ -308,7 +315,10 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-orientation-note {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(280px, 56dvh, 420px);
 }
 
 .football-orientation-card {
@@ -363,8 +373,10 @@ const FOOTBALL_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: block;
-  width: 100%;
+  width: min(100%, calc((var(--app-dvh, 100dvh) - 172px) * 1.613));
   height: auto;
+  max-height: calc(var(--app-dvh, 100dvh) - 172px);
+  margin: 0 auto;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
@@ -1532,55 +1544,20 @@ function renderField(state, canAct) {
   `;
 }
 
-function renderHud(state) {
-  const leftTeam = TEAM_META[0];
-  const rightTeam = TEAM_META[1];
-  const status = buildStatusCopy(state);
+function renderShell(state, canAct, uiState) {
+  if (uiState?.viewport?.isPortraitHandheld) {
+    return `
+      <section class="football-orientation-note" aria-live="polite">
+        <article class="football-orientation-card">
+          <span class="football-orientation-eyebrow">Mejor en horizontal</span>
+          <h3 class="football-orientation-title">Gira el dispositivo</h3>
+          <p class="football-orientation-copy">El campo gana mucho mas espacio en paisaje y las jugadas se leen mejor.</p>
+        </article>
+      </section>
+    `;
+  }
+
   return `
-    <section class="football-hud">
-      <article class="football-team-card is-team-0 ${state.turnSlot === 0 && state.phase === "ready" ? "is-active" : ""}">
-        <div class="football-team-badge">
-          <span class="football-team-dot" aria-hidden="true"></span>
-          <div>
-            <h3 class="football-team-name">${escapeHtml(leftTeam.short)}</h3>
-          </div>
-        </div>
-        <p class="football-score">${state.score[0]}</p>
-      </article>
-
-      <article class="football-status-card">
-        <div class="football-status-copy">
-          <span class="football-status-eyebrow ${state.phase === "goal" ? "football-status-goal" : ""}" data-football-status-eyebrow>${escapeHtml(status.eyebrow)}</span>
-          <h3 class="football-status-title" data-football-status-title>${escapeHtml(status.title)}</h3>
-          <p class="football-status-note" data-football-status-note>${escapeHtml(status.note)}</p>
-        </div>
-        <div class="football-meta-row">
-          <span class="football-meta-pill">A ${state.goalsToWin}</span>
-        </div>
-      </article>
-
-      <article class="football-team-card is-team-1 ${state.turnSlot === 1 && state.phase === "ready" ? "is-active" : ""}">
-        <div class="football-team-badge">
-          <span class="football-team-dot" aria-hidden="true"></span>
-          <div>
-            <h3 class="football-team-name">${escapeHtml(rightTeam.short)}</h3>
-          </div>
-        </div>
-        <p class="football-score">${state.score[1]}</p>
-      </article>
-    </section>
-  `;
-}
-
-function renderShell(state, canAct) {
-  return `
-    <section class="football-orientation-note" aria-live="polite">
-      <article class="football-orientation-card">
-        <span class="football-orientation-eyebrow">Mejor en horizontal</span>
-        <h3 class="football-orientation-title">Gira el dispositivo</h3>
-        <p class="football-orientation-copy">El campo gana mucho mas espacio en paisaje y las jugadas se leen mejor.</p>
-      </article>
-    </section>
     <section class="football-shell" data-football-root data-football-phase="${escapeHtml(state.phase)}">
       <section class="football-stage">
         ${renderField(state, canAct)}
@@ -1649,36 +1626,17 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
 
   const svg = root.querySelector("[data-football-field]");
   const aimLayer = root.querySelector("[data-football-aim-layer]");
-  const statusEyebrow = root.querySelector("[data-football-status-eyebrow]");
-  const statusTitle = root.querySelector("[data-football-status-title]");
-  const statusNote = root.querySelector("[data-football-status-note]");
 
   if (!svg || !aimLayer) {
     return;
   }
 
   root.dataset.bound = "true";
-
-  const baseStatus = buildStatusCopy(state);
   let drag = null;
-
-  function resetMeter() {
-    if (statusEyebrow) {
-      statusEyebrow.textContent = baseStatus.eyebrow;
-      statusEyebrow.classList.toggle("football-status-goal", state.phase === "goal");
-    }
-    if (statusTitle) {
-      statusTitle.textContent = baseStatus.title;
-    }
-    if (statusNote) {
-      statusNote.textContent = baseStatus.note;
-    }
-  }
 
   function clearAimLayer() {
     aimLayer.innerHTML = "";
     drag = null;
-    resetMeter();
   }
 
   function updateAimLayer() {
@@ -1693,20 +1651,6 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     const power01 = clamp(pullDistance / MAX_DRAG_DISTANCE, 0, 1);
 
     aimLayer.innerHTML = renderAimGuide(drag.anchor, handlePoint, power01);
-    if (statusEyebrow) {
-      statusEyebrow.textContent = "Apuntando";
-      statusEyebrow.classList.remove("football-status-goal");
-    }
-    if (statusTitle) {
-      statusTitle.textContent = `${teamMeta(drag.team).short} · ${Math.round(power01 * 100)}%`;
-    }
-    if (statusNote) {
-      statusNote.textContent = power01 >= 0.72
-        ? "Fuerte"
-        : power01 >= 0.34
-          ? "Media"
-          : "Corta";
-    }
   }
 
   async function releaseShot(event, cancelled = false) {
@@ -1820,11 +1764,9 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
 
   svg.addEventListener("pointerleave", () => {
     if (!drag) {
-      resetMeter();
+      aimLayer.innerHTML = "";
     }
   });
-
-  resetMeter();
 }
 
 export const futbolTurnosGame = {
@@ -1902,13 +1844,13 @@ export const futbolTurnosGame = {
   renderCardIllustration() {
     return renderCardIllustration();
   },
-  renderBoard({ state, canAct }) {
+  renderBoard({ state, canAct, uiState }) {
     ensureFootballStyles();
-    return renderShell(state, canAct);
+    return renderShell(state, canAct, uiState);
   },
-  patchBoardElement(boardWrap, { state, canAct }) {
+  patchBoardElement(boardWrap, { state, canAct, uiState }) {
     ensureFootballStyles();
-    boardWrap.innerHTML = renderShell(state, canAct);
+    boardWrap.innerHTML = renderShell(state, canAct, uiState);
     return true;
   },
   bindBoardElement(boardWrap, ctx) {
@@ -1921,7 +1863,7 @@ export const futbolTurnosGame = {
     return {
       title: `${winner} gana`,
       subtitle: `Marcador final ${state.score[0]} - ${state.score[1]}. ${formatModeLabel(state)}.`,
-      iconText: "G",
+      iconText: "⚽",
       iconClass: "win"
     };
   }

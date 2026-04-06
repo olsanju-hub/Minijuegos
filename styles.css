@@ -12658,26 +12658,27 @@ body:not(.is-home-screen) .bg-layer {
 
 .app-shell:not(.app-shell-home) .screen.game-layout {
   gap: 12px;
+  height: 100%;
+  overflow: hidden;
+}
+
+body.is-game-screen {
+  overflow: hidden;
+  height: var(--app-dvh, 100dvh);
+}
+
+.app-shell.app-shell-game {
+  margin: 0 auto;
+  padding-top: 8px;
+  height: var(--app-dvh, 100dvh);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 
 .game-shell-body {
   display: flex;
   min-height: 0;
-}
-
-.game-status-band,
-.game-floating-actions,
-.football-hud,
-.billar-hud,
-.tanks-strip,
-.football-team-card,
-.football-status-card,
-.billar-player-card,
-.billar-status-card,
-.tanks-team-card,
-.tanks-status-card,
-.tanks-footer {
-  display: none !important;
+  overflow: hidden;
 }
 
 .game-stage-layout,
@@ -12689,6 +12690,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .game-stage-main {
+  display: flex;
   min-height: 0;
 }
 
@@ -12701,9 +12703,8 @@ body:not(.is-home-screen) .bg-layer {
 .app-shell:not(.app-shell-home) .topbar-sub {
   min-width: 0;
   max-width: 52ch;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow: visible;
 }
 
 .football-shell,

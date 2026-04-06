@@ -81,8 +81,9 @@ const TANKS_STYLES = String.raw`
 }
 
 .game-screen-tanques .board-wrap {
-  display: block;
+  display: flex;
   padding: 0;
+  min-height: 0;
 }
 
 .game-screen-tanques .actions-bottom {
@@ -98,7 +99,9 @@ const TANKS_STYLES = String.raw`
   width: 100%;
   margin: 0 auto;
   display: grid;
-  gap: 12px;
+  gap: 6px;
+  min-height: 0;
+  height: 100%;
 }
 
 .tanks-strip {
@@ -314,9 +317,10 @@ const TANKS_STYLES = String.raw`
 .tanks-stage {
   display: grid;
   grid-template-rows: minmax(0, 1fr) auto;
-  gap: 8px;
+  gap: 6px;
   min-height: 0;
-  padding: 8px;
+  height: 100%;
+  padding: 6px;
   border-radius: 22px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background:
@@ -335,20 +339,21 @@ const TANKS_STYLES = String.raw`
 .tanks-battlefield {
   position: relative;
   min-height: 0;
-  display: flex;
-  align-items: stretch;
-  justify-content: stretch;
+  display: grid;
+  place-items: center;
 }
 
 .tanks-controls-dock {
   position: relative;
   z-index: 1;
-  padding-top: 6px;
-  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  padding-top: 4px;
 }
 
 .tanks-orientation-note {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: clamp(280px, 56dvh, 420px);
 }
 
 .tanks-orientation-card {
@@ -403,9 +408,11 @@ const TANKS_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: block;
-  width: 100%;
+  width: min(100%, calc((var(--app-dvh, 100dvh) - 242px) * 1.613));
   height: auto;
+  max-height: calc(var(--app-dvh, 100dvh) - 242px);
   border-radius: 26px;
+  margin: 0 auto;
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
@@ -576,15 +583,15 @@ const TANKS_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(132px, 148px);
+  gap: 6px;
   margin-top: 0;
 }
 
 .tanks-control {
   display: grid;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 8px 10px;
   border-radius: 16px;
   border: 1px solid rgba(15, 23, 42, 0.08);
   background: rgba(255, 255, 255, 0.74);
@@ -646,8 +653,8 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-fire {
-  min-width: 148px;
-  min-height: 58px;
+  min-width: 132px;
+  min-height: 50px;
   border-radius: 16px;
 }
 
@@ -1651,46 +1658,6 @@ function buildStatusCopy(state, players) {
   };
 }
 
-function renderTankCard(player, tank, isActive) {
-  const meta = teamMeta(player.slot);
-  const health = clamp((tank.health / STARTING_HEALTH) * 100, 0, 100);
-  return `
-    <article class="tanks-team-card is-team-${player.slot} ${isActive ? "is-active" : ""}" style="--tank-health:${health}%">
-      <div class="tanks-card-head">
-        <div class="tanks-team-badge">
-          <span class="tanks-team-dot" aria-hidden="true"></span>
-          <div>
-            <p class="tanks-team-name">${escapeHtml(player.name)}</p>
-            <p class="tanks-team-role">${escapeHtml(meta.short)} · ${tank.health} de vida</p>
-          </div>
-        </div>
-        <p class="tanks-health">${tank.health}</p>
-      </div>
-      <div class="tanks-health-track" aria-hidden="true">
-        <div class="tanks-health-fill"></div>
-      </div>
-    </article>
-  `;
-}
-
-function renderStatusCard(state, players) {
-  const copy = buildStatusCopy(state, players);
-  return `
-    <article class="tanks-status-card">
-      <div class="tanks-status-top">
-        <span class="tanks-status-tag">${escapeHtml(copy.tag)}</span>
-      </div>
-      <div class="tanks-status-copy">
-        <h3 class="tanks-status-title">${escapeHtml(copy.title)}</h3>
-        <p class="tanks-status-note">${escapeHtml(copy.note)}</p>
-      </div>
-      <div class="tanks-status-meta">
-        ${copy.meta.map((item) => `<span class="tanks-status-pill">${escapeHtml(item)}</span>`).join("")}
-      </div>
-    </article>
-  `;
-}
-
 function tankGroupMarkup(tank, isActive) {
   const vector = vectorForShot(tank.slot, tank.angle);
   const turretX = vector.x * (TANK_BARREL_LENGTH - 10);
@@ -1773,6 +1740,7 @@ function renderPreview(state) {
   return `
     <g class="tanks-preview" aria-hidden="true">
       <path class="tanks-preview-line" d="${path}" data-tank-preview-path></path>
+      <circle class="tanks-preview-impact" cx="${round(impact.x, 2)}" cy="${round(impact.y, 2)}" r="7" data-tank-preview-impact></circle>
     </g>
   `;
 }
@@ -1844,15 +1812,20 @@ function renderField(state) {
   `;
 }
 
-function renderShell(state, players, canAct) {
+function renderShell(state, canAct, uiState) {
+  if (uiState?.viewport?.isPortraitHandheld) {
+    return `
+      <section class="tanks-orientation-note" aria-live="polite">
+        <article class="tanks-orientation-card">
+          <span class="tanks-orientation-eyebrow">Mejor en horizontal</span>
+          <h3 class="tanks-orientation-title">Gira el dispositivo</h3>
+          <p class="tanks-orientation-copy">En paisaje el terreno gana mucho mas ancho y el tiro se ajusta mejor.</p>
+        </article>
+      </section>
+    `;
+  }
+
   return `
-    <section class="tanks-orientation-note" aria-live="polite">
-      <article class="tanks-orientation-card">
-        <span class="tanks-orientation-eyebrow">Mejor en horizontal</span>
-        <h3 class="tanks-orientation-title">Gira el dispositivo</h3>
-        <p class="tanks-orientation-copy">En paisaje el terreno gana mucho mas ancho y el tiro se ajusta mejor.</p>
-      </article>
-    </section>
     <section class="tanks-shell">
       <section class="tanks-stage">
         <div class="tanks-battlefield">
@@ -2125,13 +2098,13 @@ export const tanquesGame = {
     ensureTankStyles();
     return renderCardIllustration();
   },
-  renderBoard({ state, players, canAct }) {
+  renderBoard({ state, canAct, uiState }) {
     ensureTankStyles();
-    return renderShell(state, players, canAct);
+    return renderShell(state, canAct, uiState);
   },
-  patchBoardElement(boardWrap, { state, players, canAct }) {
+  patchBoardElement(boardWrap, { state, canAct, uiState }) {
     ensureTankStyles();
-    boardWrap.innerHTML = renderShell(state, players, canAct);
+    boardWrap.innerHTML = renderShell(state, canAct, uiState);
     return true;
   },
   bindBoardElement(boardWrap, ctx) {
@@ -2156,7 +2129,7 @@ export const tanquesGame = {
     return {
       title: `${winner ? winner.name : "Jugador"} gana`,
       subtitle: `${winnerTank ? winnerTank.health : 0} de vida restante frente a ${loserTank ? loserTank.health : 0}. Terreno ${terrainMeta(state.terrain.key).label.toLowerCase()}.`,
-      iconText: "TK",
+      iconText: "✦",
       iconClass: "win"
     };
   }
