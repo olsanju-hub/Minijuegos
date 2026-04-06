@@ -12789,3 +12789,306 @@ body.is-game-screen {
     max-width: 26ch;
   }
 }
+
+@media (max-width: 760px) and (orientation: portrait) {
+  .app-shell.app-shell-home {
+    width: min(100%, calc(100% - 14px));
+    margin: 6px auto 12px;
+  }
+
+  .app-shell:not(.app-shell-home) {
+    width: min(100%, calc(100% - 14px));
+  }
+
+  .home-library-screen {
+    gap: 10px;
+  }
+
+  .home-library-header {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 18px;
+  }
+
+  .home-catalog-brand {
+    gap: 12px;
+  }
+
+  .home-catalog-icon {
+    width: 46px;
+    height: 46px;
+    border-radius: 15px;
+  }
+
+  .home-catalog-title {
+    font-size: clamp(1.68rem, 10vw, 2.18rem);
+    line-height: 0.9;
+  }
+
+  .home-catalog-subtitle {
+    font-size: 0.6rem;
+    letter-spacing: 0.12em;
+  }
+
+  .home-catalog-signature {
+    font-size: 0.72rem;
+  }
+
+  .home-library-header-note .home-note-pill {
+    min-height: 26px;
+    padding: 0 10px;
+    font-size: 0.62rem;
+  }
+
+  .home-family-hero {
+    border-radius: 20px;
+  }
+
+  .home-family-art {
+    height: clamp(124px, 17vh, 146px);
+  }
+
+  .home-family-art-image {
+    object-position: center 20%;
+  }
+
+  .home-games-section {
+    gap: 10px;
+  }
+
+  .home-games-heading {
+    gap: 4px;
+  }
+
+  .home-games-kicker {
+    font-size: 0.62rem;
+    letter-spacing: 0.14em;
+  }
+
+  .home-games-title {
+    font-size: clamp(1.46rem, 8vw, 2.06rem);
+    line-height: 0.92;
+  }
+
+  .home-games-subtitle {
+    font-size: 0.76rem;
+    line-height: 1.28;
+  }
+
+  .home-games-grid {
+    gap: 7px;
+  }
+
+  .home-game-card {
+    min-height: 96px;
+    padding: 9px;
+    gap: 6px;
+    border-radius: 16px;
+  }
+
+  .home-game-card::before {
+    inset: 0 auto auto 10px;
+    width: 40px;
+  }
+
+  .home-game-card-top {
+    align-items: center;
+    gap: 8px;
+  }
+
+  .home-game-card-glyph {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+  }
+
+  .home-game-card-tag {
+    min-height: 22px;
+    padding: 0 8px;
+    font-size: 0.54rem;
+    letter-spacing: 0.08em;
+  }
+
+  .home-game-card-copy {
+    gap: 1px;
+  }
+
+  .home-game-card-title {
+    font-size: 0.84rem;
+    line-height: 1.06;
+  }
+
+  .home-game-card-subtitle {
+    display: none;
+  }
+
+  .screen.config-screen {
+    gap: 10px;
+  }
+
+  .config-card-modern,
+  .app-shell:not(.app-shell-home) .config-card.config-card-modern {
+    padding: 14px;
+    gap: 14px;
+    border-radius: 20px;
+  }
+
+  .config-hero {
+    gap: 12px;
+  }
+
+  .config-hero-media {
+    width: 100%;
+    max-width: none;
+    max-height: 132px;
+    border-radius: 18px;
+  }
+
+  .config-hero-media .game-illustration {
+    min-height: 0;
+    height: 132px;
+    max-height: 132px;
+  }
+
+  .config-hero-copy {
+    gap: 6px;
+  }
+
+  .config-badge {
+    min-height: 26px;
+    padding: 0 10px;
+    font-size: 0.62rem;
+  }
+
+  .config-title {
+    font-size: 1.32rem;
+  }
+
+  .config-tagline {
+    font-size: 0.86rem;
+    line-height: 1.34;
+  }
+
+  .config-stack {
+    gap: 10px;
+  }
+
+  .config-card-modern .block {
+    padding: 12px;
+    gap: 8px;
+    border-radius: 16px;
+  }
+
+  .config-card-modern .fields-grid,
+  .config-card-modern .player-count-row {
+    gap: 8px;
+  }
+
+  .block-title {
+    font-size: 0.92rem;
+  }
+
+  .info-line,
+  .block-sub {
+    font-size: 0.82rem;
+    line-height: 1.28;
+  }
+
+  .field {
+    gap: 4px;
+  }
+
+  .field-label {
+    font-size: 0.78rem;
+  }
+
+  .input,
+  .select {
+    height: 42px;
+    padding: 0 12px;
+    font-size: 0.92rem;
+    border-radius: 12px;
+  }
+
+  .pill {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 0.8rem;
+  }
+
+  .form-error,
+  .config-card-modern .form-error {
+    min-height: 0.9em;
+    font-size: 0.8rem;
+  }
+
+  .action-row,
+  .app-shell:not(.app-shell-home) .action-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .action-row .btn,
+  .app-shell:not(.app-shell-home) .action-row .btn {
+    min-height: 42px;
+    height: 42px;
+    padding: 0 14px;
+    font-size: 0.88rem;
+    border-radius: 14px;
+  }
+
+  .topbar,
+  .app-shell:not(.app-shell-home) .topbar {
+    padding: 10px 12px;
+    gap: 8px;
+    border-radius: 18px;
+  }
+
+  .topbar-main,
+  .app-shell:not(.app-shell-home) .topbar-main {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .topbar-title {
+    font-size: 1.02rem;
+    line-height: 1;
+  }
+
+  .topbar-sub,
+  .app-shell:not(.app-shell-home) .topbar-sub {
+    margin-top: 2px;
+    max-width: 20ch;
+    font-size: 0.74rem;
+    line-height: 1.22;
+  }
+
+  .btn,
+  .btn-icon,
+  .btn-icon-text {
+    min-height: 38px;
+  }
+
+  .btn {
+    height: 42px;
+    padding: 0 14px;
+  }
+
+  .btn-icon {
+    width: 38px;
+    height: 38px;
+    border-radius: 13px;
+    font-size: 0.9rem;
+  }
+
+  .btn-icon-text {
+    min-width: 44px;
+    padding: 0 9px;
+    font-size: 0.64rem;
+  }
+
+  .topbar-actions {
+    gap: 4px;
+  }
+}

@@ -354,16 +354,16 @@ const TANKS_STYLES = String.raw`
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: clamp(280px, 56dvh, 420px);
+  min-height: clamp(220px, 42dvh, 320px);
 }
 
 .tanks-orientation-card {
   display: grid;
-  gap: 8px;
-  width: min(100%, 430px);
+  gap: 6px;
+  width: min(100%, 400px);
   margin: 0 auto;
-  padding: 20px 18px;
-  border-radius: 24px;
+  padding: 16px 15px;
+  border-radius: 20px;
   border: 1px solid rgba(210, 197, 171, 0.84);
   background:
     radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 34%),
@@ -378,13 +378,13 @@ const TANKS_STYLES = String.raw`
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  min-height: 24px;
+  min-height: 22px;
   margin: 0 auto;
   padding: 0 10px;
   border-radius: 999px;
   background: rgba(72, 116, 95, 0.1);
   color: #47695a;
-  font-size: 0.64rem;
+  font-size: 0.6rem;
   font-weight: 820;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -393,7 +393,7 @@ const TANKS_STYLES = String.raw`
 .tanks-orientation-title {
   margin: 0;
   color: #213029;
-  font-size: 1.02rem;
+  font-size: 0.96rem;
   font-weight: 800;
   letter-spacing: -0.03em;
 }
@@ -401,8 +401,8 @@ const TANKS_STYLES = String.raw`
 .tanks-orientation-copy {
   margin: 0;
   color: #607065;
-  font-size: 0.84rem;
-  line-height: 1.4;
+  font-size: 0.8rem;
+  line-height: 1.34;
 }
 
 .tanks-field {

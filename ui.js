@@ -1026,6 +1026,7 @@ export function createUI({ appElement, toastElement }) {
     }
 
     const fullscreenActive = Boolean(game.allowFullscreen) && isGameFullscreen();
+    const useCompactPortraitChrome = Boolean(game.useLandscapeMobileShell) && Boolean(boardUiState.viewport?.isPortraitHandheld);
 
     return `
       <section class="${screenClasses.join(" ")}">
@@ -1033,18 +1034,20 @@ export function createUI({ appElement, toastElement }) {
           leftAction: "game-back",
           leftLabel: "Volver",
           title: game.name,
-          subtitle: topbarSubtitle,
-          showRules: true,
-          showFullscreen: Boolean(game.allowFullscreen),
+          subtitle: useCompactPortraitChrome ? "Gira el movil para jugar" : topbarSubtitle,
+          showRules: !useCompactPortraitChrome,
+          showFullscreen: !useCompactPortraitChrome && Boolean(game.allowFullscreen),
           fullscreenActive,
-          extraActions: [
-            {
-              action: "restart-game",
-              label: "Reiniciar",
-              ariaLabel: "Reiniciar partida",
-              className: "btn-icon btn-icon-text"
-            }
-          ]
+          extraActions: useCompactPortraitChrome
+            ? []
+            : [
+                {
+                  action: "restart-game",
+                  label: "Reiniciar",
+                  ariaLabel: "Reiniciar partida",
+                  className: "btn-icon btn-icon-text"
+                }
+              ]
         })}
 
         <div class="game-shell-body">
