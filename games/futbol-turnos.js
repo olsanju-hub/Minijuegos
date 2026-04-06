@@ -54,15 +54,35 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .game-screen-futbol-turnos .topbar {
-  padding: 8px 10px;
+  padding: 7px 10px;
+  gap: 10px;
 }
 
 .game-screen-futbol-turnos .topbar-title {
-  font-size: clamp(1.14rem, 1.7vw, 1.54rem);
+  font-size: clamp(1.04rem, 1.62vw, 1.4rem);
 }
 
 .game-screen-futbol-turnos .topbar-sub {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+}
+
+.game-screen-futbol-turnos .topbar .btn {
+  min-height: 38px;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.76rem;
+}
+
+.game-screen-futbol-turnos .topbar .btn-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 12px;
+}
+
+.game-screen-futbol-turnos .topbar .btn-icon-text {
+  min-width: 56px;
+  padding: 0 10px;
 }
 
 .game-screen-futbol-turnos .board-wrap {
@@ -85,7 +105,7 @@ const FOOTBALL_STYLES = String.raw`
 .football-shell {
   width: 100%;
   margin: 0 auto;
-  display: flex;
+  display: block;
   min-height: 0;
   height: 100%;
 }
@@ -287,6 +307,8 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-stage {
+  flex: 1 1 auto;
+  width: 100%;
   position: relative;
   display: flex;
   align-items: center;
@@ -374,9 +396,10 @@ const FOOTBALL_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: block;
-  width: min(100%, calc((var(--app-dvh, 100dvh) - 172px) * 1.613));
-  height: auto;
-  max-height: calc(var(--app-dvh, 100dvh) - 172px);
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   margin: 0 auto;
   touch-action: none;
   user-select: none;

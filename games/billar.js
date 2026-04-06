@@ -69,15 +69,35 @@ body:has(.screen.game-screen-billar) {
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .topbar {
-  padding: 8px 12px;
+  padding: 7px 10px;
+  gap: 10px;
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .topbar-title {
-  font-size: clamp(1.18rem, 1.84vw, 1.66rem);
+  font-size: clamp(1.08rem, 1.68vw, 1.48rem);
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .topbar-sub {
-  font-size: 0.78rem;
+  font-size: 0.72rem;
+}
+
+.app-shell:not(.app-shell-home) .game-screen-billar .topbar .btn {
+  min-height: 38px;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.76rem;
+}
+
+.app-shell:not(.app-shell-home) .game-screen-billar .topbar .btn-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 12px;
+}
+
+.app-shell:not(.app-shell-home) .game-screen-billar .topbar .btn-icon-text {
+  min-width: 56px;
+  padding: 0 10px;
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .board-wrap {
@@ -100,7 +120,7 @@ body:has(.screen.game-screen-billar) {
 .billar-shell {
   width: 100%;
   margin: 0 auto;
-  display: flex;
+  display: block;
   min-height: 0;
   height: 100%;
 }
@@ -296,6 +316,8 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-stage {
+  flex: 1 1 auto;
+  width: 100%;
   padding: 8px;
 }
 
@@ -309,9 +331,10 @@ body:has(.screen.game-screen-billar) {
   position: relative;
   z-index: 1;
   display: block;
-  width: min(100%, calc((var(--app-dvh, 100dvh) - 168px) * 1.744));
-  height: auto;
-  max-height: calc(var(--app-dvh, 100dvh) - 168px);
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   margin: 0 auto;
   touch-action: none;
   user-select: none;

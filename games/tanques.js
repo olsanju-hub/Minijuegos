@@ -73,11 +73,35 @@ const TANKS_STYLES = String.raw`
 }
 
 .game-screen-tanques .topbar {
-  padding: 12px 14px;
+  padding: 7px 10px;
+  gap: 10px;
 }
 
 .game-screen-tanques .topbar-title {
-  font-size: clamp(1.36rem, 2.15vw, 1.92rem);
+  font-size: clamp(1.06rem, 1.74vw, 1.46rem);
+}
+
+.game-screen-tanques .topbar-sub {
+  font-size: 0.72rem;
+}
+
+.game-screen-tanques .topbar .btn {
+  min-height: 38px;
+  height: 38px;
+  padding: 0 12px;
+  font-size: 0.76rem;
+}
+
+.game-screen-tanques .topbar .btn-icon {
+  width: 36px;
+  height: 36px;
+  min-width: 36px;
+  border-radius: 12px;
+}
+
+.game-screen-tanques .topbar .btn-icon-text {
+  min-width: 56px;
+  padding: 0 10px;
 }
 
 .game-screen-tanques .board-wrap {
@@ -98,8 +122,7 @@ const TANKS_STYLES = String.raw`
 .tanks-shell {
   width: 100%;
   margin: 0 auto;
-  display: grid;
-  gap: 6px;
+  display: block;
   min-height: 0;
   height: 100%;
 }
@@ -315,9 +338,12 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-stage {
+  --tanks-dock-width: 220px;
   display: grid;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) var(--tanks-dock-width);
+  grid-template-rows: minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
   min-height: 0;
   height: 100%;
   padding: 6px;
@@ -339,6 +365,7 @@ const TANKS_STYLES = String.raw`
 .tanks-battlefield {
   position: relative;
   min-height: 0;
+  min-width: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -347,7 +374,10 @@ const TANKS_STYLES = String.raw`
 .tanks-controls-dock {
   position: relative;
   z-index: 1;
-  padding-top: 4px;
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
+  padding-top: 0;
 }
 
 .tanks-orientation-note {
@@ -409,9 +439,10 @@ const TANKS_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: block;
-  width: min(100%, calc((var(--app-dvh, 100dvh) - 242px) * 1.613));
-  height: auto;
-  max-height: calc(var(--app-dvh, 100dvh) - 242px);
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 26px;
   margin: 0 auto;
   touch-action: pan-y;
@@ -604,14 +635,18 @@ const TANKS_STYLES = String.raw`
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(132px, 148px);
-  gap: 6px;
-  margin-top: 0;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
+  margin: 0;
 }
 
 .tanks-control {
   display: grid;
   gap: 6px;
+  align-content: start;
   padding: 8px 10px;
   border-radius: 16px;
   border: 1px solid rgba(15, 23, 42, 0.08);
@@ -637,8 +672,8 @@ const TANKS_STYLES = String.raw`
 
 .tanks-range-row {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 8px;
+  grid-template-columns: 32px minmax(0, 1fr) 32px;
+  gap: 6px;
   align-items: center;
 }
 
@@ -674,9 +709,11 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-fire {
-  min-width: 132px;
-  min-height: 50px;
+  width: 100%;
+  min-width: 0;
+  min-height: 48px;
   border-radius: 16px;
+  align-self: end;
 }
 
 .tanks-fire:disabled {

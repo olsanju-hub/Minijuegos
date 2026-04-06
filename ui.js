@@ -179,6 +179,7 @@ export function createUI({ appElement, toastElement }) {
   let onOverlayClose = null;
   let toastTimer = null;
   let currentVm = null;
+  let viewportRefreshFrame = null;
   let homeActiveIndex = 0;
   let homeDrawerOpen = false;
   let homeMotionDir = 0;
@@ -1150,6 +1151,10 @@ export function createUI({ appElement, toastElement }) {
       return false;
     }
 
+    if (nextVm.forceFullGameRender) {
+      return false;
+    }
+
     if (previousVm.screen !== "game" || nextVm.screen !== "game") {
       return false;
     }
@@ -1870,6 +1875,22 @@ export function createUI({ appElement, toastElement }) {
     }
   }
 
+  function scheduleViewportRefresh(vm = currentVm) {
+    if (viewportRefreshFrame) {
+      window.cancelAnimationFrame(viewportRefreshFrame);
+    }
+
+    viewportRefreshFrame = window.requestAnimationFrame(() => {
+      viewportRefreshFrame = null;
+      const nextVm = vm || currentVm;
+      syncLandscapeShellState(nextVm);
+
+      if (nextVm?.screen === "game" && nextVm?.game?.useLandscapeMobileShell) {
+        render({ ...nextVm, forceFullGameRender: true });
+      }
+    });
+  }
+
   function bind({ onAction: actionHandler, onField: fieldHandler, onOverlayClose: overlayHandler }) {
     onAction = actionHandler;
     onField = fieldHandler;
@@ -2250,11 +2271,11 @@ export function createUI({ appElement, toastElement }) {
     });
 
     syncViewportVars();
-    window.addEventListener("resize", () => syncLandscapeShellState(currentVm));
-    window.addEventListener("orientationchange", () => syncLandscapeShellState(currentVm));
-    document.addEventListener("fullscreenchange", () => syncLandscapeShellState(currentVm));
-    document.addEventListener("webkitfullscreenchange", () => syncLandscapeShellState(currentVm));
-    window.visualViewport?.addEventListener("resize", () => syncLandscapeShellState(currentVm));
+    window.addEventListener("resize", () => scheduleViewportRefresh(currentVm));
+    window.addEventListener("orientationchange", () => scheduleViewportRefresh(currentVm));
+    document.addEventListener("fullscreenchange", () => scheduleViewportRefresh(currentVm));
+    document.addEventListener("webkitfullscreenchange", () => scheduleViewportRefresh(currentVm));
+    window.visualViewport?.addEventListener("resize", () => scheduleViewportRefresh(currentVm));
   }
 
   return {
