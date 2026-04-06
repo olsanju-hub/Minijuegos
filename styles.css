@@ -7136,7 +7136,7 @@ body:not(.is-home-screen) .bg-layer {
   body.game-landscape-mobile-active .screen.game-screen-landscape-mobile-shell .game-shell-body,
   body.game-landscape-mobile-active .app-shell:not(.app-shell-home) .screen.game-screen-landscape-mobile-shell .game-shell-body {
     position: absolute;
-    top: calc(env(safe-area-inset-top, 0px) + 56px);
+    top: calc(env(safe-area-inset-top, 0px) + 52px);
     left: calc(env(safe-area-inset-left, 0px) + 8px);
     right: calc(env(safe-area-inset-right, 0px) + 8px);
     bottom: calc(env(safe-area-inset-bottom, 0px) + 8px);
@@ -7155,8 +7155,8 @@ body:not(.is-home-screen) .bg-layer {
     align-items: center;
     justify-content: space-between;
     gap: 10px;
-    min-height: 42px;
-    padding: 6px 8px;
+    min-height: 40px;
+    padding: 5px 8px;
     border-radius: 18px;
     background:
       linear-gradient(180deg, rgba(255, 252, 248, 0.92) 0%, rgba(247, 242, 236, 0.74) 100%);

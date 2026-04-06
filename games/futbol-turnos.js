@@ -298,6 +298,7 @@ const FOOTBALL_STYLES = String.raw`
   border-radius: 22px;
   border: 1px solid rgba(206, 195, 174, 0.76);
   background:
+    radial-gradient(circle at center, rgba(24, 97, 76, 0.14), rgba(24, 97, 76, 0) 54%),
     linear-gradient(180deg, rgba(255, 252, 247, 0.92) 0%, rgba(246, 240, 231, 0.82) 100%);
   box-shadow:
     0 16px 30px rgba(43, 38, 33, 0.07),
@@ -394,9 +395,18 @@ const FOOTBALL_STYLES = String.raw`
   stroke-width: 1.8;
 }
 
+.football-field-ambient {
+  fill: url(#footballPitchAmbient);
+  opacity: 0.82;
+}
+
 .football-pitch-grid {
   fill: url(#footballPitchPattern);
   opacity: 0.16;
+}
+
+.football-pitch-stripe {
+  fill: rgba(255, 255, 255, 0.06);
 }
 
 .football-field-grain {
@@ -431,23 +441,43 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-piece {
   cursor: pointer;
+  --football-piece-fill: #e6775d;
+  --football-piece-stroke: #bf5a43;
+  --football-piece-shadow: rgba(47, 39, 34, 0.22);
+  --football-piece-ring: rgba(255, 255, 255, 0.22);
 }
 
-.football-piece.is-team-0 .football-piece-core {
-  fill: #e6775d;
-  stroke: #bf5a43;
+.football-piece.is-team-0 {
+  --football-piece-fill: #e6775d;
+  --football-piece-stroke: #bf5a43;
 }
 
-.football-piece.is-team-1 .football-piece-core {
-  fill: #4f84ea;
-  stroke: #355fb9;
+.football-piece.is-team-1 {
+  --football-piece-fill: #4f84ea;
+  --football-piece-stroke: #355fb9;
+}
+
+.football-piece-shadow {
+  fill: var(--football-piece-shadow);
 }
 
 .football-piece-core {
+  fill: var(--football-piece-fill);
+  stroke: var(--football-piece-stroke);
   stroke-width: 4.2;
   paint-order: stroke;
   filter: drop-shadow(0 5px 8px rgba(39, 43, 48, 0.16));
   transition: filter 140ms ease, stroke-width 140ms ease;
+}
+
+.football-piece-rim {
+  fill: none;
+  stroke: var(--football-piece-ring);
+  stroke-width: 2.2;
+}
+
+.football-piece-panel {
+  fill: rgba(255, 255, 255, 0.14);
 }
 
 .football-piece.is-clickable:hover .football-piece-core {
@@ -456,6 +486,10 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-piece-detail {
   fill: rgba(255, 255, 255, 0.9);
+}
+
+.football-piece-gloss {
+  fill: rgba(255, 255, 255, 0.26);
 }
 
 .football-piece.is-turn-team .football-piece-core {
@@ -504,6 +538,12 @@ const FOOTBALL_STYLES = String.raw`
   fill: #fffaf1;
   stroke: #d6c4a2;
   stroke-width: 2.2;
+}
+
+.football-ball-ring {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.48);
+  stroke-width: 1.8;
 }
 
 .football-ball-seam {
@@ -781,13 +821,18 @@ body.game-landscape-mobile-active .football-meta-row {
 body.game-landscape-mobile-active .football-stage {
   position: absolute;
   inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0;
   border-radius: 24px;
 }
 
 body.game-landscape-mobile-active .football-field {
-  width: 100%;
+  width: auto;
   height: 100%;
+  max-width: 100%;
+  max-height: none;
 }
 `;
 
@@ -1468,9 +1513,13 @@ function renderField(state, canAct) {
           data-team="${piece.team}"
           transform="translate(${piece.x} ${piece.y})"
         >
+          <ellipse class="football-piece-shadow" cx="0" cy="${piece.r * 0.76}" rx="${piece.r * 0.92}" ry="${piece.r * 0.44}"></ellipse>
           <circle class="football-turn-ring" cx="0" cy="0" r="${piece.r + 8}"></circle>
           <circle class="football-piece-core" cx="0" cy="0" r="${piece.r}"></circle>
+          <circle class="football-piece-rim" cx="0" cy="0" r="${piece.r - 1.6}"></circle>
+          <path class="football-piece-panel" d="M ${-piece.r * 0.58} ${piece.r * 0.12} Q 0 ${piece.r * 0.58} ${piece.r * 0.58} ${piece.r * 0.12} Q 0 ${piece.r * 0.04} ${-piece.r * 0.58} ${piece.r * 0.12}"></path>
           <circle class="football-piece-detail" cx="${-piece.r * 0.36}" cy="${-piece.r * 0.4}" r="${piece.r * 0.3}"></circle>
+          <ellipse class="football-piece-gloss" cx="${-piece.r * 0.18}" cy="${-piece.r * 0.34}" rx="${piece.r * 0.48}" ry="${piece.r * 0.28}"></ellipse>
         </g>
       `;
     })
@@ -1486,8 +1535,14 @@ function renderField(state, canAct) {
     >
       <defs>
         <linearGradient id="footballPitchFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1d7c62" />
-          <stop offset="100%" stop-color="#104b3c" />
+          <stop offset="0%" stop-color="#268c6e" />
+          <stop offset="44%" stop-color="#1b745c" />
+          <stop offset="100%" stop-color="#0f4b3b" />
+        </linearGradient>
+        <radialGradient id="footballPitchAmbient" cx="50%" cy="42%" r="72%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
+          <stop offset="62%" stop-color="rgba(255,255,255,0)" />
+          <stop offset="100%" stop-color="rgba(5,38,29,0.18)" />
         </linearGradient>
         <pattern id="footballPitchPattern" width="32" height="32" patternUnits="userSpaceOnUse">
           <path d="M16 0V32M0 16H32" stroke="rgba(255,255,255,0.1)" stroke-width="1"></path>
@@ -1496,7 +1551,12 @@ function renderField(state, canAct) {
 
       <rect class="football-field-frame" x="${-GOAL_DEPTH}" y="0" width="${FIELD_WIDTH + GOAL_DEPTH * 2}" height="${FIELD_HEIGHT}" rx="42"></rect>
       <rect class="football-field-pitch" x="0" y="18" width="${FIELD_WIDTH}" height="${FIELD_HEIGHT - 36}" rx="34"></rect>
+      <rect class="football-field-ambient" x="0" y="18" width="${FIELD_WIDTH}" height="${FIELD_HEIGHT - 36}" rx="34"></rect>
       <rect class="football-pitch-grid" x="0" y="18" width="${FIELD_WIDTH}" height="${FIELD_HEIGHT - 36}" rx="34"></rect>
+      ${Array.from({ length: 5 }, (_, index) => {
+        const stripeHeight = (FIELD_HEIGHT - 92) / 5;
+        return `<rect class="football-pitch-stripe" x="26" y="${46 + stripeHeight * index}" width="${FIELD_WIDTH - 52}" height="${stripeHeight}" rx="18"></rect>`;
+      }).join("")}
       <g class="football-field-grain">
         <rect x="34" y="30" width="${FIELD_WIDTH - 68}" height="${(FIELD_HEIGHT - 60) / 3}" rx="24" fill="rgba(255,255,255,0.055)"></rect>
         <rect x="34" y="${30 + (FIELD_HEIGHT - 60) / 3}" width="${FIELD_WIDTH - 68}" height="${(FIELD_HEIGHT - 60) / 3}" rx="24" fill="rgba(0,0,0,0.032)"></rect>
@@ -1537,6 +1597,7 @@ function renderField(state, canAct) {
       <g class="football-ball" transform="translate(${state.ball.x} ${state.ball.y})">
         <ellipse class="football-ball-shadow" cx="1.4" cy="${BALL_RADIUS + 3.8}" rx="${BALL_RADIUS * 0.96}" ry="5.4"></ellipse>
         <circle class="football-ball-shell" cx="0" cy="0" r="${BALL_RADIUS}"></circle>
+        <circle class="football-ball-ring" cx="0" cy="0" r="${BALL_RADIUS - 1.8}"></circle>
         <path class="football-ball-seam" d="M-4 -6L4 -6L7 0L4 6H-4L-7 0Z"></path>
         <circle class="football-ball-highlight" cx="${-BALL_RADIUS * 0.3}" cy="${-BALL_RADIUS * 0.38}" r="${BALL_RADIUS * 0.24}"></circle>
       </g>

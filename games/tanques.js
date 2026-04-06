@@ -339,8 +339,9 @@ const TANKS_STYLES = String.raw`
 .tanks-battlefield {
   position: relative;
   min-height: 0;
-  display: grid;
-  place-items: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .tanks-controls-dock {
@@ -420,7 +421,7 @@ const TANKS_STYLES = String.raw`
 
 .tanks-field-frame {
   fill: #f8fafc;
-  stroke: rgba(15, 23, 42, 0.18);
+  stroke: rgba(15, 23, 42, 0.22);
   stroke-width: 2;
 }
 
@@ -430,22 +431,31 @@ const TANKS_STYLES = String.raw`
   stroke-width: 1.3;
 }
 
+.tanks-sky-glow {
+  fill: url(#tankSkyGlow);
+  opacity: 0.86;
+}
+
 .tanks-grid {
   fill: url(#tankGridPattern);
   opacity: 0.18;
 }
 
 .tanks-horizon {
-  fill: rgba(203, 213, 225, 0.26);
+  fill: rgba(174, 190, 214, 0.34);
 }
 
 .tanks-hill-back {
-  fill: rgba(148, 163, 184, 0.16);
+  fill: rgba(126, 145, 171, 0.18);
+}
+
+.tanks-front-ridge {
+  fill: rgba(108, 125, 148, 0.26);
 }
 
 .tanks-terrain {
   fill: url(#tankGroundFill);
-  stroke: rgba(71, 85, 105, 0.86);
+  stroke: rgba(64, 78, 99, 0.96);
   stroke-width: 2.2;
 }
 
@@ -497,27 +507,27 @@ const TANKS_STYLES = String.raw`
 }
 
 .tanks-shadow {
-  fill: rgba(43, 41, 37, 0.12);
+  fill: rgba(32, 30, 27, 0.2);
 }
 
 .tanks-track {
-  fill: #665a47;
+  fill: #5d5140;
 }
 
 .tanks-track-detail {
-  fill: rgba(255, 255, 255, 0.08);
+  fill: rgba(255, 255, 255, 0.12);
 }
 
 .tanks-tank.is-slot-0 .tanks-hull,
 .tanks-tank.is-slot-0 .tanks-turret {
-  fill: #de7559;
-  stroke: #b3543d;
+  fill: #e57b5e;
+  stroke: #a84e39;
 }
 
 .tanks-tank.is-slot-1 .tanks-hull,
 .tanks-tank.is-slot-1 .tanks-turret {
-  fill: #5a87e8;
-  stroke: #375eb8;
+  fill: #5d8ff2;
+  stroke: #2f57a9;
 }
 
 .tanks-hull,
@@ -526,9 +536,20 @@ const TANKS_STYLES = String.raw`
   paint-order: stroke;
 }
 
+.tanks-hull-panel,
+.tanks-cupola {
+  fill: rgba(255, 255, 255, 0.16);
+}
+
 .tanks-hull-sheen,
 .tanks-turret-sheen {
   fill: rgba(255, 255, 255, 0.16);
+}
+
+.tanks-barrel-shadow {
+  stroke: rgba(30, 41, 59, 0.28);
+  stroke-width: 10;
+  stroke-linecap: round;
 }
 
 .tanks-barrel {
@@ -950,8 +971,9 @@ body.game-landscape-mobile-active .tanks-stage {
   inset: auto;
   height: 100%;
   min-height: 0;
-  grid-template-rows: minmax(0, 1fr) auto;
-  gap: 6px;
+  grid-template-columns: minmax(0, 1fr) 188px;
+  grid-template-rows: minmax(0, 1fr);
+  gap: 8px;
   padding: 0;
   border-radius: 24px;
   border: 0;
@@ -960,17 +982,23 @@ body.game-landscape-mobile-active .tanks-stage {
 }
 
 body.game-landscape-mobile-active .tanks-controls-dock {
+  display: flex;
+  align-items: stretch;
+  min-height: 0;
   padding-top: 0;
   border-top: 0;
 }
 
 body.game-landscape-mobile-active .tanks-battlefield {
   min-height: 0;
+  min-width: 0;
 }
 
 body.game-landscape-mobile-active .tanks-field {
-  width: 100%;
+  width: auto;
   height: 100%;
+  max-width: 100%;
+  max-height: none;
 }
 
 body.game-landscape-mobile-active .tanks-controls {
@@ -978,15 +1006,18 @@ body.game-landscape-mobile-active .tanks-controls {
   inset: auto;
   z-index: 18;
   width: 100%;
+  height: 100%;
   margin: 0;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: 6px;
+  grid-template-columns: 1fr;
+  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 8px;
   padding: 0;
 }
 
 body.game-landscape-mobile-active .tanks-control {
   gap: 4px;
-  padding: 6px 8px;
+  align-content: start;
+  padding: 8px 9px;
   border-radius: 14px;
   background: rgba(255, 255, 255, 0.78);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
@@ -998,21 +1029,23 @@ body.game-landscape-mobile-active .tanks-control-value {
 }
 
 body.game-landscape-mobile-active .tanks-range-row {
-  gap: 6px;
+  grid-template-columns: 28px minmax(0, 1fr) 28px;
+  gap: 5px;
 }
 
 body.game-landscape-mobile-active .tanks-step {
-  min-width: 28px;
+  min-width: 0;
   height: 28px;
   border-radius: 10px;
 }
 
 body.game-landscape-mobile-active .tanks-fire {
-  min-width: 108px;
-  min-height: 44px;
+  width: 100%;
+  min-width: 0;
+  min-height: 46px;
   height: auto;
   border-radius: 16px;
-  align-self: stretch;
+  align-self: end;
 }
 
 body.game-landscape-mobile-active .tanks-footer {
@@ -1670,10 +1703,13 @@ function tankGroupMarkup(tank, isActive) {
         <rect class="tanks-track" x="${-TANK_TRACK_WIDTH / 2}" y="8" width="${TANK_TRACK_WIDTH}" height="${TANK_TRACK_HEIGHT}" rx="8"></rect>
         <rect class="tanks-track-detail" x="${-TANK_TRACK_WIDTH / 2 + 10}" y="11" width="${TANK_TRACK_WIDTH - 20}" height="4" rx="2"></rect>
         <rect class="tanks-hull" x="${-TANK_BODY_WIDTH / 2}" y="-2" width="${TANK_BODY_WIDTH}" height="${TANK_BODY_HEIGHT}" rx="10"></rect>
+        <rect class="tanks-hull-panel" x="${-TANK_BODY_WIDTH / 2 + 11}" y="3" width="${TANK_BODY_WIDTH - 22}" height="8" rx="4"></rect>
         <path class="tanks-hull-sheen" d="M ${-TANK_BODY_WIDTH / 2 + 8} 4 Q 0 -6 ${TANK_BODY_WIDTH / 2 - 8} 4 L ${TANK_BODY_WIDTH / 2 - 12} 9 Q 0 0 ${-TANK_BODY_WIDTH / 2 + 12} 9 Z"></path>
+        <line class="tanks-barrel-shadow" x1="0" y1="-10" x2="${round(turretX, 2)}" y2="${round(-10 + turretY, 2)}"></line>
         <line class="tanks-barrel" x1="0" y1="-12" x2="${round(turretX, 2)}" y2="${round(-12 + turretY, 2)}"></line>
         <line class="tanks-barrel-core" x1="0" y1="-12" x2="${round(turretX, 2)}" y2="${round(-12 + turretY, 2)}"></line>
         <circle class="tanks-turret" cx="0" cy="-12" r="${TANK_TURRET_RADIUS}"></circle>
+        <circle class="tanks-cupola" cx="0" cy="-12" r="${Math.max(5, TANK_TURRET_RADIUS - 9)}"></circle>
         <path class="tanks-turret-sheen" d="M -7 -20 Q 0 -25 8 -19 Q 1 -16 -7 -14 Z"></path>
         <circle class="tanks-muzzle" cx="${round(vector.x * TANK_BARREL_LENGTH, 2)}" cy="${round(-12 + vector.y * TANK_BARREL_LENGTH, 2)}" r="4.6"></circle>
       </g>
@@ -1785,13 +1821,19 @@ function renderField(state) {
     <svg class="tanks-field ${state.phase === "ready" ? "" : "is-disabled"}" viewBox="0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Campo de tanques" data-tanks-svg>
       <defs>
         <linearGradient id="tankSkyFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#f8fafc" />
-          <stop offset="64%" stop-color="#e2e8f0" />
-          <stop offset="100%" stop-color="#cbd5e1" />
+          <stop offset="0%" stop-color="#f8fbff" />
+          <stop offset="52%" stop-color="#dbe7f4" />
+          <stop offset="100%" stop-color="#aec0d8" />
+        </linearGradient>
+        <radialGradient id="tankSkyGlow" cx="50%" cy="18%" r="58%">
+          <stop offset="0%" stop-color="rgba(255,255,255,0.78)" />
+          <stop offset="46%" stop-color="rgba(255,255,255,0.16)" />
+          <stop offset="100%" stop-color="rgba(255,255,255,0)" />
         </linearGradient>
         <linearGradient id="tankGroundFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#cbd5e1" />
-          <stop offset="100%" stop-color="#8f9bab" />
+          <stop offset="0%" stop-color="#b9c5d6" />
+          <stop offset="58%" stop-color="#8a98ac" />
+          <stop offset="100%" stop-color="#5e6d82" />
         </linearGradient>
         <pattern id="tankGridPattern" width="34" height="34" patternUnits="userSpaceOnUse">
           <path d="M 34 0 H 0 V 34" fill="none" stroke="rgba(15,23,42,0.08)" stroke-width="1"></path>
@@ -1799,9 +1841,11 @@ function renderField(state) {
       </defs>
       <rect class="tanks-field-frame" x="${FIELD_FRAME_INSET}" y="${FIELD_FRAME_INSET}" width="${FIELD_WIDTH - FIELD_FRAME_INSET * 2}" height="${FIELD_HEIGHT - FIELD_FRAME_INSET * 2}" rx="32"></rect>
       <rect class="tanks-sky" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
+      <ellipse class="tanks-sky-glow" cx="${FIELD_WIDTH / 2}" cy="124" rx="308" ry="184"></ellipse>
       <rect class="tanks-grid" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
       <rect class="tanks-horizon" x="${FIELD_FRAME_INSET + 8}" y="250" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="108"></rect>
       <path class="tanks-hill-back" d="M 0 ${FIELD_HEIGHT} L 0 398 C 126 362 250 356 360 386 C 464 414 584 420 706 378 C 810 342 888 346 1000 392 L 1000 ${FIELD_HEIGHT} Z"></path>
+      <path class="tanks-front-ridge" d="M 0 ${FIELD_HEIGHT} L 0 466 C 122 486 246 476 360 438 C 492 394 620 394 748 430 C 846 458 922 462 1000 448 L 1000 ${FIELD_HEIGHT} Z"></path>
       <path class="tanks-terrain" d="${terrainPathData}"></path>
       <path class="tanks-terrain-crest" d="${terrainCrest}"></path>
       ${renderPreview(state)}
