@@ -1,3 +1,4 @@
+import { applyAppearanceRefresh } from "./appearance-refresh.js";
 import { createEngine } from "./engine.js";
 import { createUI } from "./ui.js";
 import { tresEnRayaGame } from "./games/tres-en-raya.js";
@@ -15,6 +16,8 @@ import { tanquesGame } from "./games/tanques.js";
 
 const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
+
+applyAppearanceRefresh();
 
 const ui = createUI({
   appElement,
