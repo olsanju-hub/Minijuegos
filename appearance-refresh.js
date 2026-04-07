@@ -1,172 +1,1280 @@
-const STRUCTURAL_REFRESH_STYLE_ID = "minijuegos-appearance-refresh";
+const STYLE_ID = "minijuegos-appearance-refresh";
+const OBSERVER_KEY = "__minijuegosAppearanceObserver";
+const HOME_STATE = {
+  search: "",
+  filter: "all"
+};
 
-const STRUCTURAL_REFRESH_CSS = String.raw`
+const FEATURED_IDS = ["trafico", "billar", "tanques"];
+const CONTINUE_ITEMS = [
+  { id: "futbol-turnos", meta: "Partida guardada", progress: 72, accent: "mustard" },
+  { id: "buscaminas", meta: "Dificultad media", progress: 41, accent: "slate" }
+];
+const DAILY_ID = "buscaminas";
+const CATEGORY_ITEMS = [
+  { key: "all", name: "Todo", icon: "◼" },
+  { key: "arcade", name: "Arcade", icon: "⚡" },
+  { key: "mesa", name: "Mesa", icon: "▦" },
+  { key: "turnos", name: "Turnos", icon: "◔" },
+  { key: "favoritos", name: "Favoritos", icon: "♥" }
+];
+
+const CSS = String.raw`
 :root {
-  --mx-bg:#dfe4ff;
-  --mx-bg-2:#eef2ff;
-  --mx-panel:#f8faff;
-  --mx-panel-2:#eef3ff;
-  --mx-line:rgba(70,87,168,.12);
-  --mx-line-strong:rgba(70,87,168,.2);
-  --mx-text:#243055;
-  --mx-text-soft:rgba(36,48,85,.72);
-  --mx-text-faint:rgba(36,48,85,.48);
-  --mx-accent:#6f82ff;
-  --mx-accent-2:#7adfd8;
-  --mx-danger:#ff6f91;
-  --mx-warm:#ffd84d;
-  --mx-shadow:0 18px 44px rgba(76,92,168,.14);
-  --mx-shadow-strong:0 28px 68px rgba(76,92,168,.18);
-  --mx-shell-max:min(1360px,calc(100vw - 28px));
-  --mx-shell-pad:clamp(14px,1.7vw,24px);
-  --mx-gap-lg:clamp(14px,1.5vw,22px);
-  --mx-radius-xl:28px;
+  --mx-bg-0: #f6f2ea;
+  --mx-bg-1: #eceaf6;
+  --mx-bg-2: #f8f6f1;
+  --mx-surface: rgba(255,255,255,0.72);
+  --mx-surface-strong: rgba(255,255,255,0.88);
+  --mx-surface-soft: rgba(255,255,255,0.58);
+  --mx-border: rgba(17,17,17,0.08);
+  --mx-border-strong: rgba(17,17,17,0.14);
+  --mx-text: #151515;
+  --mx-text-soft: rgba(17,17,17,0.58);
+  --mx-text-faint: rgba(17,17,17,0.38);
+  --mx-mustard: #c8a24a;
+  --mx-mustard-soft: rgba(200,162,74,0.16);
+  --mx-slate: #7b3f3f;
+  --mx-slate-soft: rgba(123,63,63,0.14);
+  --mx-card-shadow: 0 16px 38px rgba(0,0,0,0.06);
+  --mx-card-shadow-strong: 0 22px 52px rgba(0,0,0,0.08);
 }
-body {
+
+body,
+body:not(.is-home-screen) {
   background:
-    radial-gradient(circle at 8% 12%, rgba(255,255,255,.65) 0, rgba(255,255,255,0) 18%),
-    radial-gradient(circle at 88% 10%, rgba(122,223,216,.16) 0, rgba(122,223,216,0) 18%),
-    radial-gradient(circle at 78% 72%, rgba(111,130,255,.12) 0, rgba(111,130,255,0) 18%),
-    linear-gradient(180deg, #d9deff 0%, #e7ecff 48%, #eef2ff 100%);
-  color:var(--mx-text);
+    radial-gradient(circle at top left, rgba(255,255,255,0.66), rgba(255,255,255,0) 24%),
+    radial-gradient(circle at top right, rgba(200,162,74,0.12), rgba(200,162,74,0) 18%),
+    linear-gradient(180deg, var(--mx-bg-0) 0%, var(--mx-bg-1) 54%, var(--mx-bg-2) 100%);
+  color: var(--mx-text);
 }
-.bg-layer {
+
+.bg-layer,
+body:not(.is-home-screen) .bg-layer {
   background:
-    radial-gradient(circle at 12% 8%, rgba(111,130,255,.1), transparent 22%),
-    radial-gradient(circle at 84% 18%, rgba(255,216,77,.12), transparent 18%),
-    linear-gradient(180deg, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 100%);
-  opacity:1;
+    radial-gradient(circle at 8% 10%, rgba(255,255,255,0.7), rgba(255,255,255,0) 24%),
+    radial-gradient(circle at 84% 12%, rgba(123,63,63,0.08), rgba(123,63,63,0) 18%),
+    radial-gradient(circle at 76% 78%, rgba(200,162,74,0.08), rgba(200,162,74,0) 22%);
 }
-.app-shell {
-  width:var(--mx-shell-max)!important;
-  max-width:var(--mx-shell-max)!important;
-  margin:0 auto!important;
-  padding:var(--mx-shell-pad)!important;
-  min-height:100dvh;
-  display:grid;
-  align-content:start;
-  gap:var(--mx-gap-lg);
+
+.app-shell,
+.app-shell.app-shell-home,
+.app-shell:not(.app-shell-home) {
+  width: min(1320px, calc(100% - 24px));
+  margin: 12px auto 22px;
 }
-.screen { gap:var(--mx-gap-lg)!important; }
-.card,.block,.modal,.home-family-hero,.home-library-header,.config-card-modern,.app-shell-game .topbar,.app-shell-game .board-wrap {
-  border:1px solid var(--mx-line);
-  background:linear-gradient(180deg, rgba(255,255,255,.82), rgba(246,249,255,.74)), linear-gradient(180deg, var(--mx-panel) 0%, var(--mx-panel-2) 100%);
-  box-shadow:var(--mx-shadow);
-  backdrop-filter:blur(14px);
+
+.home-screen.home-library-screen.is-catalog.mx-home-screen {
+  display: grid;
+  gap: 18px;
 }
-.card { border-radius:var(--mx-radius-xl); }
-.home-catalog-title,.home-games-title,.config-title,.topbar-title,.modal-title,.result-title,.rule-label,.player-name { color:var(--mx-text)!important; }
-.home-catalog-subtitle,.home-catalog-signature,.home-games-subtitle,.config-tagline,.topbar-sub,.info-line,.field-label,.block-title,.result-sub,.rule-text { color:var(--mx-text-soft)!important; }
-.home-note-pill,.config-badge,.pill,.home-game-card-tag {
-  background:rgba(111,130,255,.08)!important;
-  border:1px solid rgba(111,130,255,.14)!important;
-  color:var(--mx-text-soft)!important;
-  box-shadow:none!important;
+
+.mx-home-search {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 0 16px;
+  border-radius: 22px;
+  border: 1px solid var(--mx-border);
+  background: var(--mx-surface-strong);
+  box-shadow: var(--mx-card-shadow);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
-.btn,.input { border:1px solid rgba(86,104,194,.14)!important; box-shadow:none!important; }
-.btn {
-  background:linear-gradient(180deg, rgba(255,255,255,.88), rgba(240,245,255,.82))!important;
-  color:var(--mx-text)!important;
+
+.mx-home-search-icon {
+  color: var(--mx-text-faint);
+  font-size: 1rem;
+  line-height: 1;
 }
-.btn.btn-primary {
-  background:linear-gradient(180deg, rgba(111,130,255,.2), rgba(111,130,255,.1))!important;
-  border-color:rgba(111,130,255,.22)!important;
+
+.mx-home-search-input {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: var(--mx-text);
+  font: inherit;
+  font-size: 0.95rem;
+  outline: none;
 }
-.btn.btn-secondary { color:var(--mx-text-soft)!important; }
-.input { min-height:46px; border-radius:14px; background:rgba(255,255,255,.78)!important; color:var(--mx-text)!important; }
-.input::placeholder { color:rgba(36,48,85,.3); }
-.home-screen.home-library-screen.is-catalog,.config-screen,.home-games-section { display:grid; gap:18px; }
-.home-library-header { display:flex; align-items:center; justify-content:space-between; gap:16px; }
-.home-family-hero { padding:0!important; overflow:hidden; min-height:clamp(210px,28vw,320px); border-radius:30px; }
-.home-family-art { position:relative; min-height:inherit; }
-.home-family-art::before { content:""; position:absolute; inset:0; z-index:1; pointer-events:none; background:linear-gradient(125deg,rgba(93,108,206,.12),transparent 42%),linear-gradient(180deg,rgba(255,255,255,.04),rgba(78,92,174,.12)); }
-.home-family-art::after { content:""; position:absolute; inset:auto 0 0; height:40%; z-index:1; pointer-events:none; background:linear-gradient(180deg,rgba(255,255,255,0) 0%,rgba(111,130,255,.12) 100%); }
-.home-family-art-image { width:100%; height:100%; display:block; object-fit:cover; filter:saturate(.92) contrast(1.02) brightness(1.02); }
-.home-games-heading { display:flex; align-items:end; justify-content:space-between; gap:14px 22px; flex-wrap:wrap; padding-inline:2px; }
-.home-games-heading-copy { display:grid; gap:6px; }
-.home-games-title { margin:0; font-size:clamp(1.28rem,2.3vw,1.82rem); line-height:1.04; }
-.home-games-subtitle { margin:0; max-width:54ch; font-size:.92rem; line-height:1.5; }
-.home-games-grid { display:grid!important; grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:14px!important; }
-.home-game-card {
-  position:relative; display:grid; place-items:center; min-height:148px; padding:16px!important; overflow:hidden; border-radius:24px;
-  border:1px solid rgba(111,130,255,.14);
-  background:radial-gradient(circle at top, rgba(255,255,255,.7), transparent 38%), linear-gradient(180deg, rgba(247,249,255,.96) 0%, rgba(234,239,255,.96) 100%);
-  box-shadow:var(--mx-shadow);
+
+.mx-home-search-input::placeholder {
+  color: var(--mx-text-faint);
 }
-.home-game-card::before { content:""; position:absolute; inset:1px; border-radius:inherit; background:linear-gradient(180deg,rgba(255,255,255,.44),rgba(255,255,255,0)); z-index:0; pointer-events:none; }
-.home-game-card::after { content:""; position:absolute; inset:auto 16px 0 16px; height:3px; border-radius:999px; background:linear-gradient(90deg,var(--home-game-accent,var(--mx-accent)),transparent 78%); opacity:.92; }
-.home-game-card > * { position:relative; z-index:1; }
-.home-game-card-hit { position:absolute; inset:0; z-index:3; opacity:0; cursor:pointer; }
-.home-game-card-top { display:grid; place-items:center; width:100%; }
-.home-game-card-glyph {
-  width:84px; height:84px; padding:12px; border-radius:22px;
-  background:linear-gradient(180deg, rgba(255,255,255,.96), rgba(236,241,255,.92));
-  border:1px solid rgba(111,130,255,.14);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,.88),0 10px 24px rgba(89,105,190,.12);
+
+.home-library-header {
+  position: sticky;
+  top: 0;
+  z-index: 8;
+  padding: 14px 18px;
+  border-radius: 24px;
+  border: 1px solid var(--mx-border);
+  background: rgba(246,242,234,0.9);
+  box-shadow: var(--mx-card-shadow);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
 }
-.home-game-card-glyph svg { width:100%; height:100%; display:block; }
-.home-game-card-tag,.home-game-card-copy,.home-game-card-title,.home-game-card-subtitle { display:none!important; }
-.config-card-modern { max-width:1120px!important; width:100%; margin:0 auto; padding:clamp(18px,2vw,28px)!important; border-radius:30px; display:grid; gap:18px; box-shadow:var(--mx-shadow-strong); }
-.config-hero { display:grid; grid-template-columns:minmax(0,1fr) minmax(280px,.92fr); gap:18px; align-items:stretch; }
-.config-hero-media { min-height:clamp(220px,26vw,300px); border-radius:24px; overflow:hidden; border:1px solid var(--mx-line); background:linear-gradient(180deg,rgba(255,255,255,.82),rgba(240,245,255,.72)); }
-.config-hero-media > * { width:100%; height:100%; }
-.config-hero-copy { display:grid; align-content:center; gap:10px; padding:4px 2px; }
-.config-title { margin:0; font-size:clamp(1.48rem,2.4vw,2.04rem); line-height:1.04; }
-.config-stack { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; }
-.config-stack > * { min-width:0; }
-.config-stack > .block:only-child,.config-stack > .block:last-child:nth-child(odd) { grid-column:1 / -1; }
-.block { padding:16px; border-radius:20px; }
-.block-title { margin:0 0 10px; font-size:.8rem; font-weight:700; letter-spacing:.12em; text-transform:uppercase; color:var(--mx-text-faint)!important; }
-.info-line { margin:0; line-height:1.55; }
-.fields-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:12px; }
-.field { display:grid; gap:8px; }
-.field-label { font-size:.82rem; font-weight:600; }
-.player-count-row,.action-row { display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
-.form-error { min-height:1.25rem; margin:-4px 0 0; color:var(--mx-danger); font-size:.86rem; }
-.pill.is-active { background:linear-gradient(180deg,rgba(111,130,255,.18) 0%,rgba(111,130,255,.08) 100%)!important; border-color:rgba(111,130,255,.22)!important; color:var(--mx-text)!important; }
-.app-shell-game { align-content:stretch; }
-.app-shell-game .game-layout { display:grid; grid-template-rows:auto minmax(0,1fr); gap:14px!important; min-height:calc(var(--app-dvh,100dvh) - (var(--mx-shell-pad) * 2)); }
-.app-shell-game .topbar { padding:12px 14px!important; border-radius:22px; gap:12px; }
-.app-shell-game .topbar-main,.app-shell-game .topbar-copy { min-width:0; }
-.app-shell-game .topbar-title { font-size:clamp(1.04rem,1.55vw,1.38rem); line-height:1.06; }
-.app-shell-game .topbar-sub { font-size:.78rem; line-height:1.35; }
-.app-shell-game .topbar .btn,.app-shell-game .topbar .btn-icon { min-height:40px; }
-.app-shell-game .game-shell-body,.app-shell-game .game-stage-layout,.app-shell-game .game-stage-main { min-height:0; display:grid; }
-.app-shell-game .board-wrap { min-height:clamp(420px,68dvh,860px); height:100%; padding:clamp(10px,1.2vw,16px)!important; border-radius:26px!important; overflow:hidden; }
-.overlay { backdrop-filter:blur(14px); background:rgba(118,132,214,.16); }
-.modal { border-radius:28px; color:var(--mx-text); box-shadow:var(--mx-shadow-strong); }
-.modal-head { padding-bottom:12px; border-bottom:1px solid var(--mx-line); }
-.result-icon { box-shadow:inset 0 1px 0 rgba(255,255,255,.72),0 12px 28px rgba(89,105,190,.14); }
-@media (max-width:980px) { .config-hero { grid-template-columns:1fr; } .config-hero-copy { padding:0; } .config-stack { grid-template-columns:1fr; } }
-@media (max-width:760px) {
-  .app-shell { width:min(100vw,calc(100vw - 16px))!important; max-width:min(100vw,calc(100vw - 16px))!important; padding:12px!important; }
-  .card,.home-family-hero,.config-card-modern,.app-shell-game .board-wrap { border-radius:24px!important; }
-  .home-family-hero { min-height:196px; }
-  .home-games-grid { grid-template-columns:repeat(3,minmax(0,1fr))!important; gap:10px!important; }
-  .home-game-card { min-height:104px; padding:10px!important; border-radius:18px; }
-  .home-game-card-glyph { width:58px; height:58px; padding:8px; border-radius:16px; }
-  .config-card-modern { padding:16px!important; }
-  .app-shell-game .topbar { padding:10px 12px!important; }
-  .app-shell-game .board-wrap { min-height:clamp(340px,62dvh,640px); padding:10px!important; }
+
+.home-catalog-title {
+  color: var(--mx-text);
 }
-@media (min-width:1200px) {
-  .home-games-grid { grid-template-columns:repeat(3,minmax(0,1fr))!important; }
-  .app-shell-game .game-layout { min-height:calc(var(--app-dvh,100dvh) - 40px); }
-  .app-shell-game .board-wrap { min-height:clamp(520px,70dvh,920px); }
+
+.home-catalog-subtitle,
+.home-catalog-signature,
+.home-note-pill {
+  color: var(--mx-text-soft);
+}
+
+.mx-home-hero {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(260px, 0.95fr);
+  gap: 18px;
+  padding: 24px;
+  border-radius: 34px;
+  border: 1px solid rgba(17,17,17,0.06);
+  background: #111111;
+  color: #f6f2ea;
+  box-shadow: var(--mx-card-shadow-strong);
+}
+
+.mx-home-hero::before,
+.mx-home-hero::after {
+  content: "";
+  position: absolute;
+  border-radius: 999px;
+  pointer-events: none;
+}
+
+.mx-home-hero::before {
+  width: 240px;
+  height: 240px;
+  top: -72px;
+  right: -60px;
+  background: radial-gradient(circle, rgba(200,162,74,0.24), rgba(200,162,74,0));
+}
+
+.mx-home-hero::after {
+  width: 180px;
+  height: 180px;
+  left: -48px;
+  bottom: -70px;
+  background: radial-gradient(circle, rgba(123,63,63,0.22), rgba(123,63,63,0));
+}
+
+.mx-home-hero-copy,
+.mx-home-hero-media {
+  position: relative;
+  z-index: 1;
+}
+
+.mx-home-hero-copy {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+}
+
+.mx-home-kicker {
+  margin: 0;
+  color: rgba(246,242,234,0.56);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.mx-home-hero-title {
+  margin: 0;
+  font-size: clamp(2rem, 3.2vw, 3rem);
+  line-height: 0.98;
+  letter-spacing: -0.05em;
+  color: #f6f2ea;
+}
+
+.mx-home-hero-text {
+  margin: 0;
+  max-width: 34ch;
+  color: rgba(246,242,234,0.72);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+.mx-home-hero-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.mx-btn,
+.mx-chip,
+.mx-mini-btn,
+.mx-nav-btn,
+.mx-category-btn,
+.mx-feature-open,
+.mx-play-fab {
+  border: 1px solid transparent;
+  font: inherit;
+  cursor: pointer;
+  transition: transform 180ms ease, opacity 180ms ease, background-color 180ms ease, border-color 180ms ease;
+}
+
+.mx-btn:hover,
+.mx-chip:hover,
+.mx-mini-btn:hover,
+.mx-nav-btn:hover,
+.mx-category-btn:hover,
+.mx-feature-open:hover,
+.mx-play-fab:hover {
+  transform: translateY(-1px);
+}
+
+.mx-btn {
+  min-height: 44px;
+  padding: 0 16px;
+  border-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.mx-btn-primary {
+  background: #f6f2ea;
+  color: #111111;
+}
+
+.mx-btn-secondary {
+  border-color: rgba(246,242,234,0.16);
+  background: rgba(255,255,255,0.08);
+  color: #f6f2ea;
+}
+
+.mx-home-hero-media {
+  display: grid;
+  align-items: stretch;
+}
+
+.mx-home-hero-media-frame {
+  min-height: 288px;
+  border-radius: 30px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.08);
+}
+
+.mx-home-hero-media-frame img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+.mx-home-block {
+  display: grid;
+  gap: 12px;
+}
+
+.mx-home-block-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.mx-home-block-title {
+  margin: 0;
+  color: var(--mx-text);
+  font-size: 1.08rem;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.mx-home-link {
+  color: var(--mx-text-faint);
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.mx-categories {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.mx-category-btn {
+  padding: 14px 10px;
+  border-radius: 22px;
+  border: 1px solid var(--mx-border);
+  background: rgba(255,255,255,0.62);
+  box-shadow: var(--mx-card-shadow);
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  text-align: center;
+}
+
+.mx-category-btn.is-active {
+  border-color: rgba(123,63,63,0.2);
+  background: rgba(255,255,255,0.88);
+}
+
+.mx-category-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--mx-mustard-soft);
+  color: var(--mx-text);
+  font-size: 1rem;
+}
+
+.mx-category-label {
+  color: rgba(17,17,17,0.78);
+  font-size: 0.72rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.mx-featured-row {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  scrollbar-width: none;
+}
+
+.mx-featured-row::-webkit-scrollbar { display: none; }
+
+.mx-feature-card {
+  min-width: 270px;
+  padding: 16px;
+  border-radius: 28px;
+  box-shadow: var(--mx-card-shadow);
+  display: grid;
+  gap: 14px;
+}
+
+.mx-feature-card[data-tone="mustard"] {
+  background: #c8a24a;
+  color: #111111;
+}
+
+.mx-feature-card[data-tone="slate"] {
+  background: #7b3f3f;
+  color: #f6f2ea;
+}
+
+.mx-feature-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mx-feature-tag {
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.08);
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.mx-feature-star {
+  opacity: 0.82;
+  font-size: 0.92rem;
+}
+
+.mx-feature-media {
+  height: 112px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.08);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.mx-feature-media .home-game-card-glyph,
+.mx-feature-media .mx-grid-thumb-glyph,
+.mx-spotlight-media .mx-grid-thumb-glyph {
+  width: 74px;
+  height: 74px;
+  border-radius: 22px;
+  background: rgba(255,255,255,0.82);
+  border: 0;
+}
+
+.mx-feature-title,
+.mx-continue-title,
+.mx-grid-title,
+.mx-spotlight-title {
+  margin: 0;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.mx-feature-title {
+  font-size: 1.14rem;
+}
+
+.mx-feature-subtitle,
+.mx-continue-meta,
+.mx-grid-caption,
+.mx-spotlight-text {
+  margin: 0;
+  font-size: 0.84rem;
+  line-height: 1.45;
+}
+
+.mx-feature-subtitle,
+.mx-spotlight-text { opacity: 0.8; }
+
+.mx-feature-open {
+  width: fit-content;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(0,0,0,0.1);
+  color: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+
+.mx-continue-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mx-continue-card,
+.mx-grid-card,
+.mx-spotlight-card {
+  border: 1px solid var(--mx-border);
+  border-radius: 26px;
+  background: rgba(255,255,255,0.64);
+  box-shadow: var(--mx-card-shadow);
+}
+
+.mx-continue-card {
+  padding: 14px;
+}
+
+.mx-continue-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.mx-continue-icon {
+  width: 54px;
+  height: 54px;
+  flex: 0 0 54px;
+  border-radius: 18px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f6f2ea;
+  font-size: 1rem;
+}
+
+.mx-continue-icon[data-tone="mustard"] { background: #c8a24a; color: #111111; }
+.mx-continue-icon[data-tone="slate"] { background: #7b3f3f; }
+
+.mx-continue-body {
+  min-width: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 10px;
+}
+
+.mx-continue-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mx-mini-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  border: 1px solid var(--mx-border);
+  background: rgba(255,255,255,0.72);
+  color: var(--mx-text-soft);
+}
+
+.mx-progress-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--mx-text-faint);
+  font-size: 0.68rem;
+}
+
+.mx-progress-track {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(0,0,0,0.08);
+  overflow: hidden;
+}
+
+.mx-progress-fill {
+  height: 100%;
+  border-radius: inherit;
+}
+
+.mx-progress-fill[data-tone="mustard"] { background: #c8a24a; }
+.mx-progress-fill[data-tone="slate"] { background: #7b3f3f; }
+
+.mx-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.mx-grid-card {
+  padding: 12px;
+  display: grid;
+  gap: 12px;
+}
+
+.mx-grid-thumb {
+  height: 132px;
+  border-radius: 20px;
+  background: rgba(0,0,0,0.06);
+  display: grid;
+  place-items: center;
+}
+
+.mx-grid-thumb[data-tone="mustard"] { background: rgba(200,162,74,0.92); }
+.mx-grid-thumb[data-tone="slate"] { background: rgba(123,63,63,0.92); }
+
+.mx-grid-thumb .mx-grid-thumb-glyph {
+  width: 76px;
+  height: 76px;
+  border-radius: 24px;
+  background: rgba(255,255,255,0.82);
+  box-shadow: var(--mx-card-shadow);
+}
+
+.mx-grid-foot {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mx-grid-chip {
+  min-height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: 0.62rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+}
+
+.mx-grid-chip[data-tone="mustard"] {
+  background: rgba(200,162,74,0.14);
+  border-color: rgba(200,162,74,0.26);
+  color: #6e5719;
+}
+
+.mx-grid-chip[data-tone="slate"] {
+  background: rgba(123,63,63,0.1);
+  border-color: rgba(123,63,63,0.18);
+  color: #7b3f3f;
+}
+
+.mx-spotlight-card {
+  padding: 16px;
+  display: grid;
+  gap: 14px;
+}
+
+.mx-spotlight-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mx-spotlight-kicker {
+  margin: 0;
+  color: var(--mx-text-faint);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.mx-spotlight-badge {
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #7b3f3f;
+  color: #f6f2ea;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.mx-spotlight-inner {
+  padding: 14px;
+  border-radius: 24px;
+  background: #111111;
+  color: #f6f2ea;
+  display: grid;
+  gap: 14px;
+}
+
+.mx-spotlight-media {
+  height: 148px;
+  border-radius: 18px;
+  background: rgba(200,162,74,0.18);
+  display: grid;
+  place-items: center;
+}
+
+.mx-spotlight-foot {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.mx-spotlight-open {
+  min-height: 38px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 0;
+  background: #f6f2ea;
+  color: #111111;
+  font: inherit;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.mx-bottom-nav {
+  position: sticky;
+  bottom: 0;
+  z-index: 9;
+  border-top: 1px solid rgba(17,17,17,0.06);
+  background: rgba(246,242,234,0.96);
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.mx-bottom-nav-row {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.mx-nav-btn {
+  border: 0;
+  background: transparent;
+  color: var(--mx-text-faint);
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  font-size: 0.68rem;
+  font-weight: 600;
+}
+
+.mx-nav-bubble {
+  width: 42px;
+  height: 42px;
+  border-radius: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  font-size: 1rem;
+}
+
+.mx-nav-btn.is-active { color: var(--mx-text); }
+.mx-nav-btn.is-active .mx-nav-bubble { background: #c8a24a; }
+
+.mx-play-fab-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translateY(-18px);
+}
+
+.mx-play-fab {
+  width: 54px;
+  height: 54px;
+  border-radius: 999px;
+  border: 0;
+  background: #7b3f3f;
+  color: #f6f2ea;
+  box-shadow: 0 14px 24px rgba(123,63,63,0.22);
+  font-size: 1.08rem;
+}
+
+.mx-hidden {
+  display: none !important;
+}
+
+@media (max-width: 980px) {
+  .mx-home-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .mx-home-hero-media-frame {
+    min-height: 220px;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell,
+  .app-shell.app-shell-home,
+  .app-shell:not(.app-shell-home) {
+    width: min(100%, calc(100% - 14px));
+    margin: 8px auto 16px;
+  }
+
+  .home-screen.home-library-screen.is-catalog.mx-home-screen {
+    gap: 12px;
+  }
+
+  .home-library-header {
+    padding: 12px 14px;
+    border-radius: 20px;
+  }
+
+  .mx-home-search {
+    min-height: 50px;
+    padding: 0 14px;
+    border-radius: 18px;
+  }
+
+  .mx-home-hero {
+    padding: 16px;
+    gap: 14px;
+    border-radius: 26px;
+  }
+
+  .mx-home-hero-title {
+    font-size: clamp(1.56rem, 8vw, 2.2rem);
+  }
+
+  .mx-home-hero-text {
+    max-width: none;
+    font-size: 0.88rem;
+    line-height: 1.45;
+  }
+
+  .mx-home-hero-media-frame {
+    min-height: 180px;
+    border-radius: 22px;
+  }
+
+  .mx-categories {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .mx-category-btn {
+    padding: 10px 6px;
+    border-radius: 18px;
+  }
+
+  .mx-category-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 12px;
+    font-size: 0.84rem;
+  }
+
+  .mx-category-label {
+    font-size: 0.62rem;
+  }
+
+  .mx-feature-card {
+    min-width: 220px;
+    border-radius: 24px;
+  }
+
+  .mx-grid {
+    gap: 8px;
+  }
+
+  .mx-grid-card,
+  .mx-continue-card,
+  .mx-spotlight-card {
+    border-radius: 20px;
+  }
+
+  .mx-grid-thumb {
+    height: 108px;
+    border-radius: 16px;
+  }
+
+  .mx-grid-thumb .mx-grid-thumb-glyph,
+  .mx-feature-media .home-game-card-glyph,
+  .mx-feature-media .mx-grid-thumb-glyph,
+  .mx-spotlight-media .mx-grid-thumb-glyph {
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+  }
+
+  .mx-feature-title,
+  .mx-continue-title,
+  .mx-grid-title,
+  .mx-spotlight-title {
+    font-size: 0.98rem;
+  }
+
+  .mx-feature-subtitle,
+  .mx-continue-meta,
+  .mx-grid-caption,
+  .mx-spotlight-text {
+    font-size: 0.74rem;
+  }
+
+  .mx-bottom-nav {
+    padding-inline: 10px;
+  }
+
+  .mx-nav-bubble {
+    width: 38px;
+    height: 38px;
+    border-radius: 14px;
+  }
+
+  .mx-play-fab-wrap {
+    transform: translateY(-14px);
+  }
+
+  .mx-play-fab {
+    width: 48px;
+    height: 48px;
+  }
 }
 `;
 
-function ensureRefreshStyle() {
+function escapeHtml(value) {
+  return String(value).replace(/[&<>"']/g, (char) => ({
+    "&": "&amp;",
+    "<": "&lt;",
+    ">": "&gt;",
+    '"': "&quot;",
+    "'": "&#39;"
+  }[char]));
+}
+
+function ensureStyle() {
   if (typeof document === "undefined") return;
-  let style = document.getElementById(STRUCTURAL_REFRESH_STYLE_ID);
+  let style = document.getElementById(STYLE_ID);
   if (!style) {
     style = document.createElement("style");
-    style.id = STRUCTURAL_REFRESH_STYLE_ID;
+    style.id = STYLE_ID;
     document.head.appendChild(style);
   }
-  style.textContent = STRUCTURAL_REFRESH_CSS;
+  style.textContent = CSS;
+}
+
+function getAppRoot() {
+  return document.getElementById("app");
+}
+
+function getTone(gameId) {
+  return ["billar", "buscaminas", "parchis", "tictactoe"].includes(gameId) ? "slate" : "mustard";
+}
+
+function getTag(gameId) {
+  const tags = {
+    trafico: "Popular",
+    billar: "Top",
+    tanques: "Nuevo",
+    buscaminas: "Clásico",
+    sokoban: "Lógica",
+    parchis: "Local",
+    damas: "Duelo",
+    tictactoe: "Rápido",
+    connect4: "Mesa",
+    "futbol-turnos": "Turnos",
+    "escaleras-serpientes": "Fiesta",
+    memory: "Memoria"
+  };
+  return tags[gameId] || "Listo";
+}
+
+function getCategoryForGame(gameId) {
+  if (["trafico"].includes(gameId)) return "arcade";
+  if (["billar", "parchis", "damas", "tictactoe", "connect4", "escaleras-serpientes", "memory"].includes(gameId)) return "mesa";
+  if (["tanques", "futbol-turnos", "damas", "parchis"].includes(gameId)) return "turnos";
+  if (["billar", "trafico", "buscaminas", "tanques"].includes(gameId)) return "favoritos";
+  return "all";
+}
+
+function collectGames(screen) {
+  const cards = Array.from(screen.querySelectorAll(".home-game-card"));
+  return cards.map((card) => {
+    const hit = card.querySelector(".home-game-card-hit");
+    const title = card.querySelector(".home-game-card-title")?.textContent?.trim() || "Juego";
+    const subtitle = card.querySelector(".home-game-card-subtitle")?.textContent?.trim() || "Partida local";
+    const glyph = card.querySelector(".home-game-card-glyph")?.outerHTML || "";
+    const gameId = hit?.dataset.gameId || "";
+    const players = card.querySelector(".home-game-card-tag")?.textContent?.trim() || "Local";
+    return {
+      id: gameId,
+      title,
+      subtitle,
+      glyph,
+      players,
+      tone: getTone(gameId),
+      tag: getTag(gameId),
+      category: getCategoryForGame(gameId)
+    };
+  });
+}
+
+function getHomeData(screen) {
+  const header = screen.querySelector(".home-library-header");
+  const heroImage = screen.querySelector(".home-family-art-image")?.getAttribute("src") || "./assets/home-hero-family.png";
+  const games = collectGames(screen);
+  return {
+    headerHtml: header ? header.outerHTML : "",
+    heroImage,
+    games
+  };
+}
+
+function filterGames(games) {
+  const term = HOME_STATE.search.trim().toLowerCase();
+  return games.filter((game) => {
+    const matchesSearch = !term || `${game.title} ${game.subtitle} ${game.tag}`.toLowerCase().includes(term);
+    const matchesFilter = HOME_STATE.filter === "all" || game.category === HOME_STATE.filter || (HOME_STATE.filter === "favoritos" && ["billar","trafico","buscaminas","tanques"].includes(game.id));
+    return matchesSearch && matchesFilter;
+  });
+}
+
+function getFeaturedGames(games) {
+  const featured = FEATURED_IDS.map((id) => games.find((game) => game.id === id)).filter(Boolean);
+  return featured.length ? featured : games.slice(0, 3);
+}
+
+function getContinueGames(games) {
+  return CONTINUE_ITEMS.map((item) => {
+    const game = games.find((entry) => entry.id === item.id);
+    return game ? { ...game, ...item } : null;
+  }).filter(Boolean);
+}
+
+function getDailyGame(games) {
+  return games.find((game) => game.id === DAILY_ID) || games[0] || null;
+}
+
+function buildSearch() {
+  return `
+    <section class="mx-home-search" aria-label="Buscar juegos">
+      <span class="mx-home-search-icon" aria-hidden="true">⌕</span>
+      <input class="mx-home-search-input" type="search" value="${escapeHtml(HOME_STATE.search)}" placeholder="Buscar juegos, modos o categorías" data-home-search />
+    </section>
+  `;
+}
+
+function buildHero(game, heroImage) {
+  const openId = game?.id || "";
+  return `
+    <section class="mx-home-hero">
+      <div class="mx-home-hero-copy">
+        <p class="mx-home-kicker">Colección destacada</p>
+        <h2 class="mx-home-hero-title">Juega rápido, sin ruido y con estilo limpio</h2>
+        <p class="mx-home-hero-text">Una interfaz compacta para explorar minijuegos, retomar partidas y entrar directo a lo importante.</p>
+        <div class="mx-home-hero-actions">
+          <button class="mx-btn mx-btn-primary" data-action="open-game" data-game-id="${escapeHtml(openId)}">▶ Jugar ahora</button>
+          <button class="mx-btn mx-btn-secondary" data-home-scroll="explorar">＋ Explorar</button>
+        </div>
+      </div>
+      <div class="mx-home-hero-media">
+        <div class="mx-home-hero-media-frame">
+          <img src="${escapeHtml(heroImage)}" alt="Colección destacada de Minijuegos" />
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function buildCategories() {
+  return `
+    <section class="mx-home-block">
+      <div class="mx-home-block-head">
+        <h3 class="mx-home-block-title">Categorías</h3>
+        <span class="mx-home-link">Ver todo</span>
+      </div>
+      <div class="mx-categories">
+        ${CATEGORY_ITEMS.filter((item) => item.key !== "all").map((item) => `
+          <button class="mx-category-btn ${HOME_STATE.filter === item.key ? "is-active" : ""}" data-home-filter="${item.key}">
+            <span class="mx-category-icon" aria-hidden="true">${item.icon}</span>
+            <span class="mx-category-label">${escapeHtml(item.name)}</span>
+          </button>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function buildFeatured(games) {
+  return `
+    <section class="mx-home-block">
+      <div class="mx-home-block-head">
+        <h3 class="mx-home-block-title">Destacados</h3>
+        <span class="mx-home-link">Explorar</span>
+      </div>
+      <div class="mx-featured-row">
+        ${games.map((game) => `
+          <article class="mx-feature-card" data-tone="${game.tone}">
+            <div class="mx-feature-top">
+              <span class="mx-feature-tag">${escapeHtml(game.tag)}</span>
+              <span class="mx-feature-star" aria-hidden="true">★</span>
+            </div>
+            <div class="mx-feature-media">${game.glyph || `<div class="mx-grid-thumb-glyph"></div>`}</div>
+            <div>
+              <h4 class="mx-feature-title">${escapeHtml(game.title)}</h4>
+              <p class="mx-feature-subtitle">${escapeHtml(game.subtitle)}</p>
+            </div>
+            <button class="mx-feature-open" data-action="open-game" data-game-id="${escapeHtml(game.id)}">Abrir ›</button>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function buildContinue(games) {
+  if (!games.length) return "";
+  return `
+    <section class="mx-home-block">
+      <div class="mx-home-block-head">
+        <h3 class="mx-home-block-title">Continuar</h3>
+        <span class="mx-home-link">Ver historial</span>
+      </div>
+      <div class="mx-continue-list">
+        ${games.map((game) => `
+          <article class="mx-continue-card">
+            <div class="mx-continue-row">
+              <div class="mx-continue-icon" data-tone="${game.accent}">▶</div>
+              <div class="mx-continue-body">
+                <div class="mx-continue-head">
+                  <div>
+                    <h4 class="mx-continue-title">${escapeHtml(game.title)}</h4>
+                    <p class="mx-continue-meta">${escapeHtml(game.meta)}</p>
+                  </div>
+                  <button class="mx-mini-btn" data-action="open-game" data-game-id="${escapeHtml(game.id)}">›</button>
+                </div>
+                <div>
+                  <div class="mx-progress-head"><span>Progreso</span><span>${game.progress}%</span></div>
+                  <div class="mx-progress-track"><div class="mx-progress-fill" data-tone="${game.accent}" style="width:${game.progress}%"></div></div>
+                </div>
+              </div>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function buildExplore(games) {
+  return `
+    <section class="mx-home-block" id="explorar">
+      <div class="mx-home-block-head">
+        <h3 class="mx-home-block-title">Explorar juegos</h3>
+        <span class="mx-home-link">Más</span>
+      </div>
+      <div class="mx-grid">
+        ${games.map((game) => `
+          <article class="mx-grid-card">
+            <button class="home-game-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button>
+            <div class="mx-grid-thumb" data-tone="${game.tone}">${game.glyph || `<div class="mx-grid-thumb-glyph"></div>`}</div>
+            <div class="mx-grid-foot">
+              <div>
+                <h4 class="mx-grid-title">${escapeHtml(game.title)}</h4>
+                <p class="mx-grid-caption">${escapeHtml(game.subtitle)}</p>
+              </div>
+              <span class="mx-grid-chip" data-tone="${game.tone}">Listo</span>
+            </div>
+          </article>
+        `).join("")}
+      </div>
+    </section>
+  `;
+}
+
+function buildSpotlight(game) {
+  if (!game) return "";
+  return `
+    <section class="mx-spotlight-card">
+      <div class="mx-spotlight-head">
+        <div>
+          <p class="mx-spotlight-kicker">Sugerencia</p>
+          <h3 class="mx-home-block-title">Partida del día</h3>
+        </div>
+        <span class="mx-spotlight-badge">Destacado</span>
+      </div>
+      <div class="mx-spotlight-inner">
+        <div class="mx-spotlight-media">${game.glyph || `<div class="mx-grid-thumb-glyph"></div>`}</div>
+        <div class="mx-spotlight-foot">
+          <div>
+            <h4 class="mx-spotlight-title">${escapeHtml(game.title)}</h4>
+            <p class="mx-spotlight-text">${escapeHtml(game.subtitle || "Una ronda rápida, limpia y bastante adictiva.")}</p>
+          </div>
+          <button class="mx-spotlight-open" data-action="open-game" data-game-id="${escapeHtml(game.id)}">Abrir</button>
+        </div>
+      </div>
+    </section>
+  `;
+}
+
+function buildBottomNav(playId) {
+  return `
+    <nav class="mx-bottom-nav">
+      <div class="mx-bottom-nav-row">
+        <button class="mx-nav-btn is-active" data-home-scroll="top">
+          <span class="mx-nav-bubble">⌂</span>
+          <span>Inicio</span>
+        </button>
+        <button class="mx-nav-btn" data-home-scroll="categorias">
+          <span class="mx-nav-bubble">▦</span>
+          <span>Juegos</span>
+        </button>
+        <div class="mx-play-fab-wrap">
+          <button class="mx-play-fab" data-action="open-game" data-game-id="${escapeHtml(playId)}">▶</button>
+        </div>
+        <button class="mx-nav-btn" data-home-scroll="destacados">
+          <span class="mx-nav-bubble">★</span>
+          <span>Top</span>
+        </button>
+        <button class="mx-nav-btn" data-home-scroll="spotlight">
+          <span class="mx-nav-bubble">◌</span>
+          <span>Perfil</span>
+        </button>
+      </div>
+    </nav>
+  `;
+}
+
+function renderTransformedHome(screen, data) {
+  const filtered = filterGames(data.games);
+  const featured = getFeaturedGames(filtered.length ? filtered : data.games);
+  const continueGames = getContinueGames(data.games);
+  const daily = getDailyGame(filtered.length ? filtered : data.games);
+  const explore = (filtered.length ? filtered : data.games).filter((game) => !FEATURED_IDS.includes(game.id)).slice(0, 6);
+  const heroGame = featured[0] || data.games[0];
+
+  screen.classList.add("mx-home-screen");
+  screen.innerHTML = `
+    ${data.headerHtml}
+    ${buildSearch()}
+    ${buildHero(heroGame, data.heroImage)}
+    <div id="categorias">${buildCategories()}</div>
+    <div id="destacados">${buildFeatured(featured)}</div>
+    ${buildContinue(continueGames)}
+    ${buildExplore(explore)}
+    <div id="spotlight">${buildSpotlight(daily)}</div>
+    ${buildBottomNav(heroGame?.id || "")}
+  `;
+  screen.dataset.homeTranslated = "1";
+}
+
+function enhanceHomeScreen(screen) {
+  if (!screen || screen.dataset.homeBusy === "1") return;
+  const hasCards = screen.querySelector(".home-game-card");
+  if (!hasCards) return;
+  screen.dataset.homeBusy = "1";
+  try {
+    const data = getHomeData(screen);
+    screen.__homeData = data;
+    renderTransformedHome(screen, data);
+  } finally {
+    delete screen.dataset.homeBusy;
+  }
+}
+
+function rerenderHome() {
+  const root = getAppRoot();
+  const screen = root?.querySelector(".home-screen.home-library-screen.is-catalog.mx-home-screen");
+  if (!screen || !screen.__homeData) return;
+  renderTransformedHome(screen, screen.__homeData);
+}
+
+function bindHomeEvents() {
+  if (document.body.dataset.mxHomeEventsBound === "1") return;
+  document.body.dataset.mxHomeEventsBound = "1";
+
+  document.addEventListener("input", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement) || !target.matches("[data-home-search]")) return;
+    HOME_STATE.search = target.value || "";
+    rerenderHome();
+  });
+
+  document.addEventListener("click", (event) => {
+    const target = event.target instanceof Element ? event.target.closest("[data-home-filter],[data-home-scroll]") : null;
+    if (!target) return;
+
+    if (target.hasAttribute("data-home-filter")) {
+      const next = target.getAttribute("data-home-filter") || "all";
+      HOME_STATE.filter = HOME_STATE.filter === next ? "all" : next;
+      rerenderHome();
+      return;
+    }
+
+    const scrollKey = target.getAttribute("data-home-scroll");
+    const map = {
+      top: ".home-library-header",
+      categorias: "#categorias",
+      destacados: "#destacados",
+      explorar: "#explorar",
+      spotlight: "#spotlight"
+    };
+    const selector = map[scrollKey || ""];
+    if (!selector) return;
+    const root = getAppRoot();
+    const node = root?.querySelector(selector);
+    node?.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
+function installObserver() {
+  const root = getAppRoot();
+  if (!root || window[OBSERVER_KEY]) return;
+  const observer = new MutationObserver(() => {
+    const home = root.querySelector(".home-screen.home-library-screen.is-catalog");
+    if (home && !home.classList.contains("mx-home-screen")) {
+      enhanceHomeScreen(home);
+    }
+  });
+  observer.observe(root, { childList: true, subtree: true });
+  window[OBSERVER_KEY] = observer;
+  const home = root.querySelector(".home-screen.home-library-screen.is-catalog");
+  if (home) enhanceHomeScreen(home);
 }
 
 export function applyAppearanceRefresh() {
-  ensureRefreshStyle();
+  if (typeof document === "undefined") return;
+  ensureStyle();
+  bindHomeEvents();
+  installObserver();
 }
