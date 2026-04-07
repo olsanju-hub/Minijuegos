@@ -5,18 +5,18 @@ const HOME_STATE = {
   filter: "all"
 };
 
-const FEATURED_IDS = ["trafico", "billar", "tanques"];
+const FEATURED_IDS = ["billar", "futbol-turnos", "parchis"];
 const CONTINUE_ITEMS = [
-  { id: "futbol-turnos", meta: "Partida guardada", progress: 72, accent: "mustard" },
-  { id: "buscaminas", meta: "Dificultad media", progress: 41, accent: "slate" }
+  { id: "futbol-turnos", meta: "Partido abierto · turno medio", progress: 68, accent: "mustard" },
+  { id: "buscaminas", meta: "Tablero a medias · modo abrir", progress: 43, accent: "slate" }
 ];
-const DAILY_ID = "buscaminas";
+const DAILY_ID = "trafico";
 const CATEGORY_ITEMS = [
-  { key: "all", name: "Todo", icon: "◼" },
-  { key: "arcade", name: "Arcade", icon: "⚡" },
+  { key: "all", name: "Todo", icon: "◌" },
+  { key: "rapidos", name: "Rápidos", icon: "◷" },
   { key: "mesa", name: "Mesa", icon: "▦" },
-  { key: "turnos", name: "Turnos", icon: "◔" },
-  { key: "favoritos", name: "Favoritos", icon: "♥" }
+  { key: "punteria", name: "Puntería", icon: "◎" },
+  { key: "familia", name: "Familia", icon: "✦" }
 ];
 
 const CSS = String.raw`
@@ -213,7 +213,8 @@ body:not(.is-home-screen) .bg-layer {
 .mx-nav-btn,
 .mx-category-btn,
 .mx-feature-open,
-.mx-play-fab {
+.mx-play-fab,
+.mx-spotlight-open {
   border: 1px solid transparent;
   font: inherit;
   cursor: pointer;
@@ -226,7 +227,8 @@ body:not(.is-home-screen) .bg-layer {
 .mx-nav-btn:hover,
 .mx-category-btn:hover,
 .mx-feature-open:hover,
-.mx-play-fab:hover {
+.mx-play-fab:hover,
+.mx-spotlight-open:hover {
   transform: translateY(-1px);
 }
 
@@ -547,6 +549,7 @@ body:not(.is-home-screen) .bg-layer {
   padding: 12px;
   display: grid;
   gap: 12px;
+  position: relative;
 }
 
 .mx-grid-thumb {
@@ -663,7 +666,6 @@ body:not(.is-home-screen) .bg-layer {
   border: 0;
   background: #f6f2ea;
   color: #111111;
-  font: inherit;
   font-size: 0.84rem;
   font-weight: 600;
 }
@@ -898,32 +900,32 @@ function getAppRoot() {
 }
 
 function getTone(gameId) {
-  return ["billar", "buscaminas", "parchis", "tictactoe"].includes(gameId) ? "slate" : "mustard";
+  return ["billar", "buscaminas", "parchis", "tictactoe", "damas"].includes(gameId) ? "slate" : "mustard";
 }
 
 function getTag(gameId) {
   const tags = {
-    trafico: "Popular",
-    billar: "Top",
-    tanques: "Nuevo",
+    trafico: "Rápido",
+    billar: "Precisión",
+    tanques: "Duelo",
     buscaminas: "Clásico",
     sokoban: "Lógica",
-    parchis: "Local",
-    damas: "Duelo",
-    tictactoe: "Rápido",
+    parchis: "Casa",
+    damas: "Tablero",
+    tictactoe: "Express",
     connect4: "Mesa",
     "futbol-turnos": "Turnos",
-    "escaleras-serpientes": "Fiesta",
-    memory: "Memoria"
+    "escaleras-serpientes": "Familia",
+    memory: "Parejas"
   };
-  return tags[gameId] || "Listo";
+  return tags[gameId] || "Local";
 }
 
 function getCategoryForGame(gameId) {
-  if (["trafico"].includes(gameId)) return "arcade";
-  if (["billar", "parchis", "damas", "tictactoe", "connect4", "escaleras-serpientes", "memory"].includes(gameId)) return "mesa";
-  if (["tanques", "futbol-turnos", "damas", "parchis"].includes(gameId)) return "turnos";
-  if (["billar", "trafico", "buscaminas", "tanques"].includes(gameId)) return "favoritos";
+  if (["trafico", "tictactoe", "connect4", "memory"].includes(gameId)) return "rapidos";
+  if (["parchis", "damas", "billar", "escaleras-serpientes", "sokoban", "buscaminas"].includes(gameId)) return "mesa";
+  if (["billar", "tanques", "futbol-turnos"].includes(gameId)) return "punteria";
+  if (["parchis", "escaleras-serpientes", "futbol-turnos", "connect4", "memory"].includes(gameId)) return "familia";
   return "all";
 }
 
@@ -964,7 +966,7 @@ function filterGames(games) {
   const term = HOME_STATE.search.trim().toLowerCase();
   return games.filter((game) => {
     const matchesSearch = !term || `${game.title} ${game.subtitle} ${game.tag}`.toLowerCase().includes(term);
-    const matchesFilter = HOME_STATE.filter === "all" || game.category === HOME_STATE.filter || (HOME_STATE.filter === "favoritos" && ["billar","trafico","buscaminas","tanques"].includes(game.id));
+    const matchesFilter = HOME_STATE.filter === "all" || game.category === HOME_STATE.filter;
     return matchesSearch && matchesFilter;
   });
 }
@@ -989,7 +991,7 @@ function buildSearch() {
   return `
     <section class="mx-home-search" aria-label="Buscar juegos">
       <span class="mx-home-search-icon" aria-hidden="true">⌕</span>
-      <input class="mx-home-search-input" type="search" value="${escapeHtml(HOME_STATE.search)}" placeholder="Buscar juegos, modos o categorías" data-home-search />
+      <input class="mx-home-search-input" type="search" value="${escapeHtml(HOME_STATE.search)}" placeholder="Buscar parchís, billar, tráfico o damas" data-home-search />
     </section>
   `;
 }
@@ -999,17 +1001,17 @@ function buildHero(game, heroImage) {
   return `
     <section class="mx-home-hero">
       <div class="mx-home-hero-copy">
-        <p class="mx-home-kicker">Colección destacada</p>
-        <h2 class="mx-home-hero-title">Juega rápido, sin ruido y con estilo limpio</h2>
-        <p class="mx-home-hero-text">Una interfaz compacta para explorar minijuegos, retomar partidas y entrar directo a lo importante.</p>
+        <p class="mx-home-kicker">Minijuegos en casa</p>
+        <h2 class="mx-home-hero-title">Partidas rápidas, locales y sin complicarse</h2>
+        <p class="mx-home-hero-text">Una colección pensada para jugar en familia o por turnos, con reglas claras y acceso directo desde la home.</p>
         <div class="mx-home-hero-actions">
-          <button class="mx-btn mx-btn-primary" data-action="open-game" data-game-id="${escapeHtml(openId)}">▶ Jugar ahora</button>
-          <button class="mx-btn mx-btn-secondary" data-home-scroll="explorar">＋ Explorar</button>
+          <button class="mx-btn mx-btn-primary" data-action="open-game" data-game-id="${escapeHtml(openId)}">Jugar ahora</button>
+          <button class="mx-btn mx-btn-secondary" data-home-scroll="explorar">Ver catálogo</button>
         </div>
       </div>
       <div class="mx-home-hero-media">
         <div class="mx-home-hero-media-frame">
-          <img src="${escapeHtml(heroImage)}" alt="Colección destacada de Minijuegos" />
+          <img src="${escapeHtml(heroImage)}" alt="Minijuegos para jugar en casa" />
         </div>
       </div>
     </section>
@@ -1020,8 +1022,8 @@ function buildCategories() {
   return `
     <section class="mx-home-block">
       <div class="mx-home-block-head">
-        <h3 class="mx-home-block-title">Categorías</h3>
-        <span class="mx-home-link">Ver todo</span>
+        <h3 class="mx-home-block-title">Cómo os apetece jugar</h3>
+        <span class="mx-home-link">Filtrar</span>
       </div>
       <div class="mx-categories">
         ${CATEGORY_ITEMS.filter((item) => item.key !== "all").map((item) => `
@@ -1039,22 +1041,22 @@ function buildFeatured(games) {
   return `
     <section class="mx-home-block">
       <div class="mx-home-block-head">
-        <h3 class="mx-home-block-title">Destacados</h3>
-        <span class="mx-home-link">Explorar</span>
+        <h3 class="mx-home-block-title">Para empezar</h3>
+        <span class="mx-home-link">Selección rápida</span>
       </div>
       <div class="mx-featured-row">
         ${games.map((game) => `
           <article class="mx-feature-card" data-tone="${game.tone}">
             <div class="mx-feature-top">
               <span class="mx-feature-tag">${escapeHtml(game.tag)}</span>
-              <span class="mx-feature-star" aria-hidden="true">★</span>
+              <span class="mx-feature-star" aria-hidden="true">●</span>
             </div>
             <div class="mx-feature-media">${game.glyph || `<div class="mx-grid-thumb-glyph"></div>`}</div>
             <div>
               <h4 class="mx-feature-title">${escapeHtml(game.title)}</h4>
               <p class="mx-feature-subtitle">${escapeHtml(game.subtitle)}</p>
             </div>
-            <button class="mx-feature-open" data-action="open-game" data-game-id="${escapeHtml(game.id)}">Abrir ›</button>
+            <button class="mx-feature-open" data-action="open-game" data-game-id="${escapeHtml(game.id)}">Abrir juego</button>
           </article>
         `).join("")}
       </div>
@@ -1067,14 +1069,14 @@ function buildContinue(games) {
   return `
     <section class="mx-home-block">
       <div class="mx-home-block-head">
-        <h3 class="mx-home-block-title">Continuar</h3>
-        <span class="mx-home-link">Ver historial</span>
+        <h3 class="mx-home-block-title">Seguir jugando</h3>
+        <span class="mx-home-link">Retomar</span>
       </div>
       <div class="mx-continue-list">
         ${games.map((game) => `
           <article class="mx-continue-card">
             <div class="mx-continue-row">
-              <div class="mx-continue-icon" data-tone="${game.accent}">▶</div>
+              <div class="mx-continue-icon" data-tone="${game.accent}">↺</div>
               <div class="mx-continue-body">
                 <div class="mx-continue-head">
                   <div>
@@ -1084,7 +1086,7 @@ function buildContinue(games) {
                   <button class="mx-mini-btn" data-action="open-game" data-game-id="${escapeHtml(game.id)}">›</button>
                 </div>
                 <div>
-                  <div class="mx-progress-head"><span>Progreso</span><span>${game.progress}%</span></div>
+                  <div class="mx-progress-head"><span>Partida</span><span>${game.progress}%</span></div>
                   <div class="mx-progress-track"><div class="mx-progress-fill" data-tone="${game.accent}" style="width:${game.progress}%"></div></div>
                 </div>
               </div>
@@ -1100,8 +1102,8 @@ function buildExplore(games) {
   return `
     <section class="mx-home-block" id="explorar">
       <div class="mx-home-block-head">
-        <h3 class="mx-home-block-title">Explorar juegos</h3>
-        <span class="mx-home-link">Más</span>
+        <h3 class="mx-home-block-title">Todos los juegos</h3>
+        <span class="mx-home-link">Catálogo</span>
       </div>
       <div class="mx-grid">
         ${games.map((game) => `
@@ -1113,7 +1115,7 @@ function buildExplore(games) {
                 <h4 class="mx-grid-title">${escapeHtml(game.title)}</h4>
                 <p class="mx-grid-caption">${escapeHtml(game.subtitle)}</p>
               </div>
-              <span class="mx-grid-chip" data-tone="${game.tone}">Listo</span>
+              <span class="mx-grid-chip" data-tone="${game.tone}">${escapeHtml(game.tag)}</span>
             </div>
           </article>
         `).join("")}
@@ -1128,19 +1130,19 @@ function buildSpotlight(game) {
     <section class="mx-spotlight-card">
       <div class="mx-spotlight-head">
         <div>
-          <p class="mx-spotlight-kicker">Sugerencia</p>
-          <h3 class="mx-home-block-title">Partida del día</h3>
+          <p class="mx-spotlight-kicker">Sugerencia del día</p>
+          <h3 class="mx-home-block-title">Una partida para empezar</h3>
         </div>
-        <span class="mx-spotlight-badge">Destacado</span>
+        <span class="mx-spotlight-badge">Hoy</span>
       </div>
       <div class="mx-spotlight-inner">
         <div class="mx-spotlight-media">${game.glyph || `<div class="mx-grid-thumb-glyph"></div>`}</div>
         <div class="mx-spotlight-foot">
           <div>
             <h4 class="mx-spotlight-title">${escapeHtml(game.title)}</h4>
-            <p class="mx-spotlight-text">${escapeHtml(game.subtitle || "Una ronda rápida, limpia y bastante adictiva.")}</p>
+            <p class="mx-spotlight-text">${escapeHtml(game.subtitle || "Una ronda rápida para entrar a jugar sin pensar demasiado.")}</p>
           </div>
-          <button class="mx-spotlight-open" data-action="open-game" data-game-id="${escapeHtml(game.id)}">Abrir</button>
+          <button class="mx-spotlight-open" data-action="open-game" data-game-id="${escapeHtml(game.id)}">Entrar</button>
         </div>
       </div>
     </section>
@@ -1156,19 +1158,19 @@ function buildBottomNav(playId) {
           <span>Inicio</span>
         </button>
         <button class="mx-nav-btn" data-home-scroll="categorias">
-          <span class="mx-nav-bubble">▦</span>
-          <span>Juegos</span>
+          <span class="mx-nav-bubble">◫</span>
+          <span>Tipos</span>
         </button>
         <div class="mx-play-fab-wrap">
           <button class="mx-play-fab" data-action="open-game" data-game-id="${escapeHtml(playId)}">▶</button>
         </div>
         <button class="mx-nav-btn" data-home-scroll="destacados">
-          <span class="mx-nav-bubble">★</span>
+          <span class="mx-nav-bubble">◆</span>
           <span>Top</span>
         </button>
         <button class="mx-nav-btn" data-home-scroll="spotlight">
-          <span class="mx-nav-bubble">◌</span>
-          <span>Perfil</span>
+          <span class="mx-nav-bubble">◎</span>
+          <span>Hoy</span>
         </button>
       </div>
     </nav>
@@ -1177,10 +1179,11 @@ function buildBottomNav(playId) {
 
 function renderTransformedHome(screen, data) {
   const filtered = filterGames(data.games);
-  const featured = getFeaturedGames(filtered.length ? filtered : data.games);
+  const baseGames = filtered.length ? filtered : data.games;
+  const featured = getFeaturedGames(baseGames);
   const continueGames = getContinueGames(data.games);
-  const daily = getDailyGame(filtered.length ? filtered : data.games);
-  const explore = (filtered.length ? filtered : data.games).filter((game) => !FEATURED_IDS.includes(game.id)).slice(0, 6);
+  const daily = getDailyGame(baseGames);
+  const explore = baseGames.slice(0, 8);
   const heroGame = featured[0] || data.games[0];
 
   screen.classList.add("mx-home-screen");
