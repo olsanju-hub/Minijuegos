@@ -31,7 +31,6 @@ const CSS = String.raw`
   --mx-chip: #f2d8e4;
   --mx-chip-strong: #e8c5d4;
   --mx-shadow-card: 0 10px 30px rgba(42, 35, 39, 0.1);
-  --mx-shadow-hero: 0 18px 40px rgba(42, 35, 39, 0.14);
   --mx-shadow-nav: 0 12px 28px rgba(42, 35, 39, 0.18);
   --mx-radius-card: 24px;
   --mx-radius-btn: 16px;
@@ -76,8 +75,6 @@ body:not(.is-home-screen) .bg-layer {
 .board-wrap,
 .screen .card,
 .home-library-header,
-.mx-home-search,
-.mx-home-hero,
 .mx-panel,
 .mx-game-card,
 .mx-bottom-nav {
@@ -211,17 +208,6 @@ button,
 .mx-home-kicker { margin:0; font-size:.72rem; font-weight:760; letter-spacing:.16em; text-transform:uppercase; color:var(--mx-text-soft); }
 .mx-home-title { margin:0; font-size:1.34rem; line-height:1.05; letter-spacing:-.04em; color:var(--mx-text); }
 .mx-home-actions { display:flex; gap:8px; }
-.mx-home-search { display:flex; align-items:center; gap:12px; min-height:54px; padding:0 16px; border-radius:22px; }
-.mx-home-search-icon { color:var(--mx-text-faint); font-size:1rem; line-height:1; }
-.mx-home-search-input { width:100%; border:0; background:transparent; color:var(--mx-text); font:inherit; font-size:.95rem; outline:none; }
-.mx-home-search-input::placeholder { color:var(--mx-text-faint); }
-.mx-home-hero { display:grid; grid-template-columns:minmax(0,1.12fr) minmax(220px,.88fr); gap:18px; padding:22px; border-radius:30px; box-shadow:var(--mx-shadow-hero); overflow:hidden; }
-.mx-home-hero-copy { display:grid; align-content:center; gap:10px; }
-.mx-home-hero-title { margin:0; font-size:clamp(1.9rem,3vw,2.7rem); line-height:.98; letter-spacing:-.05em; color:var(--mx-text); }
-.mx-home-hero-text { margin:0; max-width:34ch; color:var(--mx-text-soft); font-size:.94rem; line-height:1.52; }
-.mx-home-hero-media { min-height:220px; border-radius:24px; overflow:hidden; background:linear-gradient(180deg, rgba(243,214,226,0.9) 0%, rgba(239,197,212,0.68) 100%); border:1px solid var(--mx-border); }
-.mx-home-hero-media img { width:100%; height:100%; object-fit:cover; display:block; }
-.mx-home-hero-actions { display:flex; gap:10px; flex-wrap:wrap; }
 .mx-panel { padding:16px; border-radius:var(--mx-radius-card); display:grid; gap:12px; }
 .mx-section-head { display:flex; align-items:end; justify-content:space-between; gap:12px; }
 .mx-section-title { margin:0; font-size:1.02rem; font-weight:700; letter-spacing:-.03em; }
@@ -251,18 +237,10 @@ button,
 .mx-nav-btn.is-active { color:#fff8fb; }
 .mx-nav-btn.is-active .mx-nav-bubble { background:var(--mx-primary); }
 
-@media (max-width: 980px) {
-  .mx-home-hero { grid-template-columns:1fr; }
-  .mx-home-hero-media { min-height:170px; }
-}
 @media (max-width: 760px) {
   .app-shell,.app-shell.app-shell-home,.app-shell:not(.app-shell-home) { width:min(100%, calc(100% - 14px)); margin:8px auto 16px; }
   .home-screen.home-library-screen.is-catalog.mx-home-screen { gap:14px; }
   .mx-home-title { font-size:1.2rem; }
-  .mx-home-hero { padding:16px; gap:14px; border-radius:24px; }
-  .mx-home-hero-title { font-size:clamp(1.56rem, 8vw, 2.1rem); }
-  .mx-home-hero-text { font-size:.86rem; line-height:1.45; max-width:none; }
-  .mx-home-hero-media { min-height:150px; border-radius:18px; }
   .mx-panel,.mx-game-card,.mx-bottom-nav,.config-card,.config-card-modern,.topbar,.modal,.board-wrap { border-radius:20px; }
   .mx-featured-grid,.mx-catalog-grid,.mx-continue-grid { gap:8px; }
   .mx-game-card { padding:10px; gap:10px; }
@@ -317,28 +295,21 @@ function collectGames(screen) {
     return {id,title: card.querySelector(".home-game-card-title")?.textContent?.trim() || "Juego",subtitle: card.querySelector(".home-game-card-subtitle")?.textContent?.trim() || "Partida local",glyph: card.querySelector(".home-game-card-glyph")?.outerHTML || "<div class=\"mx-game-glyph\"></div>",category: getCategoryForGame(id),tag: getTag(id)};
   });
 }
-function getHomeData(screen) { return {heroImage: screen.querySelector(".home-family-art-image")?.getAttribute("src") || "./assets/home-hero-family.png",games: collectGames(screen)}; }
+function getHomeData(screen) { return {games: collectGames(screen)}; }
 function filterGames(games) {
-  const term = HOME_STATE.search.trim().toLowerCase();
   return games.filter((game) => {
-    const matchesSearch = !term || `${game.title} ${game.subtitle} ${game.tag}`.toLowerCase().includes(term);
     const matchesFilter = HOME_STATE.filter === "all" || game.category === HOME_STATE.filter;
-    return matchesSearch && matchesFilter;
+    return matchesFilter;
   });
 }
 function findByIds(games, ids) { return ids.map((id) => games.find((game) => game.id === id)).filter(Boolean); }
-function buildTop() { return `<section class="mx-home-top"><div class="mx-home-greeting"><p class="mx-home-kicker">Hola</p><h1 class="mx-home-title">¿A qué jugamos hoy?</h1></div><div class="mx-home-actions"><button class="mx-icon-btn" data-home-scroll="search" aria-label="Buscar">⌕</button><button class="mx-icon-btn" data-home-scroll="profile" aria-label="Perfil">◌</button></div></section>`; }
-function buildSearch() { return `<section class="mx-home-search" id="search" aria-label="Buscar juegos"><span class="mx-home-search-icon" aria-hidden="true">⌕</span><input class="mx-home-search-input" type="search" value="${escapeHtml(HOME_STATE.search)}" placeholder="Buscar juegos" data-home-search /></section>`; }
-function buildHero(game, heroImage) {
-  const openId = game?.id || "";
-  return `<section class="mx-home-hero"><div class="mx-home-hero-copy"><p class="mx-home-kicker">Juego del día</p><h2 class="mx-home-hero-title">${escapeHtml(game?.title || "Minijuegos")}</h2><p class="mx-home-hero-text">${escapeHtml(game?.subtitle || "Una partida rápida para empezar sin pensar demasiado.")}</p><div class="mx-home-hero-actions"><button class="mx-btn mx-btn-primary" data-action="open-game" data-game-id="${escapeHtml(openId)}">Jugar</button></div></div><div class="mx-home-hero-media">${heroImage ? `<img src="${escapeHtml(heroImage)}" alt="Juego destacado" />` : game?.glyph || ""}</div></section>`;
-}
+function buildTop() { return `<section class="mx-home-top"><div class="mx-home-greeting"><p class="mx-home-kicker">Hola</p><h1 class="mx-home-title">¿A qué jugamos hoy?</h1></div><div class="mx-home-actions"><button class="mx-icon-btn" data-home-scroll="juegos" aria-label="Juegos">▦</button><button class="mx-icon-btn" data-home-scroll="profile" aria-label="Perfil">◌</button></div></section>`; }
 function buildCategories() { return `<section class="mx-panel" id="categorias"><div class="mx-categories">${CATEGORY_ITEMS.filter((item) => item.key !== "all").map((item) => `<button class="mx-category-btn ${HOME_STATE.filter === item.key ? "is-active" : ""}" data-home-filter="${item.key}"><span class="mx-category-icon" aria-hidden="true">${item.icon}</span><span class="mx-category-label">${escapeHtml(item.name)}</span></button>`).join("")}</div></section>`; }
 function buildCard(game) { return `<article class="mx-game-card" data-accent="${escapeHtml(game.category)}"><button class="mx-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button><div class="mx-game-thumb">${game.glyph}</div><div class="mx-game-body"><h4 class="mx-game-title">${escapeHtml(game.title)}</h4><p class="mx-game-sub">${escapeHtml(game.subtitle)}</p></div><div class="mx-game-meta"><span class="mx-game-chip">${escapeHtml(game.tag)}</span></div></article>`; }
 function buildContinueCard(game) {
   const progress = game.id === "futbol-turnos" ? 68 : 43;
   const meta = game.id === "futbol-turnos" ? "Partida abierta" : "Tablero a medias";
-  return `<article class="mx-game-card" data-accent="${escapeHtml(game.category)}"><button class="mx-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button><div class="mx-game-thumb">${game.glyph}</div><div class="mx-game-body"><h4 class="mx-game-title">${escapeHtml(game.title)}</h4><p class="mx-game-sub">${escapeHtml(meta)}</p></div><div class="mx-progress"><div class="mx-progress-head"><span>Progreso</span><span>${progress}%</span></div><div class="mx-progress-track"><div class="mx-progress-fill" style="width:${progress}%"></div></div></div></article>`;
+  return `<article class="mx-game-card"><button class="mx-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button><div class="mx-game-thumb">${game.glyph}</div><div class="mx-game-body"><h4 class="mx-game-title">${escapeHtml(game.title)}</h4><p class="mx-game-sub">${escapeHtml(meta)}</p></div><div class="mx-progress"><div class="mx-progress-head"><span>Progreso</span><span>${progress}%</span></div><div class="mx-progress-track"><div class="mx-progress-fill" style="width:${progress}%"></div></div></div></article>`;
 }
 function buildFeatured(games) { return `<section class="mx-panel"><div class="mx-section-head"><h3 class="mx-section-title">Juegos destacados</h3></div><div class="mx-featured-grid">${games.map(buildCard).join("")}</div></section>`; }
 function buildCatalog(games) {
@@ -348,13 +319,12 @@ function buildCatalog(games) {
 function buildContinue(games) { if (!games.length) return ""; return `<section class="mx-panel" id="seguir"><div class="mx-section-head"><h3 class="mx-section-title">Seguir</h3></div><div class="mx-continue-grid">${games.map(buildContinueCard).join("")}</div></section>`; }
 function buildBottomNav() { return `<nav class="mx-bottom-nav"><div class="mx-bottom-nav-row"><button class="mx-nav-btn is-active" data-home-scroll="top"><span class="mx-nav-bubble">⌂</span><span>Inicio</span></button><button class="mx-nav-btn" data-home-scroll="juegos"><span class="mx-nav-bubble">▦</span><span>Juegos</span></button><button class="mx-nav-btn" data-home-scroll="seguir"><span class="mx-nav-bubble">♥</span><span>Favoritos</span></button><button class="mx-nav-btn" data-home-scroll="ranking"><span class="mx-nav-bubble">★</span><span>Ranking</span></button><button class="mx-nav-btn" data-home-scroll="profile"><span class="mx-nav-bubble">◌</span><span>Perfil</span></button></div></nav>`; }
 function renderTransformedHome(screen, data) {
-  const filtered = filterGames(data.games);
-  const visible = filtered.length ? filtered : data.games;
-  const heroGame = data.games.find((g) => g.id === HERO_ID) || visible[0] || data.games[0];
-  const featured = findByIds(visible, FEATURED_IDS);
+  const visible = filterGames(data.games);
+  const featured = findByIds(visible.length ? visible : data.games, FEATURED_IDS);
   const continueGames = findByIds(data.games, ["futbol-turnos", "buscaminas"]);
+  const base = visible.length ? visible : data.games;
   screen.classList.add("mx-home-screen");
-  screen.innerHTML = `${buildTop()}${buildSearch()}${buildHero(heroGame, data.heroImage)}${buildCategories()}${buildFeatured(featured.length ? featured : visible.slice(0, 4))}${buildContinue(continueGames)}${buildCatalog(visible)}<div id="ranking"></div><div id="profile"></div>${buildBottomNav()}`;
+  screen.innerHTML = `${buildTop()}${buildCategories()}${buildFeatured(featured.length ? featured : base.slice(0, 4))}${buildContinue(continueGames)}${buildCatalog(base)}<div id="ranking"></div><div id="profile"></div>${buildBottomNav()}`;
 }
 function enhanceHomeScreen(screen) {
   if (!screen || screen.dataset.homeBusy === "1") return;
@@ -370,12 +340,6 @@ function rerenderHome() {
 function bindHomeEvents() {
   if (document.body.dataset.mxHomeEventsBound === "1") return;
   document.body.dataset.mxHomeEventsBound = "1";
-  document.addEventListener("input", (event) => {
-    const target = event.target;
-    if (!(target instanceof HTMLInputElement) || !target.matches("[data-home-search]")) return;
-    HOME_STATE.search = target.value || "";
-    rerenderHome();
-  });
   document.addEventListener("click", (event) => {
     const target = event.target instanceof Element ? event.target.closest("[data-home-filter],[data-home-scroll],[data-home-toggle-all]") : null;
     if (!target) return;
@@ -390,7 +354,7 @@ function bindHomeEvents() {
       rerenderHome();
       return;
     }
-    const map = {top:".mx-home-top",search:"#search",categorias:"#categorias",seguir:"#seguir",juegos:"#juegos",ranking:"#ranking",profile:"#profile"};
+    const map = {top:".mx-home-top",categorias:"#categorias",seguir:"#seguir",juegos:"#juegos",ranking:"#ranking",profile:"#profile"};
     const selector = map[target.getAttribute("data-home-scroll") || ""];
     if (!selector) return;
     const node = getAppRoot()?.querySelector(selector);
