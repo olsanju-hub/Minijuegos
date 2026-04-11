@@ -49,6 +49,18 @@ body,body:not(.is-home-screen){
   backdrop-filter:blur(14px);
   -webkit-backdrop-filter:blur(14px);
 }
+.home-library-header h1,
+.home-library-header h2,
+.home-library-header .topbar-title,
+.home-library-header .topbar-sub,
+.home-library-header .home-title,
+.home-library-header .home-subtitle,
+.home-library-header .brand-title,
+.home-library-header .brand-subtitle,
+.home-library-header .app-title,
+.home-library-header .app-subtitle{
+  display:none !important;
+}
 .btn,.btn-primary,.btn-secondary,.btn-ghost,.btn-icon,.pill,.mx-category-btn,.mx-section-link{
   font-family:inherit;
 }
@@ -82,7 +94,6 @@ body,body:not(.is-home-screen){
 .mx-game-title{margin:0;font-size:.98rem;font-weight:700;letter-spacing:-.03em;color:var(--mx-text);}
 .mx-game-sub{margin:0;font-size:.76rem;line-height:1.35;color:var(--mx-text-soft);}
 .mx-game-meta{display:flex;justify-content:flex-start;}.mx-game-chip{min-height:24px;padding:0 8px;border-radius:var(--mx-radius-pill);background:linear-gradient(180deg,rgba(231,236,231,.96) 0%,rgba(220,227,220,.84) 100%);color:#556456;border:1px solid rgba(95,112,95,.14);display:inline-flex;align-items:center;font-size:.64rem;font-weight:700;}
-.mx-progress{display:grid;gap:6px;}.mx-progress-head{display:flex;align-items:center;justify-content:space-between;gap:8px;font-size:.68rem;color:var(--mx-text-soft);} .mx-progress-track{height:9px;border-radius:999px;background:rgba(56,49,43,.08);overflow:hidden;} .mx-progress-fill{height:100%;border-radius:inherit;background:linear-gradient(90deg,var(--mx-accent) 0%,var(--mx-accent-strong) 100%);}
 @media (max-width:760px){
   .app-shell,.app-shell.app-shell-home,.app-shell:not(.app-shell-home){width:min(100%,calc(100% - 14px));margin:8px auto 16px;}
   .home-screen.home-library-screen.is-catalog.mx-home-screen{gap:14px;}
@@ -104,13 +115,14 @@ function getAppRoot(){return document.getElementById("app");}
 function getCategoryForGame(id){if(["trafico","tanques","futbol-turnos"].includes(id)) return "arcade"; if(["parchis","damas","billar","connect4","tictactoe","escaleras-serpientes"].includes(id)) return "mesa"; if(["buscaminas","sokoban"].includes(id)) return "logica"; if(["memory","impostor","preguntas-rapidas","mimica-retos"].includes(id)) return "party"; return "mesa";}
 function getTag(id){const tags={trafico:"1 jugador",tanques:"2 jugadores",billar:"2 jugadores",damas:"estrategia",parchis:"local",connect4:"rápido",tictactoe:"rápido",buscaminas:"1 jugador",sokoban:"lógica","futbol-turnos":"2 jugadores",memory:"party",impostor:"grupo","preguntas-rapidas":"party","mimica-retos":"party"}; return tags[id]||"local";}
 function collectGames(screen){return Array.from(screen.querySelectorAll(".home-game-card")).map((card)=>{const hit=card.querySelector(".home-game-card-hit"); const id=hit?.dataset.gameId||""; return {id,title:card.querySelector(".home-game-card-title")?.textContent?.trim()||"Juego",subtitle:card.querySelector(".home-game-card-subtitle")?.textContent?.trim()||"Partida local",glyph:card.querySelector(".home-game-card-glyph")?.outerHTML||"<div class=\"mx-game-glyph\"></div>",category:getCategoryForGame(id),tag:getTag(id)};});}
-function getHomeData(screen){return {headerHtml:screen.querySelector(".home-library-header")?.outerHTML||"",heroImage:screen.querySelector(".home-family-art-image")?.getAttribute("src")||"./assets/home-hero-family.png",games:collectGames(screen)};}
+function cleanHeaderHtml(headerHtml){if(typeof document==="undefined"||!headerHtml) return headerHtml||""; const wrap=document.createElement("div"); wrap.innerHTML=headerHtml; wrap.querySelectorAll("h1,h2,.topbar-title,.topbar-sub,.home-title,.home-subtitle,.brand-title,.brand-subtitle,.app-title,.app-subtitle").forEach((node)=>node.remove()); return wrap.innerHTML;}
+function getHomeData(screen){return {headerHtml:cleanHeaderHtml(screen.querySelector(".home-library-header")?.outerHTML||""),heroImage:screen.querySelector(".home-family-art-image")?.getAttribute("src")||"./assets/home-hero-family.png",games:collectGames(screen)};}
 function filterGames(games){return games.filter((game)=>HOME_STATE.filter==="all"||game.category===HOME_STATE.filter);}
 function findByIds(games,ids){return ids.map((id)=>games.find((game)=>game.id===id)).filter(Boolean);}
 function buildCover(heroImage){return `<section class="mx-home-cover"><img src="${escapeHtml(heroImage)}" alt="Cabecera de Minijuegos" /></section>`;}
 function buildCategories(){return `<section class="mx-panel" id="categorias"><div class="mx-categories">${CATEGORY_ITEMS.filter((item)=>item.key!=="all").map((item)=>`<button class="mx-category-btn ${HOME_STATE.filter===item.key?"is-active":""}" data-home-filter="${item.key}"><span class="mx-category-icon" aria-hidden="true">${item.icon}</span><span class="mx-category-label">${escapeHtml(item.name)}</span></button>`).join("")}</div></section>`;}
 function buildCard(game){return `<article class="mx-game-card"><button class="mx-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button><div class="mx-game-thumb">${game.glyph}</div><div class="mx-game-body"><h4 class="mx-game-title">${escapeHtml(game.title)}</h4><p class="mx-game-sub">${escapeHtml(game.subtitle)}</p></div><div class="mx-game-meta"><span class="mx-game-chip">${escapeHtml(game.tag)}</span></div></article>`;}
-function buildContinueCard(game){const progress=game.id==="futbol-turnos"?68:43; const meta=game.id==="futbol-turnos"?"Partida abierta":"Tablero a medias"; return `<article class="mx-game-card"><button class="mx-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button><div class="mx-game-thumb">${game.glyph}</div><div class="mx-game-body"><h4 class="mx-game-title">${escapeHtml(game.title)}</h4><p class="mx-game-sub">${escapeHtml(meta)}</p></div><div class="mx-progress"><div class="mx-progress-head"><span>Progreso</span><span>${progress}%</span></div><div class="mx-progress-track"><div class="mx-progress-fill" style="width:${progress}%"></div></div></div></article>`;}
+function buildContinueCard(game){const meta=game.id==="futbol-turnos"?"Partida abierta":"Tablero a medias"; return `<article class="mx-game-card"><button class="mx-card-hit" data-action="open-game" data-game-id="${escapeHtml(game.id)}" aria-label="Abrir ${escapeHtml(game.title)}"></button><div class="mx-game-thumb">${game.glyph}</div><div class="mx-game-body"><h4 class="mx-game-title">${escapeHtml(game.title)}</h4><p class="mx-game-sub">${escapeHtml(meta)}</p></div><div class="mx-game-meta"><span class="mx-game-chip">${escapeHtml(game.tag)}</span></div></article>`;}
 function buildFeatured(games){return `<section class="mx-panel"><div class="mx-section-head"><h3 class="mx-section-title">Juegos destacados</h3></div><div class="mx-featured-grid">${games.map(buildCard).join("")}</div></section>`;}
 function buildCatalog(games){const visible=HOME_STATE.showAll?games:games.slice(0,6); return `<section class="mx-panel" id="juegos"><div class="mx-section-head"><h3 class="mx-section-title">Todos los juegos</h3><button class="mx-section-link" data-home-toggle-all>${HOME_STATE.showAll?"Ver menos":`Ver los ${games.length}`}</button></div><div class="mx-catalog-grid">${visible.map(buildCard).join("")}</div></section>`;}
 function buildContinue(games){if(!games.length) return ""; return `<section class="mx-panel" id="seguir"><div class="mx-section-head"><h3 class="mx-section-title">Seguir</h3></div><div class="mx-continue-grid">${games.map(buildContinueCard).join("")}</div></section>`;}
