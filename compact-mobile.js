@@ -17,7 +17,7 @@ const CSS = String.raw`
   .topbar-actions{gap:4px;}
   .btn,.btn-primary,.btn-secondary,.btn-ghost{height:36px !important;min-height:36px !important;padding:0 11px !important;font-size:.8rem !important;border-radius:12px !important;}
   .btn-icon{width:34px !important;height:34px !important;min-width:34px !important;border-radius:11px !important;font-size:.76rem !important;}
-  .btn-icon-text{min-width:44px;padding:0 8px !important;font-size:.62rem !important;}
+  .btn-icon-text{min-width:52px !important;padding:0 7px !important;font-size:.58rem !important;line-height:1 !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
   .config-card,.config-card-modern,.app-shell:not(.app-shell-home) .config-card{width:min(100%,760px);padding:12px !important;gap:10px !important;max-height:calc(var(--app-dvh,100dvh) - 62px);overflow:hidden;}
   .config-hero{display:grid;grid-template-columns:116px minmax(0,1fr) !important;gap:10px !important;align-items:center;}
@@ -52,7 +52,7 @@ const CSS = String.raw`
   .player-name,.player-chip-list-compact .player-name{max-width:none;font-size:.72rem;}
 
   .actions-bottom,.app-shell:not(.app-shell-home) .actions-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px !important;}
-  .actions-bottom .btn,.app-shell:not(.app-shell-home) .actions-bottom .btn{width:100%;min-width:0;height:34px !important;min-height:34px !important;padding:0 6px !important;font-size:.62rem !important;line-height:1 !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:11px !important;}
+  .actions-bottom .btn,.app-shell:not(.app-shell-home) .actions-bottom .btn{width:100%;min-width:0;height:34px !important;min-height:34px !important;padding:0 8px !important;font-size:.7rem !important;border-radius:11px !important;}
 }
 `;
 
