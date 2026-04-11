@@ -52,7 +52,7 @@ const CSS = String.raw`
   .player-name,.player-chip-list-compact .player-name{max-width:none;font-size:.72rem;}
 
   .actions-bottom,.app-shell:not(.app-shell-home) .actions-bottom{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px !important;}
-  .actions-bottom .btn,.app-shell:not(.app-shell-home) .actions-bottom .btn{width:100%;min-width:0;height:34px !important;min-height:34px !important;padding:0 8px !important;font-size:.7rem !important;border-radius:11px !important;}
+  .actions-bottom .btn,.app-shell:not(.app-shell-home) .actions-bottom .btn{width:100%;min-width:0;height:34px !important;min-height:34px !important;padding:0 6px !important;font-size:.62rem !important;line-height:1 !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:11px !important;}
 }
 `;
 
