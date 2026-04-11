@@ -1,4 +1,5 @@
 import { applyAppearanceRefresh } from "./appearance-refresh.js";
+import { applyCompactMobileRefresh } from "./compact-mobile.js";
 import { createEngine } from "./engine.js";
 import { createUI } from "./ui.js";
 import { tresEnRayaGame } from "./games/tres-en-raya.js";
@@ -18,6 +19,7 @@ const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
 
 applyAppearanceRefresh();
+applyCompactMobileRefresh();
 
 const ui = createUI({
   appElement,
