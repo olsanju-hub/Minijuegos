@@ -14,10 +14,24 @@ const CSS = String.raw`
   .topbar-copy{gap:1px;min-width:0;}
   .topbar-title,.app-shell:not(.app-shell-home) .topbar-title{font-size:.96rem !important;line-height:1;}
   .topbar-sub,.app-shell:not(.app-shell-home) .topbar-sub{font-size:.7rem !important;line-height:1.15;max-width:18ch;white-space:normal;overflow:visible;}
-  .topbar-actions{gap:4px;}
+  .topbar-actions{gap:4px;align-items:center;flex-wrap:nowrap;}
   .btn,.btn-primary,.btn-secondary,.btn-ghost{height:36px !important;min-height:36px !important;padding:0 11px !important;font-size:.8rem !important;border-radius:12px !important;}
   .btn-icon{width:34px !important;height:34px !important;min-width:34px !important;border-radius:11px !important;font-size:.76rem !important;}
-  .btn-icon-text{min-width:52px !important;padding:0 7px !important;font-size:.58rem !important;line-height:1 !important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .topbar-actions .btn-icon-text,
+  .btn-icon-text{
+    width:64px !important;
+    min-width:64px !important;
+    max-width:64px !important;
+    flex:0 0 64px !important;
+    padding:0 5px !important;
+    font-size:.54rem !important;
+    line-height:1 !important;
+    letter-spacing:-.01em;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    justify-content:center;
+  }
 
   .config-card,.config-card-modern,.app-shell:not(.app-shell-home) .config-card{width:min(100%,760px);padding:12px !important;gap:10px !important;max-height:calc(var(--app-dvh,100dvh) - 62px);overflow:hidden;}
   .config-hero{display:grid;grid-template-columns:116px minmax(0,1fr) !important;gap:10px !important;align-items:center;}
