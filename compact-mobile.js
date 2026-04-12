@@ -15,6 +15,7 @@ const CSS = String.raw`
   .topbar-title,.app-shell:not(.app-shell-home) .topbar-title{font-size:.96rem !important;line-height:1;}
   .topbar-sub,.app-shell:not(.app-shell-home) .topbar-sub{font-size:.7rem !important;line-height:1.15;max-width:18ch;white-space:normal;overflow:visible;}
   .topbar-actions{gap:4px;align-items:center;flex-wrap:nowrap;}
+  .topbar-actions [data-action="restart-game"]{display:none !important;}
   .btn,.btn-primary,.btn-secondary,.btn-ghost{height:36px !important;min-height:36px !important;padding:0 11px !important;font-size:.8rem !important;border-radius:12px !important;}
   .btn-icon{width:34px !important;height:34px !important;min-width:34px !important;border-radius:11px !important;font-size:.76rem !important;}
   .topbar-actions .btn-icon-text,
