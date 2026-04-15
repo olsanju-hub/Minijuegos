@@ -51,12 +51,15 @@ const FOOTBALL_STYLES = String.raw`
 /* GLOBAL OVERRIDES PARA MAXIMIZAR ESPACIO MOVIL */
 @media (max-width: 1024px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
+    position: relative;
+    display: block !important;
     padding: 0 !important;
     gap: 0 !important;
     width: 100%;
     height: 100dvh;
     max-height: 100dvh;
     border-radius: 0;
+    overflow: hidden;
   }
 
   .game-screen-futbol-turnos .topbar {
@@ -83,6 +86,33 @@ const FOOTBALL_STYLES = String.raw`
 
   .game-screen-futbol-turnos .actions-bottom {
     display: none !important;
+  }
+
+  .game-screen-futbol-turnos .game-shell-body {
+    position: absolute;
+    inset: 0;
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .game-screen-futbol-turnos .game-stage-layout,
+  .game-screen-futbol-turnos .game-stage-main,
+  .game-screen-futbol-turnos .board-wrap {
+    display: block !important;
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    overflow: hidden;
   }
 }
 
@@ -132,6 +162,7 @@ const FOOTBALL_STYLES = String.raw`
   .football-field {
     padding: 0;
     transform: rotate(90deg);
+    transform-origin: center center;
     width: 100dvh;
     height: 100vw;
     max-width: 86dvh;
