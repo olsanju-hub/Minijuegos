@@ -24,12 +24,31 @@ const GRAVITY = 620;
 const PROJECTILE_STEP_MS = 8;
 const MAX_FRAME_MS = 120;
 const PREVIEW_TIME_SECONDS = 0.42;
-const IMPACT_DURATION_MS = 780;
+const TURN_START_SETTLE_MS = 340;
+const DAMAGE_EVALUATION_DURATION_MS = 1720;
+const EXPLOSION_ANIMATION_MS = 780;
+const TOUCH_AIM_ACTIVATION_PX = 14;
+const TOUCH_FIRE_MIN_PULL_PX = 26;
+const TOUCH_MOVE_TAP_MAX_PX = 10;
+const TOUCH_MOVE_TAP_MAX_MS = 240;
+const TOUCH_POWER_DISTANCE = 280;
 
 const DAMAGE_RADIUS = 138;
 const SPLASH_DAMAGE = 46;
 const DIRECT_HIT_BONUS = 20;
 const STARTING_HEALTH = 100;
+const TURN_FUEL = 120;
+const MOVE_STEP = 18;
+const MOVE_MIN_X = 86;
+const MOVE_MAX_X = FIELD_WIDTH - 86;
+const WEAPON_MAX_AMMO = 1;
+const STANDARD_CAMERA_ZOOM = 1;
+const SIMULATION_CAMERA_ZOOM = 0.82;
+const DAMAGE_CAMERA_ZOOM = 0.92;
+const CAMERA_Y_OFFSET = 124;
+const WIND_MIN = -34;
+const WIND_MAX = 34;
+const WIND_ACCEL_FACTOR = 7.4;
 
 const TERRAIN_SAMPLE_COUNT = 161;
 const TERRAIN_KEYS = ["clasico", "ondulado"];
@@ -108,6 +127,7 @@ const TANKS_STYLES = String.raw`
   display: flex;
   padding: 0;
   min-height: 0;
+  overscroll-behavior: contain;
 }
 
 .game-screen-tanques .actions-bottom {
@@ -369,6 +389,26 @@ const TANKS_STYLES = String.raw`
   display: flex;
   align-items: center;
   justify-content: center;
+  overflow: hidden;
+}
+
+.tanks-stage-hud {
+  position: absolute;
+  inset: 10px 12px auto;
+  z-index: 6;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.86fr) minmax(0, 1fr);
+  gap: 8px;
+  width: calc(100% - 24px);
+  pointer-events: none;
+}
+
+.tanks-stage-status {
+  min-width: 0;
+}
+
+.tanks-team-card.is-pending {
+  border-color: rgba(112, 133, 162, 0.5);
 }
 
 .tanks-controls-dock {
@@ -377,62 +417,156 @@ const TANKS_STYLES = String.raw`
   display: flex;
   align-items: stretch;
   min-height: 0;
+  min-width: 0;
   padding-top: 0;
 }
 
-.tanks-orientation-note {
+.tanks-touch-context {
+  position: absolute;
+  inset: auto 10px 10px;
+  z-index: 7;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  pointer-events: none;
+}
+
+.tanks-touch-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(197, 189, 175, 0.84);
+  background: rgba(255, 253, 249, 0.78);
+  color: #4d5d55;
+  font-size: 0.64rem;
+  font-weight: 760;
+  box-shadow: 0 6px 14px rgba(28, 33, 35, 0.08);
+}
+
+.tanks-shell.is-touch {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.tanks-shell.is-touch .tanks-stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+  border-radius: 24px;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.tanks-shell.is-touch .tanks-battlefield {
+  height: 100%;
+  min-height: 0;
+}
+
+.tanks-shell.is-touch .tanks-stage-hud {
+  inset: 8px 8px auto;
+  gap: 6px;
+  width: calc(100% - 16px);
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 0.72fr) minmax(0, 1fr);
+}
+
+.tanks-shell.is-touch .tanks-team-card,
+.tanks-shell.is-touch .tanks-status-card {
+  padding: 8px 10px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 253, 249, 0.84) 0%, rgba(246, 241, 234, 0.74) 100%);
+}
+
+.tanks-shell.is-touch .tanks-team-name {
+  font-size: 0.76rem;
+}
+
+.tanks-shell.is-touch .tanks-team-role,
+.tanks-shell.is-touch .tanks-status-note,
+.tanks-shell.is-touch .tanks-status-meta {
+  display: none;
+}
+
+.tanks-shell.is-touch .tanks-health {
+  font-size: 1.2rem;
+}
+
+.tanks-shell.is-touch .tanks-health-track {
+  margin-top: 6px;
+  height: 7px;
+}
+
+.tanks-shell.is-touch .tanks-resource-row {
+  gap: 4px;
+  margin-top: 6px;
+}
+
+.tanks-shell.is-touch .tanks-resource-pill,
+.tanks-shell.is-touch .tanks-status-tag,
+.tanks-shell.is-touch .tanks-status-pill {
+  min-height: 20px;
+  padding: 0 7px;
+  font-size: 0.56rem;
+}
+
+.tanks-shell.is-touch .tanks-status-copy {
+  margin-top: 6px;
+  gap: 2px;
+}
+
+.tanks-shell.is-touch .tanks-status-title {
+  font-size: 0.74rem;
+}
+
+.tanks-shell.is-touch .tanks-field {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: none;
+  touch-action: none;
+}
+
+.tanks-shell.is-mobile-portrait {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: clamp(220px, 42dvh, 320px);
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
 }
 
-.tanks-orientation-card {
-  display: grid;
-  gap: 6px;
-  width: min(100%, 400px);
-  margin: 0 auto;
-  padding: 16px 15px;
-  border-radius: 20px;
-  border: 1px solid rgba(210, 197, 171, 0.84);
-  background:
-    radial-gradient(circle at 14% 0%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 34%),
-    linear-gradient(180deg, rgba(255, 252, 246, 0.98) 0%, rgba(246, 238, 226, 0.98) 100%);
-  box-shadow:
-    0 18px 28px rgba(54, 48, 40, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
-  text-align: center;
-}
-
-.tanks-orientation-eyebrow {
-  display: inline-flex;
-  justify-content: center;
+.tanks-portrait-frame {
+  position: relative;
+  flex: 1 1 auto;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  display: flex;
   align-items: center;
-  min-height: 22px;
-  margin: 0 auto;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: rgba(72, 116, 95, 0.1);
-  color: #47695a;
-  font-size: 0.6rem;
-  font-weight: 820;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  justify-content: center;
+  overflow: hidden;
 }
 
-.tanks-orientation-title {
-  margin: 0;
-  color: #213029;
-  font-size: 0.96rem;
-  font-weight: 800;
-  letter-spacing: -0.03em;
+.tanks-portrait-embed {
+  position: relative;
+  width: min(100%, var(--tanks-embed-frame-width, 380px));
+  height: min(100%, var(--tanks-embed-frame-height, 620px));
 }
 
-.tanks-orientation-copy {
-  margin: 0;
-  color: #607065;
-  font-size: 0.8rem;
-  line-height: 1.34;
+.tanks-portrait-canvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: var(--tanks-embed-landscape-width, 620px);
+  height: var(--tanks-embed-landscape-height, 380px);
+  transform: translate(-50%, -50%) rotate(90deg);
+  transform-origin: center center;
 }
 
 .tanks-field {
@@ -631,6 +765,16 @@ const TANKS_STYLES = String.raw`
   stroke-width: 2.8;
 }
 
+.tanks-preview-reticle {
+  filter: drop-shadow(0 5px 8px rgba(15, 23, 42, 0.14));
+}
+
+.tanks-preview-cross {
+  stroke: rgba(51, 65, 85, 0.7);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+}
+
 .tanks-controls {
   position: relative;
   z-index: 1;
@@ -638,7 +782,8 @@ const TANKS_STYLES = String.raw`
   width: 100%;
   height: 100%;
   grid-template-columns: 1fr;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-auto-rows: min-content;
+  align-content: start;
   gap: 8px;
   margin: 0;
 }
@@ -677,6 +822,12 @@ const TANKS_STYLES = String.raw`
   align-items: center;
 }
 
+.tanks-move-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
 .tanks-step {
   min-width: 34px;
   height: 34px;
@@ -706,6 +857,69 @@ const TANKS_STYLES = String.raw`
 .tanks-range {
   width: 100%;
   accent-color: #334155;
+}
+
+.tanks-weapon-button {
+  display: grid;
+  gap: 2px;
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid rgba(106, 154, 129, 0.24);
+  border-radius: 14px;
+  background: linear-gradient(180deg, rgba(244, 249, 246, 0.92) 0%, rgba(232, 241, 236, 0.9) 100%);
+  color: #2e4739;
+  text-align: left;
+}
+
+.tanks-weapon-button strong {
+  font-size: 0.86rem;
+}
+
+.tanks-weapon-button span {
+  color: #5d7168;
+  font-size: 0.7rem;
+  line-height: 1.3;
+}
+
+.tanks-context-panel {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  width: 100%;
+  padding: 14px 14px 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+.tanks-context-tag {
+  display: inline-flex;
+  width: fit-content;
+  min-height: 24px;
+  align-items: center;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(72, 116, 95, 0.1);
+  color: #47695a;
+  font-size: 0.62rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tanks-context-title {
+  margin: 0;
+  color: #223128;
+  font-size: 0.96rem;
+  font-weight: 780;
+}
+
+.tanks-context-note {
+  margin: 0;
+  color: #68746c;
+  font-size: 0.78rem;
+  line-height: 1.38;
 }
 
 .tanks-fire {
@@ -749,6 +963,73 @@ const TANKS_STYLES = String.raw`
   stroke-linecap: round;
 }
 
+.tanks-resource-row {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.tanks-resource-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.66);
+  border: 1px solid rgba(207, 199, 184, 0.74);
+  color: #516159;
+  font-size: 0.66rem;
+  font-weight: 720;
+}
+
+.tanks-handover-overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 22px;
+  background: rgba(17, 24, 39, 0.74);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+.tanks-handover-card {
+  display: grid;
+  gap: 8px;
+  width: min(100%, 360px);
+  padding: 20px 18px;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 22px;
+  background: linear-gradient(180deg, rgba(248, 250, 252, 0.96) 0%, rgba(236, 242, 248, 0.94) 100%);
+  color: #1f2937;
+  text-align: center;
+  box-shadow: 0 22px 44px rgba(15, 23, 42, 0.28);
+}
+
+.tanks-handover-kicker {
+  color: #52685e;
+  font-size: 0.64rem;
+  font-weight: 820;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tanks-handover-title {
+  font-size: 1.1rem;
+  line-height: 1.2;
+}
+
+.tanks-handover-copy {
+  color: #607065;
+  font-size: 0.8rem;
+  line-height: 1.42;
+}
+
 .tanks-field.is-disabled .tanks-preview-line,
 .tanks-field.is-disabled .tanks-preview-impact {
   opacity: 0.24;
@@ -760,6 +1041,14 @@ const TANKS_STYLES = String.raw`
 }
 
 @media (max-width: 980px) {
+  .tanks-stage-hud {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tanks-stage-status {
+    grid-column: 1 / -1;
+  }
+
   .tanks-strip {
     grid-template-columns: 1fr;
   }
@@ -777,6 +1066,11 @@ const TANKS_STYLES = String.raw`
 }
 
 @media (max-width: 760px) {
+  .tanks-stage-hud {
+    inset: 8px 8px auto;
+    gap: 6px;
+  }
+
   .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
     gap: 12px;
   }
@@ -810,25 +1104,52 @@ const TANKS_STYLES = String.raw`
   .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
     width: min(100%, calc(100vw - 8px));
     min-height: calc(100dvh - 10px);
+    gap: 6px;
+  }
+
+  .game-screen-tanques .topbar {
+    padding: 6px 10px;
+  }
+
+  .game-screen-tanques .topbar-main {
+    gap: 2px;
   }
 
   .game-screen-tanques .board-wrap {
     padding: 0;
+    overflow: hidden;
   }
 
   .game-screen-tanques .actions-bottom {
     display: none;
   }
 
-  .tanks-shell {
-    display: none;
+  .game-screen-tanques .game-shell-body,
+  .game-screen-tanques .game-stage-layout,
+  .game-screen-tanques .game-stage-main,
+  .game-screen-tanques .board-wrap,
+  .tanks-shell.is-mobile-portrait {
+    min-height: 0;
+    height: 100%;
+    overflow: hidden;
   }
 
-  .tanks-orientation-note {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: clamp(280px, 56dvh, 420px);
+  .tanks-shell.is-mobile-portrait .tanks-stage-hud {
+    inset: 6px 6px auto;
+    gap: 4px;
+    width: calc(100% - 12px);
+    grid-template-columns: minmax(0, 1fr) 140px minmax(0, 1fr);
+  }
+
+  .tanks-shell.is-mobile-portrait .tanks-touch-context {
+    inset: auto 8px 8px;
+    gap: 4px;
+  }
+
+  .tanks-shell.is-mobile-portrait .tanks-touch-pill {
+    min-height: 20px;
+    padding: 0 8px;
+    font-size: 0.54rem;
   }
 }
 
@@ -918,6 +1239,10 @@ const TANKS_STYLES = String.raw`
     border-radius: 16px;
   }
 
+  .tanks-context-panel {
+    padding: 12px;
+  }
+
   .tanks-control-label,
   .tanks-control-value {
     font-size: 0.64rem;
@@ -940,6 +1265,7 @@ const TANKS_STYLES = String.raw`
 
 body.game-landscape-mobile-active .game-screen-tanques .board-wrap {
   padding: 0;
+  overflow: hidden;
 }
 
 body.game-landscape-mobile-active .tanks-shell {
@@ -949,14 +1275,11 @@ body.game-landscape-mobile-active .tanks-shell {
   gap: 0;
 }
 
-body.game-landscape-mobile-active .tanks-strip {
-  position: absolute;
-  inset: 0 0 auto;
-  z-index: 16;
-  width: min(100%, 780px);
-  margin: 0 auto;
-  grid-template-columns: minmax(0, 0.92fr) minmax(170px, 0.72fr) minmax(0, 0.92fr);
+body.game-landscape-mobile-active .tanks-stage-hud {
+  inset: 6px 6px auto;
   gap: 4px;
+  width: calc(100% - 12px);
+  grid-template-columns: minmax(0, 1fr) 150px minmax(0, 1fr);
 }
 
 body.game-landscape-mobile-active .tanks-team-card,
@@ -971,6 +1294,17 @@ body.game-landscape-mobile-active .tanks-status-card {
 
 body.game-landscape-mobile-active .tanks-team-name {
   font-size: 0.72rem;
+}
+
+body.game-landscape-mobile-active .tanks-resource-row {
+  gap: 4px;
+  margin-top: 6px;
+}
+
+body.game-landscape-mobile-active .tanks-resource-pill {
+  min-height: 20px;
+  padding: 0 7px;
+  font-size: 0.56rem;
 }
 
 body.game-landscape-mobile-active .tanks-team-role,
@@ -1000,17 +1334,14 @@ body.game-landscape-mobile-active .tanks-status-copy {
 }
 
 body.game-landscape-mobile-active .tanks-status-title {
-  font-size: 0.72rem;
+  font-size: 0.7rem;
 }
 
 body.game-landscape-mobile-active .tanks-stage {
-  position: relative;
-  inset: auto;
   height: 100%;
   min-height: 0;
-  grid-template-columns: minmax(0, 1fr) 188px;
-  grid-template-rows: minmax(0, 1fr);
-  gap: 8px;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0;
   padding: 0;
   border-radius: 24px;
   border: 0;
@@ -1018,15 +1349,9 @@ body.game-landscape-mobile-active .tanks-stage {
   box-shadow: none;
 }
 
-body.game-landscape-mobile-active .tanks-controls-dock {
-  display: flex;
-  align-items: stretch;
-  min-height: 0;
-  padding-top: 0;
-  border-top: 0;
-}
-
 body.game-landscape-mobile-active .tanks-battlefield {
+  position: relative;
+  height: 100%;
   min-height: 0;
   min-width: 0;
 }
@@ -1038,55 +1363,25 @@ body.game-landscape-mobile-active .tanks-field {
   max-height: none;
 }
 
-body.game-landscape-mobile-active .tanks-controls {
-  position: relative;
-  inset: auto;
-  z-index: 18;
-  width: 100%;
-  height: 100%;
-  margin: 0;
-  grid-template-columns: 1fr;
-  grid-template-rows: minmax(0, 1fr) minmax(0, 1fr) auto;
-  gap: 8px;
-  padding: 0;
-}
-
-body.game-landscape-mobile-active .tanks-control {
+body.game-landscape-mobile-active .tanks-touch-context {
+  inset: auto 8px 8px;
   gap: 4px;
-  align-content: start;
-  padding: 8px 9px;
-  border-radius: 14px;
-  background: rgba(255, 255, 255, 0.78);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
 }
 
-body.game-landscape-mobile-active .tanks-control-label,
-body.game-landscape-mobile-active .tanks-control-value {
-  font-size: 0.56rem;
-}
-
-body.game-landscape-mobile-active .tanks-range-row {
-  grid-template-columns: 28px minmax(0, 1fr) 28px;
-  gap: 5px;
-}
-
-body.game-landscape-mobile-active .tanks-step {
-  min-width: 0;
-  height: 28px;
-  border-radius: 10px;
-}
-
-body.game-landscape-mobile-active .tanks-fire {
-  width: 100%;
-  min-width: 0;
-  min-height: 46px;
-  height: auto;
-  border-radius: 16px;
-  align-self: end;
+body.game-landscape-mobile-active .tanks-touch-pill {
+  min-height: 20px;
+  padding: 0 8px;
+  font-size: 0.54rem;
 }
 
 body.game-landscape-mobile-active .tanks-footer {
   display: none;
+}
+
+body.game-landscape-mobile-active .tanks-handover-card {
+  width: min(100%, 300px);
+  padding: 16px 14px;
+  border-radius: 18px;
 }
 `;
 
@@ -1232,41 +1527,264 @@ function groundYAtTank(x, terrain) {
   return terrainHeightAt(terrain, x);
 }
 
-function createTank(slot, terrain) {
+function createCameraState() {
+  return {
+    centerX: FIELD_WIDTH / 2,
+    centerY: FIELD_HEIGHT / 2 - 14,
+    zoom: 0.92
+  };
+}
+
+function createTank(slot, terrain, player = null) {
   const x = slot === 0 ? 168 : 832;
   const groundY = groundYAtTank(x, terrain);
   const centerY = groundY - 24;
   return {
     slot,
+    playerId: player?.id || `tank-player-${slot}`,
     x,
     centerY,
     groundY,
     angle: slot === 0 ? 54 : 56,
     power: slot === 0 ? 68 : 66,
-    health: STARTING_HEALTH
+    health: STARTING_HEALTH,
+    fuel: TURN_FUEL,
+    ammo: {
+      basic: WEAPON_MAX_AMMO,
+      max: WEAPON_MAX_AMMO
+    },
+    selectedWeaponId: "basic",
+    statusEffects: {
+      burningTurns: 0,
+      burningDamage: 0
+    }
   };
 }
 
-function createState(options = {}) {
-  const terrain = buildTerrain(options.terrain);
-  const tanks = [createTank(0, terrain), createTank(1, terrain)];
+function cloneTank(tank) {
   return {
-    phase: "ready",
-    turnSlot: 0,
-    turnNumber: 1,
-    terrain,
-    tanks,
-    projectile: null,
-    impact: null,
-    lastReport: {
-      kind: "opening"
+    ...tank,
+    ammo: {
+      ...(tank.ammo || {})
     },
-    result: null
+    statusEffects: {
+      ...(tank.statusEffects || {})
+    }
   };
 }
 
 function cloneTanks(tanks) {
-  return tanks.map((tank) => ({ ...tank }));
+  return tanks.map(cloneTank);
+}
+
+function playerBySlot(players, slot) {
+  return players.find((player) => player.slot === slot) || null;
+}
+
+function normalizeCamera(camera) {
+  const zoom = clamp(Number(camera?.zoom) || STANDARD_CAMERA_ZOOM, 0.72, 1.12);
+  const visibleWidth = FIELD_WIDTH / zoom;
+  const visibleHeight = FIELD_HEIGHT / zoom;
+  const halfWidth = visibleWidth / 2;
+  const halfHeight = visibleHeight / 2;
+  return {
+    centerX:
+      halfWidth >= FIELD_WIDTH / 2
+        ? FIELD_WIDTH / 2
+        : clamp(Number(camera?.centerX) || FIELD_WIDTH / 2, halfWidth, FIELD_WIDTH - halfWidth),
+    centerY:
+      halfHeight >= FIELD_HEIGHT / 2
+        ? FIELD_HEIGHT / 2
+        : clamp(Number(camera?.centerY) || FIELD_HEIGHT / 2, halfHeight, FIELD_HEIGHT - halfHeight),
+    zoom
+  };
+}
+
+function cameraBlend(deltaMs, strength = 0.18) {
+  const frames = Math.max(1, deltaMs / 16);
+  return 1 - (1 - strength) ** frames;
+}
+
+function interpolateCamera(camera, target, deltaMs) {
+  const current = normalizeCamera(camera || createCameraState());
+  const desired = normalizeCamera(target || current);
+  const blend = cameraBlend(deltaMs);
+  return normalizeCamera({
+    centerX: lerp(current.centerX, desired.centerX, blend),
+    centerY: lerp(current.centerY, desired.centerY, blend),
+    zoom: lerp(current.zoom, desired.zoom, blend)
+  });
+}
+
+function cameraTransform(camera) {
+  const current = normalizeCamera(camera || createCameraState());
+  return `translate(${round(FIELD_WIDTH / 2, 2)} ${round(FIELD_HEIGHT / 2, 2)}) scale(${round(current.zoom, 4)}) translate(${round(-current.centerX, 2)} ${round(-current.centerY, 2)})`;
+}
+
+function cameraSettled(camera, target) {
+  const current = normalizeCamera(camera);
+  const desired = normalizeCamera(target);
+  return (
+    Math.abs(current.centerX - desired.centerX) < 6 &&
+    Math.abs(current.centerY - desired.centerY) < 6 &&
+    Math.abs(current.zoom - desired.zoom) < 0.012
+  );
+}
+
+function tankCameraFocus(tank, zoom = STANDARD_CAMERA_ZOOM) {
+  return normalizeCamera({
+    centerX: tank.x,
+    centerY: clamp(tank.centerY - CAMERA_Y_OFFSET, 130, FIELD_HEIGHT - 120),
+    zoom
+  });
+}
+
+function projectileCameraFocus(projectile) {
+  return normalizeCamera({
+    centerX: projectile.x,
+    centerY: clamp(projectile.y + 34, 150, FIELD_HEIGHT - 116),
+    zoom: SIMULATION_CAMERA_ZOOM
+  });
+}
+
+function impactCameraFocus(impact) {
+  return normalizeCamera({
+    centerX: impact.x,
+    centerY: clamp(impact.y - 24, 130, FIELD_HEIGHT - 116),
+    zoom: DAMAGE_CAMERA_ZOOM
+  });
+}
+
+function buildWind(turnNumber, terrainKey) {
+  const terrainSeed = String(terrainKey || "")
+    .split("")
+    .reduce((sum, char) => sum + char.charCodeAt(0), 0);
+  const raw = Math.sin(turnNumber * 12.9898 + terrainSeed * 0.37) * 43758.5453;
+  const normalized = raw - Math.floor(raw);
+  let strength = Math.round(lerp(WIND_MIN, WIND_MAX, normalized));
+  if (Math.abs(strength) < 4) {
+    strength = 0;
+  }
+  return {
+    strength,
+    accel: strength * WIND_ACCEL_FACTOR,
+    direction: strength === 0 ? "calm" : strength > 0 ? "east" : "west",
+    label: strength === 0 ? "Calma" : `${Math.abs(strength)} km/h ${strength > 0 ? "→" : "←"}`
+  };
+}
+
+function activeTank(state) {
+  if (state.activePlayerId) {
+    return state.tanks.find((tank) => tank.playerId === state.activePlayerId) || null;
+  }
+  if (Number.isInteger(state.activePlayerSlot)) {
+    return state.tanks[state.activePlayerSlot] || null;
+  }
+  return null;
+}
+
+function resolveLayoutMode(uiState) {
+  const viewport = uiState?.viewport || {};
+  if (viewport.isCompactTouch && viewport.isPortraitHandheld) {
+    return "mobile-portrait";
+  }
+  if (viewport.isCompactLandscape) {
+    return "mobile-landscape";
+  }
+  return "desktop";
+}
+
+function isTouchLayoutMode(layoutMode) {
+  return layoutMode === "mobile-portrait" || layoutMode === "mobile-landscape";
+}
+
+function computePortraitEmbedMetrics(uiState) {
+  const viewportWidth = Math.max(320, Number(uiState?.viewport?.width) || 390);
+  const viewportHeight = Math.max(520, Number(uiState?.viewport?.height) || 844);
+  const outerWidth = Math.max(280, viewportWidth - 12);
+  const outerHeight = Math.max(360, viewportHeight - 108);
+  const ratio = FIELD_WIDTH / FIELD_HEIGHT;
+  const landscapeWidth = Math.min(outerHeight, outerWidth * ratio);
+  const landscapeHeight = landscapeWidth / ratio;
+  return {
+    frameWidth: landscapeHeight,
+    frameHeight: landscapeWidth,
+    landscapeWidth,
+    landscapeHeight
+  };
+}
+
+function updateTankPosition(tank, terrain, nextX) {
+  const x = clamp(nextX, MOVE_MIN_X, MOVE_MAX_X);
+  const groundY = groundYAtTank(x, terrain);
+  return {
+    ...tank,
+    x,
+    groundY,
+    centerY: groundY - 24
+  };
+}
+
+function refillTurnResources(tanks, slot) {
+  const nextTanks = cloneTanks(tanks);
+  const tank = nextTanks[slot];
+  if (!tank) {
+    return nextTanks;
+  }
+  tank.fuel = TURN_FUEL;
+  tank.ammo.basic = tank.ammo.max || WEAPON_MAX_AMMO;
+  return nextTanks;
+}
+
+function beginTurnState(state, slot, { preserveReport = false } = {}) {
+  const tanks = refillTurnResources(state.tanks, slot);
+  return {
+    ...state,
+    phase: "TURN_START",
+    phaseElapsedMs: 0,
+    activePlayerSlot: slot,
+    activePlayerId: tanks[slot]?.playerId || null,
+    pendingPlayerSlot: null,
+    pendingPlayerId: null,
+    tanks,
+    projectile: null,
+    impact: null,
+    wind: buildWind(state.turnNumber, state.terrain.key),
+    lastReport: preserveReport
+      ? state.lastReport
+      : {
+          kind: "turn-start",
+          playerSlot: slot
+        }
+  };
+}
+
+function createState(options = {}, players = []) {
+  const terrain = buildTerrain(options.terrain);
+  const tanks = [createTank(0, terrain, players[0]), createTank(1, terrain, players[1])];
+  return beginTurnState(
+    {
+      phase: "TURN_START",
+      phaseElapsedMs: 0,
+      turnNumber: 1,
+      activePlayerSlot: null,
+      activePlayerId: null,
+      pendingPlayerSlot: null,
+      pendingPlayerId: null,
+      terrain,
+      tanks,
+      projectile: null,
+      impact: null,
+      wind: buildWind(1, terrain.key),
+      camera: createCameraState(),
+      lastReport: {
+        kind: "opening"
+      },
+      result: null
+    },
+    0,
+    { preserveReport: true }
+  );
 }
 
 function vectorForShot(slot, angle) {
@@ -1295,7 +1813,7 @@ function speedFromPower(power) {
   return lerp(MIN_PROJECTILE_SPEED, MAX_PROJECTILE_SPEED, power01);
 }
 
-function previewTrajectory(tank, terrain, angle = tank.angle, power = tank.power) {
+function previewTrajectory(tank, terrain, wind, angle = tank.angle, power = tank.power) {
   const shotVector = vectorForShot(tank.slot, normalizeAngle(angle));
   const speed = speedFromPower(power);
   const points = [];
@@ -1311,6 +1829,7 @@ function previewTrajectory(tank, terrain, angle = tank.angle, power = tank.power
     const dt = 0.06;
     const nextX = x + vx * dt;
     const nextY = y + vy * dt;
+    vx += (wind?.accel || 0) * dt;
     vy += GRAVITY * dt;
 
     if (step * dt >= PREVIEW_TIME_SECONDS) {
@@ -1398,7 +1917,7 @@ function terrainImpactPoint(start, end, terrain) {
 }
 
 function computeDamage(impactPoint, tanks, directSlot = null) {
-  const damageBySlot = tanks.map((tank) => {
+  return tanks.map((tank) => {
     const hitCenter = hitCenterForTank(tank);
     const distance = Math.hypot(hitCenter.x - impactPoint.x, hitCenter.y - impactPoint.y);
     const closeness = clamp(1 - distance / DAMAGE_RADIUS, 0, 1);
@@ -1408,8 +1927,6 @@ function computeDamage(impactPoint, tanks, directSlot = null) {
     }
     return Math.max(0, damage);
   });
-
-  return damageBySlot;
 }
 
 function summarizeImpactReport(previousState, nextTanks, impact, directSlot) {
@@ -1418,7 +1935,7 @@ function summarizeImpactReport(previousState, nextTanks, impact, directSlot) {
 
   return {
     kind: directSlot !== null ? "direct-hit" : totalDamage > 0 ? "splash-hit" : "miss",
-    shooterSlot: previousState.turnSlot,
+    shooterSlot: previousState.activePlayerSlot,
     directSlot,
     damageBySlot,
     impactX: impact.x,
@@ -1437,13 +1954,22 @@ function resolveWinner(nextTanks) {
   return { type: "draw" };
 }
 
-function setAim(state, action, actorSlot) {
-  if (state.phase !== "ready" || actorSlot !== state.turnSlot) {
+function canRouteActiveInput(state, playerId) {
+  return (
+    state.phase === "AIMING_PHASE" &&
+    Boolean(state.activePlayerId) &&
+    playerId === state.activePlayerId &&
+    !state.result
+  );
+}
+
+function setAim(state, action) {
+  if (!canRouteActiveInput(state, action.playerId)) {
     return { ok: false, reason: "turn" };
   }
 
   const tanks = cloneTanks(state.tanks);
-  const active = tanks[state.turnSlot];
+  const active = tanks[state.activePlayerSlot];
   active.angle = normalizeAngle(action.angle ?? active.angle);
   active.power = normalizePower(action.power ?? active.power);
 
@@ -1456,17 +1982,81 @@ function setAim(state, action, actorSlot) {
   };
 }
 
-function fireShot(state, action, actorSlot) {
-  if (state.phase !== "ready" || actorSlot !== state.turnSlot) {
+function moveTank(state, action) {
+  if (!canRouteActiveInput(state, action.playerId)) {
+    return { ok: false, reason: "turn" };
+  }
+
+  const direction = Number(action.direction);
+  if (direction !== -1 && direction !== 1) {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const tanks = cloneTanks(state.tanks);
+  const active = tanks[state.activePlayerSlot];
+  if (active.fuel <= 0) {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const nextTank = updateTankPosition(active, state.terrain, active.x + direction * Math.min(MOVE_STEP, active.fuel));
+  const movedDistance = Math.round(Math.abs(nextTank.x - active.x));
+  if (movedDistance <= 0) {
+    return { ok: false, reason: "invalid" };
+  }
+
+  nextTank.fuel = Math.max(0, active.fuel - movedDistance);
+  tanks[state.activePlayerSlot] = nextTank;
+
+  return {
+    ok: true,
+    state: {
+      ...state,
+      tanks,
+      lastReport: {
+        kind: "movement",
+        playerSlot: nextTank.slot
+      }
+    }
+  };
+}
+
+function selectWeapon(state, action) {
+  if (!canRouteActiveInput(state, action.playerId)) {
+    return { ok: false, reason: "turn" };
+  }
+
+  if (action.weaponId !== "basic") {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const tanks = cloneTanks(state.tanks);
+  tanks[state.activePlayerSlot].selectedWeaponId = "basic";
+
+  return {
+    ok: true,
+    state: {
+      ...state,
+      tanks
+    }
+  };
+}
+
+function fireShot(state, action) {
+  if (!canRouteActiveInput(state, action.playerId)) {
     return { ok: false, reason: "turn" };
   }
 
   const tanks = cloneTanks(state.tanks);
-  const active = tanks[state.turnSlot];
+  const active = tanks[state.activePlayerSlot];
+  if ((active.ammo?.basic || 0) <= 0) {
+    return { ok: false, reason: "invalid" };
+  }
+
   const angle = normalizeAngle(action.angle ?? active.angle);
   const power = normalizePower(action.power ?? active.power);
   active.angle = angle;
   active.power = power;
+  active.ammo.basic = Math.max(0, (active.ammo?.basic || 0) - 1);
 
   const muzzle = muzzlePointForTank(active);
   const vector = vectorForShot(active.slot, angle);
@@ -1476,7 +2066,8 @@ function fireShot(state, action, actorSlot) {
     ok: true,
     state: {
       ...state,
-      phase: "projectile",
+      phase: "SIMULATION",
+      phaseElapsedMs: 0,
       tanks,
       projectile: {
         x: muzzle.x,
@@ -1484,6 +2075,7 @@ function fireShot(state, action, actorSlot) {
         vx: vector.x * speed,
         vy: vector.y * speed,
         ownerSlot: active.slot,
+        ownerPlayerId: active.playerId,
         trail: [{ x: muzzle.x, y: muzzle.y }]
       },
       impact: null,
@@ -1497,17 +2089,55 @@ function fireShot(state, action, actorSlot) {
   };
 }
 
-function tickProjectile(state, action) {
-  if (state.phase !== "projectile" || !state.projectile) {
+function tickTurnStart(state, action) {
+  if (state.phase !== "TURN_START") {
     return { ok: false, reason: "invalid" };
   }
 
   const deltaMs = clamp(Number(action.deltaMs) || 0, 0, MAX_FRAME_MS);
   if (deltaMs <= 0) {
+    return { ok: true, state };
+  }
+
+  const tank = activeTank(state);
+  if (!tank) {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const target = tankCameraFocus(tank);
+  const camera = interpolateCamera(state.camera, target, deltaMs);
+  const phaseElapsedMs = state.phaseElapsedMs + deltaMs;
+
+  if (phaseElapsedMs < TURN_START_SETTLE_MS || !cameraSettled(camera, target)) {
     return {
       ok: true,
-      state
+      state: {
+        ...state,
+        phaseElapsedMs,
+        camera
+      }
     };
+  }
+
+  return {
+    ok: true,
+    state: {
+      ...state,
+      phase: "AIMING_PHASE",
+      phaseElapsedMs: 0,
+      camera
+    }
+  };
+}
+
+function tickSimulation(state, action) {
+  if (state.phase !== "SIMULATION" || !state.projectile) {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const deltaMs = clamp(Number(action.deltaMs) || 0, 0, MAX_FRAME_MS);
+  if (deltaMs <= 0) {
+    return { ok: true, state };
   }
 
   const steps = Math.max(1, Math.ceil(deltaMs / PROJECTILE_STEP_MS));
@@ -1518,6 +2148,7 @@ function tickProjectile(state, action) {
   };
   let impact = null;
   let directSlot = null;
+  let camera = state.camera;
 
   for (let step = 0; step < steps; step += 1) {
     const start = { x: projectile.x, y: projectile.y };
@@ -1525,25 +2156,24 @@ function tickProjectile(state, action) {
       x: projectile.x + projectile.vx * dtSeconds,
       y: projectile.y + projectile.vy * dtSeconds
     };
+    projectile.vx += (state.wind?.accel || 0) * dtSeconds;
     projectile.vy += GRAVITY * dtSeconds;
 
-    const tanks = state.tanks;
-    for (let slot = 0; slot < tanks.length; slot += 1) {
-      const hit = segmentHitsTank(start, end, tanks[slot]);
+    for (let slot = 0; slot < state.tanks.length; slot += 1) {
+      const hit = segmentHitsTank(start, end, state.tanks[slot]);
       if (hit.hit) {
         impact = hit.point;
-        directSlot = tanks[slot].slot;
+        directSlot = state.tanks[slot].slot;
         break;
       }
     }
 
     if (!impact) {
       if (end.x < 0 || end.x > FIELD_WIDTH || end.y > FIELD_HEIGHT) {
-        const edgePoint = {
+        impact = {
           x: clamp(end.x, 0, FIELD_WIDTH),
           y: terrainHeightAt(state.terrain, clamp(end.x, 0, FIELD_WIDTH))
         };
-        impact = edgePoint;
       } else if (end.y >= terrainHeightAt(state.terrain, end.x)) {
         impact = terrainImpactPoint(start, end, state.terrain);
       }
@@ -1556,6 +2186,7 @@ function tickProjectile(state, action) {
     projectile.x = end.x;
     projectile.y = end.y;
     projectile.trail.push({ x: projectile.x, y: projectile.y });
+    camera = interpolateCamera(camera, projectileCameraFocus(projectile), deltaMs / steps);
     if (projectile.trail.length > 14) {
       projectile.trail.shift();
     }
@@ -1566,7 +2197,9 @@ function tickProjectile(state, action) {
       ok: true,
       state: {
         ...state,
-        projectile
+        projectile,
+        phaseElapsedMs: state.phaseElapsedMs + deltaMs,
+        camera
       }
     };
   }
@@ -1584,25 +2217,28 @@ function tickProjectile(state, action) {
     ok: true,
     state: {
       ...state,
-      phase: result ? "finished" : "impact",
+      phase: result ? "FINISHED" : "DAMAGE_EVALUATION",
+      phaseElapsedMs: 0,
       tanks,
       projectile: null,
       impact: {
         x: impact.x,
         y: impact.y,
         elapsedMs: 0,
-        durationMs: IMPACT_DURATION_MS,
+        durationMs: DAMAGE_EVALUATION_DURATION_MS,
+        animationDurationMs: EXPLOSION_ANIMATION_MS,
         directSlot,
         damageBySlot
       },
       lastReport: report,
-      result
+      result,
+      camera: interpolateCamera(camera, impactCameraFocus(impact), deltaMs)
     }
   };
 }
 
-function tickImpact(state, action) {
-  if (state.phase !== "impact" || !state.impact) {
+function tickDamageEvaluation(state, action) {
+  if (state.phase !== "DAMAGE_EVALUATION" || !state.impact) {
     return { ok: false, reason: "invalid" };
   }
 
@@ -1612,35 +2248,145 @@ function tickImpact(state, action) {
     ...state.impact,
     elapsedMs
   };
+  const camera = interpolateCamera(state.camera, impactCameraFocus(impact), deltaMs);
 
   if (elapsedMs < state.impact.durationMs) {
     return {
       ok: true,
       state: {
         ...state,
-        impact
+        impact,
+        phaseElapsedMs: state.phaseElapsedMs + deltaMs,
+        camera
       }
     };
   }
 
-  const nextTurn = state.turnSlot === 0 ? 1 : 0;
+  if (state.result) {
+    return {
+      ok: true,
+      state: {
+        ...state,
+        phase: "FINISHED",
+        phaseElapsedMs: 0,
+        impact,
+        camera
+      }
+    };
+  }
+
   return {
     ok: true,
     state: {
       ...state,
-      phase: "ready",
-      turnSlot: nextTurn,
-      turnNumber: state.turnNumber + 1,
-      projectile: null,
-      impact: null,
-      lastReport: state.lastReport
+      phase: "END_TURN",
+      phaseElapsedMs: 0,
+      impact,
+      camera
     }
   };
 }
 
+function resolveEndTurnEffects(state) {
+  const tanks = cloneTanks(state.tanks);
+  const events = [];
+
+  for (let slot = 0; slot < tanks.length; slot += 1) {
+    const tank = tanks[slot];
+    const burningTurns = Number(tank.statusEffects?.burningTurns) || 0;
+    if (burningTurns > 0 && tank.health > 0) {
+      const damage = Math.max(1, Number(tank.statusEffects?.burningDamage) || 4);
+      tank.health = Math.max(0, tank.health - damage);
+      tank.statusEffects.burningTurns = Math.max(0, burningTurns - 1);
+      events.push({ type: "burn", slot: tank.slot, damage });
+    }
+
+    if ((tank.x < MOVE_MIN_X - 32 || tank.x > MOVE_MAX_X + 32 || tank.centerY > FIELD_HEIGHT + 10) && tank.health > 0) {
+      tank.health = 0;
+      events.push({ type: "fall", slot: tank.slot });
+    }
+  }
+
+  return {
+    tanks,
+    events
+  };
+}
+
+function tickEndTurn(state) {
+  if (state.phase !== "END_TURN") {
+    return { ok: false, reason: "invalid" };
+  }
+
+  const { tanks, events } = resolveEndTurnEffects(state);
+  const result = resolveWinner(tanks);
+
+  if (result) {
+    return {
+      ok: true,
+      state: {
+        ...state,
+        phase: "FINISHED",
+        phaseElapsedMs: 0,
+        activePlayerSlot: null,
+        activePlayerId: null,
+        pendingPlayerSlot: null,
+        pendingPlayerId: null,
+        tanks,
+        result,
+        lastReport: {
+          kind: "end-turn",
+          events
+        }
+      }
+    };
+  }
+
+  const nextTurn = state.activePlayerSlot === 0 ? 1 : 0;
+  return {
+    ok: true,
+    state: {
+      ...state,
+      phase: "DEVICE_HANDOVER",
+      phaseElapsedMs: 0,
+      activePlayerSlot: null,
+      activePlayerId: null,
+      pendingPlayerSlot: nextTurn,
+      pendingPlayerId: tanks[nextTurn]?.playerId || null,
+      turnNumber: state.turnNumber + 1,
+      tanks,
+      projectile: null,
+      impact: null,
+      lastReport: {
+        kind: "handover",
+        nextTurnSlot: nextTurn,
+        events
+      }
+    }
+  };
+}
+
+function continueHandover(state, action) {
+  if (state.phase !== "DEVICE_HANDOVER" || !Number.isInteger(state.pendingPlayerSlot)) {
+    return { ok: false, reason: "invalid" };
+  }
+
+  if (action.playerId && state.pendingPlayerId && action.playerId !== state.pendingPlayerId) {
+    return { ok: false, reason: "turn" };
+  }
+
+  return {
+    ok: true,
+    state: beginTurnState(state, state.pendingPlayerSlot)
+  };
+}
+
 function buildStatusCopy(state, players) {
-  const currentPlayer = players.find((player) => player.slot === state.turnSlot) || players[0];
-  const lastReport = state.lastReport || { kind: "opening" };
+  const currentPlayer = Number.isInteger(state.activePlayerSlot) ? playerBySlot(players, state.activePlayerSlot) : null;
+  const pendingPlayer = Number.isInteger(state.pendingPlayerSlot) ? playerBySlot(players, state.pendingPlayerSlot) : null;
+  const terrainLabel = terrainMeta(state.terrain.key).label;
+  const windLabel = state.wind?.label || "Calma";
+  const totalDamage = (state.impact?.damageBySlot || []).reduce((sum, damage) => sum + damage, 0);
 
   if (state.result?.type === "win") {
     const winner = players.find((player) => player.slot === state.result.winnerSlot);
@@ -1648,7 +2394,7 @@ function buildStatusCopy(state, players) {
       tag: "Victoria",
       title: `${winner ? winner.name : "Un jugador"} gana la bateria`,
       note: "La artilleria rival se ha quedado sin vida.",
-      meta: [`Turnos: ${state.turnNumber}`, `Terreno ${terrainMeta(state.terrain.key).label.toLowerCase()}`]
+      meta: [`Turnos: ${state.turnNumber}`, `Terreno ${terrainLabel.toLowerCase()}`]
     };
   }
 
@@ -1657,66 +2403,64 @@ function buildStatusCopy(state, players) {
       tag: "Empate",
       title: "Ambos tanques caen",
       note: "El impacto final dejo a los dos equipos fuera de combate.",
-      meta: [`Turnos: ${state.turnNumber}`, `Terreno ${terrainMeta(state.terrain.key).label.toLowerCase()}`]
+      meta: [`Turnos: ${state.turnNumber}`, `Terreno ${terrainLabel.toLowerCase()}`]
     };
   }
 
-  if (state.phase === "projectile") {
-    const shooter = players.find((player) => player.slot === state.projectile?.ownerSlot) || currentPlayer;
+  if (state.phase === "TURN_START") {
     return {
-      tag: "En vuelo",
-      title: `Disparo de ${shooter ? shooter.name : "Jugador"}`,
-      note: "Espera a que el proyectil impacte para cerrar el turno.",
-      meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
+      tag: "TURN_START",
+      title: `Encuadre para ${currentPlayer ? currentPlayer.name : "Jugador"}`,
+      note: `La camara centra al jugador activo con viento ${windLabel}.`,
+      meta: [`Turno ${state.turnNumber}`, terrainLabel]
     };
   }
 
-  if (state.phase === "impact") {
-    const totalDamage = (state.impact?.damageBySlot || []).reduce((sum, damage) => sum + damage, 0);
+  if (state.phase === "AIMING_PHASE") {
     return {
-      tag: "Impacto",
+      tag: "AIMING_PHASE",
+      title: `Turno de ${currentPlayer ? currentPlayer.name : "Jugador"}`,
+      note: "Ajusta el tiro del tanque activo y dispara una sola vez.",
+      meta: [`Viento ${windLabel}`, `Turno ${state.turnNumber}`]
+    };
+  }
+
+  if (state.phase === "SIMULATION") {
+    return {
+      tag: "SIMULATION",
+      title: `Disparo de ${currentPlayer ? currentPlayer.name : "Jugador"}`,
+      note: "La camara sigue el proyectil hasta el impacto.",
+      meta: [`Viento ${windLabel}`, `Turno ${state.turnNumber}`]
+    };
+  }
+
+  if (state.phase === "DAMAGE_EVALUATION") {
+    return {
+      tag: "DAMAGE_EVALUATION",
       title: totalDamage > 0 ? "Golpe confirmado" : "Impacto sin dano",
-      note: totalDamage > 0 ? "La onda expansiva ya se ha aplicado. El siguiente turno entra enseguida." : "El proyectil toco terreno, pero no alcanzo a ningun tanque.",
-      meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
+      note:
+        totalDamage > 0
+          ? "La camara se queda sobre el impacto antes del relevo del dispositivo."
+          : "No hubo dano, pero el relevo del turno sigue el mismo protocolo.",
+      meta: [`Turno ${state.turnNumber}`, terrainLabel]
     };
   }
 
-  if (lastReport.kind === "direct-hit") {
-    const target = players.find((player) => player.slot === lastReport.directSlot);
-    const damage = lastReport.damageBySlot?.[lastReport.directSlot] || 0;
+  if (state.phase === "END_TURN") {
     return {
-      tag: "Impacto directo",
-      title: `${target ? target.name : "El rival"} recibe ${damage} de dano`,
-      note: `${currentPlayer ? currentPlayer.name : "Jugador"} ya prepara el siguiente tiro.`,
-      meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
+      tag: "END_TURN",
+      title: "Resolviendo fin de turno",
+      note: "Se aplican los efectos pendientes antes de ceder el dispositivo.",
+      meta: [`Turno ${state.turnNumber}`, terrainLabel]
     };
   }
 
-  if (lastReport.kind === "splash-hit") {
-    const damage = (lastReport.damageBySlot || []).reduce((sum, value) => sum + value, 0);
+  if (state.phase === "DEVICE_HANDOVER") {
     return {
-      tag: "Onda expansiva",
-      title: `El impacto deja ${damage} de dano`,
-      note: `Turno de ${currentPlayer ? currentPlayer.name : "Jugador"}. Ajusta angulo y potencia antes de disparar.`,
-      meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
-    };
-  }
-
-  if (lastReport.kind === "miss") {
-    return {
-      tag: "Turno",
-      title: `Turno de ${currentPlayer ? currentPlayer.name : "Jugador"}`,
-      note: "El ultimo disparo se fue largo. Busca una curva mejor y prueba otra vez.",
-      meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
-    };
-  }
-
-  if (lastReport.kind === "shot") {
-    return {
-      tag: "Apunta",
-      title: `Turno de ${currentPlayer ? currentPlayer.name : "Jugador"}`,
-      note: "Ajusta el canion con el angulo y la potencia. Un impacto directo hace mucho mas dano.",
-      meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
+      tag: "DEVICE_HANDOVER",
+      title: `Turno del Jugador ${pendingPlayer ? pendingPlayer.name : "siguiente"}`,
+      note: "La simulacion esta bloqueada hasta que el nuevo jugador toque la pantalla.",
+      meta: [`Viento ${windLabel}`, `Turno ${state.turnNumber}`]
     };
   }
 
@@ -1724,7 +2468,7 @@ function buildStatusCopy(state, players) {
     tag: "Apertura",
     title: `Turno de ${currentPlayer ? currentPlayer.name : "Jugador"}`,
     note: "Elige angulo y potencia para enviar el primer proyectil.",
-    meta: [`Turno ${state.turnNumber}`, `${terrainMeta(state.terrain.key).label}`]
+    meta: [`Turno ${state.turnNumber}`, terrainLabel]
   };
 }
 
@@ -1733,7 +2477,13 @@ function tankGroupMarkup(tank, isActive) {
   const turretX = vector.x * (TANK_BARREL_LENGTH - 10);
   const turretY = vector.y * (TANK_BARREL_LENGTH - 10);
   return `
-    <g class="tanks-tank is-slot-${tank.slot} ${isActive ? "is-active" : ""}">
+    <g
+      class="tanks-tank is-slot-${tank.slot} ${isActive ? "is-active" : ""}"
+      data-tank-slot="${tank.slot}"
+      data-tank-player-id="${escapeHtml(tank.playerId)}"
+      data-tank-x="${round(tank.x, 2)}"
+      data-tank-center-y="${round(tank.centerY, 2)}"
+    >
       <circle class="tanks-active-ring" cx="${round(tank.x, 2)}" cy="${round(tank.centerY - 6, 2)}" r="42"></circle>
       <ellipse class="tanks-shadow" cx="${round(tank.x, 2)}" cy="${round(tank.groundY + 6, 2)}" rx="54" ry="11"></ellipse>
       <g transform="translate(${round(tank.x, 2)} ${round(tank.centerY, 2)})">
@@ -1773,7 +2523,8 @@ function renderImpact(impact) {
     return "";
   }
 
-  const progress = clamp(impact.elapsedMs / impact.durationMs, 0, 1);
+  const animationMs = impact.animationDurationMs || impact.durationMs;
+  const progress = clamp(impact.elapsedMs / animationMs, 0, 1);
   const radius = 16 + progress * 74;
   const coreRadius = Math.max(6, 18 - progress * 11);
   const sparkRadius = 20 + progress * 54;
@@ -1796,33 +2547,110 @@ function renderImpact(impact) {
   `;
 }
 
-function renderPreview(state) {
-  if (state.phase !== "ready") {
+function renderAimAssist(state) {
+  if (state.phase !== "AIMING_PHASE") {
     return "";
   }
-  const tank = state.tanks[state.turnSlot];
+
+  const tank = activeTank(state);
   if (!tank) {
     return "";
   }
-  const points = previewTrajectory(tank, state.terrain, tank.angle, tank.power);
+
+  const points = previewTrajectory(tank, state.terrain, state.wind, tank.angle, tank.power);
   const path = trajectoryPath(points);
   const impact = points[points.length - 1];
   if (!path || !impact) {
     return "";
   }
+
   return `
     <g class="tanks-preview" aria-hidden="true">
       <path class="tanks-preview-line" d="${path}" data-tank-preview-path></path>
-      <circle class="tanks-preview-impact" cx="${round(impact.x, 2)}" cy="${round(impact.y, 2)}" r="7" data-tank-preview-impact></circle>
+      <g class="tanks-preview-reticle" transform="translate(${round(impact.x, 2)} ${round(impact.y, 2)})" data-tank-preview-reticle>
+        <circle class="tanks-preview-impact" cx="0" cy="0" r="8"></circle>
+        <line class="tanks-preview-cross" x1="-15" y1="0" x2="-6" y2="0"></line>
+        <line class="tanks-preview-cross" x1="6" y1="0" x2="15" y2="0"></line>
+        <line class="tanks-preview-cross" x1="0" y1="-15" x2="0" y2="-6"></line>
+        <line class="tanks-preview-cross" x1="0" y1="6" x2="0" y2="15"></line>
+      </g>
     </g>
   `;
 }
 
-function renderControls(state, canAct) {
-  const tank = state.tanks[state.turnSlot];
-  const disabled = !canAct || state.phase !== "ready" || Boolean(state.result);
+function renderHudCard(tank, player, state) {
+  const isActive = Boolean(state.activePlayerId) && tank.playerId === state.activePlayerId;
+  const isPending = Boolean(state.pendingPlayerId) && tank.playerId === state.pendingPlayerId;
+  const healthPercent = clamp((tank.health / STARTING_HEALTH) * 100, 0, 100);
+  return `
+    <article class="tanks-team-card is-team-${tank.slot} ${isActive ? "is-active" : ""} ${isPending ? "is-pending" : ""}">
+      <div class="tanks-card-head">
+        <div class="tanks-team-badge">
+          <span class="tanks-team-dot"></span>
+          <div>
+            <h3 class="tanks-team-name">${escapeHtml(player?.name || `Jugador ${tank.slot + 1}`)}</h3>
+            <p class="tanks-team-role">${isActive ? "Activo" : isPending ? "En espera" : "Suspendido"}</p>
+          </div>
+        </div>
+        <p class="tanks-health">${tank.health}</p>
+      </div>
+      <div class="tanks-health-track">
+        <div class="tanks-health-fill" style="width:${round(healthPercent, 2)}%"></div>
+      </div>
+      <div class="tanks-resource-row">
+        <span class="tanks-resource-pill">Combustible ${tank.fuel}</span>
+        <span class="tanks-resource-pill">Armamento ${tank.ammo?.basic || 0}/${tank.ammo?.max || WEAPON_MAX_AMMO}</span>
+      </div>
+    </article>
+  `;
+}
+
+function renderStageStatus(state, players) {
+  const status = buildStatusCopy(state, players);
+  return `
+    <article class="tanks-status-card tanks-stage-status">
+      <div class="tanks-status-top">
+        <span class="tanks-status-tag">${escapeHtml(status.tag)}</span>
+        <span class="tanks-status-pill">${escapeHtml(state.wind?.label || "Calma")}</span>
+      </div>
+      <div class="tanks-status-copy">
+        <p class="tanks-status-title">${escapeHtml(status.title)}</p>
+        <p class="tanks-status-note">${escapeHtml(status.note)}</p>
+      </div>
+      <div class="tanks-status-meta">
+        ${(status.meta || []).map((item) => `<span class="tanks-status-pill">${escapeHtml(item)}</span>`).join("")}
+      </div>
+    </article>
+  `;
+}
+
+function renderControls(state, canAct, players) {
+  const tank = activeTank(state);
+  const status = buildStatusCopy(state, players);
+
+  if (!tank || state.phase !== "AIMING_PHASE") {
+    return `
+      <div class="tanks-context-panel">
+        <span class="tanks-context-tag">${escapeHtml(status.tag)}</span>
+        <h3 class="tanks-context-title">${escapeHtml(status.title)}</h3>
+        <p class="tanks-context-note">${escapeHtml(status.note)}</p>
+      </div>
+    `;
+  }
+
+  const disabled = !canAct || Boolean(state.result);
   return `
     <div class="tanks-controls" data-tanks-controls>
+      <div class="tanks-control">
+        <div class="tanks-control-head">
+          <span class="tanks-control-label">Movimiento</span>
+          <span class="tanks-control-value">${tank.fuel}</span>
+        </div>
+        <div class="tanks-move-row">
+          <button class="tanks-step" type="button" data-tank-move="-1" ${disabled ? "disabled" : ""}>←</button>
+          <button class="tanks-step" type="button" data-tank-move="1" ${disabled ? "disabled" : ""}>→</button>
+        </div>
+      </div>
       <div class="tanks-control">
         <div class="tanks-control-head">
           <span class="tanks-control-label">Angulo</span>
@@ -1845,7 +2673,34 @@ function renderControls(state, canAct) {
           <button class="tanks-step" type="button" data-tank-step="power:4" ${disabled ? "disabled" : ""}>+</button>
         </div>
       </div>
+      <div class="tanks-control tanks-weapon-panel">
+        <div class="tanks-control-head">
+          <span class="tanks-control-label">Armamento</span>
+          <span class="tanks-control-value">${tank.ammo?.basic || 0}/${tank.ammo?.max || WEAPON_MAX_AMMO}</span>
+        </div>
+        <button class="tanks-weapon-button is-selected" type="button" data-tank-weapon="basic" ${disabled ? "disabled" : ""}>
+          <strong>Canon base</strong>
+          <span>Visible solo en AIMING_PHASE</span>
+        </button>
+      </div>
       <button class="btn btn-primary tanks-fire" type="button" data-tank-fire ${disabled ? "disabled" : ""}>Disparar</button>
+    </div>
+  `;
+}
+
+function renderTouchContextBar(state, canAct, players) {
+  const tank = activeTank(state);
+  if (!tank || state.phase !== "AIMING_PHASE" || !canAct || state.result) {
+    return "";
+  }
+
+  const currentPlayer = Number.isInteger(state.activePlayerSlot) ? playerBySlot(players, state.activePlayerSlot) : null;
+  return `
+    <div class="tanks-touch-context" aria-hidden="true">
+      <span class="tanks-touch-pill">${escapeHtml(currentPlayer?.name || "Jugador activo")}</span>
+      <span class="tanks-touch-pill">Canon base ${tank.ammo?.basic || 0}/${tank.ammo?.max || WEAPON_MAX_AMMO}</span>
+      <span class="tanks-touch-pill">Arrastra desde tu tanque y suelta para disparar</span>
+      <span class="tanks-touch-pill">Toque corto a un lado del tanque para mover</span>
     </div>
   `;
 }
@@ -1854,8 +2709,9 @@ function renderField(state) {
   const terrain = state.terrain;
   const terrainPathData = terrainPath(terrain);
   const terrainCrest = terrainCrestPath(terrain);
+  const sceneTransform = cameraTransform(state.camera);
   return `
-    <svg class="tanks-field ${state.phase === "ready" ? "" : "is-disabled"}" viewBox="0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Campo de tanques" data-tanks-svg>
+    <svg class="tanks-field ${state.phase === "AIMING_PHASE" ? "" : "is-disabled"}" viewBox="0 0 ${FIELD_WIDTH} ${FIELD_HEIGHT}" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Campo de tanques" data-tanks-svg>
       <defs>
         <linearGradient id="tankSkyFill" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="#f8fbff" />
@@ -1876,46 +2732,93 @@ function renderField(state) {
           <path d="M 34 0 H 0 V 34" fill="none" stroke="rgba(15,23,42,0.08)" stroke-width="1"></path>
         </pattern>
       </defs>
-      <rect class="tanks-field-frame" x="${FIELD_FRAME_INSET}" y="${FIELD_FRAME_INSET}" width="${FIELD_WIDTH - FIELD_FRAME_INSET * 2}" height="${FIELD_HEIGHT - FIELD_FRAME_INSET * 2}" rx="32"></rect>
-      <rect class="tanks-sky" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
-      <ellipse class="tanks-sky-glow" cx="${FIELD_WIDTH / 2}" cy="124" rx="308" ry="184"></ellipse>
-      <rect class="tanks-grid" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
-      <rect class="tanks-horizon" x="${FIELD_FRAME_INSET + 8}" y="250" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="108"></rect>
-      <path class="tanks-hill-back" d="M 0 ${FIELD_HEIGHT} L 0 398 C 126 362 250 356 360 386 C 464 414 584 420 706 378 C 810 342 888 346 1000 392 L 1000 ${FIELD_HEIGHT} Z"></path>
-      <path class="tanks-front-ridge" d="M 0 ${FIELD_HEIGHT} L 0 466 C 122 486 246 476 360 438 C 492 394 620 394 748 430 C 846 458 922 462 1000 448 L 1000 ${FIELD_HEIGHT} Z"></path>
-      <path class="tanks-terrain" d="${terrainPathData}"></path>
-      <path class="tanks-terrain-crest" d="${terrainCrest}"></path>
-      ${renderPreview(state)}
-      ${state.tanks.map((tank, slot) => tankGroupMarkup(tank, state.phase === "ready" && state.turnSlot === slot)).join("")}
-      ${renderProjectile(state.projectile)}
-      ${renderImpact(state.impact)}
+      <g transform="${sceneTransform}">
+        <rect class="tanks-field-frame" x="${FIELD_FRAME_INSET}" y="${FIELD_FRAME_INSET}" width="${FIELD_WIDTH - FIELD_FRAME_INSET * 2}" height="${FIELD_HEIGHT - FIELD_FRAME_INSET * 2}" rx="32"></rect>
+        <rect class="tanks-sky" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
+        <ellipse class="tanks-sky-glow" cx="${FIELD_WIDTH / 2}" cy="124" rx="308" ry="184"></ellipse>
+        <rect class="tanks-grid" x="${FIELD_FRAME_INSET + 8}" y="${FIELD_FRAME_INSET + 8}" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="${FIELD_HEIGHT - (FIELD_FRAME_INSET + 8) * 2}" rx="26"></rect>
+        <rect class="tanks-horizon" x="${FIELD_FRAME_INSET + 8}" y="250" width="${FIELD_WIDTH - (FIELD_FRAME_INSET + 8) * 2}" height="108"></rect>
+        <path class="tanks-hill-back" d="M 0 ${FIELD_HEIGHT} L 0 398 C 126 362 250 356 360 386 C 464 414 584 420 706 378 C 810 342 888 346 1000 392 L 1000 ${FIELD_HEIGHT} Z"></path>
+        <path class="tanks-front-ridge" d="M 0 ${FIELD_HEIGHT} L 0 466 C 122 486 246 476 360 438 C 492 394 620 394 748 430 C 846 458 922 462 1000 448 L 1000 ${FIELD_HEIGHT} Z"></path>
+        <path class="tanks-terrain" d="${terrainPathData}"></path>
+        <path class="tanks-terrain-crest" d="${terrainCrest}"></path>
+        ${renderAimAssist(state)}
+        ${state.tanks.map((tank) => tankGroupMarkup(tank, Boolean(state.activePlayerId) && tank.playerId === state.activePlayerId)).join("")}
+        ${renderProjectile(state.projectile)}
+        ${renderImpact(state.impact)}
+      </g>
     </svg>
   `;
 }
 
-function renderShell(state, canAct, uiState) {
-  if (uiState?.viewport?.isPortraitHandheld) {
+function renderHandoverOverlay(state, players) {
+  if (state.phase !== "DEVICE_HANDOVER") {
+    return "";
+  }
+
+  const pendingPlayer = Number.isInteger(state.pendingPlayerSlot) ? playerBySlot(players, state.pendingPlayerSlot) : null;
+  return `
+    <div class="tanks-handover-overlay" data-tank-handover>
+      <button class="tanks-handover-card" type="button" data-tank-continue>
+        <span class="tanks-handover-kicker">Hot Seat</span>
+        <strong class="tanks-handover-title">Turno del Jugador ${escapeHtml(pendingPlayer?.name || "siguiente")}</strong>
+        <span class="tanks-handover-copy">Toca o haz clic para tomar el control. El disparo queda bloqueado hasta esta confirmacion.</span>
+      </button>
+    </div>
+  `;
+}
+
+function renderStageMarkup(state, players, canAct, layoutMode) {
+  const touchLayout = isTouchLayoutMode(layoutMode);
+  return `
+    <section class="tanks-stage">
+      <div class="tanks-battlefield">
+        <div class="tanks-stage-hud">
+          ${renderHudCard(state.tanks[0], players[0], state)}
+          ${renderStageStatus(state, players)}
+          ${renderHudCard(state.tanks[1], players[1], state)}
+        </div>
+        ${renderField(state)}
+        ${touchLayout ? renderTouchContextBar(state, canAct, players) : ""}
+        ${renderHandoverOverlay(state, players)}
+      </div>
+      ${touchLayout ? "" : `<div class="tanks-controls-dock">${renderControls(state, canAct, players)}</div>`}
+    </section>
+  `;
+}
+
+function renderShell(state, players, canAct, uiState) {
+  const layoutMode = resolveLayoutMode(uiState);
+  const touchLayout = isTouchLayoutMode(layoutMode);
+  const portraitEmbed = layoutMode === "mobile-portrait";
+  const embed = portraitEmbed ? computePortraitEmbedMetrics(uiState) : null;
+  const shellStyle = portraitEmbed
+    ? ` style="--tanks-embed-frame-width:${round(embed.frameWidth, 2)}px; --tanks-embed-frame-height:${round(
+        embed.frameHeight,
+        2
+      )}px; --tanks-embed-landscape-width:${round(embed.landscapeWidth, 2)}px; --tanks-embed-landscape-height:${round(
+        embed.landscapeHeight,
+        2
+      )}px;"`
+    : "";
+
+  if (portraitEmbed) {
     return `
-      <section class="tanks-orientation-note" aria-live="polite">
-        <article class="tanks-orientation-card">
-          <span class="tanks-orientation-eyebrow">Mejor en horizontal</span>
-          <h3 class="tanks-orientation-title">Gira el dispositivo</h3>
-          <p class="tanks-orientation-copy">En paisaje el terreno gana mucho mas ancho y el tiro se ajusta mejor.</p>
-        </article>
+      <section class="tanks-shell is-touch is-mobile-portrait" data-tanks-layout="${layoutMode}"${shellStyle}>
+        <div class="tanks-portrait-frame">
+          <div class="tanks-portrait-embed">
+            <div class="tanks-portrait-canvas">
+              ${renderStageMarkup(state, players, canAct, layoutMode)}
+            </div>
+          </div>
+        </div>
       </section>
     `;
   }
 
   return `
-    <section class="tanks-shell">
-      <section class="tanks-stage">
-        <div class="tanks-battlefield">
-          ${renderField(state)}
-        </div>
-        <div class="tanks-controls-dock">
-          ${renderControls(state, canAct)}
-        </div>
-      </section>
+    <section class="tanks-shell ${touchLayout ? "is-touch is-mobile-landscape" : "is-desktop"}" data-tanks-layout="${layoutMode}">
+      ${renderStageMarkup(state, players, canAct, layoutMode)}
     </section>
   `;
 }
@@ -1992,22 +2895,258 @@ function renderCardIllustration() {
 
 function updatePreview(boardWrap, state, angle, power) {
   const pathNode = boardWrap.querySelector("[data-tank-preview-path]");
-  const impactNode = boardWrap.querySelector("[data-tank-preview-impact]");
-  const currentTank = state.tanks[state.turnSlot];
+  const reticleNode = boardWrap.querySelector("[data-tank-preview-reticle]");
+  const currentTank = activeTank(state);
   if (!currentTank || !pathNode) {
     return;
   }
-  const points = previewTrajectory(currentTank, state.terrain, angle, power);
+
+  const points = previewTrajectory(currentTank, state.terrain, state.wind, angle, power);
   const path = trajectoryPath(points);
   const impact = points[points.length - 1];
   pathNode.setAttribute("d", path || "");
-  if (impact && impactNode) {
-    impactNode.setAttribute("cx", String(round(impact.x, 2)));
-    impactNode.setAttribute("cy", String(round(impact.y, 2)));
+  if (impact && reticleNode) {
+    reticleNode.setAttribute("transform", `translate(${round(impact.x, 2)} ${round(impact.y, 2)})`);
   }
 }
 
-function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
+function screenPointToViewBox(svg, clientX, clientY, layoutMode) {
+  const rect = svg.getBoundingClientRect();
+  const viewBox = svg.viewBox.baseVal;
+  if (!rect.width || !rect.height || !viewBox.width || !viewBox.height) {
+    return null;
+  }
+
+  if (layoutMode === "mobile-portrait") {
+    const rotatedX = clamp(clientX - rect.left, 0, rect.width);
+    const rotatedY = clamp(clientY - rect.top, 0, rect.height);
+    const unrotatedWidth = rect.height;
+    const unrotatedHeight = rect.width;
+    const localX = rotatedY;
+    const localY = unrotatedHeight - rotatedX;
+    return {
+      x: (localX / unrotatedWidth) * viewBox.width,
+      y: (localY / unrotatedHeight) * viewBox.height
+    };
+  }
+
+  return {
+    x: ((clientX - rect.left) / rect.width) * viewBox.width,
+    y: ((clientY - rect.top) / rect.height) * viewBox.height
+  };
+}
+
+function viewBoxPointToWorld(point, camera) {
+  const current = normalizeCamera(camera || createCameraState());
+  return {
+    x: (point.x - FIELD_WIDTH / 2) / current.zoom + current.centerX,
+    y: (point.y - FIELD_HEIGHT / 2) / current.zoom + current.centerY
+  };
+}
+
+function screenPointToWorld(svg, clientX, clientY, layoutMode, camera) {
+  const point = screenPointToViewBox(svg, clientX, clientY, layoutMode);
+  if (!point) {
+    return null;
+  }
+  return viewBoxPointToWorld(point, camera);
+}
+
+function deriveTouchAim(tank, worldPoint) {
+  const originX = tank.x;
+  const originY = tank.centerY - 12;
+  const horizontal = tank.slot === 0 ? worldPoint.x - originX : originX - worldPoint.x;
+  const vertical = originY - worldPoint.y;
+  const angle = normalizeAngle((Math.atan2(vertical, horizontal) * 180) / Math.PI);
+  const distance = Math.hypot(horizontal, vertical);
+  const power = normalizePower(lerp(MIN_POWER, MAX_POWER, clamp(distance / TOUCH_POWER_DISTANCE, 0, 1)));
+  return { angle, power };
+}
+
+function bindTouchAim(boardWrap, { state, canAct, uiState, dispatchGameAction }) {
+  const layoutMode = resolveLayoutMode(uiState);
+  if (!isTouchLayoutMode(layoutMode)) {
+    return false;
+  }
+
+  const svg = boardWrap.querySelector("[data-tanks-svg]");
+  if (!(svg instanceof SVGSVGElement)) {
+    return false;
+  }
+
+  function dispatchActiveAction(action) {
+    if (!canAct || state.phase !== "AIMING_PHASE" || !state.activePlayerId || state.result) {
+      return Promise.resolve();
+    }
+
+    return dispatchGameAction({
+      ...action,
+      playerId: state.activePlayerId
+    });
+  }
+
+  function restorePreview() {
+    const currentTank = activeTank(state);
+    if (!currentTank) {
+      return;
+    }
+    updatePreview(boardWrap, state, currentTank.angle, currentTank.power);
+  }
+
+  let gesture = null;
+
+  function clearGesture() {
+    gesture = null;
+    restorePreview();
+  }
+
+  svg.addEventListener("pointerdown", (event) => {
+    if (!canAct || state.phase !== "AIMING_PHASE" || !state.activePlayerId || state.result) {
+      return;
+    }
+
+    const target = event.target instanceof Element ? event.target.closest("[data-tank-player-id]") : null;
+    const currentTank = activeTank(state);
+    if (!(target instanceof Element) || !currentTank) {
+      return;
+    }
+
+    if (String(target.getAttribute("data-tank-player-id") || "") !== currentTank.playerId) {
+      return;
+    }
+
+    const startWorld = screenPointToWorld(svg, event.clientX, event.clientY, layoutMode, state.camera);
+    if (!startWorld) {
+      return;
+    }
+
+    gesture = {
+      pointerId: event.pointerId,
+      startClientX: event.clientX,
+      startClientY: event.clientY,
+      startWorld,
+      lastWorld: startWorld,
+      startedAtMs: Date.now(),
+      screenDistance: 0,
+      aiming: false,
+      angle: currentTank.angle,
+      power: currentTank.power
+    };
+
+    if (typeof svg.setPointerCapture === "function") {
+      svg.setPointerCapture(event.pointerId);
+    }
+
+    event.preventDefault();
+  });
+
+  svg.addEventListener("pointermove", (event) => {
+    if (!gesture || gesture.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const worldPoint = screenPointToWorld(svg, event.clientX, event.clientY, layoutMode, state.camera);
+    if (!worldPoint) {
+      return;
+    }
+
+    const currentTank = activeTank(state);
+    if (!currentTank) {
+      clearGesture();
+      return;
+    }
+
+    const dx = event.clientX - gesture.startClientX;
+    const dy = event.clientY - gesture.startClientY;
+    const distance = Math.hypot(dx, dy);
+    gesture.lastWorld = worldPoint;
+    gesture.screenDistance = distance;
+
+    if (!gesture.aiming && distance >= TOUCH_AIM_ACTIVATION_PX) {
+      gesture.aiming = true;
+    }
+
+    if (!gesture.aiming) {
+      return;
+    }
+
+    const aim = deriveTouchAim(currentTank, worldPoint);
+    gesture.angle = aim.angle;
+    gesture.power = aim.power;
+    updatePreview(boardWrap, state, aim.angle, aim.power);
+    event.preventDefault();
+  });
+
+  function finishGesture(event, cancelled = false) {
+    if (!gesture || gesture.pointerId !== event.pointerId) {
+      return;
+    }
+
+    const currentTank = activeTank(state);
+    const duration = Date.now() - gesture.startedAtMs;
+
+    if (typeof svg.releasePointerCapture === "function" && svg.hasPointerCapture?.(event.pointerId)) {
+      svg.releasePointerCapture(event.pointerId);
+    }
+
+    if (cancelled || !currentTank) {
+      clearGesture();
+      return;
+    }
+
+    if (gesture.aiming && gesture.screenDistance >= TOUCH_FIRE_MIN_PULL_PX) {
+      dispatchActiveAction({
+        type: "fire-shot",
+        angle: gesture.angle,
+        power: gesture.power,
+        nowMs: Date.now()
+      }).catch(() => {});
+      gesture = null;
+      return;
+    }
+
+    if (!gesture.aiming && gesture.screenDistance <= TOUCH_MOVE_TAP_MAX_PX && duration <= TOUCH_MOVE_TAP_MAX_MS) {
+      const deltaX = (gesture.lastWorld?.x ?? currentTank.x) - currentTank.x;
+      if (Math.abs(deltaX) >= 10) {
+        dispatchActiveAction({
+          type: "move-tank",
+          direction: deltaX < 0 ? -1 : 1
+        }).catch(() => {});
+        gesture = null;
+        return;
+      }
+    }
+
+    clearGesture();
+  }
+
+  svg.addEventListener("pointerup", (event) => {
+    finishGesture(event);
+  });
+
+  svg.addEventListener("pointercancel", (event) => {
+    finishGesture(event, true);
+  });
+
+  return true;
+}
+
+function bindBoardElement(boardWrap, { state, canAct, uiState, dispatchGameAction }) {
+  const continueButton = boardWrap.querySelector("[data-tank-continue]");
+  if (continueButton) {
+    continueButton.addEventListener("click", () => {
+      dispatchGameAction({
+        type: "continue-handover",
+        playerId: state.pendingPlayerId,
+        nowMs: Date.now()
+      }).catch(() => {});
+    });
+  }
+
+  if (bindTouchAim(boardWrap, { state, canAct, uiState, dispatchGameAction })) {
+    return;
+  }
+
   const controls = boardWrap.querySelector("[data-tanks-controls]");
   if (!controls) {
     return;
@@ -2026,6 +3165,17 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
   let localAngle = normalizeAngle(angleInput.value);
   let localPower = normalizePower(powerInput.value);
 
+  function dispatchActiveAction(action) {
+    if (!canAct || state.phase !== "AIMING_PHASE" || !state.activePlayerId) {
+      return Promise.resolve();
+    }
+
+    return dispatchGameAction({
+      ...action,
+      playerId: state.activePlayerId
+    });
+  }
+
   function syncLocalUi() {
     angleInput.value = String(localAngle);
     powerInput.value = String(localPower);
@@ -2035,11 +3185,7 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
   }
 
   async function pushAimState() {
-    if (!canAct || state.phase !== "ready") {
-      return;
-    }
-
-    await dispatchGameAction({
+    await dispatchActiveAction({
       type: "set-aim",
       angle: localAngle,
       power: localPower
@@ -2066,7 +3212,7 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
 
   controls.querySelectorAll("[data-tank-step]").forEach((button) => {
     button.addEventListener("click", (event) => {
-      if (!canAct || state.phase !== "ready") {
+      if (!canAct || state.phase !== "AIMING_PHASE") {
         return;
       }
       const raw = String(event.currentTarget.dataset.tankStep || "");
@@ -2087,12 +3233,43 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     });
   });
 
+  controls.querySelectorAll("[data-tank-move]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      if (!canAct || state.phase !== "AIMING_PHASE") {
+        return;
+      }
+
+      const direction = Number(event.currentTarget.dataset.tankMove);
+      if (direction !== -1 && direction !== 1) {
+        return;
+      }
+
+      dispatchActiveAction({
+        type: "move-tank",
+        direction
+      }).catch(() => {});
+    });
+  });
+
+  controls.querySelectorAll("[data-tank-weapon]").forEach((button) => {
+    button.addEventListener("click", (event) => {
+      if (!canAct || state.phase !== "AIMING_PHASE") {
+        return;
+      }
+
+      dispatchActiveAction({
+        type: "select-weapon",
+        weaponId: String(event.currentTarget.dataset.tankWeapon || "basic")
+      }).catch(() => {});
+    });
+  });
+
   fireButton.addEventListener("click", () => {
-    if (!canAct || state.phase !== "ready") {
+    if (!canAct || state.phase !== "AIMING_PHASE") {
       return;
     }
 
-    dispatchGameAction({
+    dispatchActiveAction({
       type: "fire-shot",
       angle: localAngle,
       power: localPower,
@@ -2113,6 +3290,7 @@ export const tanquesGame = {
   hideGlobalTurnMessage: true,
   hideDefaultPlayerChips: true,
   useLandscapeMobileShell: true,
+  compactPortraitSubtitle: "",
   allowFullscreen: true,
   rules: [
     { title: "Objetivo", text: "Gana quien deja la vida rival en cero antes de caer." },
@@ -2134,11 +3312,17 @@ export const tanquesGame = {
     ensureTankStyles();
     return renderConfigPanel(options);
   },
-  createInitialState({ options }) {
-    return createState(options);
+  createInitialState({ options, players }) {
+    return createState(options, players);
   },
   getTurnSlot(state) {
-    return Number(state?.turnSlot) || 0;
+    if (Number.isInteger(state?.activePlayerSlot)) {
+      return state.activePlayerSlot;
+    }
+    if (Number.isInteger(state?.pendingPlayerSlot)) {
+      return state.pendingPlayerSlot;
+    }
+    return 0;
   },
   getResult(state) {
     return state?.result || null;
@@ -2150,25 +3334,43 @@ export const tanquesGame = {
     const status = buildStatusCopy(state, players);
     return `Vida ${state.tanks[0].health} - ${state.tanks[1].health} · ${status.title}`;
   },
-  applyAction({ state, action, actorSlot }) {
+  applyAction({ state, action }) {
     if (!action || typeof action.type !== "string") {
       return { ok: false, reason: "invalid" };
     }
 
     if (action.type === "set-aim") {
-      return setAim(state, action, actorSlot);
+      return setAim(state, action);
+    }
+
+    if (action.type === "move-tank") {
+      return moveTank(state, action);
+    }
+
+    if (action.type === "select-weapon") {
+      return selectWeapon(state, action);
     }
 
     if (action.type === "fire-shot") {
-      return fireShot(state, action, actorSlot);
+      return fireShot(state, action);
+    }
+
+    if (action.type === "continue-handover") {
+      return continueHandover(state, action);
     }
 
     if (action.type === "tick") {
-      if (state.phase === "projectile") {
-        return tickProjectile(state, action);
+      if (state.phase === "TURN_START") {
+        return tickTurnStart(state, action);
       }
-      if (state.phase === "impact") {
-        return tickImpact(state, action);
+      if (state.phase === "SIMULATION") {
+        return tickSimulation(state, action);
+      }
+      if (state.phase === "DAMAGE_EVALUATION") {
+        return tickDamageEvaluation(state, action);
+      }
+      if (state.phase === "END_TURN") {
+        return tickEndTurn(state);
       }
       return { ok: false, reason: "invalid" };
     }
@@ -2179,13 +3381,13 @@ export const tanquesGame = {
     ensureTankStyles();
     return renderCardIllustration();
   },
-  renderBoard({ state, canAct, uiState }) {
+  renderBoard({ state, players, canAct, uiState }) {
     ensureTankStyles();
-    return renderShell(state, canAct, uiState);
+    return renderShell(state, players, canAct, uiState);
   },
-  patchBoardElement(boardWrap, { state, canAct, uiState }) {
+  patchBoardElement(boardWrap, { state, players, canAct, uiState }) {
     ensureTankStyles();
-    boardWrap.innerHTML = renderShell(state, canAct, uiState);
+    boardWrap.innerHTML = renderShell(state, players, canAct, uiState);
     return true;
   },
   bindBoardElement(boardWrap, ctx) {

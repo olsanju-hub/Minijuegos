@@ -7,6 +7,9 @@ const FIELD_WIDTH = 1000;
 const FIELD_HEIGHT = 620;
 const GOAL_MOUTH_HEIGHT = 188;
 const GOAL_DEPTH = 44;
+const FOOTBALL_VIEWBOX_WIDTH = FIELD_WIDTH + GOAL_DEPTH * 2;
+const FOOTBALL_VIEWBOX_HEIGHT = FIELD_HEIGHT;
+const FOOTBALL_VIEWBOX_ASPECT = FOOTBALL_VIEWBOX_WIDTH / FOOTBALL_VIEWBOX_HEIGHT;
 
 const PLAYER_RADIUS = 27;
 const BALL_RADIUS = 14;
@@ -56,8 +59,8 @@ const FOOTBALL_STYLES = String.raw`
     padding: 0 !important;
     gap: 0 !important;
     width: 100%;
-    height: 100dvh;
-    max-height: 100dvh;
+    height: var(--app-dvh, 100dvh);
+    max-height: var(--app-dvh, 100dvh);
     border-radius: 0;
     overflow: hidden;
   }
@@ -117,20 +120,28 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-shell {
+  --football-field-width: min(1200px, 100%);
+  --football-field-height: min(740px, 100%);
   position: relative;
   width: 100%;
   height: 100%;
   min-height: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: stretch;
+  justify-content: stretch;
+  padding: 8px;
   background: radial-gradient(circle at center, rgba(24, 97, 76, 0.05), transparent), #f8f6f0;
   border-radius: 20px;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) {
   .football-shell {
+    gap: 6px;
+    padding: max(8px, env(safe-area-inset-top)) 8px 8px;
     border-radius: 0;
   }
 }
@@ -138,24 +149,27 @@ const FOOTBALL_STYLES = String.raw`
 .football-stage {
   width: 100%;
   height: 100%;
+  min-height: 0;
   display: flex;
   align-items: center;
   justify-content: center;
   position: relative;
+  overflow: hidden;
 }
 
 .football-field {
   position: relative;
   z-index: 1;
   display: block;
-  width: 100%;
-  height: 100%;
-  max-width: 1200px;
-  max-height: 740px;
-  padding: 16px;
+  width: var(--football-field-width);
+  height: var(--football-field-height);
+  max-width: none;
+  max-height: none;
+  padding: 0;
   touch-action: none;
   user-select: none;
   -webkit-user-select: none;
+  box-sizing: border-box;
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
@@ -163,54 +177,39 @@ const FOOTBALL_STYLES = String.raw`
     padding: 0;
     transform: rotate(90deg);
     transform-origin: center center;
-    width: 100dvh;
-    height: 100vw;
-    max-width: 86dvh;
-    max-height: 94vw;
   }
 }
 
 @media (max-width: 1024px) and (orientation: landscape) {
+  .football-shell {
+    grid-template-columns: 78px minmax(0, 1fr);
+    grid-template-rows: minmax(0, 1fr);
+    gap: 4px;
+    padding: 6px 6px 6px max(8px, env(safe-area-inset-left));
+  }
+
   .football-field {
     padding: 0;
-    width: 100vw;
-    height: 100dvh;
-    max-width: 92vw;
-    max-height: 88dvh;
   }
 }
 
 .football-mobile-hud {
-  position: absolute;
-  top: 16px;
-  left: 50%;
-  transform: translateX(-50%);
+  position: relative;
+  justify-self: center;
   z-index: 20;
   display: flex;
   align-items: center;
   gap: 20px;
+  width: fit-content;
+  max-width: calc(100% - 112px);
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  padding: 8px 24px;
+  padding: 7px 22px;
   border-radius: 99px;
   box-shadow: 0 8px 24px rgba(30, 40, 35, 0.08), inset 0 1px 0 rgba(255, 255, 255, 1);
   border: 1px solid rgba(210, 205, 190, 0.6);
   pointer-events: none;
-}
-
-@media (max-width: 1024px) and (orientation: portrait) {
-  .football-mobile-hud {
-    top: auto;
-    bottom: 32px;
-  }
-}
-
-@media (max-width: 1024px) and (orientation: landscape) {
-  .football-mobile-hud {
-    top: 8px;
-    transform: translateX(-50%) scale(0.9);
-  }
 }
 
 .hud-team {
@@ -250,6 +249,31 @@ const FOOTBALL_STYLES = String.raw`
   text-transform: uppercase;
   letter-spacing: 0.05em;
   white-space: nowrap;
+}
+
+@media (max-width: 1024px) and (orientation: landscape) {
+  .football-mobile-hud {
+    width: 100%;
+    max-width: none;
+    align-self: center;
+    justify-self: stretch;
+    flex-direction: column;
+    gap: 9px;
+    padding: 10px 4px;
+    border-radius: 24px;
+  }
+
+  .hud-center {
+    min-width: 0;
+  }
+
+  .hud-center .turn-text {
+    max-width: 64px;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.05;
+    font-size: 0.58rem;
+  }
 }
 
 .football-field-frame {
@@ -653,6 +677,45 @@ function buildStatusCopy(state) {
     eyebrow: `Turno ${state.turnNumber}`,
     title: `Juega ${teamMeta(state.turnSlot).short}`,
     note: `Primero a ${state.goalsToWin}`
+  };
+}
+
+function resolveFootballLayoutMode(uiState) {
+  const viewport = uiState?.viewport || {};
+  const width = Number(viewport.width) || 0;
+  const height = Number(viewport.height) || 0;
+  const isMobile = width > 0 && height > 0 ? width <= 1024 : false;
+  if (!isMobile) {
+    return "desktop";
+  }
+  return height >= width ? "mobile-portrait" : "mobile-landscape";
+}
+
+function computeFootballFieldMetrics(uiState, layoutMode) {
+  if (layoutMode === "desktop") {
+    return null;
+  }
+
+  const viewport = uiState?.viewport || {};
+  const viewportWidth = Math.max(320, Number(viewport.width) || 390);
+  const viewportHeight = Math.max(320, Number(viewport.height) || 844);
+  const horizontalReserve = layoutMode === "mobile-landscape" ? 92 : 16;
+  const verticalReserve = layoutMode === "mobile-landscape" ? 12 : 58;
+  const availableWidth = Math.max(260, viewportWidth - horizontalReserve);
+  const availableHeight = Math.max(220, viewportHeight - verticalReserve);
+
+  if (layoutMode === "mobile-portrait") {
+    const fieldWidth = Math.min(availableHeight, availableWidth * FOOTBALL_VIEWBOX_ASPECT);
+    return {
+      width: fieldWidth,
+      height: fieldWidth / FOOTBALL_VIEWBOX_ASPECT
+    };
+  }
+
+  const fieldWidth = Math.min(availableWidth, availableHeight * FOOTBALL_VIEWBOX_ASPECT);
+  return {
+    width: fieldWidth,
+    height: fieldWidth / FOOTBALL_VIEWBOX_ASPECT
   };
 }
 
@@ -1075,7 +1138,7 @@ function renderConfigPanel(options = {}) {
             </button>
           `).join("")}
         </div>
-        <p class="info-line">Una sola ficha por turno. Arrastra hacia atras, suelta y deja que el campo resuelva la jugada.</p>
+        <p class="info-line">Una sola ficha por turno. Arrastra hacia donde quieres tirar, suelta y deja que el campo resuelva la jugada.</p>
       </div>
     </section>
   `;
@@ -1225,8 +1288,13 @@ function renderField(state, canAct) {
 
 function renderShell(state, canAct, uiState) {
   const status = buildStatusCopy(state);
+  const layoutMode = resolveFootballLayoutMode(uiState);
+  const metrics = computeFootballFieldMetrics(uiState, layoutMode);
+  const shellStyle = metrics
+    ? ` style="--football-field-width:${round(metrics.width, 2)}px; --football-field-height:${round(metrics.height, 2)}px;"`
+    : "";
   return `
-    <section class="football-shell" data-football-root data-football-phase="${escapeHtml(state.phase)}">
+    <section class="football-shell" data-football-root data-football-layout="${layoutMode}" data-football-phase="${escapeHtml(state.phase)}"${shellStyle}>
       <div class="football-mobile-hud">
         <div class="hud-team hud-team-0 ${state.turnSlot === 0 ? "is-active" : ""}">
           <span class="score">${state.score[0]}</span>
@@ -1246,19 +1314,42 @@ function renderShell(state, canAct, uiState) {
 }
 
 function worldPointFromClient(svg, clientX, clientY) {
-  try {
-    const point = svg.createSVGPoint();
-    point.x = clientX;
-    point.y = clientY;
-    const ctm = svg.getScreenCTM();
-    if (!ctm) {
-      return null;
-    }
-    const worldPoint = point.matrixTransform(ctm.inverse());
-    return { x: worldPoint.x, y: worldPoint.y };
-  } catch (error) {
+  const rect = svg.getBoundingClientRect();
+  const viewBox = svg.viewBox.baseVal;
+  if (!rect.width || !rect.height || !viewBox.width || !viewBox.height) {
     return null;
   }
+
+  const root = svg.closest("[data-football-root]");
+  const layoutMode = root?.dataset?.footballLayout || "desktop";
+  let localX = clientX - rect.left;
+  let localY = clientY - rect.top;
+  let cssWidth = rect.width;
+  let cssHeight = rect.height;
+
+  if (layoutMode === "mobile-portrait") {
+    const rotatedX = clamp(clientX - rect.left, 0, rect.width);
+    const rotatedY = clamp(clientY - rect.top, 0, rect.height);
+    cssWidth = rect.height;
+    cssHeight = rect.width;
+    localX = rotatedY;
+    localY = cssHeight - rotatedX;
+  }
+
+  localX = clamp(localX, 0, cssWidth);
+  localY = clamp(localY, 0, cssHeight);
+
+  const scale = Math.min(cssWidth / viewBox.width, cssHeight / viewBox.height);
+  if (!Number.isFinite(scale) || scale <= 0) {
+    return null;
+  }
+
+  const offsetX = (cssWidth - viewBox.width * scale) / 2;
+  const offsetY = (cssHeight - viewBox.height * scale) / 2;
+  return {
+    x: viewBox.x + (localX - offsetX) / scale,
+    y: viewBox.y + (localY - offsetY) / scale
+  };
 }
 
 function clampPullPoint(anchor, point) {
@@ -1277,11 +1368,11 @@ function clampPullPoint(anchor, point) {
 }
 
 function renderAimGuide(anchor, handlePoint, power01) {
-  const pullX = anchor.x - handlePoint.x;
-  const pullY = anchor.y - handlePoint.y;
-  const pullDistance = Math.hypot(pullX, pullY) || 1;
-  const dirX = pullX / pullDistance;
-  const dirY = pullY / pullDistance;
+  const aimX = handlePoint.x - anchor.x;
+  const aimY = handlePoint.y - anchor.y;
+  const aimDistance = Math.hypot(aimX, aimY) || 1;
+  const dirX = aimX / aimDistance;
+  const dirY = aimY / aimDistance;
   const guideLength = 24 + power01 * 48;
   const tipX = anchor.x + dirX * guideLength;
   const tipY = anchor.y + dirY * guideLength;
@@ -1293,8 +1384,8 @@ function renderAimGuide(anchor, handlePoint, power01) {
   const dash = Math.max(7, 16 - power01 * 7);
 
   return `
-    <line class="football-aim-line is-pull" x1="${handlePoint.x}" y1="${handlePoint.y}" x2="${anchor.x}" y2="${anchor.y}" style="stroke:${softTone};stroke-width:${round(pullWidth + 6, 2)}"></line>
-    <line class="football-aim-line is-pull" x1="${handlePoint.x}" y1="${handlePoint.y}" x2="${anchor.x}" y2="${anchor.y}" style="stroke:${tone};stroke-width:${round(pullWidth, 2)};stroke-dasharray:${round(dash, 2)} 10"></line>
+    <line class="football-aim-line is-pull" x1="${anchor.x}" y1="${anchor.y}" x2="${handlePoint.x}" y2="${handlePoint.y}" style="stroke:${softTone};stroke-width:${round(pullWidth + 6, 2)}"></line>
+    <line class="football-aim-line is-pull" x1="${anchor.x}" y1="${anchor.y}" x2="${handlePoint.x}" y2="${handlePoint.y}" style="stroke:${tone};stroke-width:${round(pullWidth, 2)};stroke-dasharray:${round(dash, 2)} 10"></line>
     <line class="football-aim-line is-vector" x1="${anchor.x}" y1="${anchor.y}" x2="${round(tipX, 2)}" y2="${round(tipY, 2)}" style="stroke:${tone};stroke-width:${round(vectorWidth, 2)}"></line>
     <circle class="football-aim-anchor" cx="${anchor.x}" cy="${anchor.y}" r="${round(haloRadius * 0.42, 2)}" style="stroke:${tone}"></circle>
     <circle class="football-aim-tip" cx="${round(tipX, 2)}" cy="${round(tipY, 2)}" r="${round(8 + power01 * 7, 2)}" style="fill:${softTone};stroke:${tone}"></circle>
@@ -1357,23 +1448,23 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     }
 
     const handlePoint = currentDrag.handlePoint || currentDrag.pointer;
-    const pullX = currentDrag.anchor.x - handlePoint.x;
-    const pullY = currentDrag.anchor.y - handlePoint.y;
-    const pullDistance = Math.hypot(pullX, pullY);
-    if (pullDistance < MIN_SHOT_DISTANCE) {
+    const aimX = handlePoint.x - currentDrag.anchor.x;
+    const aimY = handlePoint.y - currentDrag.anchor.y;
+    const aimDistance = Math.hypot(aimX, aimY);
+    if (aimDistance < MIN_SHOT_DISTANCE) {
       return;
     }
 
-    const power01 = clamp(pullDistance / MAX_DRAG_DISTANCE, 0, 1);
+    const power01 = clamp(aimDistance / MAX_DRAG_DISTANCE, 0, 1);
     const easedPower = power01 * power01 * 0.78 + power01 * 0.22;
     const speed = MAX_SHOT_SPEED * easedPower;
-    const scale = speed / pullDistance;
+    const scale = speed / aimDistance;
 
     await dispatchGameAction({
       type: "shoot-piece",
       pieceId: currentDrag.pieceId,
-      velocityX: pullX * scale,
-      velocityY: pullY * scale,
+      velocityX: aimX * scale,
+      velocityY: aimY * scale,
       power01,
       nowMs: Date.now()
     });
@@ -1466,7 +1557,7 @@ export const futbolTurnosGame = {
   allowFullscreen: true,
   rules: [
     { title: "Objetivo", text: "Marca mas goles que el rival empujando una sola ficha por turno." },
-    { title: "Disparo", text: "Selecciona una ficha de tu equipo, tira de ella hacia atras y sueltala para impulsarla." },
+    { title: "Disparo", text: "Selecciona una ficha de tu equipo, arrastra hacia donde quieres tirar y sueltala para impulsarla." },
     { title: "Resolucion", text: "La jugada termina cuando pelota y fichas se detienen por completo." },
     { title: "Gol", text: "La pelota debe cruzar la porteria rival por la abertura central para sumar." }
   ],

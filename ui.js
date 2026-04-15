@@ -1028,6 +1028,8 @@ export function createUI({ appElement, toastElement }) {
 
     const fullscreenActive = Boolean(game.allowFullscreen) && isGameFullscreen();
     const useCompactPortraitChrome = Boolean(game.useLandscapeMobileShell) && Boolean(boardUiState.viewport?.isPortraitHandheld);
+    const compactPortraitSubtitle =
+      typeof game.compactPortraitSubtitle === "string" ? game.compactPortraitSubtitle : "Gira el movil para jugar";
 
     return `
       <section class="${screenClasses.join(" ")}">
@@ -1035,7 +1037,7 @@ export function createUI({ appElement, toastElement }) {
           leftAction: "game-back",
           leftLabel: "Volver",
           title: game.name,
-          subtitle: useCompactPortraitChrome ? "Gira el movil para jugar" : topbarSubtitle,
+          subtitle: useCompactPortraitChrome ? compactPortraitSubtitle : topbarSubtitle,
           showRules: !useCompactPortraitChrome,
           showFullscreen: !useCompactPortraitChrome && Boolean(game.allowFullscreen),
           fullscreenActive,
@@ -1411,10 +1413,11 @@ export function createUI({ appElement, toastElement }) {
   }
 
   function shouldRunTankLoop(vm = currentVm) {
+    const phase = vm?.session?.state?.phase;
     return Boolean(
       vm?.screen === "game" &&
       vm?.game?.id === "tanques" &&
-      (vm?.session?.state?.phase === "projectile" || vm?.session?.state?.phase === "impact") &&
+      (phase === "TURN_START" || phase === "SIMULATION" || phase === "DAMAGE_EVALUATION" || phase === "END_TURN") &&
       typeof onAction === "function"
     );
   }
