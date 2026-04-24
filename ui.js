@@ -672,15 +672,16 @@ export function createUI({ appElement, toastElement }) {
 
       <main class="pt-24 pb-32 max-w-[1440px] mx-auto px-6 md:px-12 w-full">
         <!-- Hero Section -->
-        <section class="relative overflow-hidden rounded-3xl mb-12 bg-primary-container border border-slate-100 shadow-sm text-on-primary-container min-h-[380px] flex items-center">
+        <section class="relative overflow-hidden rounded-3xl mb-12 bg-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[380px] flex items-center">
           <!-- Background Image -->
-          <img src="./assets/home-hero-family.png" alt="Familia jugando" class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-50 mix-blend-multiply" />
-          <div class="absolute inset-0 bg-gradient-to-r from-primary-container via-primary-container/80 to-transparent z-0"></div>
+          <img src="./assets/home-hero-family.png" alt="Familia jugando" class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-100" />
+          <div class="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent z-0"></div>
+          <div class="absolute inset-0 bg-black/10 z-0"></div>
           
-          <div class="relative z-10 px-8 py-12 md:px-16 md:py-20 max-w-2xl">
-            <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-4 uppercase tracking-wider backdrop-blur-md shadow-sm">Coleccion Local</span>
-            <h2 class="font-display-lg text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-sm">Redescubre los clasicos</h2>
-            <p class="font-body-lg text-lg opacity-90 mb-8 leading-relaxed font-medium">
+          <div class="relative z-10 px-8 py-12 md:px-16 md:py-20 max-w-2xl text-white">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-4 uppercase tracking-wider backdrop-blur-md shadow-sm border border-white/20">Coleccion Local</span>
+            <h2 class="font-display-lg text-4xl md:text-5xl font-bold mb-6 leading-tight text-white" style="text-shadow: 0 4px 12px rgba(0,0,0,0.6)">Redescubre los clasicos</h2>
+            <p class="font-body-lg text-lg opacity-95 mb-8 leading-relaxed font-medium text-slate-100" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8)">
               Una coleccion curada de los juegos que definieron generaciones, ahora reimaginados con una interfaz moderna y enfocada en la jugabilidad.
             </p>
           </div>
@@ -699,29 +700,28 @@ export function createUI({ appElement, toastElement }) {
           ${games.map((game) => {
             const profile = profileForGame(game);
             return `
-              <div class="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)] hover:shadow-xl transition-all duration-300 border border-slate-100 relative flex flex-col active:scale-95">
-                <button
-                  class="absolute inset-0 w-full h-full z-10"
-                  data-action="open-game"
-                  data-game-id="${game.id}"
-                  aria-label="Abrir ${escapeHtml(game.name)}"
-                ></button>
-                <div class="h-48 relative flex items-center justify-center bg-gradient-to-br ${profile.color}">
+              <button
+                class="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)] hover:shadow-xl transition-all duration-300 border border-slate-100 relative flex flex-col active:scale-95 text-left w-full cursor-pointer"
+                data-action="open-game"
+                data-game-id="${game.id}"
+                aria-label="Abrir ${escapeHtml(game.name)}"
+              >
+                <div class="h-48 relative flex items-center justify-center w-full bg-gradient-to-br ${profile.color}">
                   <div class="scale-150 opacity-90 text-white drop-shadow-xl group-hover:scale-[1.7] transition-transform duration-500">
                     ${renderHomeGameGlyph(game.id)}
                   </div>
                 </div>
-                <div class="p-5 flex-1 flex flex-col justify-between">
+                <div class="p-5 flex-1 flex flex-col justify-between w-full">
                   <div>
                     <h4 class="font-title-lg text-lg font-bold text-on-surface mb-1">${escapeHtml(game.name)}</h4>
                     <p class="font-caption text-sm text-on-surface-variant line-clamp-2">${escapeHtml(game.tagline || "Partida local")}</p>
                   </div>
-                  <div class="mt-4 flex justify-between items-center">
+                  <div class="mt-4 flex justify-between items-center w-full">
                     <span class="px-2 py-1 bg-surface-container rounded text-[10px] font-bold text-primary tracking-wider uppercase">${escapeHtml(profile.tag)}</span>
                     <span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0" data-icon="play_circle">play_circle</span>
                   </div>
                 </div>
-              </div>
+              </button>
             `;
           }).join("")}
         </div>
@@ -838,7 +838,7 @@ export function createUI({ appElement, toastElement }) {
 
             <!-- Action Button -->
             <div class="pt-6 mt-6 border-t border-outline-variant/20">
-              <button class="w-full bg-primary hover:bg-primary/90 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3" data-action="start-game">
+              <button class="w-full bg-primary hover:bg-primary/90 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3" data-action="config-continue">
                 Iniciar Partida
                 <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_circle</span>
               </button>
@@ -985,9 +985,8 @@ export function createUI({ appElement, toastElement }) {
       </header>
 
       <!-- Main Game Area (Theater Mode) -->
-      <main class="relative h-[calc(100vh-64px)] mt-16 w-full flex flex-col items-center justify-center p-2 md:p-6 bg-surface-container-low overflow-hidden">
-        <div class="relative w-full max-w-[1200px] h-full max-h-[800px] bg-white rounded-2xl shadow-xl border border-outline-variant/30 flex items-center justify-center overflow-hidden">
-          <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 24px 24px; opacity: 0.03;"></div>
+      <main class="relative h-[calc(100vh-64px)] mt-16 w-full flex flex-col items-center justify-center p-0 md:p-6 bg-surface-container-lowest overflow-hidden">
+        <div class="relative w-full max-w-[1200px] h-full max-h-[800px] flex items-center justify-center overflow-visible">
           <section class="board-wrap z-10 w-full h-full flex items-center justify-center">
             ${game.renderBoard({
               state: session.state,

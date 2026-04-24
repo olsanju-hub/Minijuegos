@@ -359,7 +359,7 @@ const FOOTBALL_STYLES = String.raw`
   stroke: var(--football-piece-stroke);
   stroke-width: 4.2;
   paint-order: stroke;
-  filter: drop-shadow(0 5px 8px rgba(39, 43, 48, 0.16));
+  filter: drop-shadow(0 6px 12px rgba(10, 20, 15, 0.4)) drop-shadow(0 2px 4px rgba(10, 20, 15, 0.3));
   transition: filter 140ms ease, stroke-width 140ms ease;
 }
 
@@ -1216,9 +1216,9 @@ function renderField(state, canAct) {
     >
       <defs>
         <linearGradient id="footballPitchFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#268c6e" />
-          <stop offset="44%" stop-color="#1b745c" />
-          <stop offset="100%" stop-color="#0f4b3b" />
+          <stop offset="0%" stop-color="#1B5E3C" />
+          <stop offset="50%" stop-color="#144C30" />
+          <stop offset="100%" stop-color="#0E3822" />
         </linearGradient>
         <radialGradient id="footballPitchAmbient" cx="50%" cy="42%" r="72%">
           <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
@@ -1368,8 +1368,8 @@ function clampPullPoint(anchor, point) {
 }
 
 function renderAimGuide(anchor, handlePoint, power01) {
-  const aimX = handlePoint.x - anchor.x;
-  const aimY = handlePoint.y - anchor.y;
+  const aimX = anchor.x - handlePoint.x;
+  const aimY = anchor.y - handlePoint.y;
   const aimDistance = Math.hypot(aimX, aimY) || 1;
   const dirX = aimX / aimDistance;
   const dirY = aimY / aimDistance;
@@ -1448,8 +1448,8 @@ function bindBoardElement(boardWrap, { state, canAct, dispatchGameAction }) {
     }
 
     const handlePoint = currentDrag.handlePoint || currentDrag.pointer;
-    const aimX = handlePoint.x - currentDrag.anchor.x;
-    const aimY = handlePoint.y - currentDrag.anchor.y;
+    const aimX = currentDrag.anchor.x - handlePoint.x;
+    const aimY = currentDrag.anchor.y - handlePoint.y;
     const aimDistance = Math.hypot(aimX, aimY);
     if (aimDistance < MIN_SHOT_DISTANCE) {
       return;
