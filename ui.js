@@ -696,7 +696,7 @@ export function createUI({ appElement, toastElement }) {
         <!-- Games Grid -->
         <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">
           ${games.map((game) => `
-            <button class="group relative bg-white/50 md:bg-white rounded-[20px] md:rounded-2xl p-2 md:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] md:shadow-sm border border-slate-200/50 md:border-slate-200/60 hover:shadow-xl hover:border-emerald-500/30 transition-all duration-300 overflow-hidden flex flex-col items-center md:items-start focus:outline-none focus:ring-4 focus:ring-emerald-500/20 active:scale-[0.95] w-full" data-action="config-continue" data-game-id="${game.id}">
+            <button class="group relative bg-white/50 md:bg-white rounded-[20px] md:rounded-2xl p-2 md:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] md:shadow-sm border border-slate-200/50 md:border-slate-200/60 hover:shadow-xl hover:border-emerald-500/30 transition-all duration-300 overflow-hidden flex flex-col items-center md:items-start focus:outline-none focus:ring-4 focus:ring-emerald-500/20 active:scale-[0.95] w-full" data-action="open-game" data-game-id="${game.id}">
               <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
               
               <!-- Mobile App Icon / Desktop Header -->
