@@ -1242,7 +1242,7 @@ export function createUI({ appElement, toastElement }) {
     if (vm.screen !== "home") {
       homeDrawerOpen = false;
     }
-    let html = "";
+    let html;
 
     if (vm.screen === "home") {
       html = renderHome(vm);

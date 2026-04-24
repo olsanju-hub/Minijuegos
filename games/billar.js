@@ -1176,8 +1176,8 @@ function settleShot(state) {
     return state;
   }
 
-  let nextTurn = actorSlot;
-  let lastEvent = null;
+  let nextTurn;
+  let lastEvent;
 
   if (scratched) {
     nextTurn = otherSlot;

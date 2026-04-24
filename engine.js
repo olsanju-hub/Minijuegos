@@ -407,7 +407,7 @@ export function createEngine({ ui }) {
       }
 
       case "restart-game":
-      case "play-again":
+      case "play-again": {
         if (!state.session) {
           return;
         }
@@ -424,6 +424,7 @@ export function createEngine({ ui }) {
         state.ui.invalidColumn = null;
         render();
         return;
+      }
 
       case "new-game":
         resetForNewGame();
