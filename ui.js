@@ -672,11 +672,10 @@ export function createUI({ appElement, toastElement }) {
 
       <main class="pt-24 pb-32 max-w-[1440px] mx-auto px-6 md:px-12 w-full">
         <!-- Hero Section -->
-        <section class="relative overflow-hidden rounded-3xl mb-12 bg-slate-900 shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[380px] flex items-center">
+        <section class="relative overflow-hidden rounded-3xl mb-12 bg-black shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[380px] flex items-center">
           <!-- Background Image -->
           <img src="./assets/home-hero-family.png" alt="Familia jugando" class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-100" />
-          <div class="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent z-0"></div>
-          <div class="absolute inset-0 bg-black/10 z-0"></div>
+          <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent z-0"></div>
           
           <div class="relative z-10 px-8 py-12 md:px-16 md:py-20 max-w-2xl text-white">
             <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-4 uppercase tracking-wider backdrop-blur-md shadow-sm border border-white/20">Coleccion Local</span>
@@ -990,7 +989,7 @@ export function createUI({ appElement, toastElement }) {
       </header>
 
       <!-- Main Game Area (Theater Mode) -->
-      <main class="relative h-[calc(100vh-64px)] mt-16 w-full flex flex-col items-center justify-center p-0 md:p-6 bg-surface-container-lowest overflow-hidden">
+      <main class="relative h-[calc(100dvh-64px)] mt-16 w-full flex flex-col items-center justify-center p-0 md:p-6 bg-surface-container-lowest overflow-hidden">
         <div class="relative w-full max-w-[1200px] h-full max-h-[800px] flex items-center justify-center overflow-visible">
           <section class="board-wrap z-10 w-full h-full flex items-center justify-center">
             ${game.renderBoard({

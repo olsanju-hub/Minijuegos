@@ -140,8 +140,8 @@ const FOOTBALL_STYLES = String.raw`
 
 @media (max-width: 1024px) {
   .football-shell {
-    gap: 12px;
-    padding: max(20px, env(safe-area-inset-top)) 16px 16px;
+    gap: 4px;
+    padding: 0;
     border-radius: 0;
   }
 }
@@ -201,7 +201,9 @@ const FOOTBALL_STYLES = String.raw`
   align-items: center;
   gap: 20px;
   width: fit-content;
-  max-width: calc(100% - 112px);
+  max-width: calc(100% - 32px);
+  margin-top: max(8px, env(safe-area-inset-top));
+  margin-bottom: 4px;
   background: rgba(255, 255, 255, 0.85);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
