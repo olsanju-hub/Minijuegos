@@ -693,36 +693,31 @@ export function createUI({ appElement, toastElement }) {
             <p class="font-body-md text-on-surface-variant">${games.length} experiencias listas para jugar</p>
           </div>
         </div>
-
-        <!-- Bento-inspired Game Grid -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          ${games.map((game) => {
-            const profile = profileForGame(game);
-            return `
-              <button
-                class="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)] hover:shadow-xl transition-all duration-300 border border-slate-100 relative flex flex-col active:scale-95 text-left w-full cursor-pointer"
-                data-action="open-game"
-                data-game-id="${game.id}"
-                aria-label="Abrir ${escapeHtml(game.name)}"
-              >
-                <div class="h-48 relative flex items-center justify-center w-full bg-gradient-to-br ${profile.color}">
-                  <div class="scale-150 opacity-90 text-white drop-shadow-xl group-hover:scale-[1.7] transition-transform duration-500">
-                    ${renderHomeGameGlyph(game.id)}
-                  </div>
+        <!-- Games Grid -->
+        <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">
+          ${games.map((game) => `
+            <button class="group relative bg-white/50 md:bg-white rounded-[20px] md:rounded-2xl p-2 md:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] md:shadow-sm border border-slate-200/50 md:border-slate-200/60 hover:shadow-xl hover:border-emerald-500/30 transition-all duration-300 overflow-hidden flex flex-col items-center md:items-start focus:outline-none focus:ring-4 focus:ring-emerald-500/20 active:scale-[0.95] w-full" data-action="config-continue" data-game-id="${game.id}">
+              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              
+              <!-- Mobile App Icon / Desktop Header -->
+              <div class="w-14 h-14 md:w-12 md:h-12 md:mb-6 rounded-2xl md:rounded-xl bg-gradient-to-br from-white to-slate-50 md:bg-slate-50 border border-slate-200/80 md:border-slate-200/50 flex items-center justify-center shadow-sm md:shadow-sm group-hover:scale-110 group-hover:bg-white transition-transform duration-300 relative z-10 mx-auto md:mx-0">
+                <div class="w-9 h-9 md:w-8 md:h-8 opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-sm">
+                  ${renderHomeGameGlyph(game.id)}
                 </div>
-                <div class="p-5 flex-1 flex flex-col justify-between w-full">
-                  <div>
-                    <h4 class="font-title-lg text-lg font-bold text-on-surface mb-1">${escapeHtml(game.name)}</h4>
-                    <p class="font-caption text-sm text-on-surface-variant line-clamp-2">${escapeHtml(game.tagline || "Partida local")}</p>
-                  </div>
-                  <div class="mt-4 flex justify-between items-center w-full">
-                    <span class="px-2 py-1 bg-surface-container rounded text-[10px] font-bold text-primary tracking-wider uppercase">${escapeHtml(profile.tag)}</span>
-                    <span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0" data-icon="play_circle">play_circle</span>
-                  </div>
+              </div>
+              
+              <h3 class="font-bold text-[11px] leading-[1.1] md:text-xl text-slate-800 md:text-slate-900 md:mb-2 text-center md:text-left mt-2 md:mt-0 font-['Plus_Jakarta_Sans'] line-clamp-2 md:line-clamp-none w-full relative z-10 tracking-tight md:tracking-normal">${escapeHtml(game.name)}</h3>
+              
+              <p class="hidden md:block text-slate-500 text-sm leading-relaxed mb-6 font-medium relative z-10 w-full text-left">${escapeHtml(game.tagline || game.subtitle || "2-4 Jugadores")}</p>
+              
+              <div class="hidden md:flex justify-between items-center w-full mt-auto relative z-10">
+                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100/50">${game.minPlayers}-${game.maxPlayers} Jug.</span>
+                <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200/50 flex items-center justify-center shadow-sm group-hover:bg-emerald-50 transition-colors">
+                  <span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-500 text-sm transition-colors">arrow_forward</span>
                 </div>
-              </button>
-            `;
-          }).join("")}
+              </div>
+            </button>
+          `).join("")}
         </div>
       </main>
 
