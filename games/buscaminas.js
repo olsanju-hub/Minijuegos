@@ -584,7 +584,7 @@ function renderBoardGrid(state) {
         class="mines-board is-${escapeHtml(state.shape)}"
         data-mines-board
         data-mines-shape="${escapeHtml(state.shape)}"
-        style="--mines-cols:${state.cols};--mines-board-max:${state.boardMaxWidth}px;"
+        style="--mines-cols:${state.cols};--mines-rows:${state.rows};--mines-board-max:${state.boardMaxWidth}px;"
       >
         ${state.cells.map((cell) => (cell.isActive ? renderActiveCell(cell, state) : renderInactiveCell(cell))).join("")}
       </div>

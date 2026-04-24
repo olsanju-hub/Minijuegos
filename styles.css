@@ -651,7 +651,7 @@ body:not(.is-home-screen) .bg-layer {
 
 
 .connect4-shell {
-  width: min(760px, calc(100vw - 38px));
+  width: min(760px, calc(100vw - 38px), calc(100dvh - 140px));
   border-radius: 24px;
   border: 1px solid rgba(34, 96, 72, 0.28);
   background: linear-gradient(176deg, #2f7f60, #24674f);
@@ -752,7 +752,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .checkers-shell {
-  width: min(760px, calc(100vw - 38px));
+  width: min(760px, calc(100vw - 38px), calc(100dvh - 140px));
   border-radius: 24px;
   border: 1px solid rgba(119, 84, 58, 0.3);
   background: linear-gradient(176deg, #f8f1e5 0%, #eadcc8 100%);
@@ -1187,7 +1187,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .app-shell:not(.app-shell-home) .ttt-board {
-  width: min(610px, calc(100vw - 42px));
+  width: min(610px, calc(100vw - 42px), calc(100dvh - 140px));
   padding: 13px;
   gap: 10px;
   border-color: #d0bf9f;
@@ -1206,7 +1206,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .app-shell:not(.app-shell-home) .connect4-shell {
-  width: min(1080px, calc(100vw - 36px));
+  width: min(1080px, calc(100vw - 36px), calc(100dvh - 140px));
   border-color: rgba(20, 90, 66, 0.28);
   background: linear-gradient(178deg, #278a64 0%, #176c4e 100%);
   padding: 18px;
@@ -1251,11 +1251,11 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .app-shell:not(.app-shell-home) .ttt-board {
-    width: min(730px, calc(100vw - 220px));
+    width: min(730px, calc(100vw - 220px), calc(100dvh - 140px));
   }
 
   .app-shell:not(.app-shell-home) .connect4-shell {
-    width: min(1220px, calc(100vw - 120px));
+    width: min(1220px, calc(100vw - 120px), calc(100dvh - 140px));
     padding: 22px;
   }
 
@@ -1267,11 +1267,11 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .app-shell:not(.app-shell-home) .ttt-board {
-    width: min(580px, calc(100vw - 36px));
+    width: min(580px, calc(100vw - 36px), calc(100dvh - 140px));
   }
 
   .app-shell:not(.app-shell-home) .connect4-shell {
-    width: min(980px, calc(100vw - 32px));
+    width: min(980px, calc(100vw - 32px), calc(100dvh - 140px));
   }
 
 }
@@ -1314,11 +1314,11 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .app-shell:not(.app-shell-home) .ttt-board {
-    width: min(548px, calc(100vw - 34px));
+    width: min(548px, calc(100vw - 34px), calc(100dvh - 140px));
   }
 
   .app-shell:not(.app-shell-home) .connect4-shell {
-    width: min(900px, calc(100vw - 30px));
+    width: min(900px, calc(100vw - 30px), calc(100dvh - 140px));
     padding: 14px;
   }
 
@@ -1392,7 +1392,7 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .app-shell:not(.app-shell-home) .ttt-board {
-    width: min(460px, calc(100vw - 20px));
+    width: min(460px, calc(100vw - 20px), calc(100dvh - 140px));
   }
 
   .connect4-column {
@@ -4483,7 +4483,7 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 760px) {
   .checkers-shell {
-    width: min(560px, calc(100vw - 18px));
+    width: min(560px, calc(100vw - 18px), calc(100dvh - 140px));
     border-radius: 18px;
     padding: 10px;
   }
@@ -4499,7 +4499,7 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 540px) {
   .checkers-shell {
-    width: min(390px, calc(100vw - 14px));
+    width: min(390px, calc(100vw - 14px), calc(100dvh - 140px));
     padding: 8px;
   }
 
@@ -4533,7 +4533,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .parchis-shell {
-  width: min(1488px, calc(100vw - 16px));
+  width: min(1488px, calc(100vw - 16px), calc(100dvh - 140px));
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 144px;
@@ -5755,7 +5755,7 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 1320px) {
   .parchis-shell {
-    width: min(1320px, calc(100vw - 14px));
+    width: min(1320px, calc(100vw - 14px), calc(100dvh - 140px));
     grid-template-columns: minmax(0, 1fr) 142px;
   }
 
@@ -5767,7 +5767,7 @@ body:not(.is-home-screen) .bg-layer {
 @media (max-width: 1080px) {
   .parchis-shell {
     grid-template-columns: 1fr;
-    width: min(860px, calc(100vw - 14px));
+    width: min(860px, calc(100vw - 14px), calc(100dvh - 140px));
     gap: 12px;
   }
 
@@ -5810,7 +5810,7 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .parchis-board {
-    width: min(680px, calc(100vw - 18px));
+    width: min(680px, calc(100vw - 18px), calc(100dvh - 140px));
     border-radius: 2px;
   }
 
@@ -5883,7 +5883,7 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 540px) {
   .parchis-board {
-    width: min(390px, calc(100vw - 14px));
+    width: min(390px, calc(100vw - 14px), calc(100dvh - 140px));
   }
 
   .parchis-dice-grid {
@@ -6898,7 +6898,7 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .parchis-shell {
-    width: min(1220px, calc(100vw - 32px));
+    width: min(1220px, calc(100vw - 32px), calc(100dvh - 140px));
   }
 
   .parchis-board-frame {
@@ -8433,7 +8433,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .sns-shell {
-  width: min(1200px, calc(100vw - 32px));
+  width: min(1200px, calc(100vw - 32px), calc(100dvh - 140px));
   margin: 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr) 220px;
@@ -8883,7 +8883,7 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 1080px) {
   .sns-shell {
-    width: min(860px, calc(100vw - 16px));
+    width: min(860px, calc(100vw - 16px), calc(100dvh - 140px));
     grid-template-columns: 1fr;
     gap: 14px;
   }
@@ -8999,7 +8999,7 @@ body:not(.is-home-screen) .bg-layer {
 
 /* Parchis ludo-track board override */
 .game-screen-parchis .parchis-shell {
-  width: min(1160px, calc(100vw - 28px));
+  width: min(1160px, calc(100vw - 28px), calc(100dvh - 140px));
   grid-template-columns: minmax(0, 1fr) 220px;
   gap: 14px;
   align-items: start;
@@ -9150,7 +9150,7 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 1080px) {
   .game-screen-parchis .parchis-shell {
-    width: min(860px, calc(100vw - 16px));
+    width: min(860px, calc(100vw - 16px), calc(100dvh - 140px));
     grid-template-columns: 1fr;
     gap: 12px;
   }
@@ -9512,7 +9512,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .game-screen-buscaminas .board-wrap {
-  display: block;
+  /* Removed display: block to prevent scroll and enforce centering */
 }
 
 .mines-shell {
@@ -9664,7 +9664,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .mines-board {
-  width: min(100%, var(--mines-board-max));
+  width: min(100%, var(--mines-board-max), calc((100dvh - 280px) * (var(--mines-cols) / var(--mines-rows))));
   display: grid;
   grid-template-columns: repeat(var(--mines-cols), minmax(0, 1fr));
   gap: 4px;
@@ -10008,7 +10008,7 @@ body:not(.is-home-screen) .bg-layer {
   --traffic-lane-change-ms: 210ms;
   position: relative;
   width: 100%;
-  height: clamp(472px, 70vh, 648px);
+  height: clamp(300px, calc(100dvh - 180px), 648px);
   border-radius: 24px;
   overflow: hidden;
   touch-action: pan-y;
@@ -10850,7 +10850,7 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .game-screen-sokoban .board-wrap {
-  display: block;
+  /* Removed display: block to prevent scroll and enforce centering */
 }
 
 .sokoban-shell {
@@ -11071,7 +11071,7 @@ body:not(.is-home-screen) .bg-layer {
 .sokoban-board {
   --sokoban-gap: clamp(4px, 0.55vw, 6px);
   --sokoban-cell-size: clamp(42px, 7.1vw, 72px);
-  width: min(100%, calc((var(--sokoban-cols) * var(--sokoban-cell-size)) + ((var(--sokoban-cols) - 1) * var(--sokoban-gap))));
+  width: min(100%, calc((var(--sokoban-cols) * var(--sokoban-cell-size)) + ((var(--sokoban-cols) - 1) * var(--sokoban-gap))), calc((100dvh - 320px) * (var(--sokoban-cols) / var(--sokoban-rows))));
   display: grid;
   grid-template-columns: repeat(var(--sokoban-cols), minmax(0, 1fr));
   gap: var(--sokoban-gap);

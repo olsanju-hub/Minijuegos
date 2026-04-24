@@ -14,13 +14,15 @@ const MEMORY_STYLES = String.raw`
 }
 
 .game-screen-memory .board-wrap {
-  display: block;
+  /* Removed display: block to prevent scroll and enforce centering */
 }
 
 .memory-shell {
   width: min(100%, 940px);
+  max-height: 100%;
   margin: 0 auto;
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 14px;
 }
 
@@ -159,6 +161,7 @@ const MEMORY_STYLES = String.raw`
   display: grid;
   grid-template-columns: repeat(var(--memory-cols), minmax(0, 1fr));
   gap: 10px;
+  width: min(100%, calc((100dvh - 280px) * (var(--memory-cols) / (var(--memory-rows) * 1.08))));
 }
 
 .memory-card {
@@ -537,7 +540,7 @@ function renderBoardGrid(state) {
     <section class="memory-board-frame">
       <div
         class="memory-board"
-        style="--memory-cols:${cols};"
+        style="--memory-cols:${cols};--memory-rows:${state.cards.length / cols};"
         role="img"
         aria-label="${escapeHtml(`Tablero de ${totalPairs(state)} parejas. ${matchedCount(state)} resueltas.`)}"
       >
