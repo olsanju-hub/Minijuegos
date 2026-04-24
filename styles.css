@@ -28,19 +28,6 @@
 
 html,
 body {
-  margin: 0;
-  min-height: 100%;
-}
-
-body {
-  font-family: "Avenir Next", "Avenir", "Segoe UI", "Trebuchet MS", sans-serif;
-  color: var(--text-main);
-  background: linear-gradient(158deg, var(--bg-start), var(--bg-end));
-  line-height: 1.35;
-}
-
-body:not(.is-home-screen) {
-  background: linear-gradient(154deg, #f5f0e5 0%, #edf3e9 58%, #f7f3ea 100%);
 }
 
 .bg-layer {

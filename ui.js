@@ -629,187 +629,115 @@ export function createUI({ appElement, toastElement }) {
     const baseGames = Array.isArray(vm.games) ? vm.games : [];
     if (baseGames.length === 0) {
       return `
-        <section class="screen home-screen home-library-screen is-catalog">
-          <header class="card home-library-header">
-            <div class="home-catalog-brand">
-              <div class="home-catalog-icon" aria-hidden="true"><span></span><span></span><span></span></div>
-              <div class="home-catalog-title-wrap">
-                <h1 class="home-catalog-title" aria-label="Minijuegos">Minijuegos</h1>
-                <p class="home-catalog-subtitle">Catalogo familiar en local</p>
-                <p class="home-catalog-signature">Flia. Olivero Escorcia</p>
-              </div>
-            </div>
-          </header>
-          <section class="card home-library-list">
-            <p class="home-secondary-text">No hay juegos disponibles por ahora.</p>
-          </section>
-        </section>
+        <div class="min-h-screen flex items-center justify-center bg-background">
+          <p class="text-on-surface-variant font-body-md">No hay juegos disponibles por ahora.</p>
+        </div>
       `;
     }
     const games = getHomeCatalog(vm);
 
     function profileForGame(game) {
       const map = {
-        tictactoe: {
-          accent: "#56bcff",
-          glow: "rgba(86, 188, 255, 0.24)",
-          tag: "Mesa",
-          description: "Clasico rapido"
-        },
-        connect4: {
-          accent: "#ff9d3d",
-          glow: "rgba(255, 157, 61, 0.24)",
-          tag: "Mesa",
-          description: "Conecta y gana"
-        },
-        damas: {
-          accent: "#ff5d86",
-          glow: "rgba(255, 93, 134, 0.22)",
-          tag: "Mesa",
-          description: "Captura obligatoria"
-        },
-        parchis: {
-          accent: "#83d44f",
-          glow: "rgba(131, 212, 79, 0.22)",
-          tag: "Tablero",
-          description: "Clasico de fichas"
-        },
-        "escaleras-serpientes": {
-          accent: "#79c95a",
-          glow: "rgba(121, 201, 90, 0.24)",
-          tag: "Tablero",
-          description: "Sube y esquiva"
-        },
-        trafico: {
-          accent: "#62a8ff",
-          glow: "rgba(98, 168, 255, 0.22)",
-          tag: "Reflejos",
-          description: "Carriles y reflejos"
-        },
-        buscaminas: {
-          accent: "#5b93ff",
-          glow: "rgba(91, 147, 255, 0.24)",
-          tag: "Logica",
-          description: "Minas y banderas"
-        },
-        memory: {
-          accent: "#74a8ff",
-          glow: "rgba(116, 168, 255, 0.24)",
-          tag: "Memoria",
-          description: "Memoria visual"
-        },
-        billar: {
-          accent: "#6cab7e",
-          glow: "rgba(108, 171, 126, 0.24)",
-          tag: "Fisica",
-          description: "Apunta, rebota y emboca"
-        },
-        sokoban: {
-          accent: "#e39b57",
-          glow: "rgba(227, 155, 87, 0.24)",
-          tag: "Puzzle",
-          description: "Cajas y objetivos"
-        },
-        "futbol-turnos": {
-          accent: "#6cab7e",
-          glow: "rgba(108, 171, 126, 0.24)",
-          tag: "Fisica",
-          description: "Dispara, rebota y marca"
-        },
-        tanques: {
-          accent: "#d78963",
-          glow: "rgba(215, 137, 99, 0.24)",
-          tag: "Fisica",
-          description: "Apunta, dispara y resiste"
-        }
+        tictactoe: { tag: "Logica", color: "from-blue-500 to-blue-600" },
+        connect4: { tag: "Estrategia", color: "from-orange-400 to-orange-500" },
+        damas: { tag: "Tablero", color: "from-rose-400 to-rose-500" },
+        parchis: { tag: "Familiar", color: "from-green-400 to-green-500" },
+        "escaleras-serpientes": { tag: "Suerte", color: "from-emerald-400 to-emerald-500" },
+        trafico: { tag: "Puzzle", color: "from-sky-400 to-sky-500" },
+        buscaminas: { tag: "Logica", color: "from-indigo-400 to-indigo-500" },
+        memory: { tag: "Memoria", color: "from-purple-400 to-purple-500" },
+        billar: { tag: "Habilidad", color: "from-teal-500 to-teal-600" },
+        sokoban: { tag: "Desafio", color: "from-amber-500 to-amber-600" },
+        "futbol-turnos": { tag: "Deportes", color: "from-emerald-500 to-emerald-600" },
+        tanques: { tag: "Accion", color: "from-red-500 to-red-600" }
       };
 
-      const base = map[game?.id] || {
-        accent: "#56bcff",
-        glow: "rgba(86, 188, 255, 0.24)",
-        description: "Partida familiar"
-      };
-
-      const playersText =
-        game && game.minPlayers === game.maxPlayers
-          ? `${game.minPlayers} ${game.minPlayers === 1 ? "jugador" : "jugadores"}`
-          : `${game?.minPlayers || 2}-${game?.maxPlayers || 4} jugadores`;
-
-      return {
-        ...base,
-        playersText
-      };
+      const base = map[game?.id] || { tag: "Juego", color: "from-slate-400 to-slate-500" };
+      return base;
     }
 
-    const gameCountLabel = `${games.length} juegos`;
-
     return `
-      <section class="screen home-screen home-library-screen is-catalog">
-        <header class="card home-library-header">
-          <div class="home-catalog-brand">
-            <div class="home-catalog-icon" aria-hidden="true"><span></span><span></span><span></span></div>
-            <div class="home-catalog-title-wrap">
-              <h1 class="home-catalog-title" aria-label="Minijuegos">Minijuegos</h1>
-              <p class="home-catalog-subtitle">Catalogo familiar en local</p>
-              <p class="home-catalog-signature">Flia. Olivero Escorcia</p>
-            </div>
+      <!-- TopAppBar -->
+      <header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.06)]">
+        <div class="flex items-center gap-4">
+          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
+            <span class="material-symbols-outlined text-primary" data-icon="sports_esports" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
           </div>
-          <div class="home-library-header-note">
-            <span class="home-note-pill">${escapeHtml(gameCountLabel)}</span>
-          </div>
-        </header>
+          <h1 class="text-xl font-extrabold tracking-tighter text-slate-900 font-['Plus_Jakarta_Sans']">Minijuegos</h1>
+        </div>
+        <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-colors active:scale-95 duration-200">
+          <span class="material-symbols-outlined text-slate-900" data-icon="help">help</span>
+        </button>
+      </header>
 
-        <section class="home-hero-stage">
-          <article class="card home-family-hero">
-            <div class="home-family-art">
-              <img
-                class="home-family-art-image"
-                src="./assets/home-hero-family.png"
-                alt="Imagen principal familiar de Minijuegos"
-                width="1536"
-                height="1024"
-                fetchpriority="high"
-              />
-            </div>
-          </article>
+      <main class="pt-24 pb-32 max-w-[1440px] mx-auto px-6 md:px-12 w-full">
+        <!-- Hero Section -->
+        <section class="relative overflow-hidden rounded-3xl mb-12 bg-primary-container border border-slate-100 shadow-sm text-on-primary-container min-h-[380px] flex items-center">
+          <!-- Background Image -->
+          <img src="./assets/home-hero-family.png" alt="Familia jugando" class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-50 mix-blend-multiply" />
+          <div class="absolute inset-0 bg-gradient-to-r from-primary-container via-primary-container/80 to-transparent z-0"></div>
+          
+          <div class="relative z-10 px-8 py-12 md:px-16 md:py-20 max-w-2xl">
+            <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-4 uppercase tracking-wider backdrop-blur-md shadow-sm">Coleccion Local</span>
+            <h2 class="font-display-lg text-4xl md:text-5xl font-bold mb-6 leading-tight drop-shadow-sm">Redescubre los clasicos</h2>
+            <p class="font-body-lg text-lg opacity-90 mb-8 leading-relaxed font-medium">
+              Una coleccion curada de los juegos que definieron generaciones, ahora reimaginados con una interfaz moderna y enfocada en la jugabilidad.
+            </p>
+          </div>
         </section>
 
-        <section class="home-games-section" id="home-games-section">
-          <div class="home-games-heading">
-            <div class="home-games-heading-copy">
-              <p class="home-games-kicker">Catalogo</p>
-              <h2 class="home-games-title">Elige una partida</h2>
-            </div>
-            <p class="home-games-subtitle">${escapeHtml(gameCountLabel)} listos para abrir. Toca una tarjeta para configurar y jugar.</p>
+        <!-- Grid Header -->
+        <div class="flex items-center justify-between mb-8">
+          <div>
+            <h3 class="font-headline-md text-2xl font-bold text-on-surface">Catalogo Premium</h3>
+            <p class="font-body-md text-on-surface-variant">${games.length} experiencias listas para jugar</p>
           </div>
+        </div>
 
-          <section class="home-games-grid" aria-label="Catalogo de juegos">
-            ${games
-              .map((game) => {
-                const profile = profileForGame(game);
-                return `
-                  <article class="card home-game-card is-${escapeHtml(game.id)}" style="--home-game-accent:${profile.accent};--home-game-glow:${profile.glow}">
-                    <button
-                      class="home-game-card-hit"
-                      data-action="open-game"
-                      data-game-id="${game.id}"
-                      aria-label="Abrir ${escapeHtml(game.name)}"
-                    ></button>
-                    <div class="home-game-card-top">
-                      <span class="home-game-card-glyph is-${escapeHtml(game.id)}" aria-hidden="true">${renderHomeGameGlyph(game.id)}</span>
-                      <span class="home-game-card-tag">${escapeHtml(profile.tag || "Juego")}</span>
-                    </div>
-                    <div class="home-game-card-copy">
-                      <h3 class="home-game-card-title">${escapeHtml(game.name)}</h3>
-                      <p class="home-game-card-subtitle">${escapeHtml(game.tagline || profile.description || "Partida local")}</p>
-                    </div>
-                  </article>
-                `;
-              })
-              .join("")}
-          </section>
-        </section>
-      </section>
+        <!-- Bento-inspired Game Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          ${games.map((game) => {
+            const profile = profileForGame(game);
+            return `
+              <div class="group bg-white rounded-xl overflow-hidden shadow-[0_4px_20px_-4px_rgba(15,23,42,0.04)] hover:shadow-xl transition-all duration-300 border border-slate-100 relative flex flex-col active:scale-95">
+                <button
+                  class="absolute inset-0 w-full h-full z-10"
+                  data-action="open-game"
+                  data-game-id="${game.id}"
+                  aria-label="Abrir ${escapeHtml(game.name)}"
+                ></button>
+                <div class="h-48 relative flex items-center justify-center bg-gradient-to-br ${profile.color}">
+                  <div class="scale-150 opacity-90 text-white drop-shadow-xl group-hover:scale-[1.7] transition-transform duration-500">
+                    ${renderHomeGameGlyph(game.id)}
+                  </div>
+                </div>
+                <div class="p-5 flex-1 flex flex-col justify-between">
+                  <div>
+                    <h4 class="font-title-lg text-lg font-bold text-on-surface mb-1">${escapeHtml(game.name)}</h4>
+                    <p class="font-caption text-sm text-on-surface-variant line-clamp-2">${escapeHtml(game.tagline || "Partida local")}</p>
+                  </div>
+                  <div class="mt-4 flex justify-between items-center">
+                    <span class="px-2 py-1 bg-surface-container rounded text-[10px] font-bold text-primary tracking-wider uppercase">${escapeHtml(profile.tag)}</span>
+                    <span class="material-symbols-outlined text-primary opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0" data-icon="play_circle">play_circle</span>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      </main>
+
+      <!-- BottomNavBar -->
+      <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-white/80 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
+        <a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-4 py-1 active:scale-90 transition-all duration-150" href="#">
+          <span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
+          <span class="font-['Plus_Jakarta_Sans'] text-xs font-medium">Home</span>
+        </a>
+        <a class="flex flex-col items-center justify-center text-slate-400 hover:text-primary active:scale-90 transition-all duration-150" href="#">
+          <span class="material-symbols-outlined" data-icon="history">history</span>
+          <span class="font-['Plus_Jakarta_Sans'] text-xs font-medium">Historial</span>
+        </a>
+      </nav>
     `;
   }
 
@@ -819,96 +747,105 @@ export function createUI({ appElement, toastElement }) {
       return renderHome(vm);
     }
 
-    const playersRow =
-      game.minPlayers === game.maxPlayers
-        ? `<p class="info-line">Numero de jugadores fijo: ${game.minPlayers}</p>`
-        : `<div class="player-count-row">${Array.from({ length: game.maxPlayers - game.minPlayers + 1 }, (_, i) => game.minPlayers + i)
-            .map(
-              (count) =>
-                `<button class="pill ${vm.config.playerCount === count ? "is-active" : ""}" data-action="select-player-count" data-player-count="${count}">${count} jugadores</button>`
-            )
-            .join("")}</div>`;
+    const maxPlayers = game.maxPlayers || 4;
+    const minPlayers = game.minPlayers || 1;
+    const isFixedPlayers = minPlayers === maxPlayers;
+
+    const playersRow = isFixedPlayers
+      ? `
+        <div class="flex items-center justify-between">
+          <label class="font-label-caps text-xs text-outline uppercase font-bold tracking-widest">Jugadores</label>
+          <span class="font-body-md text-primary font-semibold">${minPlayers} Jugadores (Fijo)</span>
+        </div>
+      `
+      : `
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <label class="font-label-caps text-xs text-outline uppercase font-bold tracking-widest">Jugadores</label>
+            <span class="font-body-md text-primary font-semibold">Multijugador Local</span>
+          </div>
+          <div class="grid grid-cols-${Math.min(3, maxPlayers - minPlayers + 1)} gap-4">
+            ${Array.from({ length: maxPlayers - minPlayers + 1 }, (_, i) => minPlayers + i).map(count => {
+              const isActive = vm.config.playerCount === count;
+              return `
+                <button 
+                  class="font-bold py-4 rounded-xl border flex flex-col items-center gap-1 transition-all active:scale-95 ${isActive ? 'bg-primary-container text-on-primary-container border-primary/20 shadow-sm' : 'bg-surface-container text-on-surface-variant border-outline-variant/50 hover:bg-surface-container-high'}"
+                  data-action="select-player-count" 
+                  data-player-count="${count}"
+                >
+                  <span class="material-symbols-outlined">${count === 1 ? 'person' : count === 2 ? 'group' : 'groups'}</span>
+                  ${count} Jug.
+                </button>
+              `;
+            }).join("")}
+          </div>
+        </div>
+      `;
 
     const namesFields = Array.from({ length: vm.config.playerCount }, (_, index) => {
       const current = vm.config.names[index] || "";
       return `
-        <label class="field">
-          <span class="field-label">Jugador ${index + 1}</span>
+        <div class="flex flex-col gap-2">
+          <label class="text-xs font-bold text-outline uppercase tracking-wider">Jugador ${index + 1}</label>
           <input
-            class="input"
+            class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none font-body-md text-on-surface shadow-sm"
             type="text"
             maxlength="14"
             value="${escapeHtml(current)}"
             data-field="player-name"
             data-index="${index}"
-            placeholder="Jugador ${index + 1}"
+            placeholder="Nombre..."
           />
-        </label>
+        </div>
       `;
     }).join("");
 
     const namesBlock = game.hidePlayerNames
       ? ""
       : `
-          <div class="block">
-            <h3 class="block-title">Nombres</h3>
-            <div class="fields-grid">${namesFields}</div>
+        <div class="space-y-4 pt-6 mt-6 border-t border-outline-variant/20">
+          <label class="font-label-caps text-xs text-outline uppercase font-bold tracking-widest">Nombres</label>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            ${namesFields}
           </div>
-        `;
-
-    const gameConfigPanel = game.renderConfigPanel
-      ? game.renderConfigPanel({
-          options: vm.config.gameOptions || {},
-          playerCount: vm.config.playerCount
-        })
-      : "";
+        </div>
+      `;
 
     return `
-      <section class="screen config-screen">
-        ${renderTopbar({
-          leftAction: "go-home",
-          leftLabel: "Volver",
-          title: game.name,
-          subtitle: "Configuracion",
-          showRules: true
-        })}
+      <!-- TopAppBar -->
+      <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16">
+        <div class="flex items-center gap-4">
+          <button class="material-symbols-outlined text-slate-500 hover:bg-slate-50 transition-colors rounded-full p-2 active:scale-95 duration-200" data-action="go-home">arrow_back</button>
+          <span class="text-xl font-bold text-slate-900 font-['Plus_Jakarta_Sans'] tracking-tight">Configurar</span>
+        </div>
+      </header>
 
-        <section class="card config-card config-card-modern">
-          <header class="config-hero">
-            <div class="config-hero-media">
-              ${game.renderCardIllustration ? game.renderCardIllustration() : '<div class="game-illustration"></div>'}
+      <main class="pt-24 pb-12 px-6 flex flex-col items-center min-h-screen">
+        <div class="max-w-md w-full">
+          <!-- Hero Header Section -->
+          <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center p-4 bg-primary-container rounded-2xl mb-4 shadow-inner">
+              <div class="scale-150 text-on-primary-container">${renderHomeGameGlyph(game.id)}</div>
             </div>
-            <div class="config-hero-copy">
-              <span class="config-badge">Configuracion</span>
-              <h3 class="config-title">${escapeHtml(game.name)}</h3>
-              <p class="config-tagline">${escapeHtml(game.tagline || "Partida local lista para empezar.")}</p>
-            </div>
-          </header>
+            <h1 class="text-3xl font-bold text-on-surface mb-2 font-['Plus_Jakarta_Sans']">${escapeHtml(game.name)}</h1>
+            <p class="text-on-surface-variant font-body-md">${escapeHtml(game.tagline || "Partida local")}</p>
+          </div>
 
-          <div class="config-stack">
-            <div class="block">
-              <h3 class="block-title">Modo de juego</h3>
-              <p class="info-line">Partida local en este dispositivo.</p>
-            </div>
-
-            <div class="block">
-              <h3 class="block-title">Numero de jugadores</h3>
-              ${playersRow}
-            </div>
-
+          <!-- Configuration Container -->
+          <div class="bg-white border border-outline-variant/30 rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.04)] p-6 md:p-8 space-y-6">
+            ${playersRow}
             ${namesBlock}
 
-            ${gameConfigPanel}
+            <!-- Action Button -->
+            <div class="pt-6 mt-6 border-t border-outline-variant/20">
+              <button class="w-full bg-primary hover:bg-primary/90 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3" data-action="start-game">
+                Iniciar Partida
+                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_circle</span>
+              </button>
+            </div>
           </div>
-
-          <p class="form-error">${escapeHtml(vm.config.error || "")}</p>
-
-          <div class="action-row">
-            <button class="btn btn-primary" data-action="config-continue">Empezar partida</button>
-            <button class="btn btn-secondary" data-action="go-home">Volver al inicio</button>
-          </div>
-        </section>
-      </section>
+        </div>
+      </main>
     `;
   }
 
@@ -1017,58 +954,51 @@ export function createUI({ appElement, toastElement }) {
     }
 
     const boardUiState = buildBoardUiState(vm);
-    const screenClasses = ["screen", "game-layout", `game-screen-${escapeHtml(game.id)}`];
-    const stageLayoutClasses = ["game-stage-layout"];
     const topbarSubtitle = buildGameTopbarSubtitle(vm);
 
-    if (game.useLandscapeMobileShell) {
-      screenClasses.push("game-screen-landscape-mobile-shell");
-      stageLayoutClasses.push("is-immersive");
-    }
-
-    const fullscreenActive = Boolean(game.allowFullscreen) && isGameFullscreen();
-    const useCompactPortraitChrome = Boolean(game.useLandscapeMobileShell) && Boolean(boardUiState.viewport?.isPortraitHandheld);
-    const compactPortraitSubtitle =
-      typeof game.compactPortraitSubtitle === "string" ? game.compactPortraitSubtitle : "Gira el movil para jugar";
-
     return `
-      <section class="${screenClasses.join(" ")}">
-        ${renderTopbar({
-          leftAction: "game-back",
-          leftLabel: "Volver",
-          title: game.name,
-          subtitle: useCompactPortraitChrome ? compactPortraitSubtitle : topbarSubtitle,
-          showRules: !useCompactPortraitChrome,
-          showFullscreen: !useCompactPortraitChrome && Boolean(game.allowFullscreen),
-          fullscreenActive,
-          extraActions: useCompactPortraitChrome
-            ? []
-            : [
-                {
-                  action: "restart-game",
-                  label: "Reiniciar",
-                  ariaLabel: "Reiniciar partida",
-                  className: "btn-icon btn-icon-text"
-                }
-              ]
-        })}
-
-        <div class="game-shell-body">
-          <div class="${stageLayoutClasses.join(" ")}">
-            <div class="game-stage-main">
-              <section class="board-wrap">
-                ${game.renderBoard({
-                  state: session.state,
-                  players: session.players,
-                  options: session.options,
-                  canAct: vm.canAct,
-                  uiState: boardUiState
-                })}
-              </section>
-            </div>
+      <!-- Top App Bar -->
+      <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-6 h-16">
+        <div class="flex items-center gap-2 md:gap-4">
+          <button class="material-symbols-outlined text-slate-500 hover:bg-slate-50 transition-colors rounded-full p-2 active:scale-95 duration-200" data-action="game-back">arrow_back</button>
+          <span class="text-lg md:text-xl font-bold text-slate-900 font-['Plus_Jakarta_Sans'] tracking-tight truncate max-w-[120px] md:max-w-none">${escapeHtml(game.name)}</span>
+        </div>
+        
+        <!-- Turn Indicator -->
+        ${topbarSubtitle ? `
+        <div class="flex items-center bg-surface-container px-3 py-1.5 rounded-full border border-outline-variant/50 max-w-[150px] md:max-w-none">
+          <div class="flex items-center gap-2">
+            <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+            <span class="font-bold text-[10px] md:text-xs uppercase tracking-wider text-on-surface-variant truncate">${escapeHtml(topbarSubtitle)}</span>
           </div>
         </div>
-      </section>
+        ` : ''}
+
+        <div class="flex items-center gap-1 md:gap-2">
+          <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all active:scale-95" data-action="restart-game" aria-label="Reiniciar">
+            <span class="material-symbols-outlined text-xl md:text-2xl">refresh</span>
+          </button>
+          <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all active:scale-95" data-action="open-rules" aria-label="Reglas">
+            <span class="material-symbols-outlined text-xl md:text-2xl">help_outline</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Game Area (Theater Mode) -->
+      <main class="relative h-[calc(100vh-64px)] mt-16 w-full flex flex-col items-center justify-center p-2 md:p-6 bg-surface-container-low overflow-hidden">
+        <div class="relative w-full max-w-[1200px] h-full max-h-[800px] bg-white rounded-2xl shadow-xl border border-outline-variant/30 flex items-center justify-center overflow-hidden">
+          <div class="absolute inset-0 pointer-events-none" style="background-image: radial-gradient(#000 1px, transparent 1px); background-size: 24px 24px; opacity: 0.03;"></div>
+          <section class="board-wrap z-10 w-full h-full flex items-center justify-center">
+            ${game.renderBoard({
+              state: session.state,
+              players: session.players,
+              options: session.options,
+              canAct: vm.canAct,
+              uiState: boardUiState
+            })}
+          </section>
+        </div>
+      </main>
     `;
   }
 
@@ -1081,24 +1011,70 @@ export function createUI({ appElement, toastElement }) {
     const sections = (game.rules || [])
       .map(
         (rule) => `
-          <article class="rule-block">
-            <p class="rule-label">${escapeHtml(rule.title)}</p>
-            <p class="rule-text">${escapeHtml(rule.text)}</p>
-          </article>
+          <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 mb-4">
+            <h4 class="font-bold text-primary mb-2">${escapeHtml(rule.title)}</h4>
+            <p class="text-on-surface-variant text-sm">${escapeHtml(rule.text)}</p>
+          </div>
         `
       )
       .join("");
 
     return `
-      <section class="overlay" data-overlay="rules">
-        <article class="modal" role="dialog" aria-modal="true" aria-label="Reglas" data-modal-root>
-          <header class="modal-head">
-            <h3 class="modal-title">Reglas</h3>
-            <button class="btn-icon" data-action="close-rules" aria-label="Cerrar reglas">X</button>
+      <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" data-overlay="rules">
+        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-[scale-in_0.2s_ease-out]">
+          <header class="flex items-center justify-between p-6 border-b border-outline-variant/30 bg-surface-container-lowest">
+            <h3 class="text-xl font-bold text-on-surface font-['Plus_Jakarta_Sans']">Reglas del Juego</h3>
+            <button class="material-symbols-outlined text-outline hover:bg-surface-container-high rounded-full p-2 transition-colors active:scale-95" data-action="close-rules">close</button>
           </header>
-          <div class="rules-grid">${sections}</div>
-        </article>
-      </section>
+          <div class="p-6 max-h-[60vh] overflow-y-auto">
+            ${sections}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  function renderResult(vm) {
+    const session = vm.session;
+    const game = vm.game;
+
+    if (!session || !game || !session.state.gameOver) {
+      return "";
+    }
+
+    const isDraw = Boolean(session.state.isDraw);
+    const winners = session.state.winners || [];
+    const winnerNames = winners.map((idx) => session.players[idx].name).join(" y ");
+
+    let title, subtitle;
+
+    if (isDraw) {
+      title = "Empate";
+      subtitle = "No hay ganador claro esta vez.";
+    } else {
+      title = `¡${escapeHtml(winnerNames)} gana!`;
+      subtitle = "Excelente partida.";
+    }
+
+    return `
+      <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" data-overlay="result">
+        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl p-8 text-center animate-[scale-in_0.3s_ease-out]">
+          <div class="w-20 h-20 mx-auto bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-inner">
+            <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">${isDraw ? 'handshake' : 'emoji_events'}</span>
+          </div>
+          <h2 class="text-3xl font-bold text-on-surface mb-2 font-['Plus_Jakarta_Sans']">${title}</h2>
+          <p class="text-on-surface-variant font-body-md mb-8">${subtitle}</p>
+          
+          <div class="flex flex-col gap-3">
+            <button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all" data-action="play-again">
+              Jugar de nuevo
+            </button>
+            <button class="w-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-bold py-4 rounded-xl active:scale-95 transition-all" data-action="new-game">
+              Salir al catalogo
+            </button>
+          </div>
+        </div>
+      </div>
     `;
   }
 
