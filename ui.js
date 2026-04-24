@@ -958,18 +958,23 @@ export function createUI({ appElement, toastElement }) {
 
     return `
       <!-- Top App Bar -->
-      <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-6 h-16">
+      <header class="bg-white/70 backdrop-blur-xl border-b border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-6 h-16">
         <div class="flex items-center gap-2 md:gap-4">
-          <button class="material-symbols-outlined text-slate-500 hover:bg-slate-50 transition-colors rounded-full p-2 active:scale-95 duration-200" data-action="game-back">arrow_back</button>
+          <button class="material-symbols-outlined text-slate-600 hover:bg-white transition-all rounded-full p-2 active:scale-95 duration-200 shadow-sm border border-transparent hover:border-slate-200" data-action="game-back">arrow_back</button>
+          
+          <div class="w-9 h-9 md:w-10 md:h-10 drop-shadow-md">
+            ${renderHomeGameGlyph(game.id)}
+          </div>
+          
           <span class="text-lg md:text-xl font-bold text-slate-900 font-['Plus_Jakarta_Sans'] tracking-tight truncate max-w-[120px] md:max-w-none">${escapeHtml(game.name)}</span>
         </div>
         
         <!-- Turn Indicator -->
         ${topbarSubtitle ? `
-        <div class="flex items-center bg-surface-container px-3 py-1.5 rounded-full border border-outline-variant/50 max-w-[150px] md:max-w-none">
+        <div class="flex items-center bg-white/80 shadow-sm px-3 py-1.5 rounded-full border border-slate-200/60 max-w-[150px] md:max-w-none backdrop-blur-md">
           <div class="flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
-            <span class="font-bold text-[10px] md:text-xs uppercase tracking-wider text-on-surface-variant truncate">${escapeHtml(topbarSubtitle)}</span>
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
+            <span class="font-bold text-[10px] md:text-xs uppercase tracking-wider text-slate-700 truncate">${escapeHtml(topbarSubtitle)}</span>
           </div>
         </div>
         ` : ''}

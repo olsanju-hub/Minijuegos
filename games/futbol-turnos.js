@@ -140,8 +140,8 @@ const FOOTBALL_STYLES = String.raw`
 
 @media (max-width: 1024px) {
   .football-shell {
-    gap: 6px;
-    padding: max(8px, env(safe-area-inset-top)) 8px 8px;
+    gap: 12px;
+    padding: max(20px, env(safe-area-inset-top)) 16px 16px;
     border-radius: 0;
   }
 }
@@ -312,6 +312,16 @@ const FOOTBALL_STYLES = String.raw`
   stroke-width: 1.5;
 }
 
+.football-goal-net.team-0-net {
+  fill: rgba(230, 119, 93, 0.25);
+  stroke: rgba(191, 90, 67, 0.6);
+}
+
+.football-goal-net.team-1-net {
+  fill: rgba(79, 132, 234, 0.25);
+  stroke: rgba(53, 95, 185, 0.6);
+}
+
 .football-goal-grid {
   stroke: rgba(226, 235, 231, 0.42);
   stroke-width: 1.2;
@@ -323,6 +333,14 @@ const FOOTBALL_STYLES = String.raw`
   stroke-width: 5;
   stroke-linecap: round;
   stroke-linejoin: round;
+}
+
+.football-goal-frame.team-0-frame {
+  stroke: rgba(230, 119, 93, 0.8);
+}
+
+.football-goal-frame.team-1-frame {
+  stroke: rgba(79, 132, 234, 0.8);
 }
 
 .football-pitch-mark {
@@ -1245,10 +1263,10 @@ function renderField(state, canAct) {
       </g>
 
       <g aria-hidden="true">
-        <rect class="football-goal-net" x="${-GOAL_DEPTH + 10}" y="${goalTop}" width="${GOAL_DEPTH - 10}" height="${GOAL_MOUTH_HEIGHT}" rx="12"></rect>
-        <rect class="football-goal-net" x="${FIELD_WIDTH}" y="${goalTop}" width="${GOAL_DEPTH - 10}" height="${GOAL_MOUTH_HEIGHT}" rx="12"></rect>
-        <path class="football-goal-frame" d="M0 ${goalTop}H${-GOAL_DEPTH + 12}V${goalBottom}H0"></path>
-        <path class="football-goal-frame" d="M${FIELD_WIDTH} ${goalTop}H${FIELD_WIDTH + GOAL_DEPTH - 12}V${goalBottom}H${FIELD_WIDTH}"></path>
+        <rect class="football-goal-net team-0-net" x="${-GOAL_DEPTH + 10}" y="${goalTop}" width="${GOAL_DEPTH - 10}" height="${GOAL_MOUTH_HEIGHT}" rx="12"></rect>
+        <rect class="football-goal-net team-1-net" x="${FIELD_WIDTH}" y="${goalTop}" width="${GOAL_DEPTH - 10}" height="${GOAL_MOUTH_HEIGHT}" rx="12"></rect>
+        <path class="football-goal-frame team-0-frame" d="M0 ${goalTop}H${-GOAL_DEPTH + 12}V${goalBottom}H0"></path>
+        <path class="football-goal-frame team-1-frame" d="M${FIELD_WIDTH} ${goalTop}H${FIELD_WIDTH + GOAL_DEPTH - 12}V${goalBottom}H${FIELD_WIDTH}"></path>
         ${Array.from({ length: 5 }, (_, index) => {
           const y = goalTop + index * (GOAL_MOUTH_HEIGHT / 4);
           return `<line class="football-goal-grid" x1="${-GOAL_DEPTH + 12}" y1="${y}" x2="0" y2="${y}"></line>`;
