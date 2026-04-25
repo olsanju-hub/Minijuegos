@@ -1152,40 +1152,22 @@ function getFinalLaneCellClasses(slot, cell, laneLayout) {
 
 function renderPieceButton(piece, { state, canAct, phaseAction, movableSet, bridge = false } = {}) {
   const theme = getTheme(piece.playerSlot);
-  const movable = false;
+  const movable = canAct && movableSet && movableSet.has(piece.id);
   const selected = state.selectedPieceId === piece.id;
   const isGoalPiece = piece.progress >= GOAL_PROGRESS;
 
   const classes = ["parchis-piece", `slot-${piece.playerSlot}`];
-  if (movable) {
-    classes.push("is-movable");
-  }
-  if (selected) {
-    classes.push("is-selected");
-  }
-  if (isGoalPiece) {
-    classes.push("is-goal");
-  }
-  if (piece.id === state.lastMovedPieceId) {
-    classes.push("is-last");
-  }
-  if (bridge) {
-    classes.push("is-bridge");
-  }
+  if (movable)   classes.push("is-movable");
+  if (selected)  classes.push("is-selected");
+  if (isGoalPiece) classes.push("is-goal");
+  if (piece.id === state.lastMovedPieceId) classes.push("is-last");
+  if (bridge)    classes.push("is-bridge");
 
   const actionAttrs = movable
     ? `data-action="game-action" data-game-action="${phaseAction}" data-piece-id="${piece.id}"`
     : "disabled";
 
-  return `
-    <button
-      class="${classes.join(" ")}"
-      style="--piece:${theme.piece};--piece-dark:${theme.pieceDark}"
-      ${actionAttrs}
-    >
-      <span>${piece.pieceIndex + 1}</span>
-    </button>
-  `;
+  return `<button class="${classes.join(" ")}" style="--piece:${theme.piece};--piece-dark:${theme.pieceDark}" ${actionAttrs}><span>${piece.pieceIndex + 1}</span></button>`;
 }
 
 function renderPieceStack(pieces, options = {}) {
