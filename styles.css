@@ -4540,7 +4540,13 @@ body:not(.is-home-screen) .bg-layer {
   font-size: clamp(1rem, 1.6vw, 1.3rem); color: #3a2910;
 }
 .app-shell:not(.app-shell-home) .game-screen-parchis .board-wrap {
-  width: 100%; justify-items: stretch; padding: 0;
+  width: 100%;
+  justify-items: stretch;
+  padding: 0;
+  /* Alinear desde arriba para que el tablero no quede cortado por overflow:hidden del main */
+  align-items: flex-start !important;
+  justify-content: center;
+  padding-top: 6px;
 }
 .parchis-shell {
   display: grid;
@@ -4937,33 +4943,43 @@ body:not(.is-home-screen) .bg-layer {
   .parchis-shell {
     grid-template-columns: 1fr;
     width: min(900px, calc(100vw - 16px));
-    gap: 12px;
+    gap: 10px;
   }
   .parchis-board-frame {
     /*
-      Columna única: el tablero está ENCIMA del panel de dados.
-      Restamos: cabecera(~58) + turno(~42) + padding(~16) + gap(~12) + dados_min(~170) + margen(~20) = ~318px
+      Columna única: restamos header(64) + paddingTop(6) + gap(10) + side_min(165) + margen(16) = ~261px
     */
-    width: min(calc(100dvh - 318px), calc(100vw - 18px), 680px);
+    width: min(calc(100dvh - 261px), calc(100vw - 18px), 680px);
   }
   .parchis-piece { width: min(82%, clamp(13px, 2.4vw, 22px)); }
 }
 @media (max-width:760px) {
-  .parchis-shell { width: calc(100vw - 12px); gap:8px; }
+  .parchis-shell {
+    width: calc(100vw - 12px);
+    gap: 8px;
+  }
   .parchis-board-frame {
     /*
-      Móvil: menos espacio. Restamos ~330px para dejar sitio a los dados debajo.
-      Pero nunca más ancho que la pantalla menos margen.
+      Móvil: side en 2 columnas = ~160px de alto. Total a restar: 64+6+8+160+12 = ~250px
     */
-    width: min(calc(100dvh - 330px), calc(100vw - 12px));
-    padding: 5px; border-radius:12px;
+    width: min(calc(100dvh - 250px), calc(100vw - 12px));
+    min-width: 280px;
+    padding: 5px;
+    border-radius: 12px;
   }
-  .parchis-piece { width: min(80%, clamp(11px, 5.5vw, 17px)); font-size:0.42rem; }
-  .parchis-side-card { border-radius:14px; padding:10px 12px; }
-  .parchis-die-cube { width:44px; height:44px; border-radius:10px; }
+  .parchis-piece { width: min(80%, clamp(11px, 5.5vw, 17px)); font-size: 0.42rem; }
+  /* Panel en 2 columnas compactas para reducir altura */
+  .parchis-side {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .parchis-die-card { grid-column: 1 / -1; }
+  .parchis-players-card, .parchis-event-card { display: none; }
+  .parchis-side-card { border-radius: 12px; padding: 8px 10px; }
+  .parchis-die-cube { width: 40px; height: 40px; border-radius: 9px; }
   .parchis-track-cell::after { font-size: clamp(5px, 2vw, 7px); }
-  .parchis-move-target-badge { font-size:0.5rem; right:2px; bottom:2px; }
-  .parchis-move-target-choice { min-width:18px; height:18px; padding:0 4px; font-size:0.6rem; }
+  .parchis-move-target-badge { font-size: 0.5rem; right: 2px; bottom: 2px; }
+  .parchis-move-target-choice { min-width: 18px; height: 18px; padding: 0 4px; font-size: 0.6rem; }
 }
 
 
