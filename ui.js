@@ -629,107 +629,125 @@ export function createUI({ appElement, toastElement }) {
     const baseGames = Array.isArray(vm.games) ? vm.games : [];
     if (baseGames.length === 0) {
       return `
-        <div class="min-h-screen flex items-center justify-center bg-background">
-          <p class="text-on-surface-variant font-body-md">No hay juegos disponibles por ahora.</p>
+        <div class="home-v2">
+          <div class="home-v2-inner" style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
+            <p style="color:var(--text-sub);font-size:1rem;">No hay juegos disponibles por ahora.</p>
+          </div>
         </div>
       `;
     }
     const games = getHomeCatalog(vm);
 
+    /* Perfil semántico por juego: tag + clase CSS de color */
     function profileForGame(game) {
       const map = {
-        tictactoe: { tag: "Logica", color: "from-blue-500 to-blue-600" },
-        connect4: { tag: "Estrategia", color: "from-orange-400 to-orange-500" },
-        damas: { tag: "Tablero", color: "from-rose-400 to-rose-500" },
-        parchis: { tag: "Familiar", color: "from-green-400 to-green-500" },
-        "escaleras-serpientes": { tag: "Suerte", color: "from-emerald-400 to-emerald-500" },
-        trafico: { tag: "Puzzle", color: "from-sky-400 to-sky-500" },
-        buscaminas: { tag: "Logica", color: "from-indigo-400 to-indigo-500" },
-        memory: { tag: "Memoria", color: "from-purple-400 to-purple-500" },
-        billar: { tag: "Habilidad", color: "from-teal-500 to-teal-600" },
-        sokoban: { tag: "Desafio", color: "from-amber-500 to-amber-600" },
-        "futbol-turnos": { tag: "Deportes", color: "from-emerald-500 to-emerald-600" },
-        tanques: { tag: "Accion", color: "from-red-500 to-red-600" }
+        tictactoe:             { tag: "Lógica",     cls: "tag-logica"     },
+        connect4:              { tag: "Estrategia", cls: "tag-estrategia" },
+        damas:                 { tag: "Tablero",    cls: "tag-tablero"    },
+        parchis:               { tag: "Familiar",   cls: "tag-familiar"   },
+        "escaleras-serpientes":{ tag: "Suerte",     cls: "tag-suerte"     },
+        trafico:               { tag: "Puzzle",     cls: "tag-puzzle"     },
+        buscaminas:            { tag: "Lógica",     cls: "tag-logica"     },
+        memory:                { tag: "Memoria",    cls: "tag-memoria"    },
+        billar:                { tag: "Habilidad",  cls: "tag-habilidad"  },
+        sokoban:               { tag: "Desafío",    cls: "tag-desafio"    },
+        "futbol-turnos":       { tag: "Deportes",   cls: "tag-deportes"   },
+        tanques:               { tag: "Acción",     cls: "tag-accion"     }
       };
-
-      const base = map[game?.id] || { tag: "Juego", color: "from-slate-400 to-slate-500" };
-      return base;
+      return map[game?.id] || { tag: "Juego", cls: "tag-default" };
     }
 
-    return `
-      <!-- TopAppBar -->
-      <header class="fixed top-0 left-0 w-full z-50 flex items-center justify-between px-6 h-16 bg-white/90 backdrop-blur-md border-b border-slate-100 shadow-[0_4px_20px_-4px_rgba(15,23,42,0.06)]">
-        <div class="flex items-center gap-4">
-          <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center">
-            <span class="material-symbols-outlined text-primary" data-icon="sports_esports" style="font-variation-settings: 'FILL' 1;">sports_esports</span>
+    const cardsHtml = games.map((game) => {
+      const profile = profileForGame(game);
+      const players = game.minPlayers === game.maxPlayers
+        ? `${game.minPlayers} jug.`
+        : `${game.minPlayers}–${game.maxPlayers} jug.`;
+      return `
+        <button
+          class="game-card-v2"
+          data-action="open-game"
+          data-game-id="${game.id}"
+          aria-label="Jugar a ${escapeHtml(game.name)}"
+        >
+          <div class="game-card-icon">
+            <div class="game-card-icon-svg">
+              ${renderHomeGameGlyph(game.id)}
+            </div>
           </div>
-          <h1 class="text-xl font-extrabold tracking-tighter text-slate-900 font-['Plus_Jakarta_Sans']">Minijuegos</h1>
-        </div>
-        <button class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-slate-50 transition-colors active:scale-95 duration-200">
-          <span class="material-symbols-outlined text-slate-900" data-icon="help">help</span>
+          <div class="game-card-body">
+            <h3 class="game-card-name">${escapeHtml(game.name)}</h3>
+            <div class="game-card-meta">
+              <span class="game-card-tag ${profile.cls}">${profile.tag}</span>
+              <span class="game-card-players">${players}</span>
+            </div>
+          </div>
         </button>
+      `;
+    }).join("");
+
+    return `
+      <!-- Topbar HOME V2 -->
+      <header class="home-topbar" role="banner">
+        <div class="home-topbar-brand">
+          <div class="home-topbar-icon">
+            <img src="./assets/icono.png" alt="Minijuegos" />
+          </div>
+          <h1 class="home-topbar-name">Minijuegos</h1>
+        </div>
+        <div class="home-topbar-actions">
+          <button class="home-topbar-btn" aria-label="Información" data-action="open-rules-home">
+            <span class="material-symbols-outlined" style="font-size:20px;">help_outline</span>
+          </button>
+        </div>
       </header>
 
-      <main class="pt-24 pb-32 max-w-[1440px] mx-auto px-6 md:px-12 w-full">
-        <!-- Hero Section -->
-        <section class="relative overflow-hidden rounded-3xl mb-12 bg-black shadow-[0_8px_30px_rgb(0,0,0,0.12)] min-h-[380px] flex items-center">
-          <!-- Background Image -->
-          <img src="./assets/home-hero-family.png" alt="Familia jugando" class="absolute inset-0 w-full h-full object-cover object-center z-0 opacity-100" />
-          <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/20 to-transparent z-0"></div>
-          
-          <div class="relative z-10 px-8 py-12 md:px-16 md:py-20 max-w-2xl text-white">
-            <span class="inline-block px-3 py-1 rounded-full bg-white/20 text-xs font-bold mb-4 uppercase tracking-wider backdrop-blur-md shadow-sm border border-white/20">Coleccion Local</span>
-            <h2 class="font-display-lg text-4xl md:text-5xl font-bold mb-6 leading-tight text-white" style="text-shadow: 0 4px 12px rgba(0,0,0,0.6)">Redescubre los clasicos</h2>
-            <p class="font-body-lg text-lg opacity-95 mb-8 leading-relaxed font-medium text-slate-100" style="text-shadow: 0 2px 8px rgba(0,0,0,0.8)">
-              Una coleccion curada de los juegos que definieron generaciones, ahora reimaginados con una interfaz moderna y enfocada en la jugabilidad.
-            </p>
-          </div>
-        </section>
+      <!-- Contenedor principal HOME V2 -->
+      <div class="home-v2">
+        <div class="home-v2-inner">
 
-        <!-- Grid Header -->
-        <div class="flex items-center justify-between mb-8">
-          <div>
-            <h3 class="font-headline-md text-2xl font-bold text-on-surface">Catalogo Premium</h3>
-            <p class="font-body-md text-on-surface-variant">${games.length} experiencias listas para jugar</p>
-          </div>
-        </div>
-        <!-- Games Grid -->
-        <div class="grid grid-cols-4 sm:grid-cols-4 md:grid-cols-2 xl:grid-cols-3 gap-3 md:gap-6">
-          ${games.map((game) => `
-            <button class="group relative bg-white/50 md:bg-white rounded-[20px] md:rounded-2xl p-2 md:p-6 shadow-[0_2px_10px_rgba(0,0,0,0.02)] md:shadow-sm border border-slate-200/50 md:border-slate-200/60 hover:shadow-xl hover:border-emerald-500/30 transition-all duration-300 overflow-hidden flex flex-col items-center md:items-start focus:outline-none focus:ring-4 focus:ring-emerald-500/20 active:scale-[0.95] w-full" data-action="open-game" data-game-id="${game.id}">
-              <div class="absolute inset-0 bg-gradient-to-br from-emerald-500/0 via-transparent to-emerald-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              
-              <!-- Mobile App Icon / Desktop Header -->
-              <div class="w-14 h-14 md:w-12 md:h-12 md:mb-6 rounded-2xl md:rounded-xl bg-gradient-to-br from-white to-slate-50 md:bg-slate-50 border border-slate-200/80 md:border-slate-200/50 flex items-center justify-center shadow-sm md:shadow-sm group-hover:scale-110 group-hover:bg-white transition-transform duration-300 relative z-10 mx-auto md:mx-0">
-                <div class="w-9 h-9 md:w-8 md:h-8 opacity-90 group-hover:opacity-100 transition-opacity drop-shadow-sm">
-                  ${renderHomeGameGlyph(game.id)}
-                </div>
+          <!-- HERO -->
+          <section class="home-hero" aria-label="Bienvenida">
+            <img
+              class="home-hero-img"
+              src="./assets/home-hero-family.png"
+              alt="Familia jugando juntos"
+              loading="eager"
+              fetchpriority="high"
+            />
+            <div class="home-hero-overlay" aria-hidden="true"></div>
+            <div class="home-hero-body">
+              <div class="home-hero-tag">
+                <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1;">stars</span>
+                Colección local
               </div>
-              
-              <h3 class="font-bold text-[11px] leading-[1.1] md:text-xl text-slate-800 md:text-slate-900 md:mb-2 text-center md:text-left mt-2 md:mt-0 font-['Plus_Jakarta_Sans'] line-clamp-2 md:line-clamp-none w-full relative z-10 tracking-tight md:tracking-normal">${escapeHtml(game.name)}</h3>
-              
-              <p class="hidden md:block text-slate-500 text-sm leading-relaxed mb-6 font-medium relative z-10 w-full text-left">${escapeHtml(game.tagline || game.subtitle || "2-4 Jugadores")}</p>
-              
-              <div class="hidden md:flex justify-between items-center w-full mt-auto relative z-10">
-                <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-100/50">${game.minPlayers}-${game.maxPlayers} Jug.</span>
-                <div class="w-8 h-8 rounded-full bg-slate-50 border border-slate-200/50 flex items-center justify-center shadow-sm group-hover:bg-emerald-50 transition-colors">
-                  <span class="material-symbols-outlined text-slate-400 group-hover:text-emerald-500 text-sm transition-colors">arrow_forward</span>
-                </div>
-              </div>
-            </button>
-          `).join("")}
-        </div>
-      </main>
+              <h2 class="home-hero-title">Juegos para<br>toda la familia</h2>
+              <p class="home-hero-sub">Clásicos de siempre, listos para jugar sin conexión.</p>
+            </div>
+          </section>
 
-      <!-- BottomNavBar -->
-      <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-white/80 backdrop-blur-md border-t border-slate-200 shadow-[0_-4px_20px_rgba(0,0,0,0.03)] md:hidden">
-        <a class="flex flex-col items-center justify-center text-primary bg-primary/10 rounded-xl px-4 py-1 active:scale-90 transition-all duration-150" href="#">
-          <span class="material-symbols-outlined" data-icon="home" style="font-variation-settings: 'FILL' 1;">home</span>
-          <span class="font-['Plus_Jakarta_Sans'] text-xs font-medium">Home</span>
+          <!-- CATÁLOGO -->
+          <section class="home-catalog" aria-label="Catálogo de juegos">
+            <div class="home-catalog-header">
+              <h2 class="home-catalog-title">Catálogo</h2>
+              <span class="home-catalog-count">${games.length} juegos</span>
+            </div>
+            <div class="home-catalog-grid" role="list">
+              ${cardsHtml}
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+      <!-- Bottom nav móvil HOME V2 -->
+      <nav class="home-bottom-nav" aria-label="Navegación principal">
+        <a class="home-bottom-nav-item is-active" href="#" aria-current="page">
+          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">home</span>
+          <span>Inicio</span>
         </a>
-        <a class="flex flex-col items-center justify-center text-slate-400 hover:text-primary active:scale-90 transition-all duration-150" href="#">
-          <span class="material-symbols-outlined" data-icon="history">history</span>
-          <span class="font-['Plus_Jakarta_Sans'] text-xs font-medium">Historial</span>
+        <a class="home-bottom-nav-item" href="#" aria-label="Historial de partidas">
+          <span class="material-symbols-outlined">history</span>
+          <span>Historial</span>
         </a>
       </nav>
     `;
