@@ -9038,36 +9038,52 @@ body:not(.is-home-screen) .bg-layer {
 
 /* Parchis ludo-track board override */
 .game-screen-parchis .parchis-shell {
-  width: min(1160px, calc(100vw - 28px), calc(100dvh - 140px));
-  grid-template-columns: minmax(0, 1fr) 220px;
+  /* Tablero cuadrado: ocupa el mínimo entre ancho disponible y alto disponible */
+  width: min(1080px, calc(100vw - 24px));
+  grid-template-columns: minmax(0, 1fr) 200px;
   gap: 14px;
   align-items: start;
 }
 
 .game-screen-parchis .parchis-board-frame {
-  width: min(100%, 820px, calc(100vh - 220px));
+  /* Marco madera: el tablero siempre cabe sin scroll */
+  width: min(100%, calc(100dvh - 160px));
   justify-self: center;
-  padding: 8px;
-  border: 1px solid #8e6337;
-  border-radius: 18px;
-  background: #87552c;
+  padding: clamp(6px, 1vw, 14px);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 20px;
+  background: linear-gradient(
+    160deg,
+    #a0713a 0%,
+    #7a5228 40%,
+    #6b4520 60%,
+    #8c6030 100%
+  );
+  box-shadow:
+    0 2px 0 rgba(255, 255, 255, 0.18) inset,
+    0 -1px 0 rgba(0, 0, 0, 0.3) inset,
+    0 20px 48px rgba(0, 0, 0, 0.28);
 }
 
 .game-screen-parchis .parchis-board {
   --parchis-board-scale: 1;
-  --parchis-line: #2c2218;
-  --parchis-track-line: #2c2218;
-  --parchis-number-ink: rgba(32, 24, 18, 0.92);
-  --parchis-paper: #fffdfa;
-  --parchis-lane-paper: #fffdfa;
-  --parchis-lane-paper-strong: #fffdfa;
+  --parchis-line: #3a2914;
+  --parchis-track-line: #3a2914;
+  --parchis-number-ink: rgba(40, 28, 14, 0.85);
+  --parchis-paper: #fdf8ee;
+  --parchis-paper-soft: #fdf8ee;
+  --parchis-lane-paper: #fdf8ee;
+  --parchis-lane-paper-strong: #fdf8ee;
   display: grid;
   grid-template-columns: repeat(15, minmax(0, 1fr));
   grid-template-rows: repeat(15, minmax(0, 1fr));
   width: 100%;
-  border: 2px solid var(--parchis-line);
-  border-radius: 4px;
-  background: #fffdfa;
+  aspect-ratio: 1;
+  border: 2.5px solid var(--parchis-line);
+  border-radius: 6px;
+  background: var(--parchis-paper);
+  box-shadow: inset 0 0 40px rgba(180, 140, 80, 0.12);
+  overflow: hidden;
 }
 
 .game-screen-parchis .parchis-center-ring {
@@ -9075,8 +9091,27 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 .game-screen-parchis .parchis-home {
-  border: 1.7px solid var(--parchis-line);
-  background: #fffdfa;
+  border: 2px solid var(--parchis-line);
+  background: #fdf8ee;
+  box-shadow: inset 0 0 16px rgba(0, 0, 0, 0.06);
+}
+
+/* Casas con color real de cada equipo */
+.game-screen-parchis .parchis-home.slot-0 {
+  background: #ffecec;
+  box-shadow: inset 0 0 20px rgba(220, 60, 60, 0.1);
+}
+.game-screen-parchis .parchis-home.slot-1 {
+  background: #e8f4ff;
+  box-shadow: inset 0 0 20px rgba(40, 120, 220, 0.1);
+}
+.game-screen-parchis .parchis-home.slot-2 {
+  background: #fffce0;
+  box-shadow: inset 0 0 20px rgba(200, 170, 0, 0.1);
+}
+.game-screen-parchis .parchis-home.slot-3 {
+  background: #edfff0;
+  box-shadow: inset 0 0 20px rgba(40, 160, 80, 0.1);
 }
 
 .game-screen-parchis .parchis-home-disc {
@@ -9101,18 +9136,13 @@ body:not(.is-home-screen) .bg-layer {
 
 .game-screen-parchis .parchis-goal {
   border-width: 2px;
-  background: #fffdfa;
+  background: #fdf8ee;
 }
 
 .game-screen-parchis .parchis-goal::before {
   background:
-    linear-gradient(45deg, transparent calc(50% - 0.9px), var(--parchis-line) calc(50% - 0.9px) calc(50% + 0.9px), transparent calc(50% + 0.9px)),
-    linear-gradient(-45deg, transparent calc(50% - 0.9px), var(--parchis-line) calc(50% - 0.9px) calc(50% + 0.9px), transparent calc(50% + 0.9px));
-}
-
-.game-screen-parchis .parchis-goal-piece-bay {
-  gap: 5%;
-  padding: 6%;
+    linear-gradient(45deg, transparent calc(50% - 1px), var(--parchis-line) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+    linear-gradient(-45deg, transparent calc(50% - 1px), var(--parchis-line) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
 }
 
 .game-screen-parchis .parchis-track-cell,
@@ -9122,32 +9152,57 @@ body:not(.is-home-screen) .bg-layer {
 
 .game-screen-parchis .parchis-track-core,
 .game-screen-parchis .parchis-final-core {
-  border-width: 1.6px;
+  border-width: 1.8px;
+  background: var(--parchis-lane-paper);
 }
 
-.game-screen-parchis .parchis-track-cell::after {
-  font-size: clamp(7px, 0.72vw, 10px);
+/* Pista de color de cada equipo — carriles finales */
+.game-screen-parchis .parchis-final-cell.slot-0 .parchis-final-core {
+  background: #ff2a2f;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.18);
+}
+.game-screen-parchis .parchis-final-cell.slot-1 .parchis-final-core {
+  background: #3192dc;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.18);
+}
+.game-screen-parchis .parchis-final-cell.slot-2 .parchis-final-core {
+  background: #f4df19;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.18);
+}
+.game-screen-parchis .parchis-final-cell.slot-3 .parchis-final-core {
+  background: #70bc35;
+  box-shadow: inset 0 0 12px rgba(0, 0, 0, 0.18);
 }
 
-.game-screen-parchis .parchis-track-cell.number-top::after {
-  top: 9%;
+/* Casillas de salida con color de su equipo */
+.game-screen-parchis .parchis-track-cell.is-start.slot-0 .parchis-track-core {
+  background: #ff2c31;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.12);
+}
+.game-screen-parchis .parchis-track-cell.is-start.slot-1 .parchis-track-core {
+  background: #3397e5;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.12);
+}
+.game-screen-parchis .parchis-track-cell.is-start.slot-2 .parchis-track-core {
+  background: #f4df19;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.12);
+}
+.game-screen-parchis .parchis-track-cell.is-start.slot-3 .parchis-track-core {
+  background: #70bc35;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.12);
 }
 
-.game-screen-parchis .parchis-track-cell.number-bottom::after {
-  bottom: 9%;
+/* Casillas seguras con aura suave */
+.game-screen-parchis .parchis-track-cell.is-safe .parchis-track-core {
+  background: var(--parchis-lane-paper);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.6);
 }
-
-.game-screen-parchis .parchis-track-cell.number-left::after,
-.game-screen-parchis .parchis-track-cell.number-right::after {
-  font-size: clamp(7px, 0.68vw, 9px);
-}
-
 .game-screen-parchis .parchis-track-cell.is-safe .parchis-track-core::before {
   width: 62%;
-  border-width: 1.85px;
-  background: #ece7dd;
+  border-width: 2px;
+  background: #e8e0cc;
+  box-shadow: 0 0 0 1px rgba(0,0,0,0.06);
 }
-
 .game-screen-parchis .parchis-track-cell.is-horizontal.is-safe .parchis-track-core::before {
   width: 62%;
 }
@@ -9189,13 +9244,14 @@ body:not(.is-home-screen) .bg-layer {
 
 @media (max-width: 1080px) {
   .game-screen-parchis .parchis-shell {
-    width: min(860px, calc(100vw - 16px), calc(100dvh - 140px));
+    width: min(900px, calc(100vw - 16px));
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 10px;
   }
 
   .game-screen-parchis .parchis-board-frame {
-    width: min(100%, 760px);
+    /* En columna única: el tablero es cuadrado y cabe sin scroll */
+    width: min(calc(100dvh - 180px), calc(100vw - 20px), 740px);
   }
 
   .game-screen-parchis .parchis-side {
@@ -9204,30 +9260,37 @@ body:not(.is-home-screen) .bg-layer {
 }
 
 @media (max-width: 760px) {
+  .game-screen-parchis .parchis-shell {
+    width: min(calc(100vw - 12px), calc(100dvh - 160px));
+    gap: 8px;
+  }
+
   .game-screen-parchis .parchis-board-frame {
-    width: min(100%, calc(100vw - 14px));
-    padding: 6px;
-    border-radius: 18px;
+    /* Móvil: tablero cuadrado, siempre encuadrado */
+    width: min(calc(100dvh - 180px), calc(100vw - 12px));
+    padding: 5px;
+    border-radius: 14px;
   }
 
   .game-screen-parchis .parchis-board {
     width: 100%;
+    border-width: 2px;
   }
 
   .game-screen-parchis .parchis-track-cell::after {
-    font-size: clamp(6px, 2vw, 8px);
+    font-size: clamp(5px, 1.8vw, 7px);
   }
 
   .game-screen-parchis .parchis-piece {
-    width: min(78%, clamp(13px, 4vw, 18px));
-    height: min(78%, clamp(13px, 4vw, 18px));
-    font-size: 0.48rem;
+    width: min(78%, clamp(12px, 4vw, 17px));
+    height: min(78%, clamp(12px, 4vw, 17px));
+    font-size: 0.46rem;
   }
 
   .game-screen-parchis .parchis-home-slot .parchis-piece,
   .game-screen-parchis .parchis-goal-slot .parchis-piece {
-    width: min(70%, clamp(12px, 3.6vw, 16px));
-    height: min(70%, clamp(12px, 3.6vw, 16px));
+    width: min(70%, clamp(11px, 3.4vw, 15px));
+    height: min(70%, clamp(11px, 3.4vw, 15px));
   }
 
   .game-screen-parchis .parchis-move-target.is-single::before {
@@ -9236,8 +9299,8 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .game-screen-parchis .parchis-move-target-badge {
-    font-size: 0.5rem;
-    padding: 1px 4px;
+    font-size: 0.48rem;
+    padding: 1px 3px;
   }
 }
 
@@ -9441,9 +9504,9 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .game-screen-parchis .parchis-board-frame {
-    width: min(100%, calc(100vw - 24px), 700px);
+    width: min(calc(100dvh - 190px), calc(100vw - 24px), 680px);
     padding: 7px;
-    border-radius: 22px;
+    border-radius: 18px;
   }
 
   .game-screen-parchis .parchis-board {
@@ -9451,19 +9514,19 @@ body:not(.is-home-screen) .bg-layer {
   }
 
   .game-screen-parchis .parchis-piece {
-    width: min(76%, clamp(14px, 1.9vw, 19px));
-    height: min(76%, clamp(14px, 1.9vw, 19px));
+    width: min(76%, clamp(13px, 1.8vw, 18px));
+    height: min(76%, clamp(13px, 1.8vw, 18px));
     font-size: 0.5rem;
   }
 
   .game-screen-parchis .parchis-home-slot .parchis-piece,
   .game-screen-parchis .parchis-goal-slot .parchis-piece {
-    width: min(68%, clamp(12px, 1.55vw, 15px));
-    height: min(68%, clamp(12px, 1.55vw, 15px));
+    width: min(68%, clamp(11px, 1.5vw, 15px));
+    height: min(68%, clamp(11px, 1.5vw, 15px));
   }
 
   .game-screen-parchis .parchis-track-cell::after {
-    font-size: clamp(6px, 0.92vw, 8px);
+    font-size: clamp(5px, 0.88vw, 8px);
   }
 
   .game-screen-parchis .parchis-side {
