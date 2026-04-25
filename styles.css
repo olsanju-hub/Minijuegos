@@ -4551,9 +4551,10 @@ body:not(.is-home-screen) .bg-layer {
   margin: 0 auto;
 }
 .parchis-board-frame {
+  /* En 2 columnas: el board dicta el tamaño; el frame solo añade el marco de madera */
   width: min(100%, calc(100dvh - 148px));
   justify-self: center;
-  aspect-ratio: 1;
+  /* SIN aspect-ratio aquí: el board interno ya tiene aspect-ratio:1 */
   padding: clamp(5px, 1vw, 12px);
   border-radius: 18px;
   border: 1px solid rgba(255,255,255,0.18);
@@ -4939,17 +4940,25 @@ body:not(.is-home-screen) .bg-layer {
     gap: 12px;
   }
   .parchis-board-frame {
-    width: min(calc(100dvh - 180px), calc(100vw - 18px), 720px);
+    /*
+      Columna única: el tablero está ENCIMA del panel de dados.
+      Restamos: cabecera(~58) + turno(~42) + padding(~16) + gap(~12) + dados_min(~170) + margen(~20) = ~318px
+    */
+    width: min(calc(100dvh - 318px), calc(100vw - 18px), 680px);
   }
-  .parchis-piece { width: min(82%, clamp(14px, 2.6vw, 24px)); }
+  .parchis-piece { width: min(82%, clamp(13px, 2.4vw, 22px)); }
 }
 @media (max-width:760px) {
-  .parchis-shell { width: calc(100vw - 12px); gap:10px; }
+  .parchis-shell { width: calc(100vw - 12px); gap:8px; }
   .parchis-board-frame {
-    width: min(calc(100dvh - 192px), calc(100vw - 12px));
+    /*
+      Móvil: menos espacio. Restamos ~330px para dejar sitio a los dados debajo.
+      Pero nunca más ancho que la pantalla menos margen.
+    */
+    width: min(calc(100dvh - 330px), calc(100vw - 12px));
     padding: 5px; border-radius:12px;
   }
-  .parchis-piece { width: min(80%, clamp(11px, 5.2vw, 17px)); font-size:0.42rem; }
+  .parchis-piece { width: min(80%, clamp(11px, 5.5vw, 17px)); font-size:0.42rem; }
   .parchis-side-card { border-radius:14px; padding:10px 12px; }
   .parchis-die-cube { width:44px; height:44px; border-radius:10px; }
   .parchis-track-cell::after { font-size: clamp(5px, 2vw, 7px); }
