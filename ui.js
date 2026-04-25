@@ -323,7 +323,7 @@ export function createUI({ appElement, toastElement }) {
 
   function renderHomeGameGlyph(gameId) {
     const glyphs = {
-      "tres-en-raya": `
+      tictactoe: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
           <rect x="4" y="4" width="40" height="40" rx="12" fill="#eef8ff" stroke="#b9dff6" stroke-width="1.5" />
           <path d="M17 12V36M31 12V36M12 17H36M12 31H36" stroke="#c6baa8" stroke-width="2.6" stroke-linecap="round" />
@@ -332,7 +332,7 @@ export function createUI({ appElement, toastElement }) {
           <path d="M28.5 28.5L34.5 34.5M34.5 28.5L28.5 34.5" stroke="#4f9b76" stroke-width="2.8" stroke-linecap="round" />
         </svg>
       `,
-      "cuatro-en-raya": `
+      connect4: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
           <rect x="5" y="7" width="38" height="34" rx="10" fill="#3c8769" stroke="#2c654d" stroke-width="1.5" />
           <g fill="#f7efe2">
@@ -622,7 +622,7 @@ export function createUI({ appElement, toastElement }) {
       `
     };
 
-    return glyphs[gameId] || "";
+    return glyphs[gameId] || glyphs.tictactoe;
   }
 
   function renderHome(vm) {
@@ -638,8 +638,8 @@ export function createUI({ appElement, toastElement }) {
 
     function profileForGame(game) {
       const map = {
-        "tres-en-raya": { tag: "Logica", color: "from-blue-500 to-blue-600" },
-        "cuatro-en-raya": { tag: "Estrategia", color: "from-orange-400 to-orange-500" },
+        tictactoe: { tag: "Logica", color: "from-blue-500 to-blue-600" },
+        connect4: { tag: "Estrategia", color: "from-orange-400 to-orange-500" },
         damas: { tag: "Tablero", color: "from-rose-400 to-rose-500" },
         parchis: { tag: "Familiar", color: "from-green-400 to-green-500" },
         "escaleras-serpientes": { tag: "Suerte", color: "from-emerald-400 to-emerald-500" },
