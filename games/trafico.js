@@ -633,6 +633,9 @@ function removeExitedEntities(state) {
     }
     return false;
   });
+  if (overtakes > 0) {
+    state.overtakes += overtakes;
+  }
   return overtakes;
 }
 
@@ -823,6 +826,94 @@ function entityVisualClass(kind) {
   return "traffic-rival-car";
 }
 
+function vehicleAccentClass(kind) {
+  if (kind === "player-car") {
+    return "is-player-car";
+  }
+  if (kind === "player-bike") {
+    return "is-player-bike";
+  }
+  if (kind === "truck") {
+    return "is-truck";
+  }
+  if (kind === "rival") {
+    return "is-rival-car";
+  }
+  return "";
+}
+
+function renderTrafficVehicleParts(kind) {
+  if (kind === "pickup") {
+    return `
+      <span class="traffic-pickup-face"></span>
+      <span class="traffic-pickup-mark"></span>
+    `;
+  }
+
+  if (kind === "player-bike") {
+    return `
+      <span class="traffic-bike-shadow"></span>
+      <span class="traffic-bike-wheel is-front"></span>
+      <span class="traffic-bike-wheel is-rear"></span>
+      <span class="traffic-bike-frame"></span>
+      <span class="traffic-bike-seat"></span>
+      <span class="traffic-bike-rider"></span>
+      <span class="traffic-bike-light"></span>
+    `;
+  }
+
+  if (kind === "truck") {
+    return `
+      <span class="traffic-vehicle-shadow"></span>
+      <span class="traffic-truck-cab">
+        <span class="traffic-truck-windshield"></span>
+        <span class="traffic-vehicle-light is-head-left"></span>
+        <span class="traffic-vehicle-light is-head-right"></span>
+      </span>
+      <span class="traffic-truck-cargo">
+        <span class="traffic-truck-rib is-rib-1"></span>
+        <span class="traffic-truck-rib is-rib-2"></span>
+        <span class="traffic-truck-rib is-rib-3"></span>
+      </span>
+      <span class="traffic-vehicle-wheel is-front-left"></span>
+      <span class="traffic-vehicle-wheel is-front-right"></span>
+      <span class="traffic-vehicle-wheel is-rear-left"></span>
+      <span class="traffic-vehicle-wheel is-rear-right"></span>
+      <span class="traffic-vehicle-light is-tail-left"></span>
+      <span class="traffic-vehicle-light is-tail-right"></span>
+    `;
+  }
+
+  return `
+    <span class="traffic-vehicle-shadow"></span>
+    <span class="traffic-car-hood"></span>
+    <span class="traffic-car-cabin">
+      <span class="traffic-car-glass is-front"></span>
+      <span class="traffic-car-glass is-rear"></span>
+    </span>
+    <span class="traffic-car-trunk"></span>
+    <span class="traffic-car-beltline"></span>
+    <span class="traffic-vehicle-wheel is-front-left"></span>
+    <span class="traffic-vehicle-wheel is-front-right"></span>
+    <span class="traffic-vehicle-wheel is-rear-left"></span>
+    <span class="traffic-vehicle-wheel is-rear-right"></span>
+    <span class="traffic-vehicle-light is-head-left"></span>
+    <span class="traffic-vehicle-light is-head-right"></span>
+    <span class="traffic-vehicle-light is-tail-left"></span>
+    <span class="traffic-vehicle-light is-tail-right"></span>
+  `;
+}
+
+function renderTrafficVehicleVisual(kind) {
+  const visualClass = entityVisualClass(kind);
+  const accentClass = vehicleAccentClass(kind);
+  return `
+    <span class="${visualClass} traffic-object-visual ${accentClass}" data-traffic-visual-kind="${escapeHtml(kind)}" aria-hidden="true">
+      ${renderTrafficVehicleParts(kind)}
+    </span>
+  `;
+}
+
 function roadScrollPx(state) {
   const loop = ROAD_SCROLL_PX_PER_STEP;
   return ((currentTravelSteps(state) * loop) % loop).toFixed(2);
@@ -852,7 +943,7 @@ function renderTrafficEntity(entity) {
       style="--traffic-lane:${entity.lane};--traffic-y:${entity.y.toFixed(4)};"
       aria-hidden="true"
     >
-      <span class="${entityVisualClass(entity.kind)}" aria-hidden="true"></span>
+      ${renderTrafficVehicleVisual(entity.kind)}
     </span>
   `;
 }
@@ -1013,19 +1104,17 @@ function createTrafficEntityNode(entity) {
   node.dataset.trafficEntityId = entity.id;
   node.dataset.trafficKind = entity.kind;
   node.setAttribute("aria-hidden", "true");
-
-  const visual = document.createElement("span");
-  visual.className = entityVisualClass(entity.kind);
-  visual.setAttribute("aria-hidden", "true");
-  node.append(visual);
+  node.innerHTML = renderTrafficVehicleVisual(entity.kind);
   return node;
 }
 
 function syncTrafficEntityVisual(node, kind) {
   const visual = node.firstElementChild;
-  if (visual instanceof HTMLElement) {
-    visual.className = entityVisualClass(kind);
+  if (!(visual instanceof HTMLElement) || visual.dataset.trafficVisualKind !== kind) {
+    node.innerHTML = renderTrafficVehicleVisual(kind);
+    return;
   }
+  visual.className = `${entityVisualClass(kind)} traffic-object-visual ${vehicleAccentClass(kind)}`.trim();
 }
 
 function syncTrafficEntities(root, state) {

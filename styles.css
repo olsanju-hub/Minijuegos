@@ -13331,3 +13331,425 @@ body.is-game-screen .game-stage-main {
     inset 0 1px 0 rgba(255,255,255,0.46),
     0 6px 12px rgba(31,28,24,0.14);
 }
+
+/* Traffic vehicle restructure - piezas reconocibles sin tocar la logica */
+.screen.game-screen-trafico .traffic-road-frame {
+  padding: clamp(8px, 1.2vw, 14px);
+  background:
+    linear-gradient(90deg, rgba(127, 96, 55, 0.24) 0 8px, transparent 8px calc(100% - 8px), rgba(127, 96, 55, 0.24) calc(100% - 8px)),
+    radial-gradient(circle at 50% -6%, rgba(255, 255, 255, 0.9), transparent 52%),
+    linear-gradient(180deg, #f1e6d0, #d8c39d);
+  border-color: rgba(117, 90, 53, 0.28);
+}
+
+.screen.game-screen-trafico .traffic-road {
+  background:
+    radial-gradient(circle at 50% 10%, rgba(255, 255, 255, 0.1), transparent 38%),
+    linear-gradient(180deg, #4c5a63, #1d252d 72%, #161d24);
+}
+
+.screen.game-screen-trafico .traffic-road-surface {
+  background:
+    linear-gradient(90deg, #d5bd8b 0 9px, #46515a 9px 11px, transparent 11px calc(100% - 11px), #46515a calc(100% - 11px) calc(100% - 9px), #d5bd8b calc(100% - 9px)),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.045) 0 17px, rgba(0, 0, 0, 0.03) 17px 35px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.024) 0 1px, transparent 1px 18px),
+    linear-gradient(180deg, #46535d 0%, #222d36 100%);
+}
+
+.screen.game-screen-trafico .traffic-road-surface::before {
+  background:
+    linear-gradient(90deg, rgba(255,255,255,0.1), transparent 18%, transparent 82%, rgba(0,0,0,0.22)),
+    radial-gradient(circle at 48% 20%, rgba(255,255,255,0.1), transparent 48%);
+}
+
+.screen.game-screen-trafico .traffic-road-flow {
+  inset: 12px 18px;
+  background:
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.058) 0 18px, transparent 18px 52px),
+    repeating-linear-gradient(90deg, rgba(255,255,255,0.03) 0 1px, transparent 1px 20px);
+  opacity: 0.5;
+}
+
+.screen.game-screen-trafico .traffic-lane-divider {
+  width: 4px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 243, 205, 0.98) 0 30px,
+      transparent 30px 62px
+    );
+  filter:
+    drop-shadow(0 0 2px rgba(255, 248, 226, 0.45))
+    drop-shadow(0 1px 0 rgba(0, 0, 0, 0.28));
+}
+
+.screen.game-screen-trafico .traffic-object-visual,
+.screen.game-screen-trafico .traffic-object-visual *,
+.screen.game-screen-trafico .traffic-object-visual *::before,
+.screen.game-screen-trafico .traffic-object-visual *::after {
+  box-sizing: border-box;
+}
+
+.screen.game-screen-trafico .traffic-object-visual {
+  position: absolute;
+  transform: translateZ(0);
+  overflow: visible;
+  border: 0;
+  box-shadow: none;
+}
+
+.screen.game-screen-trafico .traffic-object-visual::before,
+.screen.game-screen-trafico .traffic-object-visual::after {
+  content: none;
+}
+
+.screen.game-screen-trafico .traffic-player-car,
+.screen.game-screen-trafico .traffic-rival-car {
+  inset: -1% 12% 1%;
+  border-radius: 42% 42% 28% 28% / 20% 20% 16% 16%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.36) 0 8%, transparent 22%),
+    linear-gradient(90deg, rgba(255,255,255,0.16), transparent 18%, transparent 82%, rgba(0,0,0,0.12)),
+    linear-gradient(180deg, var(--traffic-car-top), var(--traffic-car-mid) 46%, var(--traffic-car-bottom));
+  border: 1px solid var(--traffic-car-stroke);
+  filter: drop-shadow(0 12px 12px rgba(7, 13, 18, 0.34));
+}
+
+.screen.game-screen-trafico .traffic-player-car {
+  --traffic-car-top: #8dc8ff;
+  --traffic-car-mid: #4f8dff;
+  --traffic-car-bottom: #285dc9;
+  --traffic-car-stroke: rgba(26, 66, 146, 0.92);
+  --traffic-car-trim: rgba(22, 54, 126, 0.5);
+}
+
+.screen.game-screen-trafico .traffic-rival-car {
+  --traffic-car-top: #ffbb82;
+  --traffic-car-mid: #f17755;
+  --traffic-car-bottom: #c84435;
+  --traffic-car-stroke: rgba(153, 56, 43, 0.92);
+  --traffic-car-trim: rgba(126, 41, 33, 0.42);
+  inset: 0% 14% 3%;
+}
+
+.screen.game-screen-trafico .traffic-vehicle-shadow,
+.screen.game-screen-trafico .traffic-bike-shadow {
+  position: absolute;
+  left: 5%;
+  right: 5%;
+  bottom: -5%;
+  height: 14%;
+  border-radius: 50%;
+  background: rgba(5, 10, 14, 0.32);
+  filter: blur(2px);
+  z-index: -1;
+}
+
+.screen.game-screen-trafico .traffic-car-hood,
+.screen.game-screen-trafico .traffic-car-trunk,
+.screen.game-screen-trafico .traffic-car-cabin,
+.screen.game-screen-trafico .traffic-car-beltline,
+.screen.game-screen-trafico .traffic-car-glass,
+.screen.game-screen-trafico .traffic-vehicle-wheel,
+.screen.game-screen-trafico .traffic-vehicle-light {
+  position: absolute;
+  display: block;
+}
+
+.screen.game-screen-trafico .traffic-car-hood {
+  top: 7%;
+  left: 19%;
+  right: 19%;
+  height: 20%;
+  border-radius: 48% 48% 22% 22% / 54% 54% 18% 18%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.34), transparent 68%),
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255,255,255,0.28) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.screen.game-screen-trafico .traffic-car-cabin {
+  top: 29%;
+  left: 14%;
+  right: 14%;
+  height: 34%;
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  gap: 5%;
+  padding: 5%;
+  border-radius: 32% 32% 24% 24% / 26% 26% 18% 18%;
+  background:
+    linear-gradient(180deg, rgba(19, 37, 56, 0.2), rgba(6, 15, 28, 0.16)),
+    rgba(13, 31, 53, 0.16);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.22),
+    0 1px 0 rgba(255,255,255,0.2);
+}
+
+.screen.game-screen-trafico .traffic-car-glass {
+  position: relative;
+  border-radius: 999px 999px 8px 8px;
+  background:
+    radial-gradient(circle at 22% 18%, rgba(255,255,255,0.98) 0 9%, transparent 10%),
+    linear-gradient(180deg, #e9f8ff, #91bad7);
+  box-shadow:
+    inset 0 -1px 0 rgba(24, 55, 80, 0.24),
+    0 0 0 1px rgba(14, 44, 72, 0.12);
+}
+
+.screen.game-screen-trafico .traffic-car-glass.is-rear {
+  border-radius: 8px 8px 999px 999px;
+  background:
+    radial-gradient(circle at 78% 18%, rgba(255,255,255,0.86) 0 7%, transparent 8%),
+    linear-gradient(180deg, #b9d4e5, #e9f8ff);
+}
+
+.screen.game-screen-trafico .traffic-car-trunk {
+  left: 18%;
+  right: 18%;
+  bottom: 11%;
+  height: 20%;
+  border-radius: 18% 18% 44% 44% / 16% 16% 42% 42%;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.1), transparent 48%),
+    linear-gradient(90deg, transparent calc(50% - 1px), rgba(255,255,255,0.24) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px));
+}
+
+.screen.game-screen-trafico .traffic-car-beltline {
+  left: 9%;
+  right: 9%;
+  top: 64%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--traffic-car-trim);
+  opacity: 0.7;
+}
+
+.screen.game-screen-trafico .traffic-vehicle-wheel {
+  width: 13%;
+  height: 16%;
+  border-radius: 45%;
+  background:
+    radial-gradient(circle at 50% 45%, #3b4550 0 21%, #111820 22% 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,0.08),
+    0 1px 2px rgba(0,0,0,0.35);
+}
+
+.screen.game-screen-trafico .traffic-vehicle-wheel.is-front-left { left: -4%; top: 23%; }
+.screen.game-screen-trafico .traffic-vehicle-wheel.is-front-right { right: -4%; top: 23%; }
+.screen.game-screen-trafico .traffic-vehicle-wheel.is-rear-left { left: -4%; bottom: 17%; }
+.screen.game-screen-trafico .traffic-vehicle-wheel.is-rear-right { right: -4%; bottom: 17%; }
+
+.screen.game-screen-trafico .traffic-vehicle-light {
+  width: 13%;
+  height: 7%;
+  border-radius: 999px;
+}
+
+.screen.game-screen-trafico .traffic-vehicle-light.is-head-left,
+.screen.game-screen-trafico .traffic-vehicle-light.is-head-right {
+  top: 2%;
+  background: #fff4c4;
+  box-shadow: 0 0 7px rgba(255, 238, 161, 0.54);
+}
+
+.screen.game-screen-trafico .traffic-vehicle-light.is-head-left { left: 18%; }
+.screen.game-screen-trafico .traffic-vehicle-light.is-head-right { right: 18%; }
+
+.screen.game-screen-trafico .traffic-vehicle-light.is-tail-left,
+.screen.game-screen-trafico .traffic-vehicle-light.is-tail-right {
+  bottom: 3%;
+  background: #ff5d57;
+  box-shadow: 0 0 5px rgba(255, 93, 87, 0.32);
+}
+
+.screen.game-screen-trafico .traffic-vehicle-light.is-tail-left { left: 18%; }
+.screen.game-screen-trafico .traffic-vehicle-light.is-tail-right { right: 18%; }
+
+.screen.game-screen-trafico .traffic-rival-truck {
+  inset: -2% 13% 1%;
+  border-radius: 26% 26% 14% 14% / 12% 12% 8% 8%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.24), transparent 18%),
+    linear-gradient(180deg, #f3b575 0 31%, #c86e42 31% 100%);
+  border: 1px solid rgba(129, 69, 43, 0.94);
+  filter: drop-shadow(0 12px 12px rgba(7, 13, 18, 0.32));
+}
+
+.screen.game-screen-trafico .traffic-truck-cab,
+.screen.game-screen-trafico .traffic-truck-cargo,
+.screen.game-screen-trafico .traffic-truck-rib,
+.screen.game-screen-trafico .traffic-truck-windshield {
+  position: absolute;
+  display: block;
+}
+
+.screen.game-screen-trafico .traffic-truck-cab {
+  top: 4%;
+  left: 12%;
+  right: 12%;
+  height: 24%;
+  border-radius: 30% 30% 10% 10% / 38% 38% 10% 10%;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.22), transparent 62%),
+    #df8f56;
+}
+
+.screen.game-screen-trafico .traffic-truck-windshield {
+  left: 16%;
+  right: 16%;
+  top: 25%;
+  height: 45%;
+  border-radius: 999px 999px 8px 8px;
+  background:
+    radial-gradient(circle at 28% 22%, rgba(255,255,255,0.92) 0 9%, transparent 10%),
+    linear-gradient(180deg, #ecf9ff, #9ebed2);
+}
+
+.screen.game-screen-trafico .traffic-truck-cargo {
+  left: 9%;
+  right: 9%;
+  top: 33%;
+  bottom: 9%;
+  border-radius: 12px 12px 8px 8px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.14), transparent 20%),
+    linear-gradient(90deg, rgba(255,255,255,0.14), transparent 15%, transparent 85%, rgba(0,0,0,0.1)),
+    linear-gradient(180deg, #cc7a49, #9f4f32);
+  box-shadow: inset 0 0 0 1px rgba(92, 47, 31, 0.22);
+}
+
+.screen.game-screen-trafico .traffic-truck-rib {
+  left: 14%;
+  right: 14%;
+  height: 2px;
+  border-radius: 999px;
+  background: rgba(255,255,255,0.2);
+}
+
+.screen.game-screen-trafico .traffic-truck-rib.is-rib-1 { top: 24%; }
+.screen.game-screen-trafico .traffic-truck-rib.is-rib-2 { top: 50%; }
+.screen.game-screen-trafico .traffic-truck-rib.is-rib-3 { top: 76%; }
+
+.screen.game-screen-trafico .traffic-player-bike {
+  inset: 2% 27% 4%;
+  border-radius: 999px;
+  background: none;
+  filter: drop-shadow(0 10px 10px rgba(7, 13, 18, 0.3));
+}
+
+.screen.game-screen-trafico .traffic-bike-wheel,
+.screen.game-screen-trafico .traffic-bike-frame,
+.screen.game-screen-trafico .traffic-bike-seat,
+.screen.game-screen-trafico .traffic-bike-rider,
+.screen.game-screen-trafico .traffic-bike-light {
+  position: absolute;
+  display: block;
+}
+
+.screen.game-screen-trafico .traffic-bike-wheel {
+  left: 50%;
+  width: 42%;
+  height: 19%;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background:
+    radial-gradient(circle at 50% 50%, #3c4652 0 22%, #111920 23% 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.09);
+}
+
+.screen.game-screen-trafico .traffic-bike-wheel.is-front { top: 0; }
+.screen.game-screen-trafico .traffic-bike-wheel.is-rear { bottom: 2%; }
+
+.screen.game-screen-trafico .traffic-bike-frame {
+  left: 24%;
+  right: 24%;
+  top: 13%;
+  bottom: 12%;
+  border-radius: 999px 999px 18px 18px;
+  background:
+    radial-gradient(circle at 50% 5%, #fff3c8 0 6%, transparent 7%),
+    linear-gradient(180deg, #8ec7ff 0%, #4f8cff 52%, #2858bf 100%);
+  border: 1px solid rgba(26, 66, 146, 0.82);
+}
+
+.screen.game-screen-trafico .traffic-bike-seat {
+  left: 33%;
+  right: 33%;
+  top: 45%;
+  height: 22%;
+  border-radius: 999px;
+  background: #15202b;
+}
+
+.screen.game-screen-trafico .traffic-bike-rider {
+  left: 24%;
+  right: 24%;
+  top: 25%;
+  height: 24%;
+  border-radius: 999px 999px 14px 14px;
+  background:
+    radial-gradient(circle at 35% 26%, rgba(255,255,255,0.8) 0 11%, transparent 12%),
+    linear-gradient(180deg, #eaf8ff, #9ec6df);
+}
+
+.screen.game-screen-trafico .traffic-bike-light {
+  left: 42%;
+  right: 42%;
+  top: -1%;
+  height: 7%;
+  border-radius: 999px;
+  background: #fff4c4;
+  box-shadow: 0 0 7px rgba(255, 238, 161, 0.54);
+}
+
+.screen.game-screen-trafico .traffic-pickup-coin {
+  inset: 8%;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 26%, #fff9d8 0 18%, transparent 19%),
+    radial-gradient(circle at center, #ffe486 0 46%, #de9e22 47% 100%);
+  border: 1px solid rgba(151, 98, 13, 0.84);
+  box-shadow:
+    0 8px 16px rgba(34, 27, 5, 0.22),
+    inset 0 2px 0 rgba(255,255,255,0.64),
+    inset 0 -3px 0 rgba(126, 83, 12, 0.22);
+  filter: drop-shadow(0 2px 3px rgba(7, 13, 18, 0.22));
+}
+
+.screen.game-screen-trafico .traffic-pickup-face,
+.screen.game-screen-trafico .traffic-pickup-mark {
+  position: absolute;
+  display: block;
+}
+
+.screen.game-screen-trafico .traffic-pickup-face {
+  inset: 19%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 249, 211, 0.78);
+}
+
+.screen.game-screen-trafico .traffic-pickup-mark {
+  width: 34%;
+  height: 48%;
+  border-radius: 999px;
+  background:
+    linear-gradient(90deg, transparent 0 31%, rgba(132, 82, 11, 0.38) 31% 69%, transparent 69% 100%);
+}
+
+@media (max-width: 520px) {
+  .screen.game-screen-trafico .traffic-player-car,
+  .screen.game-screen-trafico .traffic-rival-car {
+    inset: 0 10% 2%;
+  }
+
+  .screen.game-screen-trafico .traffic-rival-truck {
+    inset: -1% 10% 1%;
+  }
+
+  .screen.game-screen-trafico .traffic-player-bike {
+    inset: 2% 24% 4%;
+  }
+}

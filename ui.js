@@ -973,24 +973,43 @@ export function createUI({ appElement, toastElement }) {
     }
 
     const copyNode = appElement.querySelector(".topbar-copy");
-    if (!copyNode) {
-      return;
-    }
-
     const subtitle = buildGameTopbarSubtitle(vm);
-    const subtitleNode = copyNode.querySelector(".topbar-sub");
+    if (copyNode) {
+      const subtitleNode = copyNode.querySelector(".topbar-sub");
+      if (!subtitle) {
+        subtitleNode?.remove();
+      } else if (subtitleNode) {
+        subtitleNode.textContent = subtitle;
+      } else {
+        copyNode.insertAdjacentHTML("beforeend", `<p class="topbar-sub">${escapeHtml(subtitle)}</p>`);
+      }
+    }
 
-    if (!subtitle) {
-      subtitleNode?.remove();
+    const session = vm?.session;
+    const game = vm?.game;
+    if (!session || !game) {
       return;
     }
 
-    if (subtitleNode) {
-      subtitleNode.textContent = subtitle;
-      return;
+    const statusLabelNode = appElement.querySelector("[data-game-status-label]");
+    const statusTextNode = appElement.querySelector("[data-game-status-text]");
+    if (statusLabelNode && statusTextNode) {
+      const statusMessage = game.getTurnMessage({
+        state: session.state,
+        players: session.players,
+        options: session.options
+      });
+      const result = game.getResult(session.state);
+      statusLabelNode.textContent = result ? "Resultado" : "Estado";
+      statusTextNode.textContent = result
+        ? (buildGameTopbarSubtitle(vm) || statusMessage || "Partida terminada")
+        : statusMessage || buildGameTopbarSubtitle(vm) || "Partida en curso";
     }
 
-    copyNode.insertAdjacentHTML("beforeend", `<p class="topbar-sub">${escapeHtml(subtitle)}</p>`);
+    const playerListNode = appElement.querySelector("[data-game-player-list]");
+    if (playerListNode && !game.hideDefaultPlayerChips) {
+      playerListNode.innerHTML = renderPlayerChips(session, game);
+    }
   }
 
   function renderGame(vm) {
@@ -1037,13 +1056,13 @@ export function createUI({ appElement, toastElement }) {
         <div class="game-shell-body">
           <section class="game-status-band ${hidePlayers ? "is-single" : ""}">
             <article class="game-status-card">
-              <span class="game-status-label">${result ? "Resultado" : "Estado"}</span>
-              <p class="game-status-text">${escapeHtml(result ? (topbarSubtitle || statusMessage || "Partida terminada") : statusMessage || topbarSubtitle || "Partida en curso")}</p>
+              <span class="game-status-label" data-game-status-label>${result ? "Resultado" : "Estado"}</span>
+              <p class="game-status-text" data-game-status-text>${escapeHtml(result ? (topbarSubtitle || statusMessage || "Partida terminada") : statusMessage || topbarSubtitle || "Partida en curso")}</p>
             </article>
             ${hidePlayers ? "" : `
               <article class="game-status-card">
                 <span class="game-status-label">Jugadores</span>
-                <div class="player-chip-list-compact">
+                <div class="player-chip-list-compact" data-game-player-list>
                   ${renderPlayerChips(session, game)}
                 </div>
               </article>
