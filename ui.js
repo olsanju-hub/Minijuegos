@@ -173,6 +173,22 @@ function normalizeActionPayload(target) {
   return null;
 }
 
+function renderUiIcon(name, className = "ui-icon") {
+  const icons = {
+    back: '<path d="M15 6L9 12L15 18" /><path d="M10 12H21" />',
+    help: '<circle cx="12" cy="12" r="9" /><path d="M9.8 9.2a2.6 2.6 0 0 1 4.4 1.8c0 2-2.2 2.1-2.2 3.8" /><path d="M12 17.5h.01" />',
+    refresh: '<path d="M20 6v5h-5" /><path d="M4 18v-5h5" /><path d="M19 11a7 7 0 0 0-12.2-3.8L4 10" /><path d="M5 13a7 7 0 0 0 12.2 3.8L20 14" />',
+    play: '<path d="M8 5v14l11-7Z" />',
+    users: '<path d="M16 20v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2" /><circle cx="9.5" cy="7" r="4" /><path d="M22 20v-2a4 4 0 0 0-3-3.8" /><path d="M16 3.2a4 4 0 0 1 0 7.6" />',
+    user: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />',
+    home: '<path d="M3 11.5L12 4l9 7.5" /><path d="M5 10.5V20h14v-9.5" /><path d="M9.5 20v-6h5v6" />',
+    spark: '<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8Z" /><path d="M20 3v4" /><path d="M22 5h-4" />',
+    close: '<path d="M18 6L6 18" /><path d="M6 6l12 12" />'
+  };
+  const body = icons[name] || icons.help;
+  return `<svg class="${escapeHtml(className)}" viewBox="0 0 24 24" aria-hidden="true" focusable="false">${body}</svg>`;
+}
+
 export function createUI({ appElement, toastElement }) {
   let onAction = null;
   let onField = null;
@@ -696,7 +712,7 @@ export function createUI({ appElement, toastElement }) {
         </div>
         <div class="home-topbar-actions">
           <button class="home-topbar-btn" aria-label="Información" data-action="open-rules-home">
-            <span class="material-symbols-outlined" style="font-size:20px;">help_outline</span>
+            ${renderUiIcon("help")}
           </button>
         </div>
       </header>
@@ -716,10 +732,6 @@ export function createUI({ appElement, toastElement }) {
             />
             <div class="home-hero-overlay" aria-hidden="true"></div>
             <div class="home-hero-body">
-              <div class="home-hero-tag">
-                <span class="material-symbols-outlined" style="font-size:13px;font-variation-settings:'FILL' 1;">stars</span>
-                Colección local
-              </div>
               <h2 class="home-hero-title">Juegos para<br>toda la familia</h2>
               <p class="home-hero-sub">Clásicos de siempre, listos para jugar sin conexión.</p>
             </div>
@@ -739,17 +751,6 @@ export function createUI({ appElement, toastElement }) {
         </div>
       </div>
 
-      <!-- Bottom nav móvil HOME V2 -->
-      <nav class="home-bottom-nav" aria-label="Navegación principal">
-        <a class="home-bottom-nav-item is-active" href="#" aria-current="page">
-          <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1;">home</span>
-          <span>Inicio</span>
-        </a>
-        <a class="home-bottom-nav-item" href="#" aria-label="Historial de partidas">
-          <span class="material-symbols-outlined">history</span>
-          <span>Historial</span>
-        </a>
-      </nav>
     `;
   }
 
@@ -765,28 +766,28 @@ export function createUI({ appElement, toastElement }) {
 
     const playersRow = isFixedPlayers
       ? `
-        <div class="flex items-center justify-between">
-          <label class="font-label-caps text-xs text-outline uppercase font-bold tracking-widest">Jugadores</label>
-          <span class="font-body-md text-primary font-semibold">${minPlayers} Jugadores (Fijo)</span>
+        <div class="config-inline-row">
+          <span class="field-label">Jugadores</span>
+          <span class="config-fixed-value">${minPlayers} ${minPlayers === 1 ? "jugador" : "jugadores"}</span>
         </div>
       `
       : `
-        <div class="space-y-4">
-          <div class="flex items-center justify-between">
-            <label class="font-label-caps text-xs text-outline uppercase font-bold tracking-widest">Jugadores</label>
-            <span class="font-body-md text-primary font-semibold">Multijugador Local</span>
+        <div class="block">
+          <div class="config-inline-row">
+            <span class="field-label">Jugadores</span>
+            <span class="config-fixed-value">Multijugador local</span>
           </div>
-          <div class="grid grid-cols-${Math.min(3, maxPlayers - minPlayers + 1)} gap-4">
+          <div class="player-count-row">
             ${Array.from({ length: maxPlayers - minPlayers + 1 }, (_, i) => minPlayers + i).map(count => {
               const isActive = vm.config.playerCount === count;
               return `
                 <button 
-                  class="font-bold py-4 rounded-xl border flex flex-col items-center gap-1 transition-all active:scale-95 ${isActive ? 'bg-primary-container text-on-primary-container border-primary/20 shadow-sm' : 'bg-surface-container text-on-surface-variant border-outline-variant/50 hover:bg-surface-container-high'}"
+                  class="pill config-player-pill ${isActive ? "is-active" : ""}"
                   data-action="select-player-count" 
                   data-player-count="${count}"
                 >
-                  <span class="material-symbols-outlined">${count === 1 ? 'person' : count === 2 ? 'group' : 'groups'}</span>
-                  ${count} Jug.
+                  ${renderUiIcon(count === 1 ? "user" : "users", "ui-icon pill-icon")}
+                  ${count} jug.
                 </button>
               `;
             }).join("")}
@@ -797,10 +798,10 @@ export function createUI({ appElement, toastElement }) {
     const namesFields = Array.from({ length: vm.config.playerCount }, (_, index) => {
       const current = vm.config.names[index] || "";
       return `
-        <div class="flex flex-col gap-2">
-          <label class="text-xs font-bold text-outline uppercase tracking-wider">Jugador ${index + 1}</label>
+        <div class="field">
+          <label class="field-label">Jugador ${index + 1}</label>
           <input
-            class="w-full px-4 py-3 rounded-xl border border-outline-variant bg-white focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none font-body-md text-on-surface shadow-sm"
+            class="input"
             type="text"
             maxlength="14"
             value="${escapeHtml(current)}"
@@ -815,49 +816,59 @@ export function createUI({ appElement, toastElement }) {
     const namesBlock = game.hidePlayerNames
       ? ""
       : `
-        <div class="space-y-4 pt-6 mt-6 border-t border-outline-variant/20">
-          <label class="font-label-caps text-xs text-outline uppercase font-bold tracking-widest">Nombres</label>
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div class="block">
+          <div>
+            <h3 class="block-title">Nombres</h3>
+            <p class="block-sub">Personaliza los jugadores para esta partida.</p>
+          </div>
+          <div class="fields-grid">
             ${namesFields}
           </div>
         </div>
       `;
 
+    const gameOptions = typeof game.renderConfigPanel === "function"
+      ? game.renderConfigPanel({ options: vm.config.gameOptions || {}, playerCount: vm.config.playerCount })
+      : "";
+
     return `
-      <!-- TopAppBar -->
-      <header class="bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm fixed top-0 w-full z-50 flex justify-between items-center px-6 h-16">
-        <div class="flex items-center gap-4">
-          <button class="material-symbols-outlined text-slate-500 hover:bg-slate-50 transition-colors rounded-full p-2 active:scale-95 duration-200" data-action="go-home">arrow_back</button>
-          <span class="text-xl font-bold text-slate-900 font-['Plus_Jakarta_Sans'] tracking-tight">Configurar</span>
-        </div>
-      </header>
-
-      <main class="pt-24 pb-12 px-6 flex flex-col items-center min-h-screen">
-        <div class="max-w-md w-full">
-          <!-- Hero Header Section -->
-          <div class="text-center mb-8">
-            <div class="inline-flex items-center justify-center p-4 bg-primary-container rounded-2xl mb-4 shadow-inner">
-              <div class="scale-150 text-on-primary-container">${renderHomeGameGlyph(game.id)}</div>
+      <section class="screen config-screen">
+        <header class="topbar">
+          <div class="topbar-main">
+            <button class="btn-icon" data-action="go-home" aria-label="Volver al catalogo">${renderUiIcon("back")}</button>
+            <div class="topbar-copy">
+              <h2 class="topbar-title">Configurar</h2>
+              <p class="topbar-sub">${escapeHtml(game.name)}</p>
             </div>
-            <h1 class="text-3xl font-bold text-on-surface mb-2 font-['Plus_Jakarta_Sans']">${escapeHtml(game.name)}</h1>
-            <p class="text-on-surface-variant font-body-md">${escapeHtml(game.tagline || "Partida local")}</p>
           </div>
+        </header>
 
-          <!-- Configuration Container -->
-          <div class="bg-white border border-outline-variant/30 rounded-2xl shadow-[0_20px_25px_-5px_rgba(0,0,0,0.04)] p-6 md:p-8 space-y-6">
+        <article class="card config-card config-card-modern">
+          <section class="config-hero">
+            <div class="config-hero-media">
+              ${typeof game.renderCardIllustration === "function" ? game.renderCardIllustration() : `<div class="config-game-glyph">${renderHomeGameGlyph(game.id)}</div>`}
+            </div>
+            <div class="config-hero-copy">
+              <h1 class="config-title">${escapeHtml(game.name)}</h1>
+              <p class="config-tagline">${escapeHtml(game.tagline || game.subtitle || "Partida local")}</p>
+            </div>
+          </section>
+
+          <div class="config-stack">
             ${playersRow}
             ${namesBlock}
-
-            <!-- Action Button -->
-            <div class="pt-6 mt-6 border-t border-outline-variant/20">
-              <button class="w-full bg-primary hover:bg-primary/90 text-white text-lg font-bold py-4 rounded-xl shadow-lg shadow-primary/30 active:scale-95 transition-all duration-200 flex items-center justify-center gap-3" data-action="config-continue">
-                Iniciar Partida
-                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">play_circle</span>
-              </button>
-            </div>
+            ${gameOptions}
           </div>
-        </div>
-      </main>
+
+          <div class="action-row config-actions">
+            <button class="btn btn-secondary" data-action="go-home">Catalogo</button>
+            <button class="btn btn-primary" data-action="config-continue">
+              Iniciar partida
+              ${renderUiIcon("play", "ui-icon btn-ui-icon")}
+            </button>
+          </div>
+        </article>
+      </section>
     `;
   }
 
@@ -967,54 +978,73 @@ export function createUI({ appElement, toastElement }) {
 
     const boardUiState = buildBoardUiState(vm);
     const topbarSubtitle = buildGameTopbarSubtitle(vm);
+    const statusMessage = game.getTurnMessage({
+      state: session.state,
+      players: session.players,
+      options: session.options
+    });
+    const result = game.getResult(session.state);
+    const hidePlayers = Boolean(game.hideDefaultPlayerChips);
+    const shellClasses = [
+      "screen",
+      "game-layout",
+      `game-screen-${escapeHtml(game.id)}`,
+      game.useLandscapeMobileShell ? "game-screen-landscape-mobile-shell" : ""
+    ].filter(Boolean).join(" ");
+    const immersive = Boolean(game.useLandscapeMobileShell || game.allowFullscreen || ["billar", "futbol-turnos", "tanques", "trafico"].includes(game.id));
 
     return `
-      <!-- Top App Bar -->
-      <header class="bg-white/70 backdrop-blur-xl border-b border-white/50 shadow-[0_8px_30px_rgb(0,0,0,0.04)] fixed top-0 w-full z-50 flex justify-between items-center px-4 md:px-6 h-16">
-        <div class="flex items-center gap-2 md:gap-4">
-          <button class="material-symbols-outlined text-slate-600 hover:bg-white transition-all rounded-full p-2 active:scale-95 duration-200 shadow-sm border border-transparent hover:border-slate-200" data-action="game-back">arrow_back</button>
-          
-          <div class="w-9 h-9 md:w-10 md:h-10 drop-shadow-md">
-            ${renderHomeGameGlyph(game.id)}
+      <section class="${shellClasses}">
+        <header class="topbar">
+          <div class="topbar-main">
+            <button class="btn-icon" data-action="game-back" aria-label="Volver a configurar">${renderUiIcon("back")}</button>
+            <div class="topbar-game-icon" aria-hidden="true">${renderHomeGameGlyph(game.id)}</div>
+            <div class="topbar-copy">
+              <h2 class="topbar-title">${escapeHtml(game.name)}</h2>
+              ${topbarSubtitle ? `<p class="topbar-sub">${escapeHtml(topbarSubtitle)}</p>` : ""}
+            </div>
           </div>
-          
-          <span class="text-lg md:text-xl font-bold text-slate-900 font-['Plus_Jakarta_Sans'] tracking-tight truncate max-w-[120px] md:max-w-none">${escapeHtml(game.name)}</span>
-        </div>
-        
-        <!-- Turn Indicator -->
-        ${topbarSubtitle ? `
-        <div class="flex items-center bg-white/80 shadow-sm px-3 py-1.5 rounded-full border border-slate-200/60 max-w-[150px] md:max-w-none backdrop-blur-md">
-          <div class="flex items-center gap-2">
-            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></div>
-            <span class="font-bold text-[10px] md:text-xs uppercase tracking-wider text-slate-700 truncate">${escapeHtml(topbarSubtitle)}</span>
+          <div class="topbar-actions">
+            <button class="btn-icon" data-action="restart-game" aria-label="Reiniciar">${renderUiIcon("refresh")}</button>
+            <button class="btn-icon" data-action="open-rules" aria-label="Reglas">${renderUiIcon("help")}</button>
           </div>
-        </div>
-        ` : ''}
+        </header>
 
-        <div class="flex items-center gap-1 md:gap-2">
-          <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all active:scale-95" data-action="restart-game" aria-label="Reiniciar">
-            <span class="material-symbols-outlined text-xl md:text-2xl">refresh</span>
-          </button>
-          <button class="p-2 text-slate-500 hover:bg-slate-50 rounded-full transition-all active:scale-95" data-action="open-rules" aria-label="Reglas">
-            <span class="material-symbols-outlined text-xl md:text-2xl">help_outline</span>
-          </button>
-        </div>
-      </header>
+        <div class="game-shell-body">
+          <section class="game-status-band ${hidePlayers ? "is-single" : ""}">
+            <article class="game-status-card">
+              <span class="game-status-label">${result ? "Resultado" : "Estado"}</span>
+              <p class="game-status-text">${escapeHtml(result ? (topbarSubtitle || statusMessage || "Partida terminada") : statusMessage || topbarSubtitle || "Partida en curso")}</p>
+            </article>
+            ${hidePlayers ? "" : `
+              <article class="game-status-card">
+                <span class="game-status-label">Jugadores</span>
+                <div class="player-chip-list-compact">
+                  ${renderPlayerChips(session, game)}
+                </div>
+              </article>
+            `}
+          </section>
 
-      <!-- Main Game Area (Theater Mode) -->
-      <main class="relative h-[calc(100dvh-64px)] mt-16 w-full flex flex-col items-center justify-center p-0 md:p-6 bg-surface-container-lowest overflow-hidden">
-        <div class="relative w-full max-w-[1200px] h-full max-h-[800px] flex items-center justify-center overflow-visible">
-          <section class="board-wrap z-10 w-full h-full flex items-center justify-center">
-            ${game.renderBoard({
-              state: session.state,
-              players: session.players,
-              options: session.options,
-              canAct: vm.canAct,
-              uiState: boardUiState
-            })}
+          <section class="game-stage-layout ${immersive ? "is-immersive" : ""}">
+            <div class="game-stage-main">
+              <section class="board-wrap">
+                ${game.renderBoard({
+                  state: session.state,
+                  players: session.players,
+                  options: session.options,
+                  canAct: vm.canAct,
+                  uiState: boardUiState
+                })}
+              </section>
+            </div>
+            <aside class="game-floating-actions" aria-label="Acciones de partida">
+              <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
+              <button class="btn btn-ghost" data-action="open-rules">Reglas</button>
+            </aside>
           </section>
         </div>
-      </main>
+      </section>
     `;
   }
 
@@ -1027,70 +1057,26 @@ export function createUI({ appElement, toastElement }) {
     const sections = (game.rules || [])
       .map(
         (rule) => `
-          <div class="bg-surface-container-low rounded-xl p-4 border border-outline-variant/30 mb-4">
-            <h4 class="font-bold text-primary mb-2">${escapeHtml(rule.title)}</h4>
-            <p class="text-on-surface-variant text-sm">${escapeHtml(rule.text)}</p>
+          <div class="rule-card">
+            <h4 class="rule-title">${escapeHtml(rule.title)}</h4>
+            <p class="rule-text">${escapeHtml(rule.text)}</p>
           </div>
         `
       )
       .join("");
 
     return `
-      <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" data-overlay="rules">
-        <div class="bg-white rounded-2xl w-full max-w-lg overflow-hidden shadow-2xl animate-[scale-in_0.2s_ease-out]">
-          <header class="flex items-center justify-between p-6 border-b border-outline-variant/30 bg-surface-container-lowest">
-            <h3 class="text-xl font-bold text-on-surface font-['Plus_Jakarta_Sans']">Reglas del Juego</h3>
-            <button class="material-symbols-outlined text-outline hover:bg-surface-container-high rounded-full p-2 transition-colors active:scale-95" data-action="close-rules">close</button>
+      <section class="overlay" data-overlay="rules">
+        <article class="modal modal-rules" role="dialog" aria-modal="true" aria-label="Reglas del juego" data-modal-root>
+          <header class="modal-header">
+            <h3 class="modal-title">Reglas del juego</h3>
+            <button class="btn-icon" data-action="close-rules" aria-label="Cerrar reglas">${renderUiIcon("close")}</button>
           </header>
-          <div class="p-6 max-h-[60vh] overflow-y-auto">
+          <div class="modal-scroll">
             ${sections}
           </div>
-        </div>
-      </div>
-    `;
-  }
-
-  function renderResult(vm) {
-    const session = vm.session;
-    const game = vm.game;
-
-    if (!session || !game || !session.state.gameOver) {
-      return "";
-    }
-
-    const isDraw = Boolean(session.state.isDraw);
-    const winners = session.state.winners || [];
-    const winnerNames = winners.map((idx) => session.players[idx].name).join(" y ");
-
-    let title, subtitle;
-
-    if (isDraw) {
-      title = "Empate";
-      subtitle = "No hay ganador claro esta vez.";
-    } else {
-      title = `¡${escapeHtml(winnerNames)} gana!`;
-      subtitle = "Excelente partida.";
-    }
-
-    return `
-      <div class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" data-overlay="result">
-        <div class="bg-white rounded-3xl w-full max-w-sm overflow-hidden shadow-2xl p-8 text-center animate-[scale-in_0.3s_ease-out]">
-          <div class="w-20 h-20 mx-auto bg-primary-container text-primary rounded-full flex items-center justify-center mb-6 shadow-inner">
-            <span class="material-symbols-outlined text-4xl" style="font-variation-settings: 'FILL' 1;">${isDraw ? 'handshake' : 'emoji_events'}</span>
-          </div>
-          <h2 class="text-3xl font-bold text-on-surface mb-2 font-['Plus_Jakarta_Sans']">${title}</h2>
-          <p class="text-on-surface-variant font-body-md mb-8">${subtitle}</p>
-          
-          <div class="flex flex-col gap-3">
-            <button class="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-xl shadow-lg active:scale-95 transition-all" data-action="play-again">
-              Jugar de nuevo
-            </button>
-            <button class="w-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant font-bold py-4 rounded-xl active:scale-95 transition-all" data-action="new-game">
-              Salir al catalogo
-            </button>
-          </div>
-        </div>
-      </div>
+        </article>
+      </section>
     `;
   }
 

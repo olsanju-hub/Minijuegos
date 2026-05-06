@@ -54,9 +54,28 @@ const CSS = String.raw`
   .form-error{min-height:.8em;font-size:.74rem;}
   .action-row,.app-shell:not(.app-shell-home) .action-row{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px !important;}
 
-  .game-shell-body{display:flex;min-height:0;overflow:hidden;gap:0 !important;}
+  .game-shell-body{display:grid;grid-template-rows:auto minmax(0,1fr);min-height:0;overflow:hidden;gap:8px !important;}
+  .game-status-band,.game-status-band.is-single{display:flex !important;flex-direction:column !important;grid-template-columns:none !important;gap:8px !important;align-self:start !important;align-items:stretch !important;}
+  .game-status-card{width:100% !important;padding:9px 11px !important;border-radius:14px !important;gap:5px !important;align-content:center;align-self:stretch !important;}
+  .game-status-label{font-size:.62rem !important;line-height:1;}
+  .game-status-text{font-size:.86rem !important;line-height:1.18;}
   .game-stage-layout,.game-stage-layout.is-immersive{grid-template-columns:minmax(0,1fr) !important;gap:0 !important;min-height:0;}
   .game-stage-main,.game-stage-layout:not(.is-immersive) .game-stage-main{min-height:0;padding:8px !important;border-radius:18px !important;}
+  .game-screen-tictactoe .game-shell-body,
+  .game-screen-connect4 .game-shell-body,
+  .game-screen-damas .game-shell-body,
+  .game-screen-memory .game-shell-body,
+  .game-screen-buscaminas .game-shell-body,
+  body.is-game-screen .game-screen-tictactoe .game-shell-body,
+  body.is-game-screen .game-screen-connect4 .game-shell-body,
+  body.is-game-screen .game-screen-damas .game-shell-body,
+  body.is-game-screen .game-screen-memory .game-shell-body,
+  body.is-game-screen .game-screen-buscaminas .game-shell-body{display:flex !important;flex-direction:column;height:auto;overflow:visible;}
+  .game-screen-tictactoe .game-stage-main,
+  .game-screen-connect4 .game-stage-main,
+  .game-screen-damas .game-stage-main,
+  .game-screen-memory .game-stage-main,
+  .game-screen-buscaminas .game-stage-main{align-self:start;}
   .board-wrap,.app-shell:not(.app-shell-home) .board-wrap{width:100%;height:100%;min-height:0;padding:0 !important;overflow:auto;display:grid;justify-items:center;align-items:start;}
   .game-floating-actions{display:none !important;}
 
