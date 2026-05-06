@@ -436,17 +436,41 @@ export function createUI({ appElement, toastElement }) {
       `,
       trafico: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="trafficGlyphRoad" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#4d5860" />
+              <stop offset="100%" stop-color="#202932" />
+            </linearGradient>
+            <linearGradient id="trafficGlyphBlueCar" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#86b8ff" />
+              <stop offset="52%" stop-color="#4c82ec" />
+              <stop offset="100%" stop-color="#2957b9" />
+            </linearGradient>
+            <linearGradient id="trafficGlyphCoralCar" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#ffab77" />
+              <stop offset="100%" stop-color="#df6046" />
+            </linearGradient>
+          </defs>
           <rect x="5" y="4" width="38" height="40" rx="11" fill="#f5ebd8" stroke="#dbc5a0" stroke-width="1.5" />
-          <rect x="13" y="7" width="22" height="34" rx="8" fill="#39444c" />
-          <rect x="10" y="7" width="3" height="34" rx="2" fill="#d8c39d" />
-          <rect x="35" y="7" width="3" height="34" rx="2" fill="#d8c39d" />
-          <path d="M24 10V38" stroke="#f6efe1" stroke-width="2.2" stroke-dasharray="4 4" opacity="0.88" />
-          <rect x="16.5" y="10.5" width="6.8" height="11.5" rx="3" fill="#ff7c4d" />
-          <rect x="18.3" y="13" width="3.3" height="3.4" rx="1.1" fill="#e8f5ff" opacity="0.9" />
-          <rect x="24.5" y="23.5" width="7.6" height="12.6" rx="3.2" fill="#4f8eff" />
-          <rect x="26.6" y="26.3" width="3.4" height="3.7" rx="1.1" fill="#e8f5ff" opacity="0.92" />
-          <circle cx="17.5" cy="31.5" r="3.8" fill="#f4c446" stroke="#cd9821" stroke-width="1.4" />
-          <circle cx="17.5" cy="31.5" r="1.4" fill="#fff6d7" />
+          <rect x="12" y="6.5" width="24" height="35" rx="8" fill="url(#trafficGlyphRoad)" />
+          <path d="M14 7v34M34 7v34" stroke="#d8c39d" stroke-width="2.6" stroke-linecap="round" />
+          <path d="M24 9v30" stroke="#f8efe0" stroke-width="2.2" stroke-dasharray="5 5" stroke-linecap="round" />
+          <g transform="translate(16 11)">
+            <ellipse cx="4" cy="19.5" rx="5.8" ry="1.8" fill="rgba(0,0,0,0.18)" />
+            <path d="M1 4.4Q1.3 1.4 4 0.7Q6.7 1.4 7 4.4V15.8Q6.3 18.4 4 18.9Q1.7 18.4 1 15.8Z" fill="url(#trafficGlyphCoralCar)" stroke="#a94a38" stroke-width="0.9" />
+            <path d="M2.2 4.4h3.6M2.1 10.7h3.8" stroke="#fff3e8" stroke-width="1.1" stroke-linecap="round" opacity="0.88" />
+            <path d="M2.2 5.1Q4 3.7 5.8 5.1V9Q4 9.8 2.2 9Z" fill="#dcecf8" opacity="0.95" />
+            <circle cx="1.1" cy="15.2" r="0.8" fill="#2b2420" /><circle cx="6.9" cy="15.2" r="0.8" fill="#2b2420" />
+          </g>
+          <g transform="translate(25 21)">
+            <ellipse cx="4" cy="17.5" rx="6.4" ry="1.9" fill="rgba(0,0,0,0.18)" />
+            <path d="M0.8 4.2Q1.2 1.2 4 0.6Q6.8 1.2 7.2 4.2V14.5Q6.4 17.4 4 18Q1.6 17.4 0.8 14.5Z" fill="url(#trafficGlyphBlueCar)" stroke="#244f9d" stroke-width="0.9" />
+            <path d="M2 4.8h4M2 10.2h4" stroke="#eef7ff" stroke-width="1.1" stroke-linecap="round" opacity="0.9" />
+            <path d="M2 5.4Q4 4 6 5.4v3.2Q4 9.4 2 8.6Z" fill="#e7f4ff" opacity="0.96" />
+            <circle cx="0.9" cy="14.2" r="0.85" fill="#1d2430" /><circle cx="7.1" cy="14.2" r="0.85" fill="#1d2430" />
+          </g>
+          <circle cx="18" cy="34" r="3.4" fill="#f6ca4d" stroke="#c9911d" stroke-width="1.2" />
+          <path d="M18 31.8v4.4M15.8 34h4.4" stroke="#fff4cf" stroke-width="1" stroke-linecap="round" />
         </svg>
       `,
       buscaminas: `

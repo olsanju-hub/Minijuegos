@@ -12765,3 +12765,569 @@ body.is-game-screen .game-stage-main {
 .screen.game-screen-buscaminas .game-stage-main {
   align-self: start;
 }
+
+/* ============================================================
+   OBJECT READABILITY PASS - dibujos principales por juego
+   ============================================================ */
+
+.screen.game-screen-trafico .traffic-road-frame {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(255, 255, 255, 0.88), transparent 54%),
+    linear-gradient(180deg, rgba(250, 246, 237, 0.98), rgba(232, 225, 211, 0.96));
+}
+
+.screen.game-screen-trafico .traffic-road {
+  background: linear-gradient(180deg, #4a555d 0%, #242d35 52%, #171e26 100%);
+  border-color: rgba(10, 16, 22, 0.9);
+}
+
+.screen.game-screen-trafico .traffic-road-surface {
+  background:
+    linear-gradient(90deg, #d8c295 0 8px, #34404a 8px calc(100% - 8px), #d8c295 calc(100% - 8px) 100%),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0 18px, rgba(0, 0, 0, 0.025) 18px 36px),
+    linear-gradient(180deg, #46525b 0%, #222b34 100%);
+}
+
+.screen.game-screen-trafico .traffic-road-surface::before {
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.18)),
+    radial-gradient(circle at 50% 22%, rgba(255, 255, 255, 0.1), transparent 52%);
+}
+
+.screen.game-screen-trafico .traffic-road-flow {
+  inset: 10px 16px;
+  background:
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.055) 0 20px, transparent 20px 54px),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.035) 0 1px, transparent 1px 18px);
+  opacity: 0.45;
+}
+
+.screen.game-screen-trafico .traffic-lane-divider {
+  width: 4px;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 244, 210, 0.96) 0 28px,
+      transparent 28px 58px
+    );
+  filter: drop-shadow(0 0 2px rgba(255, 248, 224, 0.38));
+}
+
+.screen.game-screen-trafico .traffic-player-car,
+.screen.game-screen-trafico .traffic-player-bike,
+.screen.game-screen-trafico .traffic-rival-car,
+.screen.game-screen-trafico .traffic-rival-truck {
+  filter: drop-shadow(0 10px 12px rgba(7, 13, 18, 0.28));
+  transform-origin: center;
+}
+
+.screen.game-screen-trafico .traffic-player-car {
+  inset: 1% 15% 3%;
+  border-radius: 42% 42% 30% 30% / 22% 22% 16% 16%;
+  background:
+    radial-gradient(circle at 18% 6%, #fef7d4 0 5%, transparent 6%),
+    radial-gradient(circle at 82% 6%, #fef7d4 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 94%, #e9564f 0 4.4%, transparent 5.4%),
+    radial-gradient(circle at 82% 94%, #e9564f 0 4.4%, transparent 5.4%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.34) 0 10%, transparent 24%),
+    linear-gradient(180deg, #8dc4ff 0%, #4f8aff 45%, #2b5cc4 100%);
+  border: 1px solid rgba(28, 65, 138, 0.9);
+}
+
+.screen.game-screen-trafico .traffic-player-car::before,
+.screen.game-screen-trafico .traffic-rival-car::before {
+  top: 18%;
+  left: 19%;
+  right: 19%;
+  height: 42%;
+  border-radius: 38% 38% 28% 28% / 30% 30% 22% 22%;
+  background:
+    linear-gradient(180deg, rgba(235, 249, 255, 0.98) 0 38%, rgba(122, 161, 192, 0.86) 38% 46%, rgba(225, 243, 255, 0.96) 46% 100%);
+  box-shadow:
+    0 -1px 0 rgba(255, 255, 255, 0.74) inset,
+    0 0 0 2px rgba(16, 35, 62, 0.1);
+}
+
+.screen.game-screen-trafico .traffic-player-car::after,
+.screen.game-screen-trafico .traffic-rival-car::after {
+  left: 4%;
+  right: 4%;
+  top: 8%;
+  bottom: 8%;
+  border-radius: inherit;
+  background:
+    radial-gradient(ellipse at 0% 31%, #151d25 0 6%, transparent 7%),
+    radial-gradient(ellipse at 100% 31%, #151d25 0 6%, transparent 7%),
+    radial-gradient(ellipse at 0% 76%, #151d25 0 6%, transparent 7%),
+    radial-gradient(ellipse at 100% 76%, #151d25 0 6%, transparent 7%),
+    linear-gradient(180deg, transparent 0 16%, rgba(255,255,255,0.16) 16% 18%, transparent 18% 64%, rgba(0,0,0,0.1) 64% 100%);
+}
+
+.screen.game-screen-trafico .traffic-rival-car {
+  inset: 2% 18% 4%;
+  border-radius: 40% 40% 31% 31% / 22% 22% 16% 16%;
+  background:
+    radial-gradient(circle at 18% 6%, #fff2c7 0 5%, transparent 6%),
+    radial-gradient(circle at 82% 6%, #fff2c7 0 5%, transparent 6%),
+    radial-gradient(circle at 18% 94%, #bb2f2d 0 4.4%, transparent 5.4%),
+    radial-gradient(circle at 82% 94%, #bb2f2d 0 4.4%, transparent 5.4%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0 13%, transparent 25%),
+    linear-gradient(180deg, #ffad75 0%, #e9694d 100%);
+}
+
+.screen.game-screen-trafico .traffic-rival-truck {
+  inset: 0% 17% 3%;
+  border-radius: 26% 26% 16% 16% / 14% 14% 10% 10%;
+  background:
+    radial-gradient(circle at 18% 5%, #fff0c2 0 4.2%, transparent 5.2%),
+    radial-gradient(circle at 82% 5%, #fff0c2 0 4.2%, transparent 5.2%),
+    linear-gradient(180deg, rgba(255,255,255,0.18) 0 11%, transparent 18%),
+    linear-gradient(180deg, #f2b06e 0 25%, #c86f42 25% 100%);
+}
+
+.screen.game-screen-trafico .traffic-rival-truck::before {
+  top: 8%;
+  left: 18%;
+  right: 18%;
+  height: 17%;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #eff9ff, #acc5d7);
+  box-shadow: 0 0 0 2px rgba(56, 36, 24, 0.08);
+}
+
+.screen.game-screen-trafico .traffic-rival-truck::after {
+  left: 8%;
+  right: 8%;
+  top: 30%;
+  bottom: 10%;
+  border-radius: 12px 12px 8px 8px;
+  background:
+    radial-gradient(ellipse at 0% 22%, #151d25 0 5%, transparent 6%),
+    radial-gradient(ellipse at 100% 22%, #151d25 0 5%, transparent 6%),
+    radial-gradient(ellipse at 0% 84%, #151d25 0 5%, transparent 6%),
+    radial-gradient(ellipse at 100% 84%, #151d25 0 5%, transparent 6%),
+    repeating-linear-gradient(180deg, rgba(255,255,255,0.14) 0 7px, transparent 7px 19px),
+    linear-gradient(180deg, rgba(105, 53, 34, 0.12), rgba(105, 53, 34, 0));
+}
+
+.screen.game-screen-trafico .traffic-player-bike {
+  inset: 3% 28% 5%;
+  border-radius: 999px 999px 18px 18px / 32px 32px 12px 12px;
+  background:
+    radial-gradient(circle at 50% 4%, #fef7d4 0 6%, transparent 7%),
+    linear-gradient(180deg, #8dc4ff 0%, #4f8aff 45%, #2a56ba 100%);
+}
+
+.screen.game-screen-trafico .traffic-player-bike::before {
+  left: 17%;
+  right: 17%;
+  top: 13%;
+  height: 36%;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #effaff, #a9c9df);
+}
+
+.screen.game-screen-trafico .traffic-player-bike::after {
+  left: 50%;
+  top: 0;
+  width: 150%;
+  height: 100%;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 50% 10%, rgba(24, 30, 37, 0.36) 0 6%, transparent 7%),
+    radial-gradient(circle at 23% 82%, #121920 0 12%, transparent 13%),
+    radial-gradient(circle at 77% 82%, #121920 0 12%, transparent 13%),
+    linear-gradient(180deg, transparent 0 35%, rgba(19, 35, 70, 0.35) 35% 62%, transparent 62%),
+    radial-gradient(circle at 50% 47%, rgba(13, 25, 48, 0.85) 0 12%, transparent 13%);
+}
+
+.screen.game-screen-trafico .traffic-pickup-coin {
+  inset: 7%;
+  background:
+    radial-gradient(circle at 34% 26%, #fff9d8 0 18%, transparent 19%),
+    radial-gradient(circle at center, #ffe27c 0 46%, #e1a72a 47% 100%);
+}
+
+.screen.game-screen-trafico .traffic-pickup-coin::before,
+.screen.game-screen-trafico .traffic-pickup-coin::after {
+  content: "";
+  position: absolute;
+  inset: 24%;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 250, 213, 0.78);
+}
+
+.screen.game-screen-trafico .traffic-pickup-coin::after {
+  inset: 38% 29%;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(144, 93, 15, 0.34);
+}
+
+.screen.game-screen-futbol-turnos .football-field-pitch {
+  fill: url(#footballPitchFill);
+  stroke-width: 2.4;
+}
+
+.screen.game-screen-futbol-turnos .football-pitch-grid {
+  opacity: 0.24;
+}
+
+.screen.game-screen-futbol-turnos .football-pitch-stripe:nth-of-type(odd) {
+  fill: rgba(255, 255, 255, 0.08);
+}
+
+.screen.game-screen-futbol-turnos .football-goal-net {
+  stroke-width: 2;
+}
+
+.screen.game-screen-futbol-turnos .football-ball-shell {
+  fill: #fffdf5;
+  stroke: #2f3440;
+  stroke-width: 2;
+}
+
+.screen.game-screen-futbol-turnos .football-ball-seam {
+  fill: #2f3440;
+  stroke: rgba(47, 52, 64, 0.88);
+  stroke-width: 1.1;
+}
+
+.screen.game-screen-futbol-turnos .football-ball-ring {
+  stroke: rgba(47, 52, 64, 0.18);
+}
+
+.screen.game-screen-futbol-turnos .football-piece-core {
+  stroke-width: 4.8;
+}
+
+.screen.game-screen-futbol-turnos .football-piece-rim {
+  stroke-width: 2.8;
+}
+
+.screen.game-screen-billar .billar-rail {
+  fill: #835c36;
+  stroke-width: 3;
+}
+
+.screen.game-screen-billar .billar-felt {
+  stroke-width: 2.2;
+}
+
+.screen.game-screen-billar .billar-pocket {
+  fill: #16120f;
+  filter: drop-shadow(0 4px 3px rgba(0, 0, 0, 0.32));
+}
+
+.screen.game-screen-billar .billar-pocket-mouth {
+  fill: rgba(6, 9, 12, 0.62);
+}
+
+.screen.game-screen-billar .billar-ball {
+  filter: drop-shadow(0 10px 10px rgba(26, 22, 18, 0.28));
+}
+
+.screen.game-screen-billar .billar-ball-shell {
+  stroke-width: 2.8;
+}
+
+.screen.game-screen-billar .billar-ball-highlight {
+  fill: rgba(255, 255, 255, 0.96);
+}
+
+.screen.game-screen-tanques .tanks-sky {
+  fill: url(#tankSkyFill);
+}
+
+.screen.game-screen-tanques .tanks-grid {
+  opacity: 0.12;
+}
+
+.screen.game-screen-tanques .tanks-hill-back {
+  fill: rgba(103, 134, 119, 0.24);
+}
+
+.screen.game-screen-tanques .tanks-front-ridge {
+  fill: rgba(95, 112, 91, 0.28);
+}
+
+.screen.game-screen-tanques .tanks-terrain {
+  fill: url(#tankGroundFill);
+  stroke: rgba(74, 87, 59, 0.94);
+  stroke-width: 3;
+}
+
+.screen.game-screen-tanques .tanks-terrain-crest {
+  stroke: rgba(255, 249, 224, 0.36);
+  stroke-width: 7;
+}
+
+.screen.game-screen-tanques .tanks-track {
+  fill: #433c32;
+  stroke: rgba(19, 24, 28, 0.4);
+  stroke-width: 2;
+}
+
+.screen.game-screen-tanques .tanks-track-detail {
+  fill: rgba(248, 244, 234, 0.18);
+}
+
+.screen.game-screen-tanques .tanks-hull {
+  stroke-width: 4;
+}
+
+.screen.game-screen-tanques .tanks-hull-panel {
+  fill: rgba(255, 255, 255, 0.2);
+}
+
+.screen.game-screen-tanques .tanks-barrel {
+  stroke-width: 9;
+  stroke: #3f4a55;
+}
+
+.screen.game-screen-tanques .tanks-barrel-core {
+  stroke-width: 3.4;
+  stroke: rgba(243, 247, 250, 0.82);
+}
+
+.screen.game-screen-tanques .tanks-turret {
+  stroke-width: 4;
+}
+
+.screen.game-screen-tanques .tanks-projectile-shell {
+  fill: #fff3d0;
+  stroke: #a57a34;
+}
+
+.screen.game-screen-sokoban .sokoban-cell.is-wall .sokoban-tile {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.2), transparent 24%),
+    linear-gradient(90deg, rgba(88, 54, 25, 0.18) 0 2px, transparent 2px 50%, rgba(255,255,255,0.1) 50% calc(50% + 2px), transparent calc(50% + 2px)),
+    linear-gradient(180deg, #d19a67, #a96535);
+}
+
+.screen.game-screen-sokoban .sokoban-cell.is-floor .sokoban-tile {
+  background:
+    linear-gradient(90deg, rgba(151, 130, 93, 0.08) 0 1px, transparent 1px),
+    linear-gradient(180deg, #fffdf7, #ece1cb);
+  background-size: 18px 18px, auto;
+}
+
+.screen.game-screen-sokoban .sokoban-box {
+  border-width: 2px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.22) 0 18%, transparent 18%),
+    linear-gradient(135deg, #f2be76, #c77934);
+}
+
+.screen.game-screen-sokoban .sokoban-box::before {
+  inset: 12%;
+  border: 1px solid rgba(119, 72, 29, 0.28);
+  background:
+    linear-gradient(90deg, transparent calc(50% - 2px), rgba(119,72,29,0.28) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px)),
+    linear-gradient(0deg, transparent calc(50% - 2px), rgba(119,72,29,0.24) calc(50% - 2px) calc(50% + 2px), transparent calc(50% + 2px));
+}
+
+.screen.game-screen-sokoban .sokoban-player-core {
+  border-radius: 48% 48% 44% 44%;
+  background:
+    radial-gradient(circle at 36% 24%, rgba(255,255,255,0.88) 0 11%, transparent 12%),
+    radial-gradient(circle at 50% 32%, #f8d5b1 0 16%, transparent 17%),
+    linear-gradient(180deg, #8dbcff 0 48%, #4f81ef 48% 100%);
+}
+
+.screen.game-screen-escaleras-serpientes .sns-board {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.3), transparent 34%),
+    #fffaf1;
+}
+
+.screen.game-screen-escaleras-serpientes .sns-cell {
+  border-color: rgba(104, 86, 58, 0.18);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.52),
+    inset 0 -1px 0 rgba(127, 102, 65, 0.08);
+}
+
+.screen.game-screen-escaleras-serpientes .sns-cell-number {
+  font-weight: 860;
+}
+
+.screen.game-screen-escaleras-serpientes .sns-snake-body {
+  filter: drop-shadow(0 4px 4px rgba(56, 43, 34, 0.22));
+}
+
+.screen.game-screen-escaleras-serpientes .sns-snake-stripe {
+  stroke-linecap: round;
+}
+
+.screen.game-screen-escaleras-serpientes .sns-snake-head {
+  filter: drop-shadow(0 3px 3px rgba(56, 43, 34, 0.2));
+}
+
+.screen.game-screen-escaleras-serpientes .sns-ladder-rail {
+  stroke-width: 9;
+  filter: drop-shadow(0 3px 3px rgba(70, 51, 26, 0.18));
+}
+
+.screen.game-screen-escaleras-serpientes .sns-ladder-rungs line {
+  stroke-width: 5.5;
+}
+
+.screen.game-screen-damas .checkers-board {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.24), transparent 36%),
+    #7f573d;
+  border: 8px solid #8b5f3e;
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.16),
+    0 14px 26px rgba(31, 28, 24, 0.14);
+}
+
+.screen.game-screen-damas .checkers-cell.is-light {
+  background: linear-gradient(180deg, #f7ead6, #e7d2b2);
+}
+
+.screen.game-screen-damas .checkers-cell.is-dark {
+  background: linear-gradient(180deg, #8e6242, #68452f);
+}
+
+.screen.game-screen-damas .checkers-piece {
+  box-shadow:
+    inset 0 -9px 12px rgba(0,0,0,0.22),
+    inset 0 8px 10px rgba(255,255,255,0.24),
+    0 8px 14px rgba(25, 20, 17, 0.2);
+}
+
+.screen.game-screen-damas .checkers-piece::after {
+  content: "";
+  position: absolute;
+  inset: 22%;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,0.3);
+}
+
+.screen.game-screen-damas .checkers-piece.is-king::before {
+  content: "K";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: rgba(255,255,255,0.86);
+  font-weight: 900;
+  font-size: 0.78em;
+}
+
+.screen.game-screen-connect4 .connect4-shell {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.24), transparent 22%),
+    linear-gradient(180deg, #326b58, #1f4d40);
+  border-color: rgba(15, 45, 37, 0.5);
+}
+
+.screen.game-screen-connect4 .connect4-column {
+  background: rgba(255,255,255,0.08);
+}
+
+.screen.game-screen-connect4 .connect4-slot {
+  background:
+    radial-gradient(circle at 45% 35%, rgba(255,255,255,0.85), rgba(255,255,255,0.08) 36%, rgba(0,0,0,0.18) 78%),
+    #17382f;
+  box-shadow:
+    inset 0 6px 10px rgba(0,0,0,0.28),
+    inset 0 -2px 0 rgba(255,255,255,0.14);
+}
+
+.screen.game-screen-connect4 .disc {
+  box-shadow:
+    inset 0 -9px 11px rgba(0,0,0,0.2),
+    inset 0 8px 11px rgba(255,255,255,0.28),
+    0 5px 10px rgba(19, 24, 28, 0.18);
+}
+
+.screen.game-screen-buscaminas .mines-cell {
+  border-width: 1px;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.74) 0 24%, transparent 25%),
+    linear-gradient(180deg, #fff8e8, #dfcfaa);
+}
+
+.screen.game-screen-buscaminas .mines-cell.is-open,
+.screen.game-screen-buscaminas .mines-cell.is-revealed-mine {
+  background:
+    linear-gradient(180deg, #e9dcc0, #d7c7a4);
+  box-shadow: inset 0 3px 8px rgba(79, 65, 42, 0.14);
+}
+
+.screen.game-screen-buscaminas .mines-icon-flag {
+  color: #cf4539;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.55);
+}
+
+.screen.game-screen-buscaminas .mines-icon-mine {
+  color: #2e2b28;
+  filter: drop-shadow(0 2px 2px rgba(0,0,0,0.2));
+}
+
+.screen.game-screen-tictactoe .ttt-board {
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.34), transparent 36%),
+    linear-gradient(180deg, #f7ebd5, #e8d7b7);
+}
+
+.screen.game-screen-tictactoe .ttt-cell {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.78), rgba(255,255,255,0.18)),
+    #fffdf7;
+}
+
+.screen.game-screen-tictactoe .mark-x span {
+  height: 18%;
+}
+
+.screen.game-screen-tictactoe .mark-o {
+  border-width: clamp(7px, 1.3vw, 14px);
+}
+
+.screen.game-screen-memory .memory-card-front {
+  border-width: 2px;
+  background:
+    radial-gradient(circle at 28% 20%, rgba(255,255,255,0.78), transparent 28%),
+    repeating-linear-gradient(45deg, rgba(255,255,255,0.18) 0 6px, transparent 6px 14px),
+    linear-gradient(180deg, #d9ead2, #7ea684);
+}
+
+.screen.game-screen-memory .memory-card-front::before {
+  width: 64%;
+  height: 14%;
+}
+
+.screen.game-screen-memory .memory-card-back {
+  border-width: 2px;
+}
+
+.screen.game-screen-memory .memory-symbol {
+  filter: drop-shadow(0 4px 6px rgba(40, 34, 28, 0.16));
+}
+
+.screen.game-screen-parchis .parchis-board {
+  background:
+    radial-gradient(circle at center, rgba(255,255,255,0.62), transparent 34%),
+    linear-gradient(180deg, #fffaf4, #f2e8d8);
+  box-shadow: inset 0 0 0 2px rgba(61, 48, 35, 0.1);
+}
+
+.screen.game-screen-parchis .parchis-track-core,
+.screen.game-screen-parchis .parchis-final-core,
+.screen.game-screen-parchis .parchis-home-disc {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.72),
+    inset 0 -2px 0 rgba(66, 45, 26, 0.1);
+}
+
+.screen.game-screen-parchis .parchis-player-token,
+.screen.game-screen-parchis .parchis-piece {
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.46),
+    0 6px 12px rgba(31,28,24,0.14);
+}

@@ -1293,15 +1293,31 @@ export const traficoGame = {
           </defs>
           <rect x="14" y="10" width="132" height="74" rx="18" fill="url(#trafficFrame)" stroke="rgba(15,23,42,0.14)" />
           <rect x="24" y="14" width="112" height="66" rx="18" fill="url(#trafficRoad)" />
-          <rect x="24" y="14" width="8" height="66" rx="6" fill="#cbd5e1" />
-          <rect x="128" y="14" width="8" height="66" rx="6" fill="#cbd5e1" />
-          <path d="M52 18V76M80 18V76M108 18V76" stroke="#f8fafc" stroke-width="2.6" stroke-dasharray="6 6" opacity="0.78" />
-          <rect x="36" y="22" width="16" height="24" rx="7" fill="#f97316" />
-          <rect x="40" y="26" width="8" height="6" rx="2.2" fill="#dff3ff" opacity="0.82" />
-          <rect x="70" y="48" width="20" height="28" rx="8" fill="#3b82f6" />
-          <rect x="75" y="53" width="10" height="8" rx="2.4" fill="#dff3ff" opacity="0.88" />
-          <rect x="106" y="28" width="18" height="30" rx="7" fill="#f59e0b" />
-          <rect x="110" y="33" width="9" height="7" rx="2.3" fill="#dff3ff" opacity="0.82" />
+          <rect x="24" y="14" width="8" height="66" rx="6" fill="#d4bd91" />
+          <rect x="128" y="14" width="8" height="66" rx="6" fill="#d4bd91" />
+          <path d="M52 18V76M80 18V76M108 18V76" stroke="#fff3d2" stroke-width="2.8" stroke-dasharray="7 7" opacity="0.82" />
+          <g transform="translate(36 22)">
+            <ellipse cx="8" cy="29" rx="10" ry="2.4" fill="rgba(0,0,0,0.2)" />
+            <path d="M2.2 8Q2.8 2.2 8 1Q13.2 2.2 13.8 8V24Q12.8 29 8 30Q3.2 29 2.2 24Z" fill="#f97316" stroke="#a8432d" stroke-width="1.2" />
+            <path d="M4.2 8.5h7.6M4.2 17h7.6" stroke="#fff2df" stroke-width="1.4" stroke-linecap="round" />
+            <path d="M4.5 9.5Q8 7.2 11.5 9.5v5Q8 16 4.5 14.5Z" fill="#dff3ff" opacity="0.9" />
+            <circle cx="2.2" cy="23" r="1.7" fill="#1d2730" /><circle cx="13.8" cy="23" r="1.7" fill="#1d2730" />
+          </g>
+          <g transform="translate(70 45)">
+            <ellipse cx="10" cy="31" rx="12" ry="2.6" fill="rgba(0,0,0,0.22)" />
+            <path d="M2.2 8.5Q3.4 2.2 10 1Q16.6 2.2 17.8 8.5V25.5Q16 31 10 32Q4 31 2.2 25.5Z" fill="#3b82f6" stroke="#1d4ed8" stroke-width="1.35" />
+            <path d="M5 9h10M5 18h10" stroke="#eef7ff" stroke-width="1.45" stroke-linecap="round" />
+            <path d="M5 10.2Q10 7.3 15 10.2v5Q10 17 5 15.2Z" fill="#dff3ff" opacity="0.94" />
+            <circle cx="2.5" cy="24" r="1.8" fill="#17202a" /><circle cx="17.5" cy="24" r="1.8" fill="#17202a" />
+          </g>
+          <g transform="translate(106 25)">
+            <ellipse cx="9" cy="35" rx="11" ry="2.5" fill="rgba(0,0,0,0.2)" />
+            <path d="M2 7Q3 2 9 1Q15 2 16 7V31Q14 35 9 36Q4 35 2 31Z" fill="#f59e0b" stroke="#a65f13" stroke-width="1.2" />
+            <path d="M4.2 8h9.6" stroke="#fff1ce" stroke-width="1.4" stroke-linecap="round" />
+            <rect x="4.2" y="9.5" width="9.6" height="5.8" rx="2.4" fill="#dff3ff" opacity="0.9" />
+            <path d="M4 19h10M4 25h10" stroke="rgba(255,255,255,0.42)" stroke-width="1.25" />
+            <circle cx="2.4" cy="29" r="1.6" fill="#1d2730" /><circle cx="15.6" cy="29" r="1.6" fill="#1d2730" />
+          </g>
         </svg>
       </div>
     `;
