@@ -790,7 +790,6 @@ export const escalerasSerpientesGame = {
       : `Resultado: ${Number.isInteger(state.diceValue) ? state.diceValue : "-"}`;
 
     return `
-    return `
       <style>
       /* EVOLUCIÓN PREMIUM: ESCALERAS Y SERPIENTES RÚNICAS EN PERGAMINO MEDIEVAL */
 
