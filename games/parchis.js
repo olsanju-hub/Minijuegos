@@ -1578,9 +1578,13 @@ export const parchisGame = {
           hasValue && shouldAnimateDice ? `is-roll-${rollVariant}` : hasValue ? "is-settled" : "is-idle",
           consumed ? "is-consumed" : "is-available"
         ];
+        if (canRoll) {
+          dieClasses.push("is-clickable");
+        }
         const statusLabel = hasValue ? (consumed ? "Usado" : "Disponible") : "Pendiente";
+        const clickableAttrs = canRoll ? 'data-action="game-action" data-game-action="roll-die"' : '';
         return `
-          <div class="${dieClasses.join(" ")}" style="--die-value: ${hasValue ? value : 1}">
+          <div class="${dieClasses.join(" ")}" style="--die-value: ${hasValue ? value : 1}" ${clickableAttrs}>
             <span class="parchis-die-label">D${index + 1}</span>
             ${renderDie(hasValue ? value : null)}
             <span class="parchis-die-status">${statusLabel}</span>
@@ -1608,7 +1612,7 @@ export const parchisGame = {
 
     return `
       <style>
-      /* EVOLUCIÓN PREMIUM: PARCHÍS DE MARQUETERÍA Y CRISTAL HOLOGRÁFICO */
+      /* EVOLUCIÓN PREMIUM: PARCHÍS DE MARQUETERÍA FINA Y CUERO CREMA */
 
       .parchis-shell {
         display: flex;
@@ -1617,71 +1621,76 @@ export const parchisGame = {
         max-width: 1200px;
         margin: 0 auto;
         padding: 24px;
-        background: radial-gradient(circle at 50% 50%, #1e120c 0%, #0d0806 100%);
+        background: radial-gradient(circle at 50% 50%, #fcfbf8 0%, #f3ebe0 100%);
         border-radius: 20px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+        box-shadow: 0 20px 50px rgba(74, 56, 41, 0.12);
         font-family: 'Outfit', sans-serif;
-        color: #f3e9db;
+        color: #2c1e13;
+        box-sizing: border-box !important;
+      }
+      .parchis-shell * {
+        box-sizing: border-box !important;
       }
 
-      /* MARCO DE CAOBA PREMIUM */
+      /* MARCO DE ARCE DORADO PREMIUM */
       .parchis-board-frame {
         padding: 16px;
         background:
-          radial-gradient(circle at 50% 50%, #541d13 0%, #2f0e08 100%),
-          repeating-linear-gradient(45deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 2px, transparent 2px, transparent 4px);
+          radial-gradient(circle at 50% 50%, #eddabf 0%, #d89f64 100%),
+          repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 2px, transparent 2px, transparent 4px);
         border-radius: 16px;
         box-shadow:
-          inset 0 4px 10px rgba(255,255,255,0.15),
-          inset 0 -4px 10px rgba(0,0,0,0.6),
-          0 15px 35px rgba(0,0,0,0.9);
+          inset 0 4px 10px rgba(255,255,255,0.5),
+          inset 0 -4px 10px rgba(110,75,45,0.3),
+          0 15px 35px rgba(74, 56, 41, 0.2);
         border: 4px solid #d4af37; /* Filete de oro pulido */
       }
 
-      /* TABLERO DE NOGAL Y CAOBA */
+      /* TABLERO DE ABEDUL PULIDO CLARO */
       .parchis-board {
         display: grid;
         grid-template-rows: repeat(15, 1fr);
         grid-template-columns: repeat(15, 1fr);
-        width: min(600px, 85vw);
-        height: min(600px, 85vw);
+        width: min(520px, 80vw, 70vh);
+        height: min(520px, 80vw, 70vh);
         aspect-ratio: 1 / 1;
         background:
-          radial-gradient(circle at 50% 50%, #2b170c 0%, #170d06 100%),
-          repeating-radial-gradient(circle at 10% 10%, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 5px, rgba(0,0,0,0.04) 6px, rgba(0,0,0,0.04) 10px);
-        border: 8px solid #140b05;
+          radial-gradient(circle at 50% 50%, #FAF8F5 0%, #ebdcc8 100%),
+          repeating-radial-gradient(circle at 10% 10%, rgba(255,255,255,0.05) 0px, rgba(255,255,255,0.05) 5px, rgba(0,0,0,0.02) 6px, rgba(0,0,0,0.02) 10px);
+        border: 8px solid #c0946a; /* Roble claro satinado */
         border-radius: 8px;
         gap: 1.5px;
         padding: 2px;
-        box-shadow: inset 0 0 40px rgba(0,0,0,0.85);
+        box-shadow: inset 0 0 30px rgba(110,75,45,0.15);
         position: relative;
       }
 
-      /* CASAS DE CUERO PREMIUN */
+      /* CASAS DE CUERO PREMIUM SATINADO */
       .parchis-home {
         border-radius: 12px;
         box-shadow:
-          inset 0 4px 12px rgba(0,0,0,0.7),
-          0 2px 4px rgba(255,255,255,0.05);
+          inset 0 4px 10px rgba(0,0,0,0.15),
+          inset 0 -2px 6px rgba(255,255,255,0.2),
+          0 2px 4px rgba(74,56,41,0.08);
         border: 3px solid #d4af37 !important; /* Bordes dorados */
         padding: 12px;
         position: relative;
         overflow: hidden;
       }
-      .parchis-home.slot-0 { background: radial-gradient(circle at 30% 30%, #7e1619 0%, #3e0b0c 100%) !important; } /* Cuero Rojo */
-      .parchis-home.slot-1 { background: radial-gradient(circle at 30% 30%, #153c60 0%, #0a1f33 100%) !important; } /* Cuero Azul */
-      .parchis-home.slot-2 { background: radial-gradient(circle at 30% 30%, #a47614 0%, #513b0a 100%) !important; } /* Cuero Amarillo */
-      .parchis-home.slot-3 { background: radial-gradient(circle at 30% 30%, #154e27 0%, #0a2713 100%) !important; } /* Cuero Verde */
+      .parchis-home.slot-0 { background: radial-gradient(circle at 30% 30%, #ff5c60 0%, #c4181c 100%) !important; } /* Esmalte Rojo */
+      .parchis-home.slot-1 { background: radial-gradient(circle at 30% 30%, #4da5ff 0%, #165ec9 100%) !important; } /* Esmalte Azul */
+      .parchis-home.slot-2 { background: radial-gradient(circle at 30% 30%, #ffe960 0%, #cca000 100%) !important; } /* Esmalte Amarillo */
+      .parchis-home.slot-3 { background: radial-gradient(circle at 30% 30%, #76e33c 0%, #35940e 100%) !important; } /* Esmalte Verde */
 
       /* HOB ORBITS EN CASAS */
       .parchis-home-disc {
-        background: radial-gradient(circle, rgba(255,255,255,0.03) 0%, transparent 70%);
-        border: 1px dashed rgba(212, 175, 55, 0.2);
+        background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, transparent 70%);
+        border: 1px dashed rgba(212, 175, 55, 0.4);
       }
       .parchis-home-slot {
-        background: rgba(0,0,0,0.4) !important;
-        border: 2px solid rgba(212, 175, 55, 0.3) !important;
-        box-shadow: inset 0 4px 10px rgba(0,0,0,0.8) !important;
+        background: rgba(255,255,255,0.25) !important;
+        border: 2px solid rgba(212, 175, 55, 0.4) !important;
+        box-shadow: inset 0 3px 6px rgba(0,0,0,0.1) !important;
         border-radius: 50%;
         width: 42px;
         height: 42px;
@@ -1690,13 +1699,13 @@ export const parchisGame = {
         justify-content: center;
       }
 
-      /* CASILLAS DEL PASILLO (Cromados y relieve) */
+      /* CASILLAS DEL PASILLO (Hueso pulido claro) */
       .parchis-track-cell, .parchis-final-cell {
-        background: #2a1b14;
-        border: 1px solid rgba(0,0,0,0.4);
+        background: #fdfcf9;
+        border: 1px solid #ebdccb;
         box-shadow:
-          inset 0 2px 4px rgba(255,255,255,0.03),
-          inset 0 -2px 4px rgba(0,0,0,0.3);
+          inset 0 1px 2px rgba(255,255,255,0.8),
+          inset 0 -1px 2px rgba(110,75,45,0.03);
         position: relative;
         display: flex;
         align-items: center;
@@ -1704,47 +1713,47 @@ export const parchisGame = {
       }
 
       .parchis-track-cell.is-safe {
-        background: radial-gradient(circle at 50% 50%, #3a2b22 0%, #20130e 100%) !important;
+        background: radial-gradient(circle at 50% 50%, #fffbe3 0%, #ead3a4 100%) !important;
         box-shadow:
-          inset 0 0 8px rgba(212, 175, 55, 0.25),
-          0 0 10px rgba(212, 175, 55, 0.1) !important;
-        border: 1px solid rgba(212, 175, 55, 0.4) !important;
+          inset 0 0 6px rgba(212, 175, 55, 0.25),
+          0 0 8px rgba(212, 175, 55, 0.1) !important;
+        border: 1.5px solid #d4af37 !important;
       }
       .parchis-track-cell.is-safe::before {
         content: '';
         position: absolute;
-        top: 3px; left: 3px; right: 3px; bottom: 3px;
+        top: 2px; left: 2px; right: 2px; bottom: 2px;
         border: 1px solid rgba(212, 175, 55, 0.15);
         border-radius: 3px;
         pointer-events: none;
       }
 
-      /* PINTADO DE PASILLOS POR JUGADOR */
-      .parchis-final-cell.slot-0, .parchis-track-cell.slot-0 { background: radial-gradient(circle, #5b1012 0%, #2f0809 100%) !important; }
-      .parchis-final-cell.slot-1, .parchis-track-cell.slot-1 { background: radial-gradient(circle, #0f2c46 0%, #071624 100%) !important; }
-      .parchis-final-cell.slot-2, .parchis-track-cell.slot-2 { background: radial-gradient(circle, #7a580f 0%, #402e08 100%) !important; }
-      .parchis-final-cell.slot-3, .parchis-track-cell.slot-3 { background: radial-gradient(circle, #0f3c1d 0%, #081e0f 100%) !important; }
+      /* PINTADO DE PASILLOS POR JUGADOR (Esmaltados luminosos claros) */
+      .parchis-final-cell.slot-0, .parchis-track-cell.slot-0 { background: radial-gradient(circle, #ffcbd0 0%, #ff8c91 100%) !important; border-color: #ffccd0; }
+      .parchis-final-cell.slot-1, .parchis-track-cell.slot-1 { background: radial-gradient(circle, #cde3ff 0%, #8ebdff 100%) !important; border-color: #cce3ff; }
+      .parchis-final-cell.slot-2, .parchis-track-cell.slot-2 { background: radial-gradient(circle, #fff7cd 0%, #ffe38e 100%) !important; border-color: #fff6cd; }
+      .parchis-final-cell.slot-3, .parchis-track-cell.slot-3 { background: radial-gradient(circle, #dbffcd 0%, #a4ff8e 100%) !important; border-color: #daffcc; }
 
       /* AROS DE RECORRIDO RECIENTE */
       .parchis-track-cell.is-recent-path {
-        box-shadow: inset 0 0 8px #d4af37, 0 0 12px rgba(212, 175, 55, 0.3) !important;
+        box-shadow: inset 0 0 8px #d4af37, 0 0 10px rgba(212, 175, 55, 0.3) !important;
       }
 
-      /* META: DIANA TRINAGULAR RELIEVE */
+      /* META: DIANA TRINAGULAR RELIEVE CLARA */
       .parchis-goal {
-        background: #170d06 !important;
+        background: #fdfcf9 !important;
         border: 4px solid #d4af37 !important;
         box-shadow:
-          inset 0 0 25px rgba(0,0,0,0.9),
-          0 4px 15px rgba(0,0,0,0.6) !important;
+          inset 0 0 20px rgba(110,75,45,0.1),
+          0 4px 15px rgba(74,56,41,0.1) !important;
         border-radius: 6px !important;
         overflow: hidden;
         position: relative;
       }
-      .parchis-goal-tri.slot-0 { border-bottom-color: #8c191c !important; }
-      .parchis-goal-tri.slot-1 { border-left-color: #17426a !important; }
-      .parchis-goal-tri.slot-2 { border-top-color: #b58216 !important; }
-      .parchis-goal-tri.slot-3 { border-right-color: #17572c !important; }
+      .parchis-goal-tri.slot-0 { border-bottom-color: #ff5c60 !important; }
+      .parchis-goal-tri.slot-1 { border-left-color: #4da5ff !important; }
+      .parchis-goal-tri.slot-2 { border-top-color: #ffe960 !important; }
+      .parchis-goal-tri.slot-3 { border-right-color: #76e33c !important; }
 
       /* FICHAS: CUENTAS DE VIDRIO / GEMAS PRECIOSAS */
       .parchis-piece {
@@ -1757,13 +1766,13 @@ export const parchisGame = {
         justify-content: center;
         font-weight: 800;
         font-size: 14px;
-        border: 1px solid rgba(255,255,255,0.3) !important;
+        border: 1px solid rgba(255,255,255,0.4) !important;
         color: #fff !important;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         box-shadow:
           inset 0 3px 6px rgba(255,255,255,0.7),
-          inset 0 -3px 6px rgba(0,0,0,0.5),
-          0 4px 8px rgba(0,0,0,0.6);
+          inset 0 -3px 6px rgba(0,0,0,0.4),
+          0 4px 8px rgba(74,56,41,0.3);
         transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
       }
       .parchis-piece.slot-0 { background: radial-gradient(circle at 35% 35%, #ff5256 0%, #b31418 80%, #6e0004 100%) !important; }
@@ -1783,22 +1792,22 @@ export const parchisGame = {
           box-shadow:
             0 0 12px var(--piece),
             inset 0 3px 6px rgba(255,255,255,0.7),
-            inset 0 -3px 6px rgba(0,0,0,0.5),
-            0 4px 8px rgba(0,0,0,0.6);
+            inset 0 -3px 6px rgba(0,0,0,0.3),
+            0 4px 8px rgba(74,56,41,0.3);
         }
         50% {
           transform: translateY(-8px) scale(1.08);
           box-shadow:
             0 0 25px var(--piece),
             inset 0 3px 6px rgba(255,255,255,0.8),
-            inset 0 -3px 6px rgba(0,0,0,0.4),
-            0 12px 20px rgba(0,0,0,0.8);
+            inset 0 -3px 6px rgba(0,0,0,0.2),
+            0 12px 20px rgba(74,56,41,0.5);
         }
       }
 
       .parchis-piece.is-selected {
         transform: translateY(-12px) scale(1.15) !important;
-        box-shadow: 0 0 30px #ffffff, 0 15px 25px rgba(0,0,0,0.9) !important;
+        box-shadow: 0 0 30px #ffffff, 0 15px 25px rgba(74,56,41,0.6) !important;
         z-index: 12;
       }
 
@@ -1813,33 +1822,33 @@ export const parchisGame = {
         100% { transform: translateY(0) scale(1); opacity: 1; }
       }
 
-      /* CUBILETE LANDING PAD DE FIBRA DE CARBONO Y NEÓN */
+      /* CUBILETE LANDING PAD DE CUERO ARENA PULIDO Y DORADOS */
       .parchis-die-card {
         background:
-          radial-gradient(circle at 50% 50%, #151d2a 0%, #0a0e14 100%),
-          repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 4px) !important;
-        border: 2px solid #2f3e53 !important;
+          radial-gradient(circle at 50% 50%, #fdfcf9 0%, #f6eee2 100%),
+          repeating-linear-gradient(45deg, rgba(142, 105, 69, 0.03) 0px, rgba(142, 105, 69, 0.03) 2px, transparent 2px, transparent 4px) !important;
+        border: 2px solid #e1d2be !important;
         border-radius: 16px !important;
         padding: 16px !important;
         box-shadow:
-          inset 0 0 20px rgba(0,0,0,0.8),
-          0 10px 25px rgba(0,0,0,0.5) !important;
+          inset 0 0 15px rgba(110,75,45,0.1),
+          0 10px 25px rgba(74,56,41,0.08) !important;
         position: relative;
         overflow: hidden;
       }
 
-      /* ARO DE LUZ HOLOGRÁFICA SEGÚN JUGADOR */
+      /* ARO DE CUERO MARFIL SEGÚN JUGADOR */
       .parchis-die-card::after {
         content: '';
         position: absolute;
         top: 6px; left: 6px; right: 6px; bottom: 6px;
         border-radius: 12px;
-        border: 1px solid rgba(0, 242, 254, 0.1);
-        box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.05);
+        border: 1px solid rgba(142, 105, 69, 0.15);
+        box-shadow: inset 0 0 15px rgba(142, 105, 69, 0.05);
         pointer-events: none;
       }
 
-      /* DADOS 3D HOLOGRÁFICOS TRANSLÚCIDOS */
+      /* DADOS 3D HOLOGRÁFICOS TRANSLÚCIDOS SATINADOS CLAROS */
       .parchis-dice-grid {
         display: flex;
         gap: 32px;
@@ -1847,12 +1856,17 @@ export const parchisGame = {
         perspective: 800px;
         padding: 24px 0;
       }
-      .parchis-die {
+       .parchis-die {
         width: 60px;
         height: 60px;
         position: relative;
         perspective: 800px;
         transform-style: preserve-3d;
+        z-index: 5;
+      }
+      .parchis-die.is-clickable {
+        cursor: pointer;
+        pointer-events: auto;
       }
 
       /* CARAS DEL CUBO 3D */
@@ -1864,27 +1878,28 @@ export const parchisGame = {
         left: 5px;
         transform-style: preserve-3d;
         transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+        pointer-events: none; /* Evita interferencias 3D al hacer click */
       }
 
       .parchis-die.die-1 {
-        --die-neon: #00f2fe;
-        --die-neon-rgb: 0, 242, 254;
+        --die-neon: #008fa0;
+        --die-neon-rgb: 0, 143, 160;
       }
       .parchis-die.die-2 {
-        --die-neon: #ff007f;
-        --die-neon-rgb: 255, 0, 127;
+        --die-neon: #d90062;
+        --die-neon-rgb: 217, 0, 98;
       }
 
       .parchis-die-face-3d {
         position: absolute;
         width: 50px;
         height: 50px;
-        background: rgba(12, 20, 30, 0.35); /* Transparencia de cristal */
-        backdrop-filter: blur(4px);
+        background: rgba(255, 255, 255, 0.85); /* Cristal claro translúcido */
+        backdrop-filter: blur(2px);
         border: 2px solid var(--die-neon);
         box-shadow:
-          inset 0 0 12px rgba(var(--die-neon-rgb), 0.25),
-          0 0 8px rgba(var(--die-neon-rgb), 0.3);
+          inset 0 0 12px rgba(var(--die-neon-rgb), 0.12),
+          0 0 8px rgba(var(--die-neon-rgb), 0.15);
         border-radius: 10px;
         display: flex;
         justify-content: center;
@@ -1909,7 +1924,7 @@ export const parchisGame = {
       }
       .parchis-die-pip.is-on {
         background: var(--die-neon);
-        box-shadow: 0 0 10px var(--die-neon), 0 0 4px #ffffff;
+        box-shadow: 0 0 8px var(--die-neon), 0 0 3px #ffffff;
       }
 
       /* ROTACIÓN FINAL SEGÚN VALOR OBTENIDO */
@@ -1949,46 +1964,205 @@ export const parchisGame = {
         flex: 1;
       }
       .parchis-side-card {
-        background: rgba(30, 20, 15, 0.5) !important;
-        backdrop-filter: blur(8px);
-        border: 1px solid rgba(212, 175, 55, 0.15) !important;
+        background: rgba(254, 252, 249, 0.75) !important;
+        backdrop-filter: blur(12px);
+        border: 1px solid rgba(142, 105, 69, 0.15) !important;
         border-radius: 12px !important;
         padding: 16px !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+        box-shadow: 0 8px 32px rgba(74, 56, 41, 0.05) !important;
       }
       .parchis-side-card h4 {
-        color: #d4af37 !important;
+        color: #8e623a !important;
         margin-bottom: 12px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
       }
       .parchis-roll-btn {
-        background: linear-gradient(135deg, #d4af37 0%, #aa8010 100%) !important;
+        background: linear-gradient(135deg, #d4af37 0%, #b89320 100%) !important;
         border: 1px solid #ffe89e !important;
-        color: #170d06 !important;
+        color: #fff !important;
         font-weight: 800 !important;
         text-transform: uppercase;
         letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.4) !important;
+        box-shadow: 0 4px 15px rgba(212, 175, 55, 0.25) !important;
         transition: all 0.2s !important;
         border-radius: 8px !important;
         padding: 12px 24px !important;
         width: 100%;
+        cursor: pointer;
       }
       .parchis-roll-btn:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.6) !important;
+        box-shadow: 0 6px 20px rgba(212, 175, 55, 0.4) !important;
+      }
+      .parchis-roll-btn:disabled {
+        background: #e2dacf !important;
+        border-color: #d1c7b8 !important;
+        color: #a4998b !important;
+        box-shadow: none !important;
+        cursor: not-allowed;
+      }
+
+      .parchis-option-chip-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+      }
+      .parchis-option-chip {
+        background: #fbf9f5;
+        border: 1px solid #ebdccb;
+        color: #8e623a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 600;
+      }
+
+      .parchis-turn-player {
+        font-size: 18px;
+        font-weight: 700;
+        margin: 0 0 6px 0;
+        color: #2c1e13;
+      }
+      .parchis-side-badge {
+        display: inline-block;
+        background: #fff8e3;
+        border: 1px solid #ead3a4;
+        color: #b0811a;
+        padding: 4px 8px;
+        border-radius: 4px;
+        font-size: 11px;
+        font-weight: 700;
+        margin: 6px 0 0 0;
+      }
+      .parchis-side-note {
+        font-size: 12px;
+        color: #6a5747;
+        margin: 6px 0 0 0;
       }
 
       /* RESPONSIVE FLUIDO APANIZADO */
       @media (max-width: 900px) {
         .parchis-shell {
           flex-direction: column;
+          align-items: center;
+          gap: 16px;
           padding: 12px;
         }
         .parchis-board-frame {
           margin: 0 auto;
+          padding: 8px;
+        }
+        .parchis-side {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .parchis-side-card {
+          margin: 0 !important;
+        }
+        .parchis-side-card:nth-child(3) {
+          grid-column: span 2;
+        }
+        .parchis-side-card:nth-child(4) {
+          grid-column: span 2;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .parchis-side {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+        }
+      }
+
+      /* OPTIMIZACIÓN LANDSCAPE EN MÓVILES (ALTURA LIMITADA) */
+      @media (max-height: 520px) and (orientation: landscape) {
+        .parchis-shell {
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 12px !important;
+          padding: 6px !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: 100vh !important;
+          overflow: hidden !important;
+        }
+        .parchis-board-frame {
+          padding: 6px !important;
+          border-radius: 10px !important;
+          margin: 0 !important;
+        }
+        .parchis-board {
+          width: 76vh !important;
+          height: 76vh !important;
+          border-width: 4px !important;
+        }
+        .parchis-side {
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: 6px !important;
+          height: 76vh !important;
+          overflow-y: auto !important;
+          align-content: start !important;
+          padding-right: 4px !important;
+        }
+        .parchis-side-card {
+          padding: 8px !important;
+          border-radius: 8px !important;
+          width: 100% !important;
+          min-width: 160px !important;
+          margin: 0 !important;
+        }
+        .parchis-dice-grid {
+          padding: 4px 0 !important;
+          gap: 12px !important;
+        }
+        .parchis-die {
+          width: 42px !important;
+          height: 42px !important;
+        }
+        .parchis-die-cube-3d {
+          width: 34px !important;
+          height: 34px !important;
+          top: 4px !important;
+          left: 4px !important;
+        }
+        .parchis-die-face-3d {
+          width: 34px !important;
+          height: 34px !important;
+          border-radius: 6px !important;
+          border-width: 1.5px !important;
+        }
+        .parchis-die-face-3d.face-1 { transform: rotateY(0deg) translateZ(17px) !important; }
+        .parchis-die-face-3d.face-6 { transform: rotateY(180deg) translateZ(17px) !important; }
+        .parchis-die-face-3d.face-3 { transform: rotateY(-90deg) translateZ(17px) !important; }
+        .parchis-die-face-3d.face-4 { transform: rotateY(90deg) translateZ(17px) !important; }
+        .parchis-die-face-3d.face-5 { transform: rotateX(90deg) translateZ(17px) !important; }
+        .parchis-die-face-3d.face-2 { transform: rotateX(-90deg) translateZ(17px) !important; }
+        
+        .parchis-die-pip {
+          width: 5px !important;
+          height: 5px !important;
+        }
+        .parchis-roll-btn {
+          padding: 8px 12px !important;
+          font-size: 12px !important;
+        }
+        .parchis-piece {
+          width: 20px !important;
+          height: 20px !important;
+          font-size: 10px !important;
+          border-width: 0.5px !important;
+        }
+        .parchis-home-slot {
+          width: 30px !important;
+          height: 30px !important;
         }
       }
       </style>

@@ -793,6 +793,10 @@ export const escalerasSerpientesGame = {
       <style>
       /* EVOLUCIÓN PREMIUM: ESCALERAS Y SERPIENTES RÚNICAS EN PERGAMINO MEDIEVAL */
 
+      .sns-shell, .sns-shell * {
+        box-sizing: border-box !important;
+      }
+
       .sns-shell {
         display: flex;
         flex-direction: row;
@@ -823,8 +827,8 @@ export const escalerasSerpientesGame = {
 
       /* TABLERO DE PERGAMINO ANTIGUO */
       .sns-board {
-        width: min(600px, 85vw);
-        height: min(600px, 85vw);
+        width: min(520px, 80vw, 70vh);
+        height: min(520px, 80vw, 70vh);
         aspect-ratio: 1 / 1;
         background:
           radial-gradient(circle at 50% 50%, #f4e3c1 0%, #d8be91 100%) !important;
@@ -872,8 +876,8 @@ export const escalerasSerpientesGame = {
 
       /* ESTADOS DE CAMINOS Y TRIGGER */
       .sns-cell.is-final-stop {
-        box-shadow: inset 0 0 12px rgba(0, 242, 254, 0.45) !important;
-        background: rgba(0, 242, 254, 0.08) !important;
+        box-shadow: inset 0 0 12px rgba(224, 122, 63, 0.45) !important;
+        background: rgba(224, 122, 63, 0.08) !important;
       }
       .sns-cell.is-pending-target {
         box-shadow: inset 0 0 14px #d4af37 !important;
@@ -960,9 +964,9 @@ export const escalerasSerpientesGame = {
       /* DADOS RÚNICOS 3D EN EL LANDING PAD */
       .sns-die-card {
         background:
-          radial-gradient(circle at 50% 50%, #1a1e26 0%, #0d1014 100%),
+          radial-gradient(circle at 50% 50%, #1e1510 0%, #0c0806 100%),
           repeating-linear-gradient(135deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 4px) !important;
-        border: 2px solid #2f3e53 !important;
+        border: 2px solid #5a3c28 !important;
         border-radius: 16px !important;
         padding: 16px !important;
         box-shadow:
@@ -978,8 +982,8 @@ export const escalerasSerpientesGame = {
         position: absolute;
         top: 6px; left: 6px; right: 6px; bottom: 6px;
         border-radius: 12px;
-        border: 1px solid rgba(0, 242, 254, 0.1);
-        box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.05);
+        border: 1px solid rgba(224, 122, 63, 0.15);
+        box-shadow: inset 0 0 15px rgba(224, 122, 63, 0.08);
         pointer-events: none;
       }
 
@@ -991,6 +995,10 @@ export const escalerasSerpientesGame = {
         transform-style: preserve-3d;
         margin: 16px auto;
       }
+      .sns-die.is-clickable {
+        cursor: pointer;
+        pointer-events: auto;
+      }
 
       .sns-die-cube-3d {
         width: 50px;
@@ -1000,18 +1008,16 @@ export const escalerasSerpientesGame = {
         left: 5px;
         transform-style: preserve-3d;
         transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2);
-      }
-
-      .sns-die-cube-3d {
-        --die-neon: #00f2fe;
-        --die-neon-rgb: 0, 242, 254;
+        pointer-events: none; /* Evita interferencias en clics móviles */
+        --die-neon: #e07a3f;
+        --die-neon-rgb: 224, 122, 63;
       }
 
       .sns-die-face-3d {
         position: absolute;
         width: 50px;
         height: 50px;
-        background: rgba(12, 20, 30, 0.35); /* Cristal translúcido */
+        background: rgba(30, 20, 15, 0.45); /* Cristal translúcido cálido */
         backdrop-filter: blur(4px);
         border: 2px solid var(--die-neon);
         box-shadow:
@@ -1117,10 +1123,115 @@ export const escalerasSerpientesGame = {
       @media (max-width: 900px) {
         .sns-shell {
           flex-direction: column;
+          align-items: center;
+          gap: 16px;
           padding: 12px;
         }
         .sns-board-frame {
           margin: 0 auto;
+          padding: 8px;
+        }
+        .sns-side {
+          width: 100%;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          gap: 12px;
+        }
+        .sns-side-card {
+          margin: 0 !important;
+        }
+        .sns-players-card {
+          grid-column: span 2;
+        }
+      }
+
+      @media (max-width: 600px) {
+        .sns-side {
+          display: flex;
+          flex-direction: column;
+          width: 100%;
+        }
+      }
+
+      /* OPTIMIZACIÓN LANDSCAPE EN MÓVILES (ALTURA LIMITADA) */
+      @media (max-height: 520px) and (orientation: landscape) {
+        .sns-shell {
+          flex-direction: row !important;
+          align-items: center !important;
+          justify-content: center !important;
+          gap: 12px !important;
+          padding: 6px !important;
+          width: 100% !important;
+          height: auto !important;
+          max-height: 100vh !important;
+          overflow: hidden !important;
+        }
+        .sns-board-frame {
+          padding: 6px !important;
+          border-radius: 10px !important;
+          margin: 0 !important;
+          border-width: 3px !important;
+        }
+        .sns-board {
+          width: 76vh !important;
+          height: 76vh !important;
+          border-width: 4px !important;
+        }
+        .sns-side {
+          flex-direction: row !important;
+          flex-wrap: wrap !important;
+          gap: 6px !important;
+          height: 76vh !important;
+          overflow-y: auto !important;
+          align-content: start !important;
+          padding-right: 4px !important;
+        }
+        .sns-side-card {
+          padding: 8px !important;
+          border-radius: 8px !important;
+          width: 100% !important;
+          min-width: 160px !important;
+          margin: 0 !important;
+        }
+        .sns-die {
+          width: 42px !important;
+          height: 42px !important;
+          margin: 4px auto !important;
+        }
+        .sns-die-cube-3d {
+          width: 34px !important;
+          height: 34px !important;
+          top: 4px !important;
+          left: 4px !important;
+        }
+        .sns-die-face-3d {
+          width: 34px !important;
+          height: 34px !important;
+          border-radius: 6px !important;
+          border-width: 1.5px !important;
+        }
+        .sns-die-face-3d.face-1 { transform: rotateY(0deg) translateZ(17px) !important; }
+        .sns-die-face-3d.face-6 { transform: rotateY(180deg) translateZ(17px) !important; }
+        .sns-die-face-3d.face-3 { transform: rotateY(-90deg) translateZ(17px) !important; }
+        .sns-die-face-3d.face-4 { transform: rotateY(90deg) translateZ(17px) !important; }
+        .sns-die-face-3d.face-5 { transform: rotateX(90deg) translateZ(17px) !important; }
+        .sns-die-face-3d.face-2 { transform: rotateX(-90deg) translateZ(17px) !important; }
+
+        .sns-die-pip {
+          width: 5px !important;
+          height: 5px !important;
+        }
+        .sns-roll-btn {
+          padding: 8px 12px !important;
+          font-size: 12px !important;
+        }
+        .sns-piece {
+          width: 20px !important;
+          height: 20px !important;
+          border-width: 1.5px !important;
+        }
+        .sns-cell-number {
+          font-size: 11px !important;
         }
       }
       </style>
@@ -1144,7 +1255,11 @@ export const escalerasSerpientesGame = {
 
         <aside class="sns-side">
           <article class="sns-side-card sns-die-card">
-            <div class="sns-die ${state.showRollAnimation ? (state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b") : "is-settled"}" style="--die-value: ${diceValue || 1}">
+            <div
+              class="sns-die ${state.showRollAnimation ? (state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b") : "is-settled"} ${!rollDisabled ? "is-clickable" : ""}"
+              style="--die-value: ${diceValue || 1}"
+              ${!rollDisabled ? 'data-action="game-action" data-game-action="roll-die"' : ''}
+            >
               ${renderDie(diceValue)}
             </div>
             <button
