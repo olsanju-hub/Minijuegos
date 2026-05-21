@@ -14,6 +14,7 @@ import { parejasGame } from "./games/parejas.js";
 import { billarGame } from "./games/billar.js";
 import { futbolTurnosGame } from "./games/futbol-turnos.js";
 import { tanquesGame } from "./games/tanques.js";
+import { reversiGame } from "./games/reversi.js";
 
 const appElement = document.getElementById("app");
 const toastElement = document.getElementById("toast-root");
@@ -40,6 +41,7 @@ engine.registerGame(parejasGame);
 engine.registerGame(billarGame);
 engine.registerGame(futbolTurnosGame);
 engine.registerGame(tanquesGame);
+engine.registerGame(reversiGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {
