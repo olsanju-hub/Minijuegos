@@ -167,17 +167,19 @@ const SOKOBAN_STYLES = String.raw`
     "controls";
 }
 
+/* STEAMPUNK DARK METALLIC HUD & CONTROLS */
 .sokoban-hud,
 .sokoban-controls,
 .sokoban-board-frame {
-  border: 1px solid rgba(209, 190, 158, 0.72);
+  border: 2px solid #5a4738;
   border-radius: 26px;
   background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.82), transparent 58%),
-    linear-gradient(180deg, rgba(255, 250, 241, 0.98) 0%, rgba(244, 236, 221, 0.98) 100%);
+    radial-gradient(circle at top left, rgba(140, 100, 60, 0.12), transparent 60%),
+    linear-gradient(180deg, #231c18 0%, #15110e 100%);
   box-shadow:
-    0 18px 30px rgba(162, 145, 110, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 18px 30px rgba(0, 0, 0, 0.5),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -2px 5px rgba(0, 0, 0, 0.8);
 }
 
 .sokoban-hud {
@@ -189,20 +191,20 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-hud.is-blocked,
 .sokoban-controls.is-blocked {
-  border-color: rgba(206, 113, 84, 0.62);
+  border-color: #ce523c;
   box-shadow:
-    0 18px 28px rgba(162, 145, 110, 0.1),
-    0 0 0 4px rgba(219, 119, 84, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 18px 28px rgba(0, 0, 0, 0.6),
+    0 0 0 4px rgba(206, 82, 60, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .sokoban-hud.is-complete,
 .sokoban-controls.is-complete,
 .sokoban-board-frame.is-complete {
-  border-color: rgba(111, 165, 109, 0.62);
+  border-color: #6da747;
   background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.88), transparent 58%),
-    linear-gradient(180deg, rgba(247, 252, 244, 0.98) 0%, rgba(236, 245, 229, 0.98) 100%);
+    radial-gradient(circle at top left, rgba(100, 180, 80, 0.1), transparent 60%),
+    linear-gradient(180deg, #1b2417 0%, #10160d 100%);
 }
 
 .sokoban-hud-copy {
@@ -223,40 +225,42 @@ const SOKOBAN_STYLES = String.raw`
   min-height: 28px;
   padding: 0 10px;
   border-radius: 999px;
-  background: rgba(214, 131, 48, 0.14);
-  color: #b76b27;
+  background: rgba(224, 142, 69, 0.15);
+  color: #e08e45;
   font-size: 0.66rem;
   font-weight: 780;
   letter-spacing: 0.06em;
   text-transform: uppercase;
+  border: 1px solid rgba(224, 142, 69, 0.2);
 }
 
 .sokoban-mode-pill.is-soft {
-  background: rgba(93, 112, 132, 0.12);
-  color: #5d6f84;
+  background: rgba(143, 184, 255, 0.1);
+  color: #8fb8ff;
+  border-color: rgba(143, 184, 255, 0.15);
 }
 
 .sokoban-level-subtitle {
   margin: 0;
-  color: #6f5c47;
-  font-size: 0.84rem;
+  color: #ebdcc2;
+  font-size: 0.88rem;
   font-weight: 720;
 }
 
 .sokoban-note {
   margin: 0;
-  color: #61727f;
+  color: #a49688;
   font-size: 0.88rem;
   line-height: 1.38;
 }
 
 .sokoban-note.is-blocked {
-  color: #a4573f;
+  color: #e2634e;
   font-weight: 700;
 }
 
 .sokoban-note.is-complete {
-  color: #496a50;
+  color: #87c570;
   font-weight: 700;
 }
 
@@ -269,20 +273,23 @@ const SOKOBAN_STYLES = String.raw`
 .sokoban-progress-dot {
   height: 8px;
   border-radius: 999px;
-  background: rgba(120, 128, 136, 0.16);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.06);
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(0, 0, 0, 0.3);
 }
 
 .sokoban-progress-dot.is-past {
-  background: rgba(214, 131, 48, 0.28);
+  background: rgba(224, 142, 69, 0.3);
 }
 
 .sokoban-progress-dot.is-current {
   background: linear-gradient(180deg, #efb267 0%, #d8863e 100%);
+  box-shadow: 0 0 8px #d8863e;
 }
 
 .sokoban-progress-dot.is-cleared {
   background: linear-gradient(180deg, #b7d78f 0%, #73ac5e 100%);
+  box-shadow: 0 0 8px #73ac5e;
 }
 
 .sokoban-live-grid {
@@ -291,22 +298,24 @@ const SOKOBAN_STYLES = String.raw`
   gap: 8px;
 }
 
+/* BRASS GAUGE TONES FOR STATS */
 .sokoban-stat {
   display: grid;
   gap: 4px;
   border-radius: 16px;
   padding: 9px 10px;
-  background: rgba(255, 255, 255, 0.76);
-  border: 1px solid rgba(214, 199, 173, 0.72);
+  background: linear-gradient(180deg, #1b1613 0%, #29211c 100%);
+  border: 1px solid #564436;
+  box-shadow: inset 0 2px 4px rgba(0,0,0,0.6);
 }
 
 .sokoban-stat.is-clear {
-  background: rgba(240, 249, 235, 0.92);
-  border-color: rgba(135, 177, 122, 0.52);
+  background: linear-gradient(180deg, #151e12 0%, #202c1b 100%);
+  border-color: #496a3b;
 }
 
 .sokoban-stat-label {
-  color: #71818e;
+  color: #8c8072;
   font-size: 0.68rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -314,9 +323,15 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-stat-value {
-  color: #233042;
+  color: #e08e45;
   font-size: 0.98rem;
   line-height: 1.1;
+  font-family: monospace, Courier;
+  font-weight: 700;
+}
+
+.sokoban-stat.is-clear .sokoban-stat-value {
+  color: #87c570;
 }
 
 .sokoban-stage {
@@ -325,6 +340,7 @@ const SOKOBAN_STYLES = String.raw`
   position: relative;
 }
 
+/* STEAMPUNK FACTORY BOARD FRAME */
 .sokoban-board-frame {
   position: relative;
   display: grid;
@@ -332,39 +348,39 @@ const SOKOBAN_STYLES = String.raw`
   padding: clamp(8px, 1.4vw, 16px);
   overflow: hidden;
   border-radius: clamp(22px, 3vw, 30px);
-  border: 1px solid rgba(205, 192, 169, 0.92);
+  border: 3px solid #6b4d32;
   background:
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0) 56%),
-    linear-gradient(180deg, rgba(250, 247, 240, 0.98) 0%, rgba(237, 228, 211, 0.98) 100%);
+    radial-gradient(circle at center, rgba(139, 90, 43, 0.06), transparent 70%),
+    repeating-linear-gradient(45deg, rgba(0,0,0,0.15) 0px, rgba(0,0,0,0.15) 10px, transparent 10px, transparent 20px),
+    linear-gradient(180deg, #1d1714 0%, #0c0a08 100%);
   box-shadow:
-    0 22px 38px rgba(35, 56, 48, 0.11),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 22px 38px rgba(0, 0, 0, 0.7),
+    inset 0 4px 8px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
   transition:
     box-shadow var(--ui-speed) var(--ui-ease),
     border-color var(--ui-speed) var(--ui-ease),
     transform var(--ui-speed) var(--ui-ease);
 }
 
-.sokoban-board-frame[data-game-swipe-zone] {
-  touch-action: manipulation;
-}
-
+/* STEAM PIPES IN THE FACTORY BACKGROUND */
 .sokoban-board-frame::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 62%),
-    radial-gradient(circle at 50% 108%, rgba(205, 187, 154, 0.18), rgba(205, 187, 154, 0) 56%);
+    radial-gradient(circle at 10% 10%, rgba(220, 140, 60, 0.04), transparent 50%),
+    radial-gradient(circle at 90% 90%, rgba(220, 140, 60, 0.04), transparent 50%);
+  opacity: 0.75;
 }
 
 .sokoban-board-frame.is-blocked {
-  border-color: rgba(204, 111, 82, 0.84);
+  border-color: #ce523c;
   box-shadow:
-    0 22px 34px rgba(162, 145, 110, 0.14),
-    0 0 0 5px rgba(219, 119, 84, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.82);
+    0 22px 34px rgba(0,0,0,0.7),
+    0 0 0 5px rgba(206, 82, 60, 0.25),
+    inset 0 4px 8px rgba(0,0,0,0.8);
   animation: sokobanBlocked 220ms var(--ui-ease);
 }
 
@@ -373,6 +389,18 @@ const SOKOBAN_STYLES = String.raw`
   35% { transform: translateX(-5px); }
   70% { transform: translateX(5px); }
   100% { transform: translateX(0); }
+}
+
+/* SHAKE ON PUSH CRATES */
+@keyframes pushShake {
+  0%, 100% { transform: translate(0, 0); }
+  25% { transform: translate(-3px, 1.5px); }
+  50% { transform: translate(3px, -1.5px); }
+  75% { transform: translate(-1.5px, -3px); }
+}
+
+.sokoban-board-frame.is-push-shake {
+  animation: pushShake 0.16s cubic-bezier(.36,.07,.19,.97) both;
 }
 
 .sokoban-board {
@@ -416,7 +444,7 @@ const SOKOBAN_STYLES = String.raw`
   position: relative;
   width: 100%;
   height: 100%;
-  border-radius: 13px;
+  border-radius: 10px;
   overflow: hidden;
 }
 
@@ -426,52 +454,55 @@ const SOKOBAN_STYLES = String.raw`
   border-radius: inherit;
 }
 
+/* METAL FLOOR GRATING */
 .sokoban-cell.is-floor .sokoban-tile {
-  border: 1px solid #d8ccb8;
+  border: 1px solid #362920;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.72) 0%, rgba(255, 255, 255, 0) 30%),
-    linear-gradient(180deg, #fffdfa 0%, #efe6d8 100%);
+    repeating-linear-gradient(90deg, transparent 0px, transparent 4px, rgba(0,0,0,0.4) 4px, rgba(0,0,0,0.4) 5px),
+    repeating-linear-gradient(0deg, transparent 0px, transparent 4px, rgba(0,0,0,0.4) 4px, rgba(0,0,0,0.4) 5px),
+    radial-gradient(circle at center, #271f1a 10%, #15110e 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.82),
-    inset 0 -2px 0 rgba(203, 191, 169, 0.34);
+    inset 0 0 10px rgba(224, 142, 69, 0.08),
+    inset 0 1px 2px rgba(255,255,255,0.05);
 }
 
+/* AGED RUSTIC INDUSTRIAL BRICK WALLS */
 .sokoban-cell.is-wall .sokoban-tile {
-  border: 1px solid #b98758;
+  border: 2px solid #23120b;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 24%),
-    linear-gradient(180deg, #ddb188 0%, #c18a58 100%);
+    linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(0,0,0,0.3) 100%),
+    repeating-linear-gradient(0deg, transparent, transparent 10px, rgba(0,0,0,0.2) 10px, rgba(0,0,0,0.2) 12px),
+    #5a3321;
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.28),
-    inset 0 -2px 0 rgba(138, 95, 58, 0.32);
+    inset 0 2px 4px rgba(255,255,255,0.12),
+    inset 0 -3px 0 rgba(0,0,0,0.4),
+    0 4px 6px rgba(0,0,0,0.3);
 }
 
+/* BRONZE MECHANICAL GEAR GOALS */
 .sokoban-goal {
   position: absolute;
-  inset: 21%;
+  inset: 15%;
   border-radius: 50%;
-  border: 2px solid rgba(97, 164, 109, 0.92);
-  background:
-    radial-gradient(circle, rgba(166, 225, 171, 0.34) 0 42%, rgba(166, 225, 171, 0) 43% 100%);
-  box-shadow:
-    inset 0 0 0 3px rgba(255, 255, 255, 0.44),
-    0 0 0 1px rgba(86, 148, 93, 0.08);
+  border: 2px dashed #e08e45;
+  background: radial-gradient(circle, rgba(224, 142, 69, 0.22) 0%, transparent 70%);
+  box-shadow: 
+    0 0 8px rgba(224, 142, 69, 0.4), 
+    inset 0 0 8px rgba(224, 142, 69, 0.3);
+  animation: gearRotate 16s linear infinite;
 }
 
-.sokoban-goal::before {
-  content: "";
-  position: absolute;
-  inset: 37%;
-  border-radius: 50%;
-  background: rgba(96, 168, 110, 0.18);
+@keyframes gearRotate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
 }
 
 .sokoban-cell.has-box-on-target .sokoban-goal {
-  border-style: solid;
-  border-color: rgba(108, 176, 99, 0.92);
-  box-shadow:
-    inset 0 0 0 2px rgba(255, 255, 255, 0.42),
-    0 0 0 3px rgba(127, 184, 109, 0.12);
+  border-color: #87c570;
+  background: radial-gradient(circle, rgba(135, 197, 112, 0.25) 0%, transparent 70%);
+  box-shadow: 
+    0 0 12px rgba(135, 197, 112, 0.5),
+    inset 0 0 10px rgba(135, 197, 112, 0.3);
 }
 
 .sokoban-cell.has-player-on-target .sokoban-goal {
@@ -493,6 +524,34 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-piece.is-moving {
   animation: sokobanEntitySlide 150ms cubic-bezier(0.24, 0.8, 0.26, 1);
+}
+
+/* PUFF STEAM PARTICLES UNDER MOVING BOXES/PLAYER */
+.sokoban-piece.is-moving::before,
+.sokoban-piece.is-moving::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, rgba(240, 240, 240, 0.8) 0%, rgba(240, 240, 240, 0) 70%);
+  border-radius: 50%;
+  opacity: 0;
+  animation: puffSteam 0.15s ease-out forwards;
+}
+.sokoban-piece.is-moving::before {
+  left: 6px;
+  animation-delay: 0.01s;
+}
+.sokoban-piece.is-moving::after {
+  right: 6px;
+  animation-delay: 0.04s;
+}
+
+@keyframes puffSteam {
+  0% { transform: scale(0.4) translateY(0); opacity: 0; filter: blur(1px); }
+  50% { opacity: 0.7; }
+  100% { transform: scale(1.6) translateY(-8px); opacity: 0; filter: blur(3px); }
 }
 
 @keyframes sokobanEntityStep {
@@ -524,36 +583,41 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-box-wrap,
 .sokoban-player {
-  width: 60%;
-  height: 60%;
+  width: 65%;
+  height: 65%;
   display: grid;
   place-items: center;
   align-self: center;
   justify-self: center;
 }
 
+/* HEAVY WOODEN CRATES WITH CORNER REMACHES */
 .sokoban-box {
   width: 100%;
   height: 100%;
-  border-radius: 12px;
-  border: 1px solid rgba(160, 103, 48, 0.94);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0) 22%),
-    linear-gradient(180deg, #efbd74 0%, #d48a45 100%);
-  box-shadow:
-    0 8px 12px rgba(92, 62, 30, 0.16),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  border-radius: 6px;
+  border: 3px solid #3c2414;
+  background: 
+    repeating-linear-gradient(90deg, #7c4c24, #7c4c24 8px, #683e1c 8px, #683e1c 10px);
+  box-shadow: 
+    0 6px 12px rgba(0,0,0,0.6),
+    inset 0 0 10px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.15);
   position: relative;
 }
 
 .sokoban-box::before {
   content: "";
   position: absolute;
-  inset: 17%;
-  border-radius: 8px;
-  background:
-    linear-gradient(180deg, rgba(183, 113, 48, 0.12), rgba(183, 113, 48, 0) 36%),
-    linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(125, 77, 31, 0.06));
+  inset: -1px;
+  border: 5px solid #1c1a18;
+  clip-path: polygon(
+    0 0, 12px 0, 12px 4px, 4px 4px, 4px 12px, 0 12px,
+    0 100%, 0 calc(100% - 12px), 4px calc(100% - 12px), 4px calc(100% - 4px), 12px calc(100% - 4px), 12px 100%,
+    100% 100%, calc(100% - 12px) 100%, calc(100% - 12px) calc(100% - 4px), calc(100% - 4px) calc(100% - 4px), calc(100% - 4px) calc(100% - 12px), 100% calc(100% - 12px),
+    100% 0, 100% 12px, calc(100% - 4px) 12px, calc(100% - 4px) 4px, calc(100% - 12px) 4px, calc(100% - 12px) 0
+  );
+  background: #151312;
 }
 
 .sokoban-box::after {
@@ -562,57 +626,89 @@ const SOKOBAN_STYLES = String.raw`
   inset: 0;
   border-radius: inherit;
   background:
-    linear-gradient(90deg, transparent calc(50% - 0.8px), rgba(255, 245, 228, 0.42) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px)),
-    linear-gradient(0deg, transparent calc(50% - 0.8px), rgba(255, 245, 228, 0.42) calc(50% - 0.8px) calc(50% + 0.8px), transparent calc(50% + 0.8px));
+    linear-gradient(90deg, transparent 40%, rgba(0,0,0,0.45) 40%, rgba(0,0,0,0.45) 60%, transparent 60%),
+    linear-gradient(0deg, transparent 40%, rgba(0,0,0,0.45) 40%, rgba(0,0,0,0.45) 60%, transparent 60%);
+  pointer-events: none;
 }
 
 .sokoban-box-rivet {
   position: absolute;
-  top: 23%;
-  left: 24%;
+  top: 22%;
+  left: 22%;
   width: clamp(4px, 0.66vw, 6px);
   height: clamp(4px, 0.66vw, 6px);
   border-radius: 50%;
-  background: rgba(130, 82, 38, 0.46);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  background: #cba876;
+  box-shadow: 0 1px 2px rgba(0,0,0,0.4);
 }
 
 .sokoban-box-rivet.is-right {
   left: auto;
-  right: 24%;
+  right: 22%;
 }
 
+/* TARGETED GREEN/GOLD GLOWING BOX */
 .sokoban-piece.is-targeted .sokoban-box {
-  border-color: rgba(96, 145, 78, 0.96);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 18%),
-    linear-gradient(180deg, #dce28f 0%, #8fb45d 100%);
-  box-shadow:
-    0 8px 14px rgba(90, 129, 70, 0.14),
-    0 0 0 3px rgba(130, 184, 103, 0.14),
-    inset 0 1px 0 rgba(255, 255, 255, 0.28);
+  border-color: #2b401d;
+  background: 
+    repeating-linear-gradient(90deg, #537537, #537537 8px, #425e2b 8px, #425e2b 10px);
+  box-shadow: 
+    0 0 16px rgba(135, 197, 112, 0.6),
+    inset 0 0 10px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2);
 }
 
+.sokoban-piece.is-targeted .sokoban-box::before {
+  border-color: #253319;
+  background: #141b10;
+}
+
+.sokoban-piece.is-targeted .sokoban-box-rivet {
+  background: #b5c7a3;
+}
+
+/* BRASS STEAM AUTOMATON PLAYER CHIP */
 .sokoban-player-core {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 1px solid rgba(46, 90, 190, 0.96);
-  background:
-    radial-gradient(circle at 34% 28%, rgba(255, 255, 255, 0.86) 0 14%, rgba(255, 255, 255, 0) 15%),
-    linear-gradient(180deg, #8fb8ff 0%, #5985e9 100%);
-  box-shadow:
-    0 8px 12px rgba(49, 92, 192, 0.17),
-    inset 0 1px 0 rgba(255, 255, 255, 0.52);
+  border: 2px solid #3c2f24;
+  background: 
+    radial-gradient(circle at 35% 35%, #fce2a6 0%, #c48e58 40%, #764b22 100%);
+  box-shadow: 
+    0 6px 12px rgba(0,0,0,0.5),
+    inset 0 2px 4px rgba(255,255,255,0.45),
+    inset 0 -4px 6px rgba(0,0,0,0.3);
+  position: relative;
 }
 
-.sokoban-piece.is-targeted .sokoban-player-core {
-  box-shadow:
-    0 8px 12px rgba(49, 92, 192, 0.17),
-    0 0 0 4px rgba(103, 170, 115, 0.12),
-    inset 0 1px 0 rgba(255, 255, 255, 0.56);
+.sokoban-player-core::before {
+  content: "";
+  position: absolute;
+  top: 26%;
+  left: 18%;
+  width: 22%;
+  height: 22%;
+  border-radius: 50%;
+  background: #00ffff;
+  border: 2px solid #23201e;
+  box-shadow: 0 0 8px #00ffff, inset 0 1px 2px white;
 }
 
+.sokoban-player-core::after {
+  content: "";
+  position: absolute;
+  top: 26%;
+  right: 18%;
+  width: 22%;
+  height: 22%;
+  border-radius: 50%;
+  background: #00ffff;
+  border: 2px solid #23201e;
+  box-shadow: 0 0 8px #00ffff, inset 0 1px 2px white;
+}
+
+/* CAMPAIGN COMPLETE DIALOG OVERLAY */
 .sokoban-stage-overlay {
   position: absolute;
   inset: 0;
@@ -620,7 +716,7 @@ const SOKOBAN_STYLES = String.raw`
   display: grid;
   place-items: center;
   padding: 14px;
-  background: linear-gradient(180deg, rgba(28, 36, 44, 0.1) 0%, rgba(28, 36, 44, 0.44) 100%);
+  background: rgba(12, 9, 8, 0.65);
   backdrop-filter: blur(6px);
   -webkit-backdrop-filter: blur(6px);
 }
@@ -631,18 +727,18 @@ const SOKOBAN_STYLES = String.raw`
   gap: 10px;
   padding: 16px;
   border-radius: 22px;
-  border: 1px solid rgba(203, 190, 161, 0.82);
+  border: 2px solid #5a4738;
   background:
-    radial-gradient(circle at top, rgba(255, 255, 255, 0.88), transparent 54%),
-    linear-gradient(180deg, rgba(255, 251, 244, 0.98) 0%, rgba(244, 237, 224, 0.98) 100%);
+    radial-gradient(circle at top left, rgba(140, 100, 60, 0.1), transparent 60%),
+    linear-gradient(180deg, #231c18 0%, #15110e 100%);
   box-shadow:
-    0 22px 34px rgba(31, 28, 24, 0.18),
-    inset 0 1px 0 rgba(255, 255, 255, 0.84);
+    0 22px 34px rgba(0, 0, 0, 0.8),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
 }
 
 .sokoban-stage-kicker {
   margin: 0;
-  color: #7a6a51;
+  color: #e08e45;
   font-size: 0.72rem;
   font-weight: 800;
   letter-spacing: 0.06em;
@@ -651,14 +747,14 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-stage-title {
   margin: 0;
-  color: #233042;
+  color: #ebdcc2;
   font-size: 1.18rem;
   line-height: 1.08;
 }
 
 .sokoban-stage-text {
   margin: 0;
-  color: #61727f;
+  color: #a49688;
   font-size: 0.84rem;
   line-height: 1.4;
 }
@@ -673,15 +769,15 @@ const SOKOBAN_STYLES = String.raw`
   min-height: 40px;
   padding: 0 12px;
   border-radius: 14px;
-  border: 1px solid rgba(214, 199, 173, 0.72);
-  background: rgba(255, 255, 255, 0.74);
+  border: 1px solid #564436;
+  background: rgba(0, 0, 0, 0.25);
   display: grid;
   align-content: center;
   gap: 2px;
 }
 
 .sokoban-stage-chip-label {
-  color: #71818e;
+  color: #8c8072;
   font-size: 0.62rem;
   font-weight: 700;
   letter-spacing: 0.04em;
@@ -689,7 +785,7 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-stage-chip-value {
-  color: #233042;
+  color: #ebdcc2;
   font-size: 0.86rem;
   font-weight: 800;
 }
@@ -727,21 +823,21 @@ const SOKOBAN_STYLES = String.raw`
 
 .sokoban-controls-title {
   margin: 0;
-  color: #233042;
+  color: #ebdcc2;
   font-size: 0.94rem;
 }
 
 .sokoban-controls-note,
 .sokoban-controls-hint {
   margin: 0;
-  color: #64737f;
+  color: #8c8072;
   font-size: 0.79rem;
   line-height: 1.4;
 }
 
 .sokoban-controls.is-complete .sokoban-controls-note,
 .sokoban-controls.is-complete .sokoban-controls-hint {
-  color: #58745e;
+  color: #87c570;
 }
 
 .sokoban-utility-row {
@@ -759,6 +855,9 @@ const SOKOBAN_STYLES = String.raw`
   height: 38px;
   padding: 0 14px;
   border-radius: 999px;
+  border: 1px solid #564436;
+  background: linear-gradient(180deg, #2e2621 0%, #1b1613 100%);
+  color: #ebdcc2;
 }
 
 .sokoban-control-pad {
@@ -780,6 +879,14 @@ const SOKOBAN_STYLES = String.raw`
   border-radius: 14px;
   font-size: 1rem;
   font-weight: 800;
+  border: 1px solid #564436;
+  background: linear-gradient(180deg, #2e2621 0%, #1b1613 100%);
+  color: #e08e45;
+}
+
+.sokoban-control-btn:hover {
+  background: linear-gradient(180deg, #3d322c 0%, #29211c 100%);
+  border-color: #6a5342;
 }
 
 @media (min-width: 761px) and (max-width: 1099px) {
@@ -888,7 +995,7 @@ const SOKOBAN_STYLES = String.raw`
   }
 
   .sokoban-cell {
-    border-radius: 11px;
+    border-radius: 9px;
   }
 
   .sokoban-stage-overlay {
@@ -1531,7 +1638,7 @@ function renderControls(state, canAct) {
 }
 
 function renderSokobanShell(state, canAct) {
-  const shellClass = `sokoban-shell${isCompleteStatus(state.status) ? " is-complete" : ""}${state.lastAction === "blocked" ? " is-blocked" : ""}`;
+  const shellClass = `sokoban-shell${isCompleteStatus(state.status) ? " is-complete" : ""}${state.lastAction === "blocked" ? " is-blocked" : ""}${state.lastAction === "push" ? " is-push-shake" : ""}`;
   return `
     <section class="${shellClass}" data-sokoban-root data-sokoban-status="${escapeHtml(state.status)}">
       ${renderHud(state)}

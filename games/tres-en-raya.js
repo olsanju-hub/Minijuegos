@@ -200,11 +200,13 @@ export const tresEnRayaGame = {
   renderBoard({ state, players, canAct }) {
     const lastCell = Number.isInteger(state.lastMove?.cell) ? state.lastMove.cell : -1;
     const winningCells = state.result?.type === "win" ? new Set(state.result.line || []) : null;
+    const winningLine = state.result?.type === "win" ? state.result.line : null;
 
     const cells = state.board
       .map((value, index) => {
         const occupied = value !== null;
         let content = "";
+        let ghostContent = "";
         const isLast = index === lastCell;
         const isWinning = winningCells ? winningCells.has(index) : false;
 
@@ -213,13 +215,51 @@ export const tresEnRayaGame = {
           const color = player ? player.identity.color : "#233042";
           if (value === 0) {
             content = `
-              <span class="mark mark-x" style="color:${color}">
-                <span></span>
-                <span></span>
+              <span class="mark mark-x" style="--player-color: ${color}">
+                <svg class="ttt-piece-svg" viewBox="0 0 100 100">
+                  <path d="M20 15 L35 15 L50 40 L65 15 L80 15 L58 50 L80 85 L65 85 L50 60 L35 85 L20 85 L42 50 Z" 
+                        fill="url(#brushedSteel)" stroke="#111" stroke-width="1.5" />
+                  <path d="M22 18 L33 18 L50 42 L67 18 L78 18 L56 50 L78 82 L67 82 L50 58 L33 82 L22 82 L44 50 Z" 
+                        fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" />
+                </svg>
               </span>
             `;
           } else {
-            content = `<span class="mark mark-o" style="color:${color}"></span>`;
+            content = `
+              <span class="mark mark-o" style="--player-color: ${color}">
+                <svg class="ttt-piece-svg" viewBox="0 0 100 100">
+                  <!-- Extrusion shadow -->
+                  <circle cx="50" cy="52" r="32" fill="none" stroke="#5a220a" stroke-width="16" />
+                  <!-- Main Copper Ring -->
+                  <circle cx="50" cy="50" r="32" fill="none" stroke="url(#polishedCopper)" stroke-width="16" />
+                  <!-- Bevel ring (outer highlight) -->
+                  <circle cx="50" cy="50" r="39" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" />
+                  <!-- Bevel ring (inner highlight) -->
+                  <circle cx="50" cy="50" r="25" fill="none" stroke="rgba(0,0,0,0.3)" stroke-width="1" />
+                  <!-- Specular shine -->
+                  <circle cx="50" cy="50" r="32" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="4" stroke-dasharray="30 170" transform="rotate(-40 50 50)" />
+                </svg>
+              </span>
+            `;
+          }
+        } else if (!state.result && canAct) {
+          if (state.turnSlot === 0) {
+            ghostContent = `
+              <span class="mark mark-x is-ghost">
+                <svg class="ttt-piece-svg" viewBox="0 0 100 100">
+                  <path d="M20 15 L35 15 L50 40 L65 15 L80 15 L58 50 L80 85 L65 85 L50 60 L35 85 L20 85 L42 50 Z" 
+                        fill="url(#brushedSteel)" stroke="#111" stroke-width="1.5" />
+                </svg>
+              </span>
+            `;
+          } else {
+            ghostContent = `
+              <span class="mark mark-o is-ghost">
+                <svg class="ttt-piece-svg" viewBox="0 0 100 100">
+                  <circle cx="50" cy="50" r="32" fill="none" stroke="url(#polishedCopper)" stroke-width="16" />
+                </svg>
+              </span>
+            `;
           }
         }
 
@@ -233,13 +273,283 @@ export const tresEnRayaGame = {
             data-cell="${index}"
             ${disabled ? "disabled" : ""}
           >
-            ${content}
+            ${occupied ? content : ghostContent}
           </button>
         `;
       })
       .join("");
 
-    return `<div class="ttt-board">${cells}</div>`;
+    let winningLineSvg = "";
+    if (winningLine) {
+      const lineStr = [...winningLine].sort((a, b) => a - b).join(",");
+      let coords = null;
+      if (lineStr === "0,1,2") coords = { x1: 20, y1: 50, x2: 280, y2: 50 };
+      else if (lineStr === "3,4,5") coords = { x1: 20, y1: 150, x2: 280, y2: 150 };
+      else if (lineStr === "6,7,8") coords = { x1: 20, y1: 250, x2: 280, y2: 250 };
+      else if (lineStr === "0,3,6") coords = { x1: 50, y1: 20, x2: 50, y2: 280 };
+      else if (lineStr === "1,4,7") coords = { x1: 150, y1: 20, x2: 150, y2: 280 };
+      else if (lineStr === "2,5,8") coords = { x1: 250, y1: 20, x2: 250, y2: 280 };
+      else if (lineStr === "0,4,8") coords = { x1: 30, y1: 30, x2: 270, y2: 270 };
+      else if (lineStr === "2,4,6") coords = { x1: 270, y1: 30, x2: 30, y2: 270 };
+
+      if (coords) {
+        winningLineSvg = `
+          <svg class="ttt-winning-line-svg" viewBox="0 0 300 300" preserveAspectRatio="none">
+            <filter id="tttGlow">
+              <feGaussianBlur stdDeviation="4" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <!-- Glowing background trace -->
+            <line x1="${coords.x1}" y1="${coords.y1}" x2="${coords.x2}" y2="${coords.y2}" 
+                  stroke="rgba(255, 215, 0, 0.85)" stroke-width="12" stroke-linecap="round" filter="url(#tttGlow)" />
+            <!-- Bright hot-white core line -->
+            <line class="ttt-victory-line-core" x1="${coords.x1}" y1="${coords.y1}" x2="${coords.x2}" y2="${coords.y2}" 
+                  stroke="#ffffff" stroke-width="4" stroke-linecap="round" />
+          </svg>
+        `;
+      }
+    }
+
+    return `
+      <div class="ttt-board-container">
+        <!-- Hidden SVG Definitions for Metal and Copper Materials -->
+        <svg class="ttt-defs-svg" style="display: none;">
+          <defs>
+            <!-- Brushed steel linear gradient for X -->
+            <linearGradient id="brushedSteel" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#eaeaea" />
+              <stop offset="15%" stop-color="#cccccc" />
+              <stop offset="30%" stop-color="#999999" />
+              <stop offset="45%" stop-color="#e0e0e0" />
+              <stop offset="55%" stop-color="#ffffff" />
+              <stop offset="70%" stop-color="#888888" />
+              <stop offset="85%" stop-color="#555555" />
+              <stop offset="100%" stop-color="#b0b0b0" />
+            </linearGradient>
+            <!-- Polished copper linear gradient for O -->
+            <linearGradient id="polishedCopper" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#ffd5b8" />
+              <stop offset="20%" stop-color="#f2996b" />
+              <stop offset="40%" stop-color="#c15a30" />
+              <stop offset="60%" stop-color="#d97443" />
+              <stop offset="80%" stop-color="#8c3310" />
+              <stop offset="100%" stop-color="#e08e62" />
+            </linearGradient>
+            <!-- Hand-drawn chalk displacements -->
+            <filter id="chalkRoughness">
+              <feTurbulence type="fractalNoise" baseFrequency="0.04 0.9" numOctaves="2" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="2" xChannelSelector="R" yChannelSelector="G"/>
+            </filter>
+          </defs>
+        </svg>
+
+        <!-- Brass Corners for the Walnut wood frame -->
+        <div class="ttt-brass-corner top-left"></div>
+        <div class="ttt-brass-corner top-right"></div>
+        <div class="ttt-brass-corner bottom-left"></div>
+        <div class="ttt-brass-corner bottom-right"></div>
+
+        <style>
+          /* ENCAPSULATED PREMIUM SLATE & METAL STYLES FOR TIC-TAC-TOE */
+          .screen.game-screen-tictactoe .ttt-board-container {
+            background: linear-gradient(135deg, #3a2212 0%, #1f1107 100%);
+            padding: 24px;
+            border-radius: 20px;
+            border: 4px solid #1a0f06;
+            box-shadow: 
+              0 20px 40px rgba(0,0,0,0.65),
+              inset 0 4px 10px rgba(255,255,255,0.1),
+              inset 0 -4px 10px rgba(0,0,0,0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 0 auto 20px;
+            max-width: 440px;
+            width: 100%;
+            position: relative;
+            box-sizing: border-box;
+          }
+          
+          /* Brass brackets on the board frame corners */
+          .screen.game-screen-tictactoe .ttt-brass-corner {
+            position: absolute;
+            width: 24px;
+            height: 24px;
+            background: linear-gradient(135deg, #f9e8a2 0%, #d4af37 40%, #aa7c11 75%, #ffd700 100%);
+            border: 1px solid rgba(0,0,0,0.4);
+            box-shadow: 1px 1px 3px rgba(0,0,0,0.4), inset 0 0.5px 0.5px rgba(255,255,255,0.4);
+            z-index: 4;
+          }
+          .screen.game-screen-tictactoe .ttt-brass-corner.top-left {
+            top: 4px; left: 4px; border-radius: 3px 0 10px 0;
+            border-top: 1px solid rgba(255,255,255,0.5); border-left: 1px solid rgba(255,255,255,0.5);
+          }
+          .screen.game-screen-tictactoe .ttt-brass-corner.top-right {
+            top: 4px; right: 4px; border-radius: 0 3px 0 10px;
+            border-top: 1px solid rgba(255,255,255,0.5); border-right: 1px solid rgba(255,255,255,0.5);
+          }
+          .screen.game-screen-tictactoe .ttt-brass-corner.bottom-left {
+            bottom: 4px; left: 4px; border-radius: 0 10px 0 3px;
+            border-bottom: 1px solid rgba(255,255,255,0.3); border-left: 1px solid rgba(255,255,255,0.5);
+          }
+          .screen.game-screen-tictactoe .ttt-brass-corner.bottom-right {
+            bottom: 4px; right: 4px; border-radius: 10px 0 3px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.3); border-right: 1px solid rgba(255,255,255,0.3);
+          }
+          .screen.game-screen-tictactoe .ttt-brass-corner::after {
+            content: "";
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            border-radius: 50%;
+            background: radial-gradient(circle, #888 20%, #333 80%);
+            border: 0.5px solid rgba(0,0,0,0.5);
+            top: 4px; left: 4px;
+          }
+          .screen.game-screen-tictactoe .ttt-brass-corner.top-right::after { left: auto; right: 4px; }
+          .screen.game-screen-tictactoe .ttt-brass-corner.bottom-left::after { top: auto; bottom: 4px; }
+          .screen.game-screen-tictactoe .ttt-brass-corner.bottom-right::after { top: auto; bottom: 4px; left: auto; right: 4px; }
+
+          .screen.game-screen-tictactoe .ttt-board {
+            background: radial-gradient(circle, #2f353b 0%, #1b1e22 100%);
+            border: 12px solid #23140a; /* Inner dark wood frame */
+            border-radius: 12px;
+            box-shadow: 
+              inset 0 6px 18px rgba(0,0,0,0.85),
+              0 3px 8px rgba(0,0,0,0.4);
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 12px;
+            aspect-ratio: 1;
+            width: 100%;
+            position: relative;
+            box-sizing: border-box;
+          }
+          
+          /* Background chalk lines */
+          .screen.game-screen-tictactoe .ttt-chalk-grid {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+          }
+
+          .screen.game-screen-tictactoe .ttt-cell {
+            position: relative;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            z-index: 2;
+            transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+            overflow: visible;
+          }
+          .screen.game-screen-tictactoe .ttt-cell:hover:not([disabled]) {
+            background: rgba(255, 255, 255, 0.03);
+            box-shadow: 
+              inset 0 1px 2px rgba(255,255,255,0.05),
+              0 0 12px rgba(255, 255, 255, 0.05);
+          }
+          .screen.game-screen-tictactoe .ttt-cell.is-last {
+            background: rgba(255, 255, 255, 0.015);
+            box-shadow: inset 0 0 8px rgba(255,255,255,0.05);
+          }
+          .screen.game-screen-tictactoe .ttt-cell.is-winning {
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.18) 0%, transparent 75%);
+            animation: tttWobble 1s infinite ease-in-out;
+          }
+          @keyframes tttWobble {
+            0%, 100% { transform: scale(1.05) rotate(0deg); }
+            25% { transform: scale(1.05) rotate(-1deg); }
+            75% { transform: scale(1.05) rotate(1deg); }
+          }
+          
+          /* Piece container styles */
+          .screen.game-screen-tictactoe .mark {
+            width: 72%;
+            height: 72%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)) drop-shadow(0 0 6px var(--player-color, transparent));
+          }
+          .screen.game-screen-tictactoe .ttt-piece-svg {
+            width: 100%;
+            height: 100%;
+            display: block;
+          }
+          
+          /* Active player mark hover scale-up */
+          .screen.game-screen-tictactoe .ttt-cell:not([disabled]) .mark:not(.is-ghost) {
+            animation: tttPieceSpawn 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+          }
+          @keyframes tttPieceSpawn {
+            0% { transform: scale(0.3) rotate(-15deg); opacity: 0; }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+          }
+          
+          /* Ghost preview style */
+          .screen.game-screen-tictactoe .mark.is-ghost {
+            opacity: 0;
+            transform: scale(0.85);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4)) opacity(0.3) saturate(0.5);
+            pointer-events: none;
+          }
+          .screen.game-screen-tictactoe .ttt-cell:hover:not([disabled]) .mark.is-ghost {
+            opacity: 0.55;
+            transform: scale(0.98);
+          }
+          
+          /* Winning line laser style */
+          .screen.game-screen-tictactoe .ttt-winning-line-svg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 3;
+          }
+          .screen.game-screen-tictactoe .ttt-victory-line-core {
+            stroke-dasharray: 400;
+            stroke-dashoffset: 400;
+            animation: tttDrawLine 0.7s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+          }
+          @keyframes tttDrawLine {
+            to { stroke-dashoffset: 0; }
+          }
+        </style>
+        <div class="ttt-board">
+          <!-- Chalk Grid SVG Background -->
+          <svg class="ttt-chalk-grid" viewBox="0 0 300 300" preserveAspectRatio="none">
+            <g stroke="rgba(255, 255, 255, 0.35)" stroke-width="4.5" stroke-linecap="round" filter="url(#chalkRoughness)">
+              <!-- Vertical lines (imperfect and hand-drawn style) -->
+              <path d="M 98 12 L 102 288" stroke-dasharray="15 3 25 2 10 5" />
+              <path d="M 202 15 L 198 285" stroke-dasharray="30 2 10 4 20 2" />
+              <!-- Horizontal lines -->
+              <path d="M 12 98 L 288 102" stroke-dasharray="20 4 15 2 30 3" />
+              <path d="M 15 198 L 285 202" stroke-dasharray="10 5 40 2 15 4" />
+            </g>
+            <!-- Chalk dust smears -->
+            <g fill="rgba(255, 255, 255, 0.02)">
+              <circle cx="50" cy="50" r="35" filter="url(#chalkRoughness)" />
+              <circle cx="250" cy="120" r="28" filter="url(#chalkRoughness)" />
+              <circle cx="120" cy="260" r="40" filter="url(#chalkRoughness)" />
+            </g>
+          </svg>
+          
+          ${cells}
+          ${winningLineSvg}
+        </div>
+      </div>
+    `;
   },
   formatResult({ state, players }) {
     if (!state.result) {

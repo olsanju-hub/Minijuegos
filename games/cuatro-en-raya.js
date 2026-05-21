@@ -235,28 +235,44 @@ export const cuatroEnRayaGame = {
   },
   renderBoard({ state, players, canAct, uiState }) {
     const drop = uiState && uiState.lastDrop ? uiState.lastDrop : null;
+    const activePlayer = players.find(p => p.slot === state.turnSlot);
+    const activeColor = activePlayer ? activePlayer.identity.color : "#e02030";
 
     const columns = Array.from({ length: COLS }, (_, col) => {
       const full = state.board[0][col] !== null;
       const invalidClass = uiState && uiState.invalidColumn === col ? "is-invalid" : "";
 
+      // Encontrar la fila vacía más baja para la ficha fantasma (hover)
+      let lowestEmptyRow = -1;
+      for (let r = ROWS - 1; r >= 0; r -= 1) {
+        if (state.board[r][col] === null) {
+          lowestEmptyRow = r;
+          break;
+        }
+      }
+
       const slots = Array.from({ length: ROWS }, (_, row) => {
         const value = state.board[row][col];
         let disc = "";
+
+        const isWinning = state.result?.type === "win" && 
+          state.result.line.some((cell) => cell.row === row && cell.col === col);
 
         if (value !== null) {
           const player = players.find((item) => item.slot === value);
           const color = player ? player.identity.color : "#233042";
 
           let dropClass = "";
-          let style = `background:${color};`;
+          let style = `--disc-color:${color};`;
           if (drop && Date.now() - drop.at < 460 && drop.row === row && drop.col === col) {
             dropClass = "drop";
             const distance = (row + 1) * 56 + 20;
             style += `--drop-distance:-${distance}px;`;
           }
 
-          disc = `<span class="disc ${dropClass}" style="${style}"></span>`;
+          disc = `<span class="disc ${dropClass} ${isWinning ? "is-winning" : ""}" style="${style}"></span>`;
+        } else if (row === lowestEmptyRow && !state.result && canAct) {
+          disc = `<span class="disc is-ghost" style="--ghost-color:${activeColor};"></span>`;
         }
 
         return `<span class="connect4-slot">${disc}</span>`;
@@ -278,6 +294,158 @@ export const cuatroEnRayaGame = {
 
     return `
       <div class="connect4-shell">
+        <style>
+          /* ENCAPSULATED PREMIUM PLASTIC STYLES FOR CONNECT 4 */
+          .screen.game-screen-connect4 .connect4-shell {
+            position: relative;
+            background: linear-gradient(180deg, #1e6091 0%, #15456b 100%);
+            padding: 16px 20px 24px;
+            border-radius: 24px;
+            border: 5px solid #1a73e8;
+            box-shadow: 
+              0 24px 48px rgba(0,0,0,0.4),
+              inset 0 4px 12px rgba(255,255,255,0.22);
+            margin: 0 auto 28px;
+            max-width: 520px;
+            width: 100%;
+          }
+          /* Side Support Legs */
+          .screen.game-screen-connect4 .connect4-shell::before,
+          .screen.game-screen-connect4 .connect4-shell::after {
+            content: "";
+            position: absolute;
+            bottom: -22px;
+            width: 28px;
+            height: 120px;
+            background: linear-gradient(180deg, #15456b 0%, #0d2840 100%);
+            border-radius: 8px 8px 16px 16px;
+            border: 3px solid #1a73e8;
+            box-shadow: 0 12px 20px rgba(0,0,0,0.45);
+            z-index: -1;
+          }
+          .screen.game-screen-connect4 .connect4-shell::before {
+            left: -12px;
+            transform: skewY(5deg);
+          }
+          .screen.game-screen-connect4 .connect4-shell::after {
+            right: -12px;
+            transform: skewY(-5deg);
+          }
+          .screen.game-screen-connect4 .connect4-board {
+            display: flex;
+            background: transparent;
+            gap: 5px;
+            width: 100%;
+            border-radius: 12px;
+          }
+          .screen.game-screen-connect4 .connect4-column {
+            background: transparent;
+            border: none;
+            padding: 3px 1px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            flex: 1;
+            transition: background-color 0.2s ease;
+            border-radius: 10px;
+          }
+          .screen.game-screen-connect4 .connect4-column:hover:not([disabled]) {
+            background: rgba(255, 255, 255, 0.08);
+          }
+          .screen.game-screen-connect4 .connect4-column.is-invalid {
+            background: rgba(224, 32, 48, 0.15) !important;
+            animation: c4Shake 0.4s ease-in-out;
+          }
+          @keyframes c4Shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+          }
+          .screen.game-screen-connect4 .connect4-slot {
+            aspect-ratio: 1;
+            width: 100%;
+            border-radius: 50%;
+            background: radial-gradient(circle at 50% 50%, #06192e 62%, #0e2742 100%);
+            border: 3.5px solid #1a73e8;
+            box-shadow: 
+              inset 0 6px 12px rgba(0,0,0,0.7),
+              0 1.5px 1.5px rgba(255,255,255,0.18);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+          }
+          .screen.game-screen-connect4 .disc {
+            width: 88%;
+            height: 88%;
+            border-radius: 50%;
+            position: relative;
+            display: block;
+            box-shadow: 
+              0 4px 6px rgba(0,0,0,0.4),
+              inset 0 -5px 6px rgba(0,0,0,0.4),
+              inset 0 5px 6px rgba(255,255,255,0.3);
+            background: radial-gradient(circle at 35% 30%, var(--disc-color, #e02030) 10%, rgba(0,0,0,0.35) 75%), var(--disc-color, #e02030);
+            z-index: 2;
+          }
+          .screen.game-screen-connect4 .disc::after {
+            content: "";
+            position: absolute;
+            inset: 22%;
+            border-radius: 50%;
+            border: 2px dashed rgba(0,0,0,0.18);
+            box-shadow: 
+              inset 0 2px 3px rgba(0,0,0,0.25),
+              0 2.5px 2.5px rgba(255,255,255,0.2);
+          }
+          .screen.game-screen-connect4 .disc.drop {
+            animation: c4DropGravity 0.44s forwards;
+          }
+          @keyframes c4DropGravity {
+            0% {
+              transform: translateY(var(--drop-distance, -400px));
+              animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+            }
+            80% {
+              transform: translateY(0);
+              animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1);
+            }
+            90% {
+              transform: translateY(-12px);
+              animation-timing-function: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+            }
+            100% {
+              transform: translateY(0);
+            }
+          }
+          .screen.game-screen-connect4 .disc.is-ghost {
+            background: radial-gradient(circle at 35% 30%, var(--ghost-color, #e02030) 10%, rgba(0,0,0,0.2) 60%), var(--ghost-color, #e02030);
+            opacity: 0;
+            transform: scale(0.8);
+            transition: all 0.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+            box-shadow: none;
+            border: 2px dashed rgba(255, 255, 255, 0.35);
+          }
+          .screen.game-screen-connect4 .disc.is-ghost::after {
+            border: 2px dashed rgba(255, 255, 255, 0.15);
+          }
+          .screen.game-screen-connect4 .connect4-column:hover:not([disabled]) .disc.is-ghost {
+            opacity: 0.35;
+            transform: scale(1);
+          }
+          .screen.game-screen-connect4 .disc.is-winning {
+            animation: c4WinPulse 1.2s infinite ease-in-out;
+            border: 2.5px solid #ffd54f;
+            box-shadow: 0 0 14px #ffd54f;
+          }
+          @keyframes c4WinPulse {
+            0% { transform: scale(1); box-shadow: 0 0 8px #ffd54f, inset 0 -5px 6px rgba(0,0,0,0.4), inset 0 5px 6px rgba(255,255,255,0.3); }
+            50% { transform: scale(1.08); box-shadow: 0 0 24px #ffd54f, inset 0 -5px 6px rgba(0,0,0,0.4), inset 0 5px 6px rgba(255,255,255,0.55); }
+            100% { transform: scale(1); box-shadow: 0 0 8px #ffd54f, inset 0 -5px 6px rgba(0,0,0,0.4), inset 0 5px 6px rgba(255,255,255,0.3); }
+          }
+        </style>
         <div class="connect4-board">${columns}</div>
       </div>
     `;

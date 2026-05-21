@@ -481,11 +481,15 @@ function getGhostDieValue(finalValue, tokenSeed) {
   return fallback === finalValue ? (fallback % 6) + 1 : fallback;
 }
 
-function renderDie(value, ghostValue = 5) {
+function renderDie(value) {
   return `
-    <div class="sns-die-cube" aria-hidden="true">
-      ${renderDieFace(value, "sns-die-face-final")}
-      ${renderDieFace(ghostValue, "sns-die-face-ghost")}
+    <div class="sns-die-cube-3d" aria-hidden="true">
+      <div class="sns-die-face-3d face-1">${renderDieFace(1)}</div>
+      <div class="sns-die-face-3d face-6">${renderDieFace(6)}</div>
+      <div class="sns-die-face-3d face-3">${renderDieFace(3)}</div>
+      <div class="sns-die-face-3d face-4">${renderDieFace(4)}</div>
+      <div class="sns-die-face-3d face-5">${renderDieFace(5)}</div>
+      <div class="sns-die-face-3d face-2">${renderDieFace(2)}</div>
     </div>
   `;
 }
@@ -786,6 +790,342 @@ export const escalerasSerpientesGame = {
       : `Resultado: ${Number.isInteger(state.diceValue) ? state.diceValue : "-"}`;
 
     return `
+    return `
+      <style>
+      /* EVOLUCIÓN PREMIUM: ESCALERAS Y SERPIENTES RÚNICAS EN PERGAMINO MEDIEVAL */
+
+      .sns-shell {
+        display: flex;
+        flex-direction: row;
+        gap: 32px;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 24px;
+        background: radial-gradient(circle at 50% 50%, #1a0f0a 0%, #0a0604 100%);
+        border-radius: 20px;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.85);
+        font-family: 'Outfit', sans-serif;
+        color: #ebd2b4;
+      }
+
+      /* MARCO DE ROBLE OSCURO RÚSTICO */
+      .sns-board-frame {
+        padding: 20px;
+        background:
+          radial-gradient(circle at 50% 50%, #3e271a 0%, #1e110a 100%),
+          repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 4px, transparent 4px, transparent 8px);
+        border-radius: 18px;
+        box-shadow:
+          inset 0 4px 12px rgba(255,255,255,0.08),
+          inset 0 -8px 20px rgba(0,0,0,0.8),
+          0 15px 35px rgba(0,0,0,0.9);
+        border: 5px solid #5a3c28;
+      }
+
+      /* TABLERO DE PERGAMINO ANTIGUO */
+      .sns-board {
+        width: min(600px, 85vw);
+        height: min(600px, 85vw);
+        aspect-ratio: 1 / 1;
+        background:
+          radial-gradient(circle at 50% 50%, #f4e3c1 0%, #d8be91 100%) !important;
+        border: 6px solid #2b170c;
+        border-radius: 12px;
+        box-shadow:
+          inset 0 0 40px rgba(74, 46, 26, 0.6),
+          0 4px 8px rgba(0,0,0,0.5);
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* CUADRÍCULA RÚNICA */
+      .sns-grid {
+        display: grid;
+        grid-template-rows: repeat(10, 1fr);
+        grid-template-columns: repeat(10, 1fr);
+        width: 100%;
+        height: 100%;
+        gap: 1px;
+        background: rgba(74, 46, 26, 0.15);
+      }
+
+      .sns-cell {
+        background: transparent !important;
+        border: 1px dashed rgba(74, 46, 26, 0.12);
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 4px;
+        position: relative;
+      }
+      .sns-cell.is-tinted {
+        background: rgba(74, 46, 26, 0.04) !important;
+      }
+
+      /* NÚMEROS RÚNICOS GRABADOS */
+      .sns-cell-number {
+        font-family: 'Cinzel', serif, sans-serif;
+        font-weight: 800;
+        font-size: 13px;
+        color: #4a2e1a !important;
+        opacity: 0.85;
+      }
+
+      /* ESTADOS DE CAMINOS Y TRIGGER */
+      .sns-cell.is-final-stop {
+        box-shadow: inset 0 0 12px rgba(0, 242, 254, 0.45) !important;
+        background: rgba(0, 242, 254, 0.08) !important;
+      }
+      .sns-cell.is-pending-target {
+        box-shadow: inset 0 0 14px #d4af37 !important;
+        background: rgba(212, 175, 55, 0.08) !important;
+        animation: snsCellPendingPulse 1.5s infinite alternate;
+      }
+      @keyframes snsCellPendingPulse {
+        0% { box-shadow: inset 0 0 8px #d4af37, 0 0 5px rgba(212, 175, 55, 0.3); }
+        100% { box-shadow: inset 0 0 18px #d4af37, 0 0 15px rgba(212, 175, 55, 0.6); }
+      }
+
+      /* PEONES DE METAL ANTIGUO */
+      .sns-piece {
+        width: 26px;
+        height: 26px;
+        border-radius: 50% !important;
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border: 2px solid rgba(255, 255, 255, 0.25) !important;
+        box-shadow:
+          inset 0 2px 4px rgba(255,255,255,0.4),
+          inset 0 -3px 6px rgba(0,0,0,0.5),
+          0 4px 6px rgba(0,0,0,0.5);
+        transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+      }
+      .sns-piece.is-active {
+        animation: snsPieceFloat 1.4s infinite ease-in-out !important;
+      }
+      @keyframes snsPieceFloat {
+        0%, 100% { transform: translateY(0); box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
+        50% { transform: translateY(-6px); box-shadow: 0 10px 14px rgba(0,0,0,0.7); }
+      }
+
+      /* PEÓN DE BRONCE, PLATA, COBRE, ORO */
+      .sns-piece[style*="--sns-piece:#ff2a2f"] { background: radial-gradient(circle at 35% 35%, #e65c5c 0%, #991a1a 80%, #4d0d0d 100%) !important; }
+      .sns-piece[style*="--sns-piece:#3192dc"] { background: radial-gradient(circle at 35% 35%, #5cadff 0%, #1a6699 80%, #0d334d 100%) !important; }
+      .sns-piece[style*="--sns-piece:#f4df19"] { background: radial-gradient(circle at 35% 35%, #ffe65c 0%, #99831a 80%, #4d410d 100%) !important; }
+      .sns-piece[style*="--sns-piece:#70bc35"] { background: radial-gradient(circle at 35% 35%, #99e65c 0%, #3d991a 80%, #1f4d0d 100%) !important; }
+
+      /* ANIMACIÓN FISICA DE REBOTE AL CAER EN CASILLA */
+      .sns-piece {
+        animation: snsPieceBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+      }
+      @keyframes snsPieceBounce {
+        0% { transform: translateY(-50px) scale(1.35); opacity: 0; }
+        60% { transform: translateY(4px) scale(0.9); }
+        80% { transform: translateY(-6px) scale(1.04); }
+        100% { transform: translateY(0) scale(1); opacity: 1; }
+      }
+
+      /* OVERLAYS REALISTAS: ESCALERAS DE CUERDA */
+      .sns-ladder-rail {
+        stroke-width: 7px !important;
+        stroke: #4d2f1d !important;
+        filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.3)) !important;
+      }
+      .sns-ladder-rungs line {
+        stroke-width: 5px !important;
+        stroke: #664632 !important;
+      }
+
+      /* SERPIENTES REALISTAS CON RELIEVE Y OJOS BRILLANTES */
+      .sns-snake-shadow {
+        filter: blur(4px) !important;
+        opacity: 0.45 !important;
+      }
+      .sns-snake-body {
+        stroke-width: 22px !important;
+        stroke-linecap: round !important;
+        filter: drop-shadow(0px 10px 8px rgba(0,0,0,0.25)) !important;
+      }
+      .sns-snake-stripe {
+        stroke-width: 8px !important;
+        stroke-linecap: round !important;
+      }
+      .sns-snake-head ellipse {
+        rx: 16px !important;
+        ry: 12px !important;
+        filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.2)) !important;
+      }
+
+      /* DADOS RÚNICOS 3D EN EL LANDING PAD */
+      .sns-die-card {
+        background:
+          radial-gradient(circle at 50% 50%, #1a1e26 0%, #0d1014 100%),
+          repeating-linear-gradient(135deg, rgba(255,255,255,0.01) 0px, rgba(255,255,255,0.01) 2px, transparent 2px, transparent 4px) !important;
+        border: 2px solid #2f3e53 !important;
+        border-radius: 16px !important;
+        padding: 16px !important;
+        box-shadow:
+          inset 0 0 20px rgba(0,0,0,0.8),
+          0 10px 25px rgba(0,0,0,0.5) !important;
+        position: relative;
+        overflow: hidden;
+        text-align: center;
+      }
+
+      .sns-die-card::before {
+        content: '';
+        position: absolute;
+        top: 6px; left: 6px; right: 6px; bottom: 6px;
+        border-radius: 12px;
+        border: 1px solid rgba(0, 242, 254, 0.1);
+        box-shadow: inset 0 0 15px rgba(0, 242, 254, 0.05);
+        pointer-events: none;
+      }
+
+      .sns-die {
+        width: 60px;
+        height: 60px;
+        position: relative;
+        perspective: 800px;
+        transform-style: preserve-3d;
+        margin: 16px auto;
+      }
+
+      .sns-die-cube-3d {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        top: 5px;
+        left: 5px;
+        transform-style: preserve-3d;
+        transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+      }
+
+      .sns-die-cube-3d {
+        --die-neon: #00f2fe;
+        --die-neon-rgb: 0, 242, 254;
+      }
+
+      .sns-die-face-3d {
+        position: absolute;
+        width: 50px;
+        height: 50px;
+        background: rgba(12, 20, 30, 0.35); /* Cristal translúcido */
+        backdrop-filter: blur(4px);
+        border: 2px solid var(--die-neon);
+        box-shadow:
+          inset 0 0 12px rgba(var(--die-neon-rgb), 0.25),
+          0 0 8px rgba(var(--die-neon-rgb), 0.3);
+        border-radius: 10px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        backface-visibility: visible;
+      }
+
+      /* CARAS DEL DADO 3D EN EL ESPACIO */
+      .sns-die-face-3d.face-1 { transform: rotateY(0deg) translateZ(25px); }
+      .sns-die-face-3d.face-6 { transform: rotateY(180deg) translateZ(25px); }
+      .sns-die-face-3d.face-3 { transform: rotateY(-90deg) translateZ(25px); }
+      .sns-die-face-3d.face-4 { transform: rotateY(90deg) translateZ(25px); }
+      .sns-die-face-3d.face-5 { transform: rotateX(90deg) translateZ(25px); }
+      .sns-die-face-3d.face-2 { transform: rotateX(-90deg) translateZ(25px); }
+
+      /* PIPS GLOWING NEÓN RÚNICOS */
+      .sns-die-pip {
+        width: 7px;
+        height: 7px;
+        border-radius: 50%;
+        background: transparent;
+      }
+      .sns-die-pip.is-on {
+        background: var(--die-neon);
+        box-shadow: 0 0 10px var(--die-neon), 0 0 4px #ffffff;
+      }
+
+      /* ROTACIÓN FINAL SEGÚN DADO */
+      .sns-die[style*="--die-value: 1"] .sns-die-cube-3d { transform: rotateX(720deg) rotateY(720deg); }
+      .sns-die[style*="--die-value: 2"] .sns-die-cube-3d { transform: rotateX(810deg) rotateY(720deg); }
+      .sns-die[style*="--die-value: 3"] .sns-die-cube-3d { transform: rotateX(720deg) rotateY(810deg); }
+      .sns-die[style*="--die-value: 4"] .sns-die-cube-3d { transform: rotateX(720deg) rotateY(630deg); }
+      .sns-die[style*="--die-value: 5"] .sns-die-cube-3d { transform: rotateX(630deg) rotateY(720deg); }
+      .sns-die[style*="--die-value: 6"] .sns-die-cube-3d { transform: rotateX(900deg) rotateY(720deg); }
+
+      /* ANIMACIONES GIMNÁSTICAS DE GIRO AL LANZAR */
+      .sns-die.is-roll-a .sns-die-cube-3d {
+        animation: snsRollDiceA 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      }
+      .sns-die.is-roll-b .sns-die-cube-3d {
+        animation: snsRollDiceB 0.8s cubic-bezier(0.22, 0.61, 0.36, 1) forwards;
+      }
+
+      @keyframes snsRollDiceA {
+        0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(-30px); }
+        40% { transform: rotateX(360deg) rotateY(180deg) rotateZ(90deg) translateY(-40px); }
+        70% { transform: rotateX(720deg) rotateY(540deg) rotateZ(270deg) translateY(-10px); }
+        100% { transform: rotateX(1080deg) rotateY(1080deg) rotateZ(360deg) translateY(0); }
+      }
+      @keyframes snsRollDiceB {
+        0% { transform: rotateX(0deg) rotateY(0deg) rotateZ(0deg) translateY(-30px); }
+        40% { transform: rotateX(180deg) rotateY(360deg) rotateZ(-90deg) translateY(-50px); }
+        70% { transform: rotateX(540deg) rotateY(720deg) rotateZ(-270deg) translateY(-15px); }
+        100% { transform: rotateX(1080deg) rotateY(1080deg) rotateZ(-360deg) translateY(0); }
+      }
+
+      /* SIDEBAR Y CONTENEDORES */
+      .sns-side {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        flex: 1;
+      }
+      .sns-side-card {
+        background: rgba(30, 20, 15, 0.5) !important;
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(212, 175, 55, 0.15) !important;
+        border-radius: 12px !important;
+        padding: 16px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+      }
+      .sns-side-card h4 {
+        color: #ebd2b4 !important;
+        margin-bottom: 12px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+      }
+      .sns-roll-btn {
+        background: linear-gradient(135deg, #a8623b 0%, #61341c 100%) !important;
+        border: 1px solid #ebd2b4 !important;
+        color: #fff !important;
+        font-weight: 800 !important;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        box-shadow: 0 4px 15px rgba(168, 98, 59, 0.4) !important;
+        transition: all 0.2s !important;
+        border-radius: 8px !important;
+        padding: 12px 24px !important;
+        width: 100%;
+      }
+      .sns-roll-btn:hover:not(:disabled) {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(168, 98, 59, 0.6) !important;
+      }
+
+      /* RESPONSIVE FLUIDO APANIZADO */
+      @media (max-width: 900px) {
+        .sns-shell {
+          flex-direction: column;
+          padding: 12px;
+        }
+        .sns-board-frame {
+          margin: 0 auto;
+        }
+      }
+      </style>
+
       <section class="sns-shell">
         <div class="sns-board-frame">
           <div class="sns-board">
@@ -805,8 +1145,8 @@ export const escalerasSerpientesGame = {
 
         <aside class="sns-side">
           <article class="sns-side-card sns-die-card">
-            <div class="sns-die ${state.showRollAnimation ? (state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b") : "is-settled"}">
-              ${renderDie(diceValue, getGhostDieValue(diceValue, state.diceToken + 2))}
+            <div class="sns-die ${state.showRollAnimation ? (state.diceToken % 2 === 0 ? "is-roll-a" : "is-roll-b") : "is-settled"}" style="--die-value: ${diceValue || 1}">
+              ${renderDie(diceValue)}
             </div>
             <button
               class="btn btn-primary sns-roll-btn"

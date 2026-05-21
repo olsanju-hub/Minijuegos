@@ -1215,6 +1215,398 @@ function syncTrafficHud(root, state, players, canAct) {
   syncTrafficControls(root, state, canAct);
 }
 
+const TRAFICO_STYLE_ID = "trafico-game-styles";
+const TRAFICO_STYLES = String.raw`
+  /* Contenedor y Diorama Premium */
+  .screen.game-screen-trafico .traffic-shell {
+    perspective: 800px;
+  }
+
+  .screen.game-screen-trafico .traffic-road-frame {
+    background: 
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.15), transparent 60%),
+      linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 
+      0 25px 50px -12px rgba(0, 0, 0, 0.6),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1) !important;
+    padding: 10px !important;
+    border-radius: 28px !important;
+  }
+
+  /* Asfalto Mojado e Iluminación Nocturna */
+  .screen.game-screen-trafico .traffic-road {
+    background: radial-gradient(circle at 50% 30%, #1e2530 0%, #0b0d13 100%) !important;
+    border: 1.5px solid rgba(0, 0, 0, 0.6) !important;
+    box-shadow: 
+      inset 0 0 40px rgba(0, 0, 0, 0.85),
+      0 12px 24px rgba(0, 0, 0, 0.5) !important;
+    border-radius: 22px !important;
+  }
+
+  .screen.game-screen-trafico .traffic-road-surface {
+    background: 
+      /* Reflejos de luces de la autopista y lluvia en el suelo */
+      radial-gradient(ellipse at 50% 10%, rgba(56, 189, 248, 0.08), transparent 70%),
+      radial-gradient(circle at 20% 60%, rgba(236, 72, 153, 0.04), transparent 50%),
+      /* Aceras / Bordillo de Hormigón Rústico 3D */
+      linear-gradient(90deg, 
+        #334155 0px, #475569 2px, #1e293b 3px, #0f172a 5px, #1e293b 10px, 
+        transparent 10px calc(100% - 10px), 
+        #1e293b calc(100% - 10px), #0f172a calc(100% - 5px), #1e293b calc(100% - 3px), #475569 calc(100% - 2px), #334155 100%
+      ),
+      /* Textura granulada de asfalto */
+      repeating-linear-gradient(0deg, rgba(255,255,255,0.006) 0 1px, transparent 1px 3px),
+      linear-gradient(180deg, #181d26 0%, #0a0c10 100%) !important;
+  }
+
+  /* Reflejos fluidos de lluvia y velocidad */
+  .screen.game-screen-trafico .traffic-road-flow {
+    background:
+      /* Estelas de reflejos mojados */
+      repeating-linear-gradient(180deg, 
+        rgba(255, 255, 255, 0) 0px, 
+        rgba(255, 255, 255, 0) 60px, 
+        rgba(255, 255, 255, 0.02) 65px, 
+        rgba(253, 224, 71, 0.04) 70px, 
+        rgba(255, 255, 255, 0.02) 75px, 
+        rgba(255, 255, 255, 0) 80px, 
+        rgba(255, 255, 255, 0) 160px
+      ),
+      /* Gotas de lluvia sutiles */
+      repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0 1px, transparent 1px 4px);
+    opacity: 0.65 !important;
+    transform: translateY(calc(var(--traffic-scroll-px) * 0.75)) !important;
+    filter: blur(0.5px);
+  }
+
+  /* Bordes iluminados nocturnos */
+  .screen.game-screen-trafico .traffic-road-surface::before {
+    background: 
+      linear-gradient(90deg, 
+        rgba(244, 63, 94, 0.08) 0 10px, 
+        transparent 10px calc(100% - 10px), 
+        rgba(14, 165, 233, 0.08) calc(100% - 10px) 100%
+      ) !important;
+    opacity: 1 !important;
+  }
+
+  /* Calzada y líneas divisoras */
+  .screen.game-screen-trafico .traffic-lane-divider {
+    background: repeating-linear-gradient(
+      180deg,
+      #fef08a 0px,
+      #eab308 24px, 
+      transparent 24px 60px
+    ) !important;
+    width: 4px !important;
+    box-shadow: 
+      0 0 5px rgba(234, 179, 8, 0.45),
+      0 0 1px rgba(0, 0, 0, 0.6) !important;
+    opacity: 0.88 !important;
+  }
+
+  /* Físicas de vehículos y brillo Die-Cast */
+  .screen.game-screen-trafico .traffic-player-car {
+    background: 
+      linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 25%, transparent 50%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.25) 0%, transparent 12%, transparent 88%, rgba(0, 0, 0, 0.25) 100%),
+      linear-gradient(180deg, #38bdf8 0%, #0284c7 42%, #0369a1 72%, #0c4a6e 100%) !important;
+    border: 1.5px solid #0284c7 !important;
+    box-shadow: 
+      0 12px 24px rgba(0, 0, 0, 0.55),
+      inset 0 1px 2px rgba(255, 255, 255, 0.6) !important;
+    border-radius: 12px 12px 8px 8px !important;
+  }
+
+  .screen.game-screen-trafico .traffic-player-bike .traffic-bike-frame {
+    background: 
+      linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, transparent 35%),
+      linear-gradient(180deg, #4ade80 0%, #16a34a 55%, #14532d 100%) !important;
+    border: 1.2px solid #15803d !important;
+    box-shadow: 
+      0 10px 20px rgba(0, 0, 0, 0.45),
+      inset 0 1px 1px rgba(255, 255, 255, 0.5) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-rival-car {
+    background: 
+      linear-gradient(180deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.08) 20%, transparent 50%),
+      linear-gradient(90deg, rgba(0, 0, 0, 0.25) 0%, transparent 12%, transparent 88%, rgba(0, 0, 0, 0.25) 100%),
+      /* Metalizado Rojo Cereza Profundo */
+      linear-gradient(180deg, #fb7185 0%, #f43f5e 40%, #be123c 70%, #4c0519 100%) !important;
+    border: 1.5px solid #be123c !important;
+    box-shadow: 
+      0 12px 20px rgba(0, 0, 0, 0.45),
+      inset 0 1px 2px rgba(255, 255, 255, 0.55) !important;
+    border-radius: 12px 12px 8px 8px !important;
+  }
+
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-truck-cab {
+    background: 
+      linear-gradient(180deg, rgba(255, 255, 255, 0.4) 0%, transparent 50%),
+      linear-gradient(180deg, #f59e0b 0%, #d97706 60%, #78350f 100%) !important;
+    border: 1.2px solid #b45309 !important;
+  }
+
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-truck-cargo {
+    background: 
+      linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, transparent 15%),
+      linear-gradient(90deg, rgba(255, 255, 255, 0.08) 0%, transparent 10%, transparent 90%, rgba(0, 0, 0, 0.28) 100%),
+      linear-gradient(180deg, #94a3b8 0%, #64748b 50%, #475569 100%) !important;
+    box-shadow: 
+      inset 0 0 10px rgba(0, 0, 0, 0.45),
+      0 8px 16px rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid #475569 !important;
+  }
+
+  .screen.game-screen-trafico .traffic-truck-rib {
+    background: linear-gradient(180deg, #f1f5f9 0%, #94a3b8 100%) !important;
+    height: 3px !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4) !important;
+  }
+
+  /* Ruedas Cromadas Ultra-Realistas */
+  .screen.game-screen-trafico .traffic-vehicle-wheel,
+  .screen.game-screen-trafico .traffic-bike-wheel {
+    background: 
+      radial-gradient(circle at 50% 50%, #ffffff 0 22%, #64748b 28% 45%, #0f172a 50% 65%, #334155 70% 100%) !important;
+    box-shadow: 
+      0 2px 4px rgba(0, 0, 0, 0.4),
+      inset 0 1px 1px rgba(255, 255, 255, 0.3) !important;
+  }
+
+  /* Cristal Reflectante de Cabinas */
+  .screen.game-screen-trafico .traffic-car-glass,
+  .screen.game-screen-trafico .traffic-truck-windshield,
+  .screen.game-screen-trafico .traffic-bike-rider,
+  .screen.game-screen-trafico .traffic-bike-frame::after {
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(255, 255, 255, 0.95) 0 8%, transparent 10%),
+      linear-gradient(135deg, #e0f2fe 0%, #38bdf8 50%, #0284c7 100%) !important;
+    box-shadow: 
+      inset 0 0 4px rgba(255, 255, 255, 0.6),
+      0 1px 2px rgba(0, 0, 0, 0.3) !important;
+    opacity: 0.9 !important;
+  }
+
+  /* Faros y Proyección de Haces de Luz SVG */
+  .screen.game-screen-trafico .traffic-vehicle-light.is-head-left,
+  .screen.game-screen-trafico .traffic-vehicle-light.is-head-right,
+  .screen.game-screen-trafico .traffic-bike-light {
+    background: #ffffff !important;
+    box-shadow: 
+      0 0 10px 2px #fffbeb,
+      0 0 4px 1px #ffffff !important;
+    z-index: 6;
+  }
+
+  /* Haz Direccional del Jugador (Cool Xenon Blue) */
+  .screen.game-screen-trafico .traffic-player-car .traffic-vehicle-light.is-head-left::after,
+  .screen.game-screen-trafico .traffic-player-car .traffic-vehicle-light.is-head-right::after,
+  .screen.game-screen-trafico .traffic-player-bike .traffic-bike-light::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: 50% !important;
+    left: 50% !important;
+    width: 60px !important;
+    height: 160px !important;
+    transform: translateX(-50%) !important;
+    transform-origin: bottom center !important;
+    background: linear-gradient(to top, rgba(224, 242, 254, 0.45) 0%, rgba(14, 165, 233, 0.15) 35%, rgba(14, 165, 233, 0) 100%) !important;
+    clip-path: polygon(42% 100%, 58% 100%, 100% 0%, 0% 0%) !important;
+    filter: blur(2px) !important;
+    pointer-events: none !important;
+    z-index: 5 !important;
+    animation: headlight-flicker 4s infinite alternate !important;
+  }
+
+  /* Haz Direccional de Rivales (Warm Halogen Yellow) */
+  .screen.game-screen-trafico .traffic-rival-car .traffic-vehicle-light.is-head-left::after,
+  .screen.game-screen-trafico .traffic-rival-car .traffic-vehicle-light.is-head-right::after,
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-vehicle-light.is-head-left::after,
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-vehicle-light.is-head-right::after {
+    content: "" !important;
+    position: absolute !important;
+    bottom: 50% !important;
+    left: 50% !important;
+    width: 50px !important;
+    height: 130px !important;
+    transform: translateX(-50%) !important;
+    transform-origin: bottom center !important;
+    background: linear-gradient(to top, rgba(254, 240, 138, 0.35) 0%, rgba(234, 179, 8, 0.12) 35%, rgba(234, 179, 8, 0) 100%) !important;
+    clip-path: polygon(43% 100%, 57% 100%, 100% 0%, 0% 0%) !important;
+    filter: blur(2px) !important;
+    pointer-events: none !important;
+    z-index: 5 !important;
+  }
+
+  /* Luces Traseras y Freno */
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-left,
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-right {
+    background: #f43f5e !important;
+    box-shadow: 0 0 6px rgba(244, 63, 94, 0.6) !important;
+  }
+
+  /* Luces de freno intensas al detenerse o chocar */
+  .traffic-shell.is-stopped .traffic-player-car .traffic-vehicle-light.is-tail-left,
+  .traffic-shell.is-stopped .traffic-player-car .traffic-vehicle-light.is-tail-right,
+  .traffic-shell.is-stopped .traffic-rival-car .traffic-vehicle-light.is-tail-left,
+  .traffic-shell.is-stopped .traffic-rival-car .traffic-vehicle-light.is-tail-right,
+  .traffic-shell.is-stopped .traffic-rival-truck .traffic-vehicle-light.is-tail-left,
+  .traffic-shell.is-stopped .traffic-rival-truck .traffic-vehicle-light.is-tail-right {
+    background: #ff2222 !important;
+    box-shadow: 
+      0 0 16px 5px #ef4444,
+      0 0 8px 2px #ffffff !important;
+    transition: box-shadow 0.2s ease-in-out !important;
+  }
+
+  /* Humo del escape continuo al jugar */
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-left::before {
+    content: "" !important;
+    position: absolute !important;
+    bottom: -12px !important;
+    left: 50% !important;
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, rgba(100, 100, 100, 0.4) 0%, rgba(50, 50, 50, 0.1) 60%, transparent 100%) !important;
+    animation: exhaust-smoke 0.8s infinite linear !important;
+    pointer-events: none !important;
+    z-index: 1 !important;
+  }
+
+  /* Ocultar humo al detenerse */
+  .traffic-shell.is-stopped .traffic-vehicle-light.is-tail-left::before {
+    animation: none !important;
+    opacity: 0 !important;
+  }
+
+  /* Monedas Flotantes de Oro Puro */
+  .screen.game-screen-trafico .traffic-pickup-coin {
+    background: 
+      radial-gradient(circle at 35% 35%, #fffbeb 0 20%, #fef08a 25% 45%, #ca8a04 60% 80%, #854d0e 100%) !important;
+    box-shadow: 
+      0 0 12px 3px rgba(250, 204, 21, 0.55),
+      0 4px 10px rgba(0, 0, 0, 0.35),
+      inset 0 1px 1px #ffffff !important;
+    border: 1px solid #eab308 !important;
+    animation: coin-spin 1.2s infinite linear, coin-float 1.5s ease-in-out infinite alternate !important;
+  }
+
+  /* Sacudida Screenshake por colisión */
+  .traffic-shell.is-crashed .traffic-road-frame {
+    animation: traffic-crashed-shake 0.42s cubic-bezier(.36,.07,.19,.97) both !important;
+  }
+
+  /* Chispas y Destellos en Colisiones */
+  .screen.game-screen-trafico .traffic-entity.is-collision::before {
+    content: "" !important;
+    position: absolute !important;
+    inset: -25px !important;
+    background: 
+      radial-gradient(circle, #facc15 0%, #ef4444 40%, transparent 70%),
+      repeating-conic-gradient(from 0deg, #fef08a 0deg 15deg, transparent 15deg 30deg) !important;
+    animation: crash-spark-burst 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite !important;
+    z-index: 10 !important;
+    pointer-events: none !important;
+  }
+
+  .screen.game-screen-trafico .traffic-entity.is-collision::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    width: 100px !important;
+    height: 100px !important;
+    transform: translate(-50%, -50%) !important;
+    background: radial-gradient(circle, #ffffff 0%, rgba(239, 68, 68, 0.8) 30%, transparent 60%) !important;
+    animation: crash-flash 0.08s ease-out infinite alternate !important;
+    z-index: 9 !important;
+    pointer-events: none !important;
+  }
+
+  /* Humo negro denso de colisión en el motor (frente) */
+  .screen.game-screen-trafico .traffic-entity.is-collision .traffic-vehicle-light.is-head-left::before,
+  .screen.game-screen-trafico .traffic-entity.is-collision .traffic-vehicle-light.is-head-right::before {
+    content: "" !important;
+    position: absolute !important;
+    top: -20px !important;
+    left: 50% !important;
+    width: 24px !important;
+    height: 24px !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle, rgba(30, 30, 30, 0.8) 0%, rgba(10, 10, 10, 0) 70%) !important;
+    animation: crash-black-smoke 1.4s infinite linear !important;
+    pointer-events: none !important;
+    z-index: 12 !important;
+  }
+
+  /* Animaciones y Keyframes */
+  @keyframes headlight-flicker {
+    0%, 100% { opacity: 1; }
+    45% { opacity: 0.95; }
+    50% { opacity: 1; }
+    53% { opacity: 0.92; }
+    60% { opacity: 1; }
+  }
+
+  @keyframes exhaust-smoke {
+    0% { transform: translate(-50%, 100%) scale(0.6); opacity: 0.6; filter: blur(0.5px); }
+    50% { transform: translate(-65%, 160%) scale(1.1); opacity: 0.3; filter: blur(1.5px); }
+    100% { transform: translate(-45%, 230%) scale(1.6); opacity: 0; filter: blur(3px); }
+  }
+
+  @keyframes coin-spin {
+    0% { transform: rotateY(0deg); }
+    100% { transform: rotateY(360deg); }
+  }
+
+  @keyframes coin-float {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(-5px); }
+  }
+
+  @keyframes traffic-crashed-shake {
+    10%, 90% { transform: translate3d(-1px, 0, 0); }
+    20%, 80% { transform: translate3d(2px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+    40%, 60% { transform: translate3d(4px, 0, 0); }
+  }
+
+  @keyframes crash-spark-burst {
+    0% { transform: scale(0.5) rotate(0deg); opacity: 0.9; }
+    100% { transform: scale(1.5) rotate(90deg); opacity: 0; filter: blur(1px); }
+  }
+
+  @keyframes crash-flash {
+    0% { opacity: 0.35; }
+    100% { opacity: 0.95; }
+  }
+
+  @keyframes crash-black-smoke {
+    0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.8; filter: blur(1px); }
+    50% { transform: translate(-35%, -90%) scale(1.2) rotate(45deg); opacity: 0.5; filter: blur(3px); }
+    100% { transform: translate(-65%, -150%) scale(1.9) rotate(-45deg); opacity: 0; filter: blur(6px); }
+  }
+`;
+
+function ensureTraficoStyles() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  if (document.getElementById(TRAFICO_STYLE_ID)) {
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.id = TRAFICO_STYLE_ID;
+  style.textContent = TRAFICO_STYLES;
+  document.head.append(style);
+}
+
 export const traficoGame = {
   id: "trafico",
   name: "Tráfico",
@@ -1412,10 +1804,15 @@ export const traficoGame = {
     `;
   },
   renderBoard({ state, players, canAct }) {
+    ensureTraficoStyles();
+    const isStopped = state.status !== "playing";
+    const isCrashed = state.status === "game-over";
+    const statusClass = `${isStopped ? " is-stopped" : ""}${isCrashed ? " is-crashed" : ""}`;
     return `
       <section
-        class="traffic-shell"
+        class="traffic-shell${statusClass}"
         data-traffic-root
+        data-traffic-status="${escapeHtml(state.status)}"
         data-traffic-profile="${escapeHtml(state.viewportProfile)}"
         data-traffic-lanes="${escapeHtml(String(state.laneCount))}"
         style="--traffic-road-max:${state.roadMaxWidth}px;--traffic-lane-count:${state.laneCount};"
@@ -1426,10 +1823,15 @@ export const traficoGame = {
     `;
   },
   patchBoardElement(boardWrap, { state, players, canAct }) {
+    ensureTraficoStyles();
     const root = boardWrap.querySelector("[data-traffic-root]");
     if (!root) {
       return false;
     }
+
+    root.dataset.trafficStatus = state.status;
+    root.classList.toggle("is-stopped", state.status !== "playing");
+    root.classList.toggle("is-crashed", state.status === "game-over");
 
     syncTrafficEntities(root, state);
     syncTrafficOverlay(root, state);

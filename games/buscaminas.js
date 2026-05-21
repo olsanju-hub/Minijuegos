@@ -1,3 +1,352 @@
+const BUSCAMINAS_STYLE_ID = "minijuegos-buscaminas-styles";
+
+const BUSCAMINAS_STYLES = String.raw`
+.app-shell:not(.app-shell-home) .screen.game-screen-buscaminas {
+  width: min(1120px, 100%);
+}
+
+.mines-shell {
+  width: min(100%, 940px);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* RETRO-INDUSTRIAL STEEL SCOREBOARD / HUD */
+.mines-hud {
+  border: 4px solid #4a4a4a !important;
+  background: linear-gradient(135deg, #2e2e2e 0%, #1c1c1c 100%) !important;
+  box-shadow: 
+    0 15px 30px rgba(0, 0, 0, 0.4),
+    inset 0 0 15px rgba(0,0,0,0.6),
+    inset 0 1px 0 rgba(255,255,255,0.15) !important;
+  border-radius: 20px !important;
+  padding: 20px !important;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Metal seams and screws for HUD */
+.mines-hud::before {
+  content: "";
+  position: absolute;
+  top: 6px; left: 6px; right: 6px; bottom: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+  pointer-events: none;
+}
+
+/* Steel Rivets in HUD corners */
+.mines-hud::after {
+  content: "•";
+  position: absolute;
+  top: 6px; left: 6px;
+  color: #888;
+  font-size: 16px;
+  text-shadow: 0 1px 0 #fff;
+  opacity: 0.7;
+}
+
+.mines-mode-pill {
+  background: rgba(255, 255, 255, 0.07) !important;
+  color: #e0e0e0 !important;
+  border: 1px solid rgba(255, 255, 255, 0.15) !important;
+  font-family: 'Courier New', monospace;
+  font-weight: bold;
+}
+
+.mines-mode-pill.is-soft {
+  background: rgba(239, 68, 68, 0.15) !important;
+  color: #ef4444 !important;
+  border-color: rgba(239, 68, 68, 0.25) !important;
+}
+
+.mines-board-summary {
+  color: #888 !important;
+  font-family: 'Courier New', monospace;
+}
+
+.mines-note {
+  color: #b0b0b0 !important;
+  font-size: 0.88rem !important;
+  line-height: 1.4 !important;
+}
+
+/* RESTART BUTTON - Industrial emergency latch */
+.mines-restart-btn {
+  background: linear-gradient(180deg, #dc2626 0%, #991b1b 100%) !important;
+  color: #fff !important;
+  border: 2px solid #7f1d1d !important;
+  box-shadow: 
+    0 4px 0 #600707,
+    0 8px 12px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+  border-radius: 8px !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.05em !important;
+  transition: all 0.1s ease !important;
+}
+
+.mines-restart-btn:hover {
+  background: linear-gradient(180deg, #ef4444 0%, #b91c1c 100%) !important;
+}
+
+.mines-restart-btn:active {
+  transform: translateY(3px) !important;
+  box-shadow: 
+    0 1px 0 #600707,
+    0 2px 4px rgba(0, 0, 0, 0.2),
+    inset 0 1px 3px rgba(0,0,0,0.5) !important;
+}
+
+/* STAT READOUTS - Glowing nixie tubes */
+.mines-stat {
+  background: #0d0d0d !important;
+  border: 2px solid #3a3a3a !important;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.9) !important;
+  border-radius: 12px !important;
+  padding: 10px 14px !important;
+}
+
+.mines-stat-label {
+  color: #888 !important;
+  font-family: 'Courier New', monospace;
+  font-size: 0.65rem !important;
+}
+
+.mines-stat-value {
+  color: #ef4444 !important; /* Nixie tube red glowing digits */
+  font-family: 'Courier New', monospace;
+  font-size: 1.4rem !important;
+  font-weight: bold !important;
+  text-shadow: 0 0 8px rgba(239, 68, 68, 0.6) !important;
+}
+
+/* MOBILE TOOLS */
+.mines-mobile-tools {
+  background: rgba(0,0,0,0.2) !important;
+  border-radius: 12px !important;
+  padding: 8px 12px !important;
+  border: 1px solid #333 !important;
+}
+
+.mines-mobile-label {
+  color: #888 !important;
+}
+
+.mines-mode-btn {
+  background: #2a2a2a !important;
+  color: #aaa !important;
+  border: 1px solid #444 !important;
+}
+
+.mines-mode-btn.is-active {
+  background: #ef4444 !important;
+  color: #fff !important;
+  border-color: #dc2626 !important;
+  box-shadow: 0 0 10px rgba(239, 68, 68, 0.4) !important;
+}
+
+/* BOARD FRAME - Heavy iron plate */
+.mines-board-frame {
+  border: 8px solid #3a3a3a !important;
+  background: #1e1e1e !important;
+  box-shadow:
+    0 25px 50px rgba(0, 0, 0, 0.6),
+    inset 0 0 30px rgba(0,0,0,0.8) !important;
+  border-radius: 24px !important;
+  padding: 20px !important;
+  position: relative;
+}
+
+/* Steel Rivets in Board Frame Corners */
+.mines-board-frame::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 20px;
+  pointer-events: none;
+}
+
+.mines-board {
+  gap: 6px !important;
+  margin: 0 auto;
+}
+
+/* MECHANICAL BUTTON TILE */
+.mines-cell {
+  aspect-ratio: 1 / 1 !important;
+  border: 0 !important;
+  padding: 0 !important;
+  border-radius: 6px !important;
+  background: linear-gradient(135deg, #5a5a5a 0%, #3a3a3a 100%) !important;
+  box-shadow:
+    0 4px 0 #222,
+    0 6px 10px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.2) !important;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.05s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transform: translateZ(0);
+}
+
+.mines-cell:hover:not([disabled]) {
+  background: linear-gradient(135deg, #6c6c6c 0%, #4a4a4a 100%) !important;
+  box-shadow:
+    0 4px 0 #222,
+    0 8px 12px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+.mines-cell:active:not([disabled]) {
+  transform: translateY(3px) !important;
+  box-shadow:
+    0 1px 0 #222,
+    0 2px 4px rgba(0,0,0,0.2),
+    inset 0 1px 3px rgba(0,0,0,0.6) !important;
+}
+
+/* Sunk state for open cells */
+.mines-cell.is-open {
+  background: radial-gradient(circle at 50% 50%, #151515 0%, #202020 100%) !important;
+  box-shadow: 
+    inset 0 3px 8px rgba(0,0,0,0.85),
+    0 1px 0 rgba(255,255,255,0.05) !important;
+  transform: translateY(3px) !important;
+  cursor: default !important;
+}
+
+/* Inactive cell gaps */
+.mines-cell.is-inactive {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Flags - Emergency markers */
+.mines-cell.is-flagged {
+  background: linear-gradient(135deg, #f59e0b 0%, #b45309 100%) !important;
+  box-shadow:
+    0 4px 0 #78350f,
+    0 6px 10px rgba(0,0,0,0.4),
+    inset 0 1px 0 rgba(255,255,255,0.3) !important;
+}
+
+.mines-icon-flag {
+  color: #fff !important;
+  font-size: 1.25rem !important;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+  animation: flagBounce 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes flagBounce {
+  0% { transform: scale(0.3) rotate(-30deg); opacity: 0; }
+  70% { transform: scale(1.1) rotate(10deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Incorrect flags in Loss mode */
+.mines-cell.is-wrong-flag {
+  background: linear-gradient(135deg, #ef4444 0%, #991b1b 100%) !important;
+  box-shadow: inset 0 0 10px rgba(0,0,0,0.6) !important;
+}
+
+/* REVEALED MINES */
+.mines-cell.is-revealed-mine {
+  background: radial-gradient(circle, #333 0%, #111 100%) !important;
+  box-shadow: inset 0 3px 6px rgba(0,0,0,0.8) !important;
+  transform: translateY(3px) !important;
+}
+
+.mines-icon-mine {
+  color: #f43f5e !important;
+  font-size: 1.3rem !important;
+  text-shadow: 0 0 8px #f43f5e !important;
+  animation: minePulse 1.2s infinite alternate;
+}
+
+@keyframes minePulse {
+  0% { transform: scale(0.9); opacity: 0.8; }
+  100% { transform: scale(1.1); opacity: 1; filter: brightness(1.2); }
+}
+
+/* DETONATED CELL - Incandescent explosion */
+.mines-cell.is-detonated {
+  background: radial-gradient(circle, #ef4444 20%, #7f1d1d 100%) !important;
+  box-shadow: 0 0 30px rgba(239, 68, 68, 0.8), inset 0 0 12px rgba(255,255,255,0.4) !important;
+  animation: mineExplodeFlash 0.5s ease-out infinite alternate !important;
+}
+
+@keyframes mineExplodeFlash {
+  0% { filter: brightness(1); }
+  100% { filter: brightness(1.6); }
+}
+
+/* NIXIE TUBE GLOWING NUMBERS FOR ADJACENT MINES */
+.mines-number {
+  font-family: 'Courier New', monospace !important;
+  font-size: 1.3rem !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
+
+.mines-cell.is-number-1 .mines-number { color: #00f2fe !important; text-shadow: 0 0 6px rgba(0, 242, 254, 0.8) !important; }
+.mines-cell.is-number-2 .mines-number { color: #39ff14 !important; text-shadow: 0 0 6px rgba(57, 255, 20, 0.8) !important; }
+.mines-cell.is-number-3 .mines-number { color: #ff007f !important; text-shadow: 0 0 6px rgba(255, 0, 127, 0.8) !important; }
+.mines-cell.is-number-4 .mines-number { color: #b026ff !important; text-shadow: 0 0 6px rgba(176, 38, 255, 0.8) !important; }
+.mines-cell.is-number-5 .mines-number { color: #ffd700 !important; text-shadow: 0 0 6px rgba(255, 215, 0, 0.8) !important; }
+.mines-cell.is-number-6 .mines-number { color: #ff5f1f !important; text-shadow: 0 0 6px rgba(255, 95, 31, 0.8) !important; }
+.mines-cell.is-number-7 .mines-number { color: #e6e6fa !important; text-shadow: 0 0 6px rgba(230, 230, 250, 0.8) !important; }
+.mines-cell.is-number-8 .mines-number { color: #7df9ff !important; text-shadow: 0 0 6px rgba(125, 249, 255, 0.8) !important; }
+
+/* SCREENSHAKE AND DANGER FLASH ALARMS */
+@keyframes ironShake {
+  0%, 100% { transform: translate(0, 0); }
+  10%, 30%, 50%, 70%, 90% { transform: translate(-8px, -4px); }
+  20%, 40%, 60%, 80% { transform: translate(8px, 4px); }
+}
+
+.mines-shell.is-lost-shake .mines-board-frame {
+  animation: ironShake 0.6s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+.mines-shell.is-lost-shake::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: rgba(239, 68, 68, 0.15);
+  pointer-events: none;
+  z-index: 9999;
+  animation: alarmRedFlash 1s ease-in-out infinite;
+}
+
+@keyframes alarmRedFlash {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+`;
+
+function ensureBuscaminasStyles() {
+  if (typeof document === "undefined") {
+    return;
+  }
+
+  if (document.getElementById(BUSCAMINAS_STYLE_ID)) {
+    return;
+  }
+
+  const style = document.createElement("style");
+  style.id = BUSCAMINAS_STYLE_ID;
+  style.textContent = BUSCAMINAS_STYLES;
+  document.head.append(style);
+}
+
 const DIFFICULTY_PRESETS = {
   easy: {
     id: "easy",
@@ -874,8 +1223,10 @@ export const buscaminasGame = {
     `;
   },
   renderBoard({ state }) {
+    ensureBuscaminasStyles();
+    const shellClass = `mines-shell${state.status === "lost" ? " is-lost-shake" : ""}`;
     return `
-      <section class="mines-shell" data-mines-root>
+      <section class="${shellClass}" data-mines-root>
         ${renderHud(state)}
         ${renderBoardGrid(state)}
       </section>
@@ -886,6 +1237,9 @@ export const buscaminasGame = {
     if (!root) {
       return false;
     }
+
+    ensureBuscaminasStyles();
+    root.className = `mines-shell${state.status === "lost" ? " is-lost-shake" : ""}`;
 
     syncNodeText(root, "[data-mines-difficulty]", difficultyText(state));
     syncNodeText(root, "[data-mines-shape]", shapeText(state));
