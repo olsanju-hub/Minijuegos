@@ -279,15 +279,15 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-field-frame {
-  fill: #f6f1e7;
-  stroke: #d3c3a7;
-  stroke-width: 2;
+  fill: #efe4d0;
+  stroke: #cab999;
+  stroke-width: 2.4;
 }
 
 .football-field-pitch {
   fill: url(#footballPitchFill);
-  stroke: #d7cfbd;
-  stroke-width: 1.8;
+  stroke: rgba(245, 247, 235, 0.78);
+  stroke-width: 2.2;
 }
 
 .football-field-ambient {
@@ -297,11 +297,11 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-pitch-grid {
   fill: url(#footballPitchPattern);
-  opacity: 0.16;
+  opacity: 0.18;
 }
 
 .football-pitch-stripe {
-  fill: rgba(255, 255, 255, 0.06);
+  fill: rgba(255, 255, 255, 0.075);
 }
 
 .football-field-grain {
@@ -309,9 +309,9 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-goal-net {
-  fill: rgba(240, 247, 244, 0.42);
-  stroke: rgba(214, 223, 219, 0.78);
-  stroke-width: 1.5;
+  fill: rgba(240, 247, 244, 0.32);
+  stroke: rgba(246, 250, 247, 0.92);
+  stroke-width: 2;
 }
 
 .football-goal-net.team-0-net {
@@ -325,16 +325,17 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-goal-grid {
-  stroke: rgba(226, 235, 231, 0.42);
-  stroke-width: 1.2;
+  stroke: rgba(246, 250, 247, 0.46);
+  stroke-width: 1.35;
 }
 
 .football-goal-frame {
   fill: none;
   stroke: rgba(242, 248, 245, 0.94);
-  stroke-width: 5;
+  stroke-width: 7;
   stroke-linecap: round;
   stroke-linejoin: round;
+  filter: drop-shadow(0 3px 4px rgba(9, 30, 22, 0.32));
 }
 
 .football-goal-frame.team-0-frame {
@@ -347,8 +348,8 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-pitch-mark {
   fill: none;
-  stroke: rgba(248, 247, 242, 0.72);
-  stroke-width: 4;
+  stroke: rgba(248, 247, 242, 0.84);
+  stroke-width: 4.4;
   stroke-linecap: round;
 }
 
@@ -377,9 +378,9 @@ const FOOTBALL_STYLES = String.raw`
 .football-piece-core {
   fill: var(--football-piece-fill);
   stroke: var(--football-piece-stroke);
-  stroke-width: 4.2;
+  stroke-width: 4.6;
   paint-order: stroke;
-  filter: drop-shadow(0 6px 12px rgba(10, 20, 15, 0.4)) drop-shadow(0 2px 4px rgba(10, 20, 15, 0.3));
+  filter: drop-shadow(0 7px 10px rgba(10, 20, 15, 0.34)) drop-shadow(0 2px 3px rgba(10, 20, 15, 0.32));
   transition: filter 140ms ease, stroke-width 140ms ease;
 }
 
@@ -390,7 +391,23 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-piece-panel {
-  fill: rgba(255, 255, 255, 0.14);
+  fill: rgba(255, 255, 255, 0.16);
+}
+
+.football-piece-stripe {
+  fill: rgba(255, 255, 255, 0.3);
+}
+
+.football-piece-number {
+  fill: rgba(255, 255, 255, 0.92);
+  font-size: 18px;
+  font-weight: 860;
+  text-anchor: middle;
+  dominant-baseline: central;
+  paint-order: stroke;
+  stroke: rgba(30, 38, 34, 0.24);
+  stroke-width: 2px;
+  pointer-events: none;
 }
 
 .football-piece.is-clickable:hover .football-piece-core {
@@ -461,6 +478,13 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-ball-seam {
   fill: #d8c39a;
+}
+
+.football-ball-stitch {
+  fill: none;
+  stroke: rgba(136, 116, 78, 0.72);
+  stroke-width: 1.35;
+  stroke-linecap: round;
 }
 
 .football-ball-highlight {
@@ -583,6 +607,7 @@ function createPiece(team, index, x, y) {
   return {
     id: `team-${team}-piece-${index}`,
     team,
+    index,
     x,
     y,
     vx: 0,
@@ -1218,9 +1243,11 @@ function renderField(state, canAct) {
           <circle class="football-turn-ring" cx="0" cy="0" r="${piece.r + 8}"></circle>
           <circle class="football-piece-core" cx="0" cy="0" r="${piece.r}"></circle>
           <circle class="football-piece-rim" cx="0" cy="0" r="${piece.r - 1.6}"></circle>
+          <path class="football-piece-stripe" d="M ${-piece.r * 0.16} ${-piece.r * 0.78} H ${piece.r * 0.16} V ${piece.r * 0.78} H ${-piece.r * 0.16} Z"></path>
           <path class="football-piece-panel" d="M ${-piece.r * 0.58} ${piece.r * 0.12} Q 0 ${piece.r * 0.58} ${piece.r * 0.58} ${piece.r * 0.12} Q 0 ${piece.r * 0.04} ${-piece.r * 0.58} ${piece.r * 0.12}"></path>
           <circle class="football-piece-detail" cx="${-piece.r * 0.36}" cy="${-piece.r * 0.4}" r="${piece.r * 0.3}"></circle>
           <ellipse class="football-piece-gloss" cx="${-piece.r * 0.18}" cy="${-piece.r * 0.34}" rx="${piece.r * 0.48}" ry="${piece.r * 0.28}"></ellipse>
+          <text class="football-piece-number" x="0" y="2">${piece.index + 1}</text>
         </g>
       `;
     })
@@ -1236,17 +1263,18 @@ function renderField(state, canAct) {
     >
       <defs>
         <linearGradient id="footballPitchFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#1B5E3C" />
-          <stop offset="50%" stop-color="#144C30" />
-          <stop offset="100%" stop-color="#0E3822" />
+          <stop offset="0%" stop-color="#227044" />
+          <stop offset="50%" stop-color="#155735" />
+          <stop offset="100%" stop-color="#0d3e29" />
         </linearGradient>
         <radialGradient id="footballPitchAmbient" cx="50%" cy="42%" r="72%">
           <stop offset="0%" stop-color="rgba(255,255,255,0.18)" />
           <stop offset="62%" stop-color="rgba(255,255,255,0)" />
           <stop offset="100%" stop-color="rgba(5,38,29,0.18)" />
         </linearGradient>
-        <pattern id="footballPitchPattern" width="32" height="32" patternUnits="userSpaceOnUse">
-          <path d="M16 0V32M0 16H32" stroke="rgba(255,255,255,0.1)" stroke-width="1"></path>
+        <pattern id="footballPitchPattern" width="34" height="34" patternUnits="userSpaceOnUse">
+          <path d="M0 8H34M0 25H34" stroke="rgba(255,255,255,0.075)" stroke-width="1"></path>
+          <path d="M8 0V34M25 0V34" stroke="rgba(0,0,0,0.045)" stroke-width="1"></path>
         </pattern>
       </defs>
 
@@ -1273,9 +1301,17 @@ function renderField(state, canAct) {
           const y = goalTop + index * (GOAL_MOUTH_HEIGHT / 4);
           return `<line class="football-goal-grid" x1="${-GOAL_DEPTH + 12}" y1="${y}" x2="0" y2="${y}"></line>`;
         }).join("")}
+        ${Array.from({ length: 4 }, (_, index) => {
+          const x = -GOAL_DEPTH + 14 + index * ((GOAL_DEPTH - 18) / 3);
+          return `<line class="football-goal-grid" x1="${x}" y1="${goalTop}" x2="${x}" y2="${goalBottom}"></line>`;
+        }).join("")}
         ${Array.from({ length: 5 }, (_, index) => {
           const y = goalTop + index * (GOAL_MOUTH_HEIGHT / 4);
           return `<line class="football-goal-grid" x1="${FIELD_WIDTH}" y1="${y}" x2="${FIELD_WIDTH + GOAL_DEPTH - 12}" y2="${y}"></line>`;
+        }).join("")}
+        ${Array.from({ length: 4 }, (_, index) => {
+          const x = FIELD_WIDTH + index * ((GOAL_DEPTH - 18) / 3);
+          return `<line class="football-goal-grid" x1="${x}" y1="${goalTop}" x2="${x}" y2="${goalBottom}"></line>`;
         }).join("")}
       </g>
 
@@ -1300,6 +1336,7 @@ function renderField(state, canAct) {
         <circle class="football-ball-shell" cx="0" cy="0" r="${BALL_RADIUS}"></circle>
         <circle class="football-ball-ring" cx="0" cy="0" r="${BALL_RADIUS - 1.8}"></circle>
         <path class="football-ball-seam" d="M-4 -6L4 -6L7 0L4 6H-4L-7 0Z"></path>
+        <path class="football-ball-stitch" d="M-7 0H7M-4 -6L-9 -10M4 -6L9 -10M-4 6L-9 10M4 6L9 10"></path>
         <circle class="football-ball-highlight" cx="${-BALL_RADIUS * 0.3}" cy="${-BALL_RADIUS * 0.38}" r="${BALL_RADIUS * 0.24}"></circle>
       </g>
     </svg>

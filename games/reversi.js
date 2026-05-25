@@ -591,16 +591,16 @@ export const reversiGame = {
             100% { transform: scale(1); opacity: 1; }
           }
 
-          /* Animación: Volteo 3D espectacular */
+          /* Animación: volteo breve */
           .reversi-piece-flipped {
-            animation: reversi-flip-piece-anim 0.55s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+            animation: reversi-flip-piece-anim 0.42s cubic-bezier(0.4, 0, 0.2, 1) forwards;
             backface-visibility: hidden;
             -webkit-backface-visibility: hidden;
           }
 
           @keyframes reversi-flip-piece-anim {
             0% { transform: rotateY(0deg) scale(1); filter: brightness(1); }
-            50% { transform: rotateY(90deg) scale(1.18); filter: brightness(1.35); }
+            50% { transform: rotateY(90deg) scale(1.08); filter: brightness(1.18); }
             100% { transform: rotateY(180deg) scale(1); filter: brightness(1); }
           }
 

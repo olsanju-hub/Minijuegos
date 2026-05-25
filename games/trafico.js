@@ -1462,6 +1462,213 @@ const TRAFICO_STYLES = String.raw`
     transition: box-shadow 0.2s ease-in-out !important;
   }
 
+  /* Anatomía final: vehículos top-down con carrocería, cristales, ruedas y luces legibles */
+  .screen.game-screen-trafico .traffic-player-car,
+  .screen.game-screen-trafico .traffic-rival-car {
+    inset: -3% 10% 1% !important;
+    border: 1px solid var(--traffic-car-stroke) !important;
+    border-radius: 24% 24% 18% 18% / 18% 18% 14% 14% !important;
+    clip-path: none !important;
+    background:
+      linear-gradient(90deg, rgba(0, 0, 0, 0.2) 0%, transparent 13%, transparent 87%, rgba(0, 0, 0, 0.18) 100%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.42) 0%, rgba(255, 255, 255, 0.1) 18%, transparent 42%),
+      linear-gradient(180deg, var(--traffic-car-top) 0%, var(--traffic-car-mid) 48%, var(--traffic-car-bottom) 100%) !important;
+    box-shadow:
+      0 13px 18px rgba(4, 10, 14, 0.44),
+      inset 0 2px 2px rgba(255, 255, 255, 0.4),
+      inset 0 -8px 12px rgba(0, 0, 0, 0.18) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-player-car {
+    --traffic-car-top: #9cd3ff;
+    --traffic-car-mid: #4387ee;
+    --traffic-car-bottom: #2456b8;
+    --traffic-car-stroke: rgba(24, 62, 137, 0.96);
+    --traffic-car-trim: rgba(15, 46, 115, 0.52);
+  }
+
+  .screen.game-screen-trafico .traffic-rival-car {
+    inset: -1% 12% 3% !important;
+    --traffic-car-top: #ffbc7d;
+    --traffic-car-mid: #ef6f4f;
+    --traffic-car-bottom: #b93831;
+    --traffic-car-stroke: rgba(129, 49, 42, 0.96);
+    --traffic-car-trim: rgba(103, 35, 30, 0.5);
+  }
+
+  .screen.game-screen-trafico .traffic-vehicle-shadow,
+  .screen.game-screen-trafico .traffic-bike-shadow {
+    left: 2% !important;
+    right: 2% !important;
+    bottom: -8% !important;
+    height: 18% !important;
+    border-radius: 50% !important;
+    background: rgba(0, 0, 0, 0.38) !important;
+    filter: blur(3px) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-car-hood {
+    top: 6% !important;
+    left: 22% !important;
+    right: 22% !important;
+    height: 18% !important;
+    border-radius: 48% 48% 20% 20% / 64% 64% 24% 24% !important;
+    background:
+      linear-gradient(90deg, transparent calc(50% - 1px), rgba(255, 255, 255, 0.34) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.04)) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-car-cabin {
+    top: 27% !important;
+    left: 15% !important;
+    right: 15% !important;
+    height: 35% !important;
+    gap: 8% !important;
+    padding: 6% 7% !important;
+    border-radius: 38% 38% 26% 26% / 28% 28% 22% 22% !important;
+    background:
+      linear-gradient(180deg, rgba(9, 30, 48, 0.24), rgba(4, 17, 30, 0.18)),
+      rgba(255, 255, 255, 0.1) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.24),
+      0 1px 0 rgba(255, 255, 255, 0.18) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-car-glass {
+    border-radius: 12px 12px 5px 5px / 10px 10px 5px 5px !important;
+    background:
+      radial-gradient(circle at 22% 18%, rgba(255, 255, 255, 0.92) 0 8%, transparent 9%),
+      linear-gradient(145deg, #eefbff 0%, #9bc8e2 48%, #507a94 100%) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(20, 50, 73, 0.16),
+      inset 0 -3px 5px rgba(11, 31, 48, 0.2) !important;
+    opacity: 0.96 !important;
+  }
+
+  .screen.game-screen-trafico .traffic-car-glass.is-rear {
+    border-radius: 5px 5px 13px 13px / 5px 5px 11px 11px !important;
+    background:
+      radial-gradient(circle at 76% 18%, rgba(255, 255, 255, 0.78) 0 7%, transparent 8%),
+      linear-gradient(145deg, #7fa9c0 0%, #d9f2ff 100%) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-car-trunk {
+    left: 20% !important;
+    right: 20% !important;
+    bottom: 10% !important;
+    height: 19% !important;
+    border-radius: 16% 16% 44% 44% / 16% 16% 54% 54% !important;
+    background:
+      linear-gradient(90deg, transparent calc(50% - 1px), rgba(255, 255, 255, 0.22) calc(50% - 1px) calc(50% + 1px), transparent calc(50% + 1px)),
+      linear-gradient(180deg, rgba(0, 0, 0, 0.08), rgba(255, 255, 255, 0.08)) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-car-beltline {
+    top: 64% !important;
+    left: 12% !important;
+    right: 12% !important;
+    height: 2px !important;
+    background: var(--traffic-car-trim) !important;
+    opacity: 0.82 !important;
+  }
+
+  .screen.game-screen-trafico .traffic-vehicle-wheel {
+    width: 16% !important;
+    height: 18% !important;
+    border-radius: 42% !important;
+    background:
+      radial-gradient(circle at 50% 48%, #d9e1e7 0 15%, #5b6872 16% 33%, #101820 34% 100%) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.12),
+      0 2px 4px rgba(0, 0, 0, 0.44) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-vehicle-wheel.is-front-left { left: -7% !important; top: 24% !important; }
+  .screen.game-screen-trafico .traffic-vehicle-wheel.is-front-right { right: -7% !important; top: 24% !important; }
+  .screen.game-screen-trafico .traffic-vehicle-wheel.is-rear-left { left: -7% !important; bottom: 16% !important; }
+  .screen.game-screen-trafico .traffic-vehicle-wheel.is-rear-right { right: -7% !important; bottom: 16% !important; }
+
+  .screen.game-screen-trafico .traffic-vehicle-light {
+    width: 12% !important;
+    height: 6% !important;
+    border-radius: 999px !important;
+  }
+
+  .screen.game-screen-trafico .traffic-vehicle-light.is-head-left,
+  .screen.game-screen-trafico .traffic-vehicle-light.is-head-right {
+    top: 3% !important;
+    background: #fff6c9 !important;
+    box-shadow: 0 0 6px rgba(255, 241, 180, 0.58) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-vehicle-light.is-head-left { left: 25% !important; }
+  .screen.game-screen-trafico .traffic-vehicle-light.is-head-right { right: 25% !important; }
+
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-left,
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-right {
+    bottom: 3% !important;
+    background: #e64a4a !important;
+    box-shadow: 0 0 5px rgba(230, 74, 74, 0.52) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-left { left: 24% !important; }
+  .screen.game-screen-trafico .traffic-vehicle-light.is-tail-right { right: 24% !important; }
+
+  .screen.game-screen-trafico .traffic-rival-truck {
+    inset: -4% 7% 0% !important;
+    filter: drop-shadow(0 14px 14px rgba(5, 10, 14, 0.42));
+  }
+
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-truck-cab {
+    top: 2% !important;
+    left: 13% !important;
+    right: 13% !important;
+    height: 30% !important;
+    border-radius: 28% 28% 14% 14% / 30% 30% 12% 12% !important;
+    background:
+      linear-gradient(180deg, rgba(255, 255, 255, 0.34), transparent 42%),
+      linear-gradient(180deg, #f6b550 0%, #d47b1f 100%) !important;
+    border: 1px solid rgba(155, 82, 22, 0.94) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-truck-cargo {
+    left: 7% !important;
+    right: 7% !important;
+    top: 31% !important;
+    bottom: 4% !important;
+    border-radius: 10px 10px 14px 14px !important;
+    background:
+      linear-gradient(90deg, rgba(255, 255, 255, 0.14), transparent 18%, transparent 82%, rgba(0, 0, 0, 0.2)),
+      linear-gradient(180deg, #aeb9c6 0%, #687789 100%) !important;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+      inset 0 -8px 12px rgba(0, 0, 0, 0.24) !important;
+    border: 1px solid #536173 !important;
+  }
+
+  .screen.game-screen-trafico .traffic-truck-windshield {
+    left: 18% !important;
+    right: 18% !important;
+    top: 18% !important;
+    height: 34% !important;
+    border-radius: 10px 10px 4px 4px !important;
+  }
+
+  .screen.game-screen-trafico .traffic-truck-rib {
+    height: 2px !important;
+    background: rgba(232, 239, 245, 0.72) !important;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.32) !important;
+  }
+
+  .screen.game-screen-trafico .traffic-player-car .traffic-vehicle-light.is-head-left::after,
+  .screen.game-screen-trafico .traffic-player-car .traffic-vehicle-light.is-head-right::after,
+  .screen.game-screen-trafico .traffic-rival-car .traffic-vehicle-light.is-head-left::after,
+  .screen.game-screen-trafico .traffic-rival-car .traffic-vehicle-light.is-head-right::after,
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-vehicle-light.is-head-left::after,
+  .screen.game-screen-trafico .traffic-rival-truck .traffic-vehicle-light.is-head-right::after {
+    content: none !important;
+  }
+
   /* Humo del escape continuo al jugar */
   .screen.game-screen-trafico .traffic-vehicle-light.is-tail-left::before {
     content: "" !important;
@@ -1483,7 +1690,7 @@ const TRAFICO_STYLES = String.raw`
     opacity: 0 !important;
   }
 
-  /* Monedas Flotantes de Oro Puro */
+  /* Recogibles con brillo contenido */
   .screen.game-screen-trafico .traffic-pickup-coin {
     background: 
       radial-gradient(circle at 35% 35%, #fffbeb 0 20%, #fef08a 25% 45%, #ca8a04 60% 80%, #854d0e 100%) !important;
@@ -1492,23 +1699,23 @@ const TRAFICO_STYLES = String.raw`
       0 4px 10px rgba(0, 0, 0, 0.35),
       inset 0 1px 1px #ffffff !important;
     border: 1px solid #eab308 !important;
-    animation: coin-spin 1.2s infinite linear, coin-float 1.5s ease-in-out infinite alternate !important;
+    animation: coin-float 1.6s ease-in-out infinite alternate !important;
   }
 
-  /* Sacudida Screenshake por colisión */
+  /* Feedback breve por colisión */
   .traffic-shell.is-crashed .traffic-road-frame {
     animation: traffic-crashed-shake 0.42s cubic-bezier(.36,.07,.19,.97) both !important;
   }
 
-  /* Chispas y Destellos en Colisiones */
+  /* Chispas contenidas en colisiones */
   .screen.game-screen-trafico .traffic-entity.is-collision::before {
     content: "" !important;
     position: absolute !important;
-    inset: -25px !important;
+    inset: -18px !important;
     background: 
       radial-gradient(circle, #facc15 0%, #ef4444 40%, transparent 70%),
       repeating-conic-gradient(from 0deg, #fef08a 0deg 15deg, transparent 15deg 30deg) !important;
-    animation: crash-spark-burst 0.5s cubic-bezier(0.1, 0.8, 0.3, 1) infinite !important;
+    animation: crash-spark-burst 0.42s cubic-bezier(0.1, 0.8, 0.3, 1) both !important;
     z-index: 10 !important;
     pointer-events: none !important;
   }
@@ -1518,11 +1725,11 @@ const TRAFICO_STYLES = String.raw`
     position: absolute !important;
     top: 50% !important;
     left: 50% !important;
-    width: 100px !important;
-    height: 100px !important;
+    width: 76px !important;
+    height: 76px !important;
     transform: translate(-50%, -50%) !important;
     background: radial-gradient(circle, #ffffff 0%, rgba(239, 68, 68, 0.8) 30%, transparent 60%) !important;
-    animation: crash-flash 0.08s ease-out infinite alternate !important;
+    animation: crash-flash 0.16s ease-out both !important;
     z-index: 9 !important;
     pointer-events: none !important;
   }
@@ -1558,21 +1765,16 @@ const TRAFICO_STYLES = String.raw`
     100% { transform: translate(-45%, 230%) scale(1.6); opacity: 0; filter: blur(3px); }
   }
 
-  @keyframes coin-spin {
-    0% { transform: rotateY(0deg); }
-    100% { transform: rotateY(360deg); }
-  }
-
   @keyframes coin-float {
     0% { transform: translateY(0); }
-    100% { transform: translateY(-5px); }
+    100% { transform: translateY(-3px); }
   }
 
   @keyframes traffic-crashed-shake {
     10%, 90% { transform: translate3d(-1px, 0, 0); }
-    20%, 80% { transform: translate3d(2px, 0, 0); }
-    30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-    40%, 60% { transform: translate3d(4px, 0, 0); }
+    25%, 75% { transform: translate3d(2px, 0, 0); }
+    45% { transform: translate3d(-3px, 0, 0); }
+    60% { transform: translate3d(3px, 0, 0); }
   }
 
   @keyframes crash-spark-burst {

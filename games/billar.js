@@ -403,14 +403,25 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-rail {
-  fill: #7f5c38;
+  fill: url(#billarRailFill);
   stroke: #5f4326;
   stroke-width: 2.6;
 }
 
 .billar-rail-inset {
-  fill: #9b7448;
-  opacity: 0.18;
+  fill: none;
+  stroke: rgba(244, 218, 176, 0.18);
+  stroke-width: 10;
+}
+
+.billar-cushion {
+  fill: url(#billarCushionFill);
+  stroke: rgba(42, 73, 54, 0.42);
+  stroke-width: 1.6;
+}
+
+.billar-rail-highlight {
+  fill: rgba(255, 235, 196, 0.18);
 }
 
 .billar-felt {
@@ -421,7 +432,7 @@ body:has(.screen.game-screen-billar) {
 
 .billar-felt-grid {
   fill: url(#billarFeltPattern);
-  opacity: 0.14;
+  opacity: 0.2;
 }
 
 .billar-felt-glow {
@@ -429,15 +440,15 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-pocket {
-  fill: #2a211a;
+  fill: url(#billarPocketFill);
 }
 
 .billar-pocket-mouth {
-  fill: rgba(18, 23, 30, 0.42);
+  fill: rgba(12, 18, 21, 0.46);
 }
 
 .billar-pocket-inner {
-  fill: rgba(0, 0, 0, 0.22);
+  fill: rgba(0, 0, 0, 0.52);
 }
 
 .billar-diamond {
@@ -467,10 +478,26 @@ body:has(.screen.game-screen-billar) {
 
 .billar-ball-shell {
   stroke-width: 2.2;
+  filter: drop-shadow(0 2px 2px rgba(255, 255, 255, 0.18));
 }
 
 .billar-ball-highlight {
   fill: rgba(255, 255, 255, 0.88);
+}
+
+.billar-ball-mark {
+  fill: rgba(41, 34, 28, 0.72);
+  font-size: 12px;
+  font-weight: 800;
+  text-anchor: middle;
+  dominant-baseline: central;
+  pointer-events: none;
+}
+
+.billar-ball-number-disc {
+  fill: rgba(255, 250, 240, 0.88);
+  stroke: rgba(72, 58, 44, 0.18);
+  stroke-width: 0.8;
 }
 
 .billar-cue-hit {
@@ -492,7 +519,8 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-aim-line.is-vector {
-  stroke: rgba(83, 113, 97, 0.94);
+  stroke: rgba(244, 237, 208, 0.94);
+  stroke-width: 5;
 }
 
 .billar-aim-anchor {
@@ -502,7 +530,7 @@ body:has(.screen.game-screen-billar) {
 }
 
 .billar-aim-tip {
-  stroke-width: 3;
+  stroke-width: 3.4;
 }
 
 @keyframes billarTurnPulse {
@@ -1487,7 +1515,8 @@ function renderTargetBall(ball) {
     <g class="billar-ball" transform="translate(${round(ball.x, 2)} ${round(ball.y, 2)})">
       <ellipse class="billar-ball-shadow" cx="1.6" cy="${BALL_RADIUS + 4}" rx="${BALL_RADIUS * 0.94}" ry="5.2"></ellipse>
       <circle class="billar-ball-shell" cx="0" cy="0" r="${BALL_RADIUS}" fill="${meta.fill}" stroke="${meta.stroke}"></circle>
-      <circle cx="0" cy="0" r="${BALL_RADIUS * 0.48}" fill="${meta.shine}" opacity="0.94"></circle>
+      <circle class="billar-ball-number-disc" cx="0" cy="0" r="${BALL_RADIUS * 0.48}"></circle>
+      <text class="billar-ball-mark" x="0" y="0">${ball.paletteIndex + 1}</text>
       <circle class="billar-ball-highlight" cx="${-BALL_RADIUS * 0.28}" cy="${-BALL_RADIUS * 0.34}" r="${BALL_RADIUS * 0.22}"></circle>
     </g>
   `;
@@ -1535,17 +1564,38 @@ function renderTable(state, canAct) {
     <svg class="billar-table ${!isCueActive ? "is-disabled" : ""}" data-billar-table viewBox="0 0 ${TABLE_WIDTH} ${TABLE_HEIGHT}" preserveAspectRatio="xMidYMid meet" role="presentation" aria-label="Mesa de billar">
       <defs>
         <linearGradient id="billarFeltFill" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="#11624f" />
-          <stop offset="100%" stop-color="#0a3b31" />
+          <stop offset="0%" stop-color="#15715c" />
+          <stop offset="52%" stop-color="#0d5747" />
+          <stop offset="100%" stop-color="#073b32" />
+        </linearGradient>
+        <linearGradient id="billarRailFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#9a7043" />
+          <stop offset="50%" stop-color="#6f4928" />
+          <stop offset="100%" stop-color="#4e301b" />
+        </linearGradient>
+        <linearGradient id="billarCushionFill" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#185f48" />
+          <stop offset="100%" stop-color="#0a3a2f" />
+        </linearGradient>
+        <radialGradient id="billarPocketFill" cx="50%" cy="46%" r="62%">
+          <stop offset="0%" stop-color="#050606" />
+          <stop offset="66%" stop-color="#15100d" />
+          <stop offset="100%" stop-color="#332318" />
         </linearGradient>
         <pattern id="billarFeltPattern" width="24" height="24" patternUnits="userSpaceOnUse">
-          <circle cx="4" cy="4" r="1.15" fill="rgba(255,255,255,0.18)"></circle>
+          <path d="M0 6H24M0 18H24M6 0V24M18 0V24" stroke="rgba(255,255,255,0.08)" stroke-width="1"></path>
+          <path d="M0 0L24 24M24 0L0 24" stroke="rgba(0,0,0,0.05)" stroke-width="1"></path>
         </pattern>
       </defs>
 
       <rect class="billar-table-frame" x="22" y="22" width="${TABLE_WIDTH - 44}" height="${TABLE_HEIGHT - 44}" rx="48"></rect>
       <rect class="billar-rail" x="44" y="44" width="${TABLE_WIDTH - 88}" height="${TABLE_HEIGHT - 88}" rx="40"></rect>
       <rect class="billar-rail-inset" x="54" y="54" width="${TABLE_WIDTH - 108}" height="${TABLE_HEIGHT - 108}" rx="34"></rect>
+      <rect class="billar-rail-highlight" x="70" y="60" width="${TABLE_WIDTH - 140}" height="9" rx="4"></rect>
+      <rect class="billar-cushion" x="${FELT_X - 18}" y="${FELT_Y - 22}" width="${FELT_WIDTH + 36}" height="24" rx="10"></rect>
+      <rect class="billar-cushion" x="${FELT_X - 18}" y="${FELT_Y + FELT_HEIGHT - 2}" width="${FELT_WIDTH + 36}" height="24" rx="10"></rect>
+      <rect class="billar-cushion" x="${FELT_X - 22}" y="${FELT_Y - 2}" width="24" height="${FELT_HEIGHT + 4}" rx="10"></rect>
+      <rect class="billar-cushion" x="${FELT_X + FELT_WIDTH - 2}" y="${FELT_Y - 2}" width="24" height="${FELT_HEIGHT + 4}" rx="10"></rect>
       <rect class="billar-felt" x="${FELT_X}" y="${FELT_Y}" width="${FELT_WIDTH}" height="${FELT_HEIGHT}" rx="24"></rect>
       <rect class="billar-felt-grid" x="${FELT_X}" y="${FELT_Y}" width="${FELT_WIDTH}" height="${FELT_HEIGHT}" rx="24"></rect>
       <ellipse class="billar-felt-glow" cx="${TABLE_WIDTH / 2}" cy="${TABLE_HEIGHT / 2}" rx="${FELT_WIDTH * 0.42}" ry="${FELT_HEIGHT * 0.36}" fill="rgba(255,255,255,0.16)"></ellipse>
@@ -1570,6 +1620,12 @@ function renderTable(state, canAct) {
         <circle class="billar-pocket" cx="${FELT_X}" cy="${FELT_Y + FELT_HEIGHT}" r="${POCKET_RADIUS + 8}"></circle>
         <circle class="billar-pocket" cx="${FELT_X + FELT_WIDTH / 2}" cy="${FELT_Y + FELT_HEIGHT}" r="${POCKET_RADIUS + 5}"></circle>
         <circle class="billar-pocket" cx="${FELT_X + FELT_WIDTH}" cy="${FELT_Y + FELT_HEIGHT}" r="${POCKET_RADIUS + 8}"></circle>
+        <circle class="billar-pocket-inner" cx="${FELT_X}" cy="${FELT_Y}" r="${POCKET_RADIUS * 0.64}"></circle>
+        <circle class="billar-pocket-inner" cx="${FELT_X + FELT_WIDTH / 2}" cy="${FELT_Y}" r="${POCKET_RADIUS * 0.54}"></circle>
+        <circle class="billar-pocket-inner" cx="${FELT_X + FELT_WIDTH}" cy="${FELT_Y}" r="${POCKET_RADIUS * 0.64}"></circle>
+        <circle class="billar-pocket-inner" cx="${FELT_X}" cy="${FELT_Y + FELT_HEIGHT}" r="${POCKET_RADIUS * 0.64}"></circle>
+        <circle class="billar-pocket-inner" cx="${FELT_X + FELT_WIDTH / 2}" cy="${FELT_Y + FELT_HEIGHT}" r="${POCKET_RADIUS * 0.54}"></circle>
+        <circle class="billar-pocket-inner" cx="${FELT_X + FELT_WIDTH}" cy="${FELT_Y + FELT_HEIGHT}" r="${POCKET_RADIUS * 0.64}"></circle>
       </g>
 
       <g data-billar-aim-layer></g>
