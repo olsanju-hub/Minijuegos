@@ -791,7 +791,7 @@ export const escalerasSerpientesGame = {
 
     return `
       <style>
-      /* EVOLUCIÓN PREMIUM: ESCALERAS Y SERPIENTES RÚNICAS EN PERGAMINO MEDIEVAL */
+      /* Dirección visual integrada: tablero ilustrado con volumen suave */
 
       .sns-shell, .sns-shell * {
         box-sizing: border-box !important;
@@ -804,44 +804,47 @@ export const escalerasSerpientesGame = {
         max-width: 1200px;
         margin: 0 auto;
         padding: 24px;
-        background: radial-gradient(circle at 50% 50%, #1a0f0a 0%, #0a0604 100%);
+        background:
+          radial-gradient(circle at 20% 12%, rgba(255, 255, 255, 0.72), transparent 34%),
+          linear-gradient(180deg, rgba(255, 252, 246, 0.96), rgba(243, 234, 220, 0.94));
         border-radius: 20px;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.85);
+        box-shadow: 0 20px 42px rgba(52, 45, 36, 0.14);
         font-family: 'Outfit', sans-serif;
-        color: #ebd2b4;
+        color: #2f3d35;
       }
 
-      /* MARCO DE ROBLE OSCURO RÚSTICO */
+      /* Marco de madera cálida */
       .sns-board-frame {
         padding: 20px;
         background:
-          radial-gradient(circle at 50% 50%, #3e271a 0%, #1e110a 100%),
-          repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 4px, transparent 4px, transparent 8px);
+          linear-gradient(135deg, #d2a572 0%, #9b704a 100%),
+          repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0px, rgba(255,255,255,0.08) 3px, transparent 3px, transparent 8px);
         border-radius: 18px;
         box-shadow:
-          inset 0 4px 12px rgba(255,255,255,0.08),
-          inset 0 -8px 20px rgba(0,0,0,0.8),
-          0 15px 35px rgba(0,0,0,0.9);
-        border: 5px solid #5a3c28;
+          inset 0 4px 12px rgba(255,255,255,0.24),
+          inset 0 -8px 18px rgba(74, 50, 29, 0.26),
+          0 15px 30px rgba(65, 50, 35, 0.2);
+        border: 5px solid #b58a5d;
       }
 
-      /* TABLERO DE PERGAMINO ANTIGUO */
+      /* Tablero de papel cálido con textura sutil */
       .sns-board {
         width: min(520px, 80vw, 70vh);
         height: min(520px, 80vw, 70vh);
         aspect-ratio: 1 / 1;
         background:
-          radial-gradient(circle at 50% 50%, #f4e3c1 0%, #d8be91 100%) !important;
-        border: 6px solid #2b170c;
+          radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.68) 0%, transparent 62%),
+          linear-gradient(135deg, #fff5df 0%, #ead1a3 100%) !important;
+        border: 6px solid #8d6846;
         border-radius: 12px;
         box-shadow:
-          inset 0 0 40px rgba(74, 46, 26, 0.6),
-          0 4px 8px rgba(0,0,0,0.5);
+          inset 0 0 34px rgba(139, 97, 53, 0.24),
+          0 4px 10px rgba(55, 42, 31, 0.22);
         position: relative;
         overflow: hidden;
       }
 
-      /* CUADRÍCULA RÚNICA */
+      /* Cuadrícula limpia */
       .sns-grid {
         display: grid;
         grid-template-rows: repeat(10, 1fr);
@@ -849,12 +852,12 @@ export const escalerasSerpientesGame = {
         width: 100%;
         height: 100%;
         gap: 1px;
-        background: rgba(74, 46, 26, 0.15);
+        background: rgba(130, 94, 55, 0.18);
       }
 
       .sns-cell {
         background: transparent !important;
-        border: 1px dashed rgba(74, 46, 26, 0.12);
+        border: 1px solid rgba(130, 94, 55, 0.16);
         display: flex;
         flex-direction: column;
         justify-content: space-between;
@@ -865,12 +868,11 @@ export const escalerasSerpientesGame = {
         background: rgba(74, 46, 26, 0.04) !important;
       }
 
-      /* NÚMEROS RÚNICOS GRABADOS */
+      /* Números grabados */
       .sns-cell-number {
-        font-family: 'Cinzel', serif, sans-serif;
         font-weight: 800;
         font-size: 13px;
-        color: #4a2e1a !important;
+        color: #5a4632 !important;
         opacity: 0.85;
       }
 
@@ -889,7 +891,7 @@ export const escalerasSerpientesGame = {
         100% { box-shadow: inset 0 0 18px #d4af37, 0 0 15px rgba(212, 175, 55, 0.6); }
       }
 
-      /* PEONES DE METAL ANTIGUO */
+      /* Peones con volumen suave */
       .sns-piece {
         width: 26px;
         height: 26px;
@@ -900,33 +902,33 @@ export const escalerasSerpientesGame = {
         justify-content: center;
         border: 2px solid rgba(255, 255, 255, 0.25) !important;
         box-shadow:
-          inset 0 2px 4px rgba(255,255,255,0.4),
-          inset 0 -3px 6px rgba(0,0,0,0.5),
-          0 4px 6px rgba(0,0,0,0.5);
+          inset 0 2px 4px rgba(255,255,255,0.48),
+          inset 0 -3px 6px rgba(0,0,0,0.32),
+          0 5px 8px rgba(55, 42, 31, 0.28);
         transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.2);
       }
       .sns-piece.is-active {
         animation: snsPieceFloat 1.4s infinite ease-in-out !important;
       }
       @keyframes snsPieceFloat {
-        0%, 100% { transform: translateY(0); box-shadow: 0 4px 6px rgba(0,0,0,0.5); }
-        50% { transform: translateY(-6px); box-shadow: 0 10px 14px rgba(0,0,0,0.7); }
+        0%, 100% { transform: translateY(0); box-shadow: 0 5px 8px rgba(55, 42, 31, 0.28); }
+        50% { transform: translateY(-4px); box-shadow: 0 9px 12px rgba(55, 42, 31, 0.34); }
       }
 
-      /* PEÓN DE BRONCE, PLATA, COBRE, ORO */
+      /* Peones por jugador */
       .sns-piece[style*="--sns-piece:#ff2a2f"] { background: radial-gradient(circle at 35% 35%, #e65c5c 0%, #991a1a 80%, #4d0d0d 100%) !important; }
       .sns-piece[style*="--sns-piece:#3192dc"] { background: radial-gradient(circle at 35% 35%, #5cadff 0%, #1a6699 80%, #0d334d 100%) !important; }
       .sns-piece[style*="--sns-piece:#f4df19"] { background: radial-gradient(circle at 35% 35%, #ffe65c 0%, #99831a 80%, #4d410d 100%) !important; }
       .sns-piece[style*="--sns-piece:#70bc35"] { background: radial-gradient(circle at 35% 35%, #99e65c 0%, #3d991a 80%, #1f4d0d 100%) !important; }
 
-      /* ANIMACIÓN FISICA DE REBOTE AL CAER EN CASILLA */
+      /* Entrada breve al caer en casilla */
       .sns-piece {
         animation: snsPieceBounce 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
       }
       @keyframes snsPieceBounce {
-        0% { transform: translateY(-50px) scale(1.35); opacity: 0; }
-        60% { transform: translateY(4px) scale(0.9); }
-        80% { transform: translateY(-6px) scale(1.04); }
+        0% { transform: translateY(-18px) scale(1.12); opacity: 0; }
+        60% { transform: translateY(2px) scale(0.96); }
+        80% { transform: translateY(-3px) scale(1.02); }
         100% { transform: translateY(0) scale(1); opacity: 1; }
       }
 
@@ -1087,28 +1089,45 @@ export const escalerasSerpientesGame = {
         flex: 1;
       }
       .sns-side-card {
-        background: rgba(30, 20, 15, 0.5) !important;
+        background:
+          radial-gradient(circle at 18% 0%, rgba(255, 255, 255, 0.68), transparent 38%),
+          linear-gradient(180deg, rgba(255, 252, 246, 0.92), rgba(240, 231, 216, 0.9)) !important;
         backdrop-filter: blur(8px);
-        border: 1px solid rgba(212, 175, 55, 0.15) !important;
+        border: 1px solid rgba(205, 190, 166, 0.72) !important;
         border-radius: 12px !important;
         padding: 16px !important;
-        box-shadow: 0 8px 32px rgba(0,0,0,0.5) !important;
+        box-shadow:
+          0 12px 24px rgba(55, 42, 31, 0.12),
+          inset 0 1px 0 rgba(255, 255, 255, 0.7) !important;
       }
       .sns-side-card h4 {
-        color: #ebd2b4 !important;
+        color: #7d6548 !important;
         margin-bottom: 12px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 1px;
       }
+      .sns-side-note,
+      .sns-player-pos {
+        color: #5f7268 !important;
+      }
+      .sns-turn-player,
+      .sns-player-name {
+        color: #24352e !important;
+      }
+      .sns-player-row {
+        background: rgba(255, 255, 255, 0.72) !important;
+        border: 1px solid rgba(205, 190, 166, 0.56) !important;
+        box-shadow: 0 6px 12px rgba(55, 42, 31, 0.08) !important;
+      }
       .sns-roll-btn {
-        background: linear-gradient(135deg, #a8623b 0%, #61341c 100%) !important;
-        border: 1px solid #ebd2b4 !important;
+        background: linear-gradient(135deg, #9f633b 0%, #6b3d24 100%) !important;
+        border: 1px solid rgba(255, 245, 228, 0.72) !important;
         color: #fff !important;
         font-weight: 800 !important;
         text-transform: uppercase;
         letter-spacing: 1px;
-        box-shadow: 0 4px 15px rgba(168, 98, 59, 0.4) !important;
+        box-shadow: 0 8px 18px rgba(118, 73, 43, 0.24) !important;
         transition: all 0.2s !important;
         border-radius: 8px !important;
         padding: 12px 24px !important;
@@ -1116,7 +1135,7 @@ export const escalerasSerpientesGame = {
       }
       .sns-roll-btn:hover:not(:disabled) {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(168, 98, 59, 0.6) !important;
+        box-shadow: 0 10px 22px rgba(118, 73, 43, 0.3) !important;
       }
 
       /* RESPONSIVE FLUIDO APANIZADO */

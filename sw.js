@@ -1,4 +1,4 @@
-const CACHE_NAME = "minijuegos-shell-v20";
+const CACHE_NAME = "minijuegos-shell-v21";
 const UPDATE_MESSAGE_TYPE = "minijuegos:sw-activated";
 const SCOPE_URL = new URL(self.registration.scope);
 const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;
@@ -13,10 +13,10 @@ const APP_SHELL = [
   `${APP_BASE}engine.js`,
   `${APP_BASE}ui.js`,
   `${APP_BASE}manifest.webmanifest`,
-  `${APP_BASE}assets/icono.png`,
+  `${APP_BASE}assets/icono.webp`,
   `${APP_BASE}assets/icon-192.png`,
   `${APP_BASE}assets/icon-512.png`,
-  `${APP_BASE}assets/home-hero-family.png`,
+  `${APP_BASE}assets/home-hero-family.webp`,
   `${APP_BASE}games/tres-en-raya.js`,
   `${APP_BASE}games/cuatro-en-raya.js`,
   `${APP_BASE}games/damas.js`,
@@ -28,7 +28,8 @@ const APP_SHELL = [
   `${APP_BASE}games/parejas.js`,
   `${APP_BASE}games/billar.js`,
   `${APP_BASE}games/futbol-turnos.js`,
-  `${APP_BASE}games/tanques.js`
+  `${APP_BASE}games/tanques.js`,
+  `${APP_BASE}games/reversi.js`
 ];
 
 const NETWORK_FIRST_PATHS = new Set([

@@ -730,7 +730,10 @@ export function createUI({ appElement, toastElement }) {
       <header class="home-topbar" role="banner">
         <div class="home-topbar-brand">
           <div class="home-topbar-icon">
-            <img src="./assets/icono.png" alt="Minijuegos" />
+            <picture>
+              <source srcset="./assets/icono.webp" type="image/webp" />
+              <img src="./assets/icono.png" alt="Minijuegos" />
+            </picture>
           </div>
           <h1 class="home-topbar-name">Minijuegos</h1>
         </div>
@@ -747,13 +750,16 @@ export function createUI({ appElement, toastElement }) {
 
           <!-- HERO -->
           <section class="home-hero" aria-label="Bienvenida">
-            <img
-              class="home-hero-img"
-              src="./assets/home-hero-family.png"
-              alt="Familia jugando juntos"
-              loading="eager"
-              fetchpriority="high"
-            />
+            <picture>
+              <source srcset="./assets/home-hero-family.webp" type="image/webp" />
+              <img
+                class="home-hero-img"
+                src="./assets/home-hero-family.png"
+                alt="Familia jugando juntos"
+                loading="eager"
+                fetchpriority="high"
+              />
+            </picture>
             <div class="home-hero-overlay" aria-hidden="true"></div>
             <div class="home-hero-body">
               <h2 class="home-hero-title">Juegos para<br>toda la familia</h2>

@@ -144,7 +144,7 @@ body:not(.is-home-screen) .bg-layer {
 .screen {
   display: grid;
   gap: 18px;
-  animation: screenIn 210ms var(--ui-ease);
+  animation: screenIn 180ms var(--ui-ease);
 }
 
 @keyframes screenIn {
@@ -11838,6 +11838,12 @@ body.is-game-screen {
   overflow: hidden;
   flex-shrink: 0;
   box-shadow: var(--shadow-z2);
+}
+
+.home-topbar-icon picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .home-topbar-icon img {
