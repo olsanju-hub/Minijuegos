@@ -506,6 +506,55 @@ const BUSCAMINAS_STYLES = String.raw`
 .mines-cell.is-number-6 .mines-number { color: #2b7e87 !important; text-shadow: none !important; }
 .mines-cell.is-number-7 .mines-number { color: #58606b !important; text-shadow: none !important; }
 .mines-cell.is-number-8 .mines-number { color: #7b8794 !important; text-shadow: none !important; }
+
+@media (min-width: 761px) {
+  .mines-shell {
+    gap: 20px;
+  }
+
+  .mines-board-frame {
+    max-width: min(100%, 920px);
+    margin: 0 auto;
+  }
+}
+
+@media (max-width: 760px) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-buscaminas {
+    width: 100%;
+  }
+
+  .mines-shell {
+    width: 100%;
+    gap: 12px;
+  }
+
+  .mines-hud {
+    padding: 14px !important;
+    border-radius: 20px !important;
+  }
+
+  .mines-hud-head,
+  .mines-live-grid,
+  .mines-mobile-tools {
+    gap: 10px !important;
+  }
+
+  .mines-stat {
+    padding: 9px 10px !important;
+  }
+
+  .mines-board-frame {
+    width: min(100%, calc(100vw - 44px));
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 12px !important;
+    border-radius: 22px !important;
+  }
+
+  .mines-board {
+    gap: clamp(3px, 1.2vw, 5px) !important;
+  }
+}
 `;
 
 function ensureBuscaminasStyles() {

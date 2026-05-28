@@ -996,16 +996,16 @@ export const damasGame = {
             box-shadow: inset 0 0 0 4px rgba(226, 164, 64, 0.34) !important;
           }
 
-          @media (max-width: 760px) {
-            .screen.game-screen-damas .checkers-shell {
-              width: min(100%, calc(100vw - 44px));
-              padding: 10px;
-              box-sizing: border-box;
-            }
+	          @media (max-width: 760px) {
+	            .screen.game-screen-damas .checkers-shell {
+	              width: min(100%, calc(100vw - 48px));
+	              padding: 12px;
+	              box-sizing: border-box;
+	            }
 
-            .screen.game-screen-damas .checkers-board {
-              width: min(100%, calc(100vw - 72px));
-              max-width: calc(100vw - 72px);
+	            .screen.game-screen-damas .checkers-board {
+	              width: 100%;
+	              max-width: calc(100vw - 72px);
               padding: 6px;
               gap: 1px;
               box-sizing: border-box;

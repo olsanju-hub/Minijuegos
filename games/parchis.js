@@ -2048,12 +2048,20 @@ export const parchisGame = {
         .parchis-shell {
           flex-direction: column;
           align-items: center;
-          gap: 16px;
-          padding: 12px;
+          gap: 18px;
+          padding: 16px;
         }
         .parchis-board-frame {
           margin: 0 auto;
-          padding: 8px;
+          width: min(100%, calc(100vw - 48px));
+          padding: 10px;
+          box-sizing: border-box !important;
+        }
+        .parchis-board {
+          width: 100%;
+          height: auto;
+          max-width: 520px;
+          max-height: none;
         }
         .parchis-side {
           width: 100%;
@@ -2077,6 +2085,10 @@ export const parchisGame = {
           display: flex;
           flex-direction: column;
           width: 100%;
+          gap: 12px;
+        }
+        .parchis-side-card {
+          padding: 14px !important;
         }
       }
 

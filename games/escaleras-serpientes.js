@@ -1143,12 +1143,20 @@ export const escalerasSerpientesGame = {
         .sns-shell {
           flex-direction: column;
           align-items: center;
-          gap: 16px;
-          padding: 12px;
+          gap: 18px;
+          padding: 16px;
         }
         .sns-board-frame {
           margin: 0 auto;
-          padding: 8px;
+          width: min(100%, calc(100vw - 48px));
+          padding: 10px;
+          box-sizing: border-box;
+        }
+        .sns-board {
+          width: 100%;
+          height: auto;
+          max-width: 520px;
+          max-height: none;
         }
         .sns-side {
           width: 100%;
@@ -1169,6 +1177,10 @@ export const escalerasSerpientesGame = {
           display: flex;
           flex-direction: column;
           width: 100%;
+          gap: 12px;
+        }
+        .sns-side-card {
+          padding: 14px !important;
         }
       }
 
