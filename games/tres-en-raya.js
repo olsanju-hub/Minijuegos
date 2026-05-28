@@ -218,7 +218,7 @@ export const tresEnRayaGame = {
               <span class="mark mark-x" style="--player-color: ${color}">
                 <svg class="ttt-piece-svg" viewBox="0 0 100 100">
                   <path d="M20 15 L35 15 L50 40 L65 15 L80 15 L58 50 L80 85 L65 85 L50 60 L35 85 L20 85 L42 50 Z" 
-                        fill="url(#brushedSteel)" stroke="#111" stroke-width="1.5" />
+                        fill="var(--player-color)" stroke="rgba(80, 62, 38, 0.28)" stroke-width="1.5" />
                   <path d="M22 18 L33 18 L50 42 L67 18 L78 18 L56 50 L78 82 L67 82 L50 58 L33 82 L22 82 L44 50 Z" 
                         fill="none" stroke="rgba(255,255,255,0.4)" stroke-width="1" />
                 </svg>
@@ -229,9 +229,9 @@ export const tresEnRayaGame = {
               <span class="mark mark-o" style="--player-color: ${color}">
                 <svg class="ttt-piece-svg" viewBox="0 0 100 100">
                   <!-- Extrusion shadow -->
-                  <circle cx="50" cy="52" r="32" fill="none" stroke="#5a220a" stroke-width="16" />
+                  <circle cx="50" cy="52" r="32" fill="none" stroke="rgba(80, 62, 38, 0.18)" stroke-width="16" />
                   <!-- Main Copper Ring -->
-                  <circle cx="50" cy="50" r="32" fill="none" stroke="url(#polishedCopper)" stroke-width="16" />
+                  <circle cx="50" cy="50" r="32" fill="none" stroke="var(--player-color)" stroke-width="16" />
                   <!-- Bevel ring (outer highlight) -->
                   <circle cx="50" cy="50" r="39" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1" />
                   <!-- Bevel ring (inner highlight) -->
@@ -248,7 +248,7 @@ export const tresEnRayaGame = {
               <span class="mark mark-x is-ghost">
                 <svg class="ttt-piece-svg" viewBox="0 0 100 100">
                   <path d="M20 15 L35 15 L50 40 L65 15 L80 15 L58 50 L80 85 L65 85 L50 60 L35 85 L20 85 L42 50 Z" 
-                        fill="url(#brushedSteel)" stroke="#111" stroke-width="1.5" />
+                        fill="#8a9a8f" stroke="rgba(80, 62, 38, 0.22)" stroke-width="1.5" />
                 </svg>
               </span>
             `;
@@ -256,7 +256,7 @@ export const tresEnRayaGame = {
             ghostContent = `
               <span class="mark mark-o is-ghost">
                 <svg class="ttt-piece-svg" viewBox="0 0 100 100">
-                  <circle cx="50" cy="50" r="32" fill="none" stroke="url(#polishedCopper)" stroke-width="16" />
+                  <circle cx="50" cy="50" r="32" fill="none" stroke="#8a9a8f" stroke-width="16" />
                 </svg>
               </span>
             `;
@@ -524,6 +524,77 @@ export const tresEnRayaGame = {
           }
           @keyframes tttDrawLine {
             to { stroke-dashoffset: 0; }
+          }
+
+          /* Phase 1 visual unification: light family tabletop board */
+          .screen.game-screen-tictactoe .ttt-board-container {
+            background:
+              radial-gradient(circle at 50% 12%, rgba(255,255,255,0.86), transparent 55%),
+              linear-gradient(180deg, #fffaf1 0%, #efe2c8 100%);
+            border: 1px solid #d9c6a7;
+            border-radius: 24px;
+            box-shadow:
+              0 18px 34px rgba(72, 58, 38, 0.14),
+              inset 0 1px 0 rgba(255,255,255,0.95);
+            padding: 22px;
+          }
+
+          .screen.game-screen-tictactoe .ttt-brass-corner {
+            display: none;
+          }
+
+          .screen.game-screen-tictactoe .ttt-board {
+            background:
+              linear-gradient(rgba(183, 158, 117, 0.08) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(183, 158, 117, 0.08) 1px, transparent 1px),
+              radial-gradient(circle at 50% 18%, #fffdf8 0%, #f3eadb 100%);
+            background-size: 28px 28px, 28px 28px, auto;
+            border: 1px solid #d7c5a8;
+            border-radius: 18px;
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,0.9),
+              0 10px 22px rgba(91, 72, 42, 0.1);
+          }
+
+          .screen.game-screen-tictactoe .ttt-chalk-grid g[stroke] {
+            stroke: rgba(138, 105, 62, 0.52);
+            stroke-width: 4;
+            filter: none;
+          }
+
+          .screen.game-screen-tictactoe .ttt-chalk-grid g[fill] {
+            display: none;
+          }
+
+          .screen.game-screen-tictactoe .ttt-cell {
+            border-radius: 12px;
+          }
+
+          .screen.game-screen-tictactoe .ttt-cell:hover:not([disabled]) {
+            background: rgba(255,255,255,0.52);
+            box-shadow: inset 0 0 0 1px rgba(216, 196, 157, 0.55), 0 6px 12px rgba(91, 72, 42, 0.08);
+          }
+
+          .screen.game-screen-tictactoe .ttt-cell.is-last {
+            background: rgba(232, 221, 201, 0.42);
+            box-shadow: inset 0 0 0 1px rgba(202, 183, 151, 0.48);
+          }
+
+          .screen.game-screen-tictactoe .ttt-cell.is-winning {
+            background: radial-gradient(circle, rgba(235, 191, 86, 0.24) 0%, rgba(235, 191, 86, 0.04) 72%);
+          }
+
+          .screen.game-screen-tictactoe .mark {
+            filter: drop-shadow(0 5px 8px rgba(91,72,42,0.18));
+          }
+
+          .screen.game-screen-tictactoe .mark.is-ghost {
+            filter: opacity(0.36) saturate(0.7);
+          }
+
+          .screen.game-screen-tictactoe .ttt-piece-svg [stroke="#111"],
+          .screen.game-screen-tictactoe .ttt-piece-svg [stroke="#5a220a"] {
+            stroke: var(--player-color, #315f4f);
           }
         </style>
         <div class="ttt-board">
