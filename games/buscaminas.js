@@ -330,6 +330,182 @@ const BUSCAMINAS_STYLES = String.raw`
   0%, 100% { opacity: 0; }
   50% { opacity: 1; }
 }
+
+/* Phase 1 visual unification: light Minijuegos puzzle surface */
+.mines-hud {
+  border: 1px solid rgba(215, 198, 166, 0.9) !important;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(250, 246, 238, 0.98)) !important;
+  box-shadow:
+    0 14px 28px rgba(72, 58, 38, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95) !important;
+  border-radius: 22px !important;
+}
+
+.mines-hud::before,
+.mines-hud::after {
+  display: none !important;
+}
+
+.mines-mode-pill {
+  background: #f5efe3 !important;
+  color: #6d5d45 !important;
+  border: 1px solid #e2d3b9 !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  text-shadow: none !important;
+}
+
+.mines-mode-pill.is-soft {
+  background: #eef5ee !important;
+  color: #2f755b !important;
+  border-color: #cde2d6 !important;
+}
+
+.mines-board-summary,
+.mines-note,
+.mines-mobile-label {
+  color: #6b7280 !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  text-shadow: none !important;
+}
+
+.mines-restart-btn {
+  background: linear-gradient(180deg, #fffdf8 0%, #f1e6d2 100%) !important;
+  color: #315f4f !important;
+  border: 1px solid #d8c49d !important;
+  box-shadow: 0 8px 18px rgba(79, 62, 34, 0.12), inset 0 1px 0 rgba(255,255,255,0.95) !important;
+  border-radius: 14px !important;
+  text-shadow: none !important;
+}
+
+.mines-restart-btn:hover {
+  background: linear-gradient(180deg, #ffffff 0%, #f6ecd9 100%) !important;
+}
+
+.mines-restart-btn:active {
+  transform: translateY(1px) !important;
+  box-shadow: 0 4px 10px rgba(79, 62, 34, 0.12), inset 0 2px 5px rgba(104, 76, 33, 0.12) !important;
+}
+
+.mines-stat {
+  background: rgba(255, 255, 255, 0.78) !important;
+  border: 1px solid #e3d7c3 !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 6px 14px rgba(92, 72, 43, 0.06) !important;
+}
+
+.mines-stat-label {
+  color: #7b8794 !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+}
+
+.mines-stat-value {
+  color: #315f4f !important;
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  text-shadow: none !important;
+}
+
+.mines-mobile-tools {
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1px solid #e3d7c3 !important;
+}
+
+.mines-mode-btn {
+  background: #fbf7ef !important;
+  color: #596579 !important;
+  border: 1px solid #dfd2bc !important;
+}
+
+.mines-mode-btn.is-active {
+  background: #eaf4ef !important;
+  color: #27644e !important;
+  border-color: #bcd9cb !important;
+  box-shadow: 0 4px 10px rgba(39, 100, 78, 0.1) !important;
+}
+
+.mines-board-frame {
+  border: 1px solid #d9c6a7 !important;
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.9), transparent 55%),
+    linear-gradient(180deg, #fffaf1 0%, #efe2c8 100%) !important;
+  box-shadow:
+    0 20px 36px rgba(79, 62, 34, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.95) !important;
+  border-radius: 26px !important;
+}
+
+.mines-board-frame::before {
+  inset: 8px !important;
+  border: 1px solid rgba(184, 157, 114, 0.28) !important;
+  border-radius: 19px !important;
+}
+
+.mines-cell {
+  border-radius: 8px !important;
+  background: linear-gradient(180deg, #fffdf8 0%, #e9dfce 100%) !important;
+  box-shadow:
+    0 3px 0 #cab99d,
+    0 7px 12px rgba(91, 72, 42, 0.12),
+    inset 0 1px 0 rgba(255,255,255,0.96) !important;
+}
+
+.mines-cell:hover:not([disabled]) {
+  background: linear-gradient(180deg, #ffffff 0%, #f0e7d8 100%) !important;
+  box-shadow:
+    0 3px 0 #c5b293,
+    0 9px 14px rgba(91, 72, 42, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.98) !important;
+}
+
+.mines-cell:active:not([disabled]),
+.mines-cell.is-open {
+  background: linear-gradient(180deg, #eee3d2 0%, #f8f2e8 100%) !important;
+  box-shadow: inset 0 2px 6px rgba(110, 87, 51, 0.16), 0 1px 0 rgba(255,255,255,0.9) !important;
+  transform: translateY(2px) !important;
+}
+
+.mines-cell.is-flagged {
+  background: linear-gradient(180deg, #fff1cf 0%, #efd08a 100%) !important;
+  box-shadow:
+    0 3px 0 #c69a42,
+    0 7px 12px rgba(122, 88, 31, 0.14),
+    inset 0 1px 0 rgba(255,255,255,0.78) !important;
+}
+
+.mines-icon-flag {
+  color: #b96b2c !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.65) !important;
+}
+
+.mines-cell.is-wrong-flag,
+.mines-cell.is-detonated {
+  background: linear-gradient(180deg, #ffe7dc 0%, #e89b82 100%) !important;
+  box-shadow: inset 0 0 0 1px rgba(174, 80, 54, 0.24), 0 8px 16px rgba(174, 80, 54, 0.16) !important;
+}
+
+.mines-cell.is-revealed-mine {
+  background: linear-gradient(180deg, #efe4d4 0%, #d8c5a7 100%) !important;
+  box-shadow: inset 0 2px 7px rgba(92, 72, 44, 0.22) !important;
+}
+
+.mines-icon-mine {
+  color: #5f5b54 !important;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.8) !important;
+  animation: none !important;
+}
+
+.mines-number {
+  font-family: 'Outfit', 'Inter', sans-serif !important;
+  text-shadow: none !important;
+}
+
+.mines-cell.is-number-1 .mines-number { color: #376fc8 !important; text-shadow: none !important; }
+.mines-cell.is-number-2 .mines-number { color: #2e7a5d !important; text-shadow: none !important; }
+.mines-cell.is-number-3 .mines-number { color: #c45c4a !important; text-shadow: none !important; }
+.mines-cell.is-number-4 .mines-number { color: #7262aa !important; text-shadow: none !important; }
+.mines-cell.is-number-5 .mines-number { color: #9a6a24 !important; text-shadow: none !important; }
+.mines-cell.is-number-6 .mines-number { color: #2b7e87 !important; text-shadow: none !important; }
+.mines-cell.is-number-7 .mines-number { color: #58606b !important; text-shadow: none !important; }
+.mines-cell.is-number-8 .mines-number { color: #7b8794 !important; text-shadow: none !important; }
 `;
 
 function ensureBuscaminasStyles() {

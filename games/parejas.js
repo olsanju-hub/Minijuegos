@@ -477,6 +477,137 @@ const MEMORY_STYLES = String.raw`
     height: 32px;
   }
 }
+
+/* Phase 1 visual unification: light family-table memory cards */
+.memory-hud {
+  border: 1px solid rgba(215, 198, 166, 0.9);
+  background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(250,246,238,0.98));
+  box-shadow: 0 14px 28px rgba(72, 58, 38, 0.08), inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+.memory-hud::after {
+  display: none;
+}
+
+.memory-mode-pill {
+  background: #f5efe3;
+  color: #7a633d;
+  border-color: #e2d3b9;
+  text-shadow: none;
+}
+
+.memory-mode-pill.is-soft {
+  background: #eaf4ef;
+  color: #2f755b;
+  border-color: #cde2d6;
+}
+
+.memory-title {
+  color: #1f2937;
+  text-shadow: none;
+}
+
+.memory-note {
+  color: #667085;
+}
+
+.memory-note.is-match {
+  color: #2f755b;
+  text-shadow: none;
+}
+
+.memory-note.is-miss {
+  color: #b85b4a;
+  text-shadow: none;
+}
+
+.memory-stat {
+  border-color: #e4d7c0;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.9), 0 6px 14px rgba(92, 72, 43, 0.06);
+}
+
+.memory-stat-label {
+  color: #7b8794;
+}
+
+.memory-stat-value {
+  color: #315f4f;
+  text-shadow: none;
+}
+
+.memory-board-frame {
+  border: 1px solid #d9c6a7;
+  background:
+    radial-gradient(circle at 50% 15%, rgba(255,255,255,0.8), transparent 55%),
+    linear-gradient(180deg, #fffaf1 0%, #efe2c8 100%);
+  box-shadow: 0 20px 36px rgba(79, 62, 34, 0.14), inset 0 1px 0 rgba(255,255,255,0.95);
+}
+
+.memory-board-frame::before {
+  background-image:
+    linear-gradient(rgba(189, 169, 132, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(189, 169, 132, 0.08) 1px, transparent 1px);
+  background-size: 22px 22px;
+  opacity: 0.42;
+}
+
+.memory-card-inner {
+  box-shadow: 0 8px 16px rgba(91, 72, 42, 0.14);
+}
+
+.memory-card:not([disabled]):hover .memory-card-inner {
+  transform: translateY(-5px) rotateX(4deg) scale(1.02);
+  box-shadow: 0 16px 24px rgba(91, 72, 42, 0.18);
+}
+
+.memory-card-front {
+  border: 1px solid #d8c49d;
+  background:
+    linear-gradient(135deg, rgba(255,255,255,0.42), rgba(255,255,255,0) 42%),
+    repeating-linear-gradient(45deg, rgba(92, 150, 124, 0.14) 0 8px, rgba(92, 150, 124, 0.06) 8px 16px),
+    linear-gradient(180deg, #f9f3e6 0%, #dceadf 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.92), inset 0 -1px 0 rgba(112, 87, 47, 0.12);
+}
+
+.memory-card-front::before {
+  border-color: rgba(216, 196, 157, 0.62);
+  background: none;
+}
+
+.memory-card-front::after {
+  border-color: rgba(92, 150, 124, 0.22);
+}
+
+.memory-card-back {
+  border-color: #ddd0bb;
+  background: radial-gradient(circle at 32% 28%, #ffffff 0%, #fbf7ef 62%, #efe4d2 100%);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.95), inset 0 -1px 0 rgba(112, 87, 47, 0.08);
+}
+
+.memory-card-back::before {
+  border-color: rgba(216, 196, 157, 0.5);
+}
+
+.memory-card.is-match .memory-card-back {
+  border-color: #b8d8c8;
+  box-shadow: 0 0 0 3px rgba(80, 145, 112, 0.12), inset 0 1px 0 rgba(255,255,255,0.95);
+  animation: none;
+}
+
+.memory-card-badge {
+  color: #315f4f;
+  border-color: rgba(49, 95, 79, 0.2);
+  background:
+    radial-gradient(circle at 35% 30%, rgba(255,255,255,0.75) 0%, rgba(255,255,255,0) 45%),
+    linear-gradient(180deg, #eef7f1 0%, #cde4d7 100%);
+  box-shadow: 0 4px 8px rgba(72, 58, 38, 0.12), inset 0 1px 0 rgba(255,255,255,0.7);
+  text-shadow: none;
+}
+
+.memory-card:focus-visible .memory-card-inner {
+  box-shadow: 0 0 0 3px rgba(49, 95, 79, 0.24), 0 12px 20px rgba(91, 72, 42, 0.16);
+}
 `;
 
 function ensureMemoryStyles() {
