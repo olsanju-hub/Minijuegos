@@ -408,18 +408,30 @@ const MEMORY_STYLES = String.raw`
   }
 }
 
+@media (min-width: 901px) {
+  .memory-shell {
+    gap: 20px;
+  }
+
+  .memory-board-frame {
+    width: min(100%, 760px);
+    margin: 0 auto;
+  }
+}
+
 @media (max-width: 760px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-memory {
-    width: min(100%, calc(100vw - 10px));
+    width: 100%;
   }
 
   .memory-shell {
-    gap: 8px;
+    width: 100%;
+    gap: 12px;
   }
 
   .memory-hud {
     padding: 14px 16px;
-    gap: 8px;
+    gap: 10px;
     border-width: 3px;
   }
 
@@ -449,7 +461,9 @@ const MEMORY_STYLES = String.raw`
   }
 
   .memory-board-frame {
-    padding: 10px;
+    width: min(100%, calc(100vw - 44px));
+    margin: 0 auto;
+    padding: 12px;
     border-width: 6px;
     border-radius: 22px;
   }

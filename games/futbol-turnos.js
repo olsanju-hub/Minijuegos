@@ -173,6 +173,36 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 @media (max-width: 1024px) and (orientation: portrait) {
+  .app-shell:not(.app-shell-home) .screen.game-screen-futbol-turnos {
+    height: auto;
+    min-height: calc(var(--app-dvh, 100dvh) - 28px);
+    max-height: none;
+    overflow: visible;
+  }
+
+  .game-screen-futbol-turnos .game-shell-body {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 0;
+    overflow: visible;
+  }
+
+  .game-screen-futbol-turnos .game-stage-layout,
+  .game-screen-futbol-turnos .game-stage-main,
+  .game-screen-futbol-turnos .board-wrap {
+    height: auto;
+    min-height: min(680px, calc(var(--app-dvh, 100dvh) - 150px));
+    overflow: visible;
+  }
+
+  .football-shell {
+    height: min(680px, calc(var(--app-dvh, 100dvh) - 150px));
+    min-height: 0;
+    border-radius: 20px;
+    overflow: hidden;
+  }
+
   .football-field {
     padding: 0;
     transform: rotate(90deg);
@@ -745,7 +775,7 @@ function computeFootballFieldMetrics(uiState, layoutMode) {
   const viewportWidth = Math.max(320, Number(viewport.width) || 390);
   const viewportHeight = Math.max(320, Number(viewport.height) || 844);
   const horizontalReserve = layoutMode === "mobile-landscape" ? 92 : 16;
-  const verticalReserve = layoutMode === "mobile-landscape" ? 12 : 58;
+  const verticalReserve = layoutMode === "mobile-landscape" ? 18 : 188;
   const availableWidth = Math.max(260, viewportWidth - horizontalReserve);
   const availableHeight = Math.max(220, viewportHeight - verticalReserve);
 

@@ -917,8 +917,8 @@ const SOKOBAN_STYLES = String.raw`
 
 @media (max-width: 760px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-sokoban {
-    width: min(100%, calc(100vw - 10px));
-    gap: 8px;
+    width: 100%;
+    gap: 12px;
   }
 
   .app-shell:not(.app-shell-home) .game-screen-sokoban .topbar {
@@ -927,7 +927,7 @@ const SOKOBAN_STYLES = String.raw`
 
   .sokoban-shell {
     width: min(100%, 720px);
-    gap: 8px;
+    gap: 12px;
   }
 
   .sokoban-hud {
@@ -980,8 +980,10 @@ const SOKOBAN_STYLES = String.raw`
   }
 
   .sokoban-board-frame {
-    padding: 6px;
-    border-radius: 18px;
+    width: min(100%, calc(100vw - 44px));
+    margin: 0 auto;
+    padding: 8px;
+    border-radius: 20px;
   }
 
   .sokoban-board-frame[data-game-swipe-zone] {
@@ -1032,8 +1034,8 @@ const SOKOBAN_STYLES = String.raw`
   }
 
   .sokoban-controls {
-    padding: 10px 12px;
-    gap: 6px;
+    padding: 12px 14px;
+    gap: 10px;
   }
 
   .sokoban-controls-head {
@@ -1067,7 +1069,7 @@ const SOKOBAN_STYLES = String.raw`
 
   .sokoban-control-pad {
     width: min(100%, 168px);
-    gap: 5px;
+    gap: 6px;
   }
 
   .sokoban-control-gap {

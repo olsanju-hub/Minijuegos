@@ -64,8 +64,8 @@ body:has(.screen.game-screen-billar) {
 }
 
 .app-shell:not(.app-shell-home) .screen.game-screen-billar {
-  width: min(1760px, calc(100vw - 10px));
-  gap: 8px;
+  width: min(1760px, 100%);
+  gap: 12px;
 }
 
 .app-shell:not(.app-shell-home) .game-screen-billar .topbar {
@@ -635,8 +635,8 @@ body:has(.screen.game-screen-billar) {
 
 @media (max-width: 1180px) and (max-height: 1366px) and (orientation: portrait) {
   .app-shell:not(.app-shell-home) .screen.game-screen-billar {
-    width: min(100%, calc(100vw - 8px));
-    min-height: calc(100dvh - 10px);
+    width: 100%;
+    min-height: calc(100dvh - 28px);
   }
 
   .app-shell:not(.app-shell-home) .game-screen-billar .board-wrap {
@@ -661,12 +661,12 @@ body:has(.screen.game-screen-billar) {
 
 @media (max-width: 1024px) and (orientation: landscape) and (max-height: 760px) {
   .app-shell:not(.app-shell-home):has(.screen.game-screen-billar) {
-    width: min(100%, calc(100vw - 8px));
+    width: min(100%, calc(100vw - 16px));
     margin: 0 auto 4px;
   }
 
   .app-shell:not(.app-shell-home) .screen.game-screen-billar {
-    width: min(100%, calc(100vw - 8px));
+    width: 100%;
     min-height: calc(100dvh - 8px);
     --screen-pad: 4px;
     padding: 4px;

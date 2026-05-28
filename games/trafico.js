@@ -1218,11 +1218,27 @@ function syncTrafficHud(root, state, players, canAct) {
 const TRAFICO_STYLE_ID = "trafico-game-styles";
 const TRAFICO_STYLES = String.raw`
   /* Contenedor y Diorama Premium */
-  .screen.game-screen-trafico .traffic-shell {
-    perspective: 800px;
-  }
+	  .screen.game-screen-trafico .traffic-shell {
+	    perspective: 800px;
+	  }
 
-  .screen.game-screen-trafico .traffic-road-frame {
+	  @media (max-width: 760px) {
+	    .screen.game-screen-trafico .traffic-shell {
+	      gap: 14px;
+	    }
+
+	    .screen.game-screen-trafico .traffic-road-frame {
+	      width: min(100%, calc(100vw - 44px));
+	      max-height: min(420px, calc(100dvh - 330px));
+	      margin: 0 auto;
+	    }
+
+	    .screen.game-screen-trafico .traffic-side-card {
+	      padding: 14px !important;
+	    }
+	  }
+
+	  .screen.game-screen-trafico .traffic-road-frame {
     background: 
       radial-gradient(circle at top, rgba(255, 255, 255, 0.15), transparent 60%),
       linear-gradient(135deg, #1e293b 0%, #0f172a 100%) !important;

@@ -1102,9 +1102,9 @@ const TANKS_STYLES = String.raw`
 
 @media (max-width: 1180px) and (max-height: 1366px) and (orientation: portrait) {
   .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
-    width: min(100%, calc(100vw - 8px));
-    min-height: calc(100dvh - 10px);
-    gap: 6px;
+    width: 100%;
+    min-height: calc(100dvh - 28px);
+    gap: 12px;
   }
 
   .game-screen-tanques .topbar {
@@ -1117,7 +1117,7 @@ const TANKS_STYLES = String.raw`
 
   .game-screen-tanques .board-wrap {
     padding: 0;
-    overflow: hidden;
+    overflow: visible;
   }
 
   .game-screen-tanques .actions-bottom {
@@ -1130,8 +1130,18 @@ const TANKS_STYLES = String.raw`
   .game-screen-tanques .board-wrap,
   .tanks-shell.is-mobile-portrait {
     min-height: 0;
+    height: auto;
+    overflow: visible;
+  }
+
+  .tanks-shell.is-mobile-portrait {
+    height: min(var(--tanks-embed-frame-height, 620px), calc(100dvh - 240px));
+    width: 100%;
+  }
+
+  .tanks-shell.is-mobile-portrait .tanks-portrait-frame {
     height: 100%;
-    overflow: hidden;
+    min-height: 0;
   }
 
   .tanks-shell.is-mobile-portrait .tanks-stage-hud {
@@ -1155,7 +1165,7 @@ const TANKS_STYLES = String.raw`
 
 @media (max-width: 1024px) and (orientation: landscape) and (max-height: 760px) {
   .app-shell:not(.app-shell-home) .screen.game-screen-tanques {
-    width: min(100%, calc(100vw - 8px));
+    width: 100%;
     min-height: calc(100dvh - 8px);
     gap: 6px;
     padding: 4px 0 8px;
