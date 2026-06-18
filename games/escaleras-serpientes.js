@@ -394,6 +394,35 @@ function buildEventText(player, move, roll) {
   return parts.join(" ");
 }
 
+function buildMovementCells(from, rolledTo, final) {
+  const cells = [];
+  const start = Math.max(0, Number(from) || 0);
+  const landing = clamp(Number(rolledTo) || 1, 1, GOAL_CELL);
+
+  if (start <= 0) {
+    for (let cell = 1; cell <= landing; cell += 1) {
+      cells.push(cell);
+    }
+  } else if (landing >= start) {
+    for (let cell = start; cell <= landing; cell += 1) {
+      cells.push(cell);
+    }
+  } else {
+    for (let cell = start; cell <= GOAL_CELL; cell += 1) {
+      cells.push(cell);
+    }
+    for (let cell = GOAL_CELL - 1; cell >= landing; cell -= 1) {
+      cells.push(cell);
+    }
+  }
+
+  if (Number.isInteger(final) && final !== landing) {
+    cells.push(final);
+  }
+
+  return cells.filter((cell, index, list) => index === 0 || cell !== list[index - 1]);
+}
+
 function buildPendingEventText(player, move, roll) {
   const parts = [`${player.name} saca ${roll}.`];
 
@@ -445,6 +474,7 @@ function resolveMove(from, roll) {
     jumpType,
     jumpFrom,
     jumpTo,
+    pathCells: buildMovementCells(from, rolledTo, final),
     bounced,
     extraTurn: roll === 6 && final !== GOAL_CELL
   };
@@ -507,6 +537,30 @@ function renderPiece(piece, players, activeSlot) {
   `;
 }
 
+function renderMotionToken(move, players) {
+  if (!move || !Array.isArray(move.pathCells) || move.pathCells.length < 2) {
+    return "";
+  }
+
+  const player = players.find((item) => item.slot === move.playerSlot);
+  const color = player ? player.identity.color : "#4a90e2";
+  const icon = player ? player.identity.icon : "•";
+  const points = move.pathCells.map((cell) => point(cell, 0.5, 0.5));
+  const path = points
+    .map((item, index) => `${index === 0 ? "M" : "L"} ${formatNumber(item.x)} ${formatNumber(item.y)}`)
+    .join(" ");
+  const duration = Math.min(900, Math.max(420, move.pathCells.length * 82));
+
+  return `
+    <g class="sns-motion-token" style="--sns-motion-color:${color}">
+      <circle class="sns-motion-token-shadow" r="25"></circle>
+      <circle class="sns-motion-token-core" r="22"></circle>
+      <text class="sns-motion-token-label" text-anchor="middle" dominant-baseline="central">${escapeHtml(icon)}</text>
+      <animateMotion dur="${duration}ms" path="${path}" fill="freeze" calcMode="linear"></animateMotion>
+    </g>
+  `;
+}
+
 function renderPlayerRows(state, players) {
   return players
     .slice()
@@ -533,6 +587,7 @@ function buildBoardCells(state, players, canAct) {
   const lastMove = state.lastMove || null;
   const pendingMove = state.pendingMove || null;
   const activeSlot = state.turnSlot;
+  const movingCells = new Set(lastMove?.pathCells || []);
 
   return Array.from({ length: CELL_COUNT }, (_, index) => {
     const cell = index + 1;
@@ -543,6 +598,19 @@ function buildBoardCells(state, players, canAct) {
 
     if ((row + col) % 2 === 0) {
       classes.push("is-tinted");
+    }
+    if (cell === 1) {
+      classes.push("is-start-cell");
+    }
+    if (cell === GOAL_CELL) {
+      classes.push("is-goal-cell");
+    }
+    if (JUMPS_BY_START.has(cell)) {
+      const jump = JUMPS_BY_START.get(cell);
+      classes.push("is-special-cell", jump.type === "ladder" ? "is-ladder-base" : "is-snake-head-cell");
+    }
+    if (movingCells.has(cell)) {
+      classes.push("is-moving-path");
     }
     if (lastMove && cell === lastMove.final) {
       classes.push("is-final-stop");
@@ -783,6 +851,7 @@ export const escalerasSerpientesGame = {
     const boardCells = buildBoardCells(state, players, canAct);
     const laddersSvg = LADDERS.map((item) => renderLadder(item)).join("");
     const snakesSvg = SNAKES.map((item) => renderSnake(item)).join("");
+    const motionSvg = renderMotionToken(state.lastMove, players);
     const pendingMove = state.pendingMove || null;
     const rollDisabled = !canAct || Boolean(pendingMove);
     const helperText = pendingMove
@@ -815,6 +884,9 @@ export const escalerasSerpientesGame = {
 
       /* Marco de madera cálida */
       .sns-board-frame {
+        flex: 0 0 auto;
+        width: fit-content !important;
+        max-width: 100%;
         padding: 20px;
         background:
           linear-gradient(135deg, #d2a572 0%, #9b704a 100%),
@@ -867,6 +939,33 @@ export const escalerasSerpientesGame = {
       .sns-cell.is-tinted {
         background: rgba(74, 46, 26, 0.04) !important;
       }
+      .sns-cell.is-start-cell {
+        background: linear-gradient(135deg, rgba(105, 163, 108, 0.18), rgba(255, 255, 255, 0.18)) !important;
+      }
+      .sns-cell.is-goal-cell {
+        background: linear-gradient(135deg, rgba(224, 122, 63, 0.24), rgba(255, 246, 219, 0.46)) !important;
+      }
+      .sns-cell.is-start-cell::before,
+      .sns-cell.is-goal-cell::before {
+        position: absolute;
+        right: 4px;
+        bottom: 4px;
+        z-index: 2;
+        padding: 2px 5px;
+        border-radius: 999px;
+        background: rgba(255, 252, 246, 0.82);
+        color: #5a4632;
+        font-size: 9px;
+        font-weight: 900;
+        line-height: 1;
+        box-shadow: 0 2px 6px rgba(55, 42, 31, 0.12);
+      }
+      .sns-cell.is-start-cell::before {
+        content: 'Inicio';
+      }
+      .sns-cell.is-goal-cell::before {
+        content: 'Meta';
+      }
 
       /* Números grabados */
       .sns-cell-number {
@@ -880,6 +979,15 @@ export const escalerasSerpientesGame = {
       .sns-cell.is-final-stop {
         box-shadow: inset 0 0 12px rgba(224, 122, 63, 0.45) !important;
         background: rgba(224, 122, 63, 0.08) !important;
+      }
+      .sns-cell.is-moving-path {
+        box-shadow: inset 0 0 0 2px rgba(47, 109, 246, 0.2) !important;
+      }
+      .sns-cell.is-ladder-base {
+        box-shadow: inset 0 0 0 2px rgba(45, 132, 84, 0.16);
+      }
+      .sns-cell.is-snake-head-cell {
+        box-shadow: inset 0 0 0 2px rgba(177, 78, 61, 0.16);
       }
       .sns-cell.is-pending-target {
         box-shadow: inset 0 0 14px #d4af37 !important;
@@ -906,6 +1014,35 @@ export const escalerasSerpientesGame = {
           inset 0 -3px 6px rgba(0,0,0,0.32),
           0 5px 8px rgba(55, 42, 31, 0.28);
         transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.2);
+      }
+      .sns-piece-stack {
+        position: absolute;
+        inset: 0;
+        z-index: 5;
+        display: grid;
+        place-items: center;
+      }
+      .sns-piece-stack.count-2 .sns-piece:nth-child(1) { transform: translate(-6px, -4px); }
+      .sns-piece-stack.count-2 .sns-piece:nth-child(2) { transform: translate(6px, 4px); }
+      .sns-piece-stack.count-3 .sns-piece:nth-child(1) { transform: translate(-7px, -5px); }
+      .sns-piece-stack.count-3 .sns-piece:nth-child(2) { transform: translate(7px, -4px); }
+      .sns-piece-stack.count-3 .sns-piece:nth-child(3) { transform: translate(0, 7px); }
+      .sns-piece-stack.count-4 .sns-piece:nth-child(1) { transform: translate(-7px, -7px); }
+      .sns-piece-stack.count-4 .sns-piece:nth-child(2) { transform: translate(7px, -7px); }
+      .sns-piece-stack.count-4 .sns-piece:nth-child(3) { transform: translate(-7px, 7px); }
+      .sns-piece-stack.count-4 .sns-piece:nth-child(4) { transform: translate(7px, 7px); }
+      .sns-piece-core {
+        position: relative;
+        z-index: 1;
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+        color: #ffffff;
+        font-size: 12px;
+        font-weight: 900;
+        line-height: 1;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
       }
       .sns-piece.is-active {
         animation: snsPieceFloat 1.4s infinite ease-in-out !important;
@@ -961,6 +1098,39 @@ export const escalerasSerpientesGame = {
         rx: 16px !important;
         ry: 12px !important;
         filter: drop-shadow(0px 4px 4px rgba(0,0,0,0.2)) !important;
+      }
+
+      .sns-overlay {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 7;
+        pointer-events: none;
+      }
+      .sns-overlay-motion {
+        z-index: 12;
+      }
+      .sns-motion-token {
+        filter: drop-shadow(0 10px 10px rgba(55, 42, 31, 0.22));
+      }
+      .sns-motion-token-shadow {
+        fill: rgba(38, 30, 23, 0.18);
+        transform: translate(6px, 8px);
+      }
+      .sns-motion-token-core {
+        fill: var(--sns-motion-color);
+        stroke: rgba(255, 255, 255, 0.92);
+        stroke-width: 5px;
+      }
+      .sns-motion-token-label {
+        fill: #ffffff;
+        font-family: Outfit, sans-serif;
+        font-size: 24px;
+        font-weight: 900;
+        paint-order: stroke;
+        stroke: rgba(0, 0, 0, 0.28);
+        stroke-width: 3px;
       }
 
       /* DADOS RÚNICOS 3D EN EL LANDING PAD */
@@ -1138,6 +1308,19 @@ export const escalerasSerpientesGame = {
         box-shadow: 0 10px 22px rgba(118, 73, 43, 0.3) !important;
       }
 
+      @media (prefers-reduced-motion: reduce) {
+        .sns-piece,
+        .sns-piece.is-active,
+        .sns-cell.is-pending-target,
+        .sns-die-cube-3d {
+          animation: none !important;
+          transition: none !important;
+        }
+        .sns-overlay-motion {
+          display: none;
+        }
+      }
+
       /* RESPONSIVE FLUIDO APANIZADO */
       @media (max-width: 900px) {
         .sns-shell {
@@ -1148,7 +1331,8 @@ export const escalerasSerpientesGame = {
         }
         .sns-board-frame {
           margin: 0 auto;
-          width: min(100%, calc(100vw - 48px));
+          width: min(100%, calc(100vw - 48px)) !important;
+          max-width: 540px;
           padding: 10px;
           box-sizing: border-box;
         }
@@ -1280,6 +1464,9 @@ export const escalerasSerpientesGame = {
               <g class="sns-overlay-snakes">
                 ${snakesSvg}
               </g>
+            </svg>
+            <svg class="sns-overlay sns-overlay-motion" viewBox="0 0 ${VIEWBOX_SIZE} ${VIEWBOX_SIZE}" preserveAspectRatio="none" aria-hidden="true">
+              ${motionSvg}
             </svg>
           </div>
         </div>
