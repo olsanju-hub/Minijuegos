@@ -1,0 +1,735 @@
+{
+  "generatedAt": "2026-06-17T16:18:03.429Z",
+  "rootUrl": "http://127.0.0.1:8080",
+  "browser": "playwright chromium",
+  "viewports": [
+    {
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "screenshots": [
+        {
+          "name": "00-home-full",
+          "path": "visual-audit-02/mobile/00-home-full.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 1568,
+            "topbarRect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 60
+            },
+            "boardRect": null,
+            "gameBoardRect": null,
+            "visibleText": "Minijuegos Juegos para toda la familia Clásicos de siempre, listos para jugar sin conexión. CATÁLOGO 13 juegos 3 en raya LÓGICA 2 jug. 4 en raya ESTRATEGIA 2–4 jug. Damas TABLERO 2 jug. Parchis FAMILIAR 2–4 jug. Escaleras y serpientes SUERTE 2–4 jug. Tráfico PUZZLE 1 jug. Buscaminas LÓGICA 1 jug. Sokoban DESAFÍO 1 jug. Parejas MEMORIA 1 jug. Billar HABILIDAD 2 jug. Futbol DEPORTES 2 jug. Tanques ACCIÓN 2 jug. Reversi ESTRATEGIA 2 jug.",
+            "reversiCard": {
+              "text": "Reversi ESTRATEGIA 2 jug.",
+              "svgText": "<svg viewBox=\"0 0 48 48\" role=\"presentation\" aria-hidden=\"true\">\n          <defs>\n            <linearGradient id=\"reversiGlyphBoard\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n              <stop offset=\"0%\" stop-color=\"#dff0e6\"></stop>\n              <stop offset=\"100%\" sto"
+            }
+          }
+        },
+        {
+          "name": "config-reversi",
+          "path": "visual-audit-02/mobile/config-reversi.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 850,
+            "topbarRect": {
+              "x": 7,
+              "y": 14,
+              "width": 376,
+              "height": 56
+            },
+            "boardRect": null,
+            "gameBoardRect": null,
+            "visibleText": "Configurar Reversi Reversi Gira y domina el tablero Jugadores 2 jugadores Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Ayudas visuales Mostrar sugerencias Ocultar sugerencias Catalogo Iniciar partida",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-reversi-initial",
+          "path": "visual-audit-02/mobile/game-reversi-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 237,
+              "width": 344,
+              "height": 568
+            },
+            "gameBoardRect": {
+              "x": 43,
+              "y": 354,
+              "width": 304,
+              "height": 304
+            },
+            "visibleText": "Reversi Turno de GuiYo ESTADO Turno de GuiYo. Coloca tu pieza. JUGADORES ○ GuiYo △ Kelly ○ GuiYo 2 Kelly 2 △",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-initial",
+          "path": "visual-audit-02/mobile/game-buscaminas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 154,
+              "width": 344,
+              "height": 597
+            },
+            "gameBoardRect": {
+              "x": 37,
+              "y": 421,
+              "width": 316,
+              "height": 316
+            },
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-interaction",
+          "path": "visual-audit-02/mobile/game-buscaminas-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 154,
+              "width": 344,
+              "height": 597
+            },
+            "gameBoardRect": {
+              "x": 37,
+              "y": 421,
+              "width": 316,
+              "height": 316
+            },
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-initial",
+          "path": "visual-audit-02/mobile/game-damas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 243,
+              "width": 344,
+              "height": 344
+            },
+            "gameBoardRect": {
+              "x": 37,
+              "y": 257,
+              "width": 316,
+              "height": 316
+            },
+            "visibleText": "Damas Turno de GuiYo. Selecciona una ficha. ESTADO Turno de GuiYo. Selecciona una ficha. JUGADORES ○ GuiYo △ Kelly",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-interaction",
+          "path": "visual-audit-02/mobile/game-damas-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 243,
+              "width": 344,
+              "height": 344
+            },
+            "gameBoardRect": {
+              "x": 37,
+              "y": 257,
+              "width": 316,
+              "height": 316
+            },
+            "visibleText": "Damas Turno de GuiYo. Elige destino. ESTADO Turno de GuiYo. Elige destino. JUGADORES ○ GuiYo △ Kelly",
+            "reversiCard": null
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "interactions": [
+        {
+          "id": "buscaminas",
+          "didInteract": true
+        },
+        {
+          "id": "damas",
+          "didInteract": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      "screenshots": [
+        {
+          "name": "00-home-full",
+          "path": "visual-audit-02/tablet/00-home-full.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1601,
+            "topbarRect": {
+              "x": 0,
+              "y": 0,
+              "width": 768,
+              "height": 60
+            },
+            "boardRect": null,
+            "gameBoardRect": null,
+            "visibleText": "Minijuegos Juegos para toda la familia Clásicos de siempre, listos para jugar sin conexión. CATÁLOGO 13 juegos 3 en raya LÓGICA 2 jug. 4 en raya ESTRATEGIA 2–4 jug. Damas TABLERO 2 jug. Parchis FAMILIAR 2–4 jug. Escaleras y serpientes SUERTE 2–4 jug. Tráfico PUZZLE 1 jug. Buscaminas LÓGICA 1 jug. Sokoban DESAFÍO 1 jug. Parejas MEMORIA 1 jug. Billar HABILIDAD 2 jug. Futbol DEPORTES 2 jug. Tanques ACCIÓN 2 jug. Reversi ESTRATEGIA 2 jug.",
+            "reversiCard": {
+              "text": "Reversi ESTRATEGIA 2 jug.",
+              "svgText": "<svg viewBox=\"0 0 48 48\" role=\"presentation\" aria-hidden=\"true\">\n          <defs>\n            <linearGradient id=\"reversiGlyphBoard\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n              <stop offset=\"0%\" stop-color=\"#dff0e6\"></stop>\n              <stop offset=\"100%\" sto"
+            }
+          }
+        },
+        {
+          "name": "config-reversi",
+          "path": "visual-audit-02/tablet/config-reversi.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1056,
+            "topbarRect": {
+              "x": 13,
+              "y": 15,
+              "width": 742,
+              "height": 76
+            },
+            "boardRect": null,
+            "gameBoardRect": null,
+            "visibleText": "Configurar Reversi Reversi Gira y domina el tablero Jugadores 2 jugadores Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Ayudas visuales Mostrar sugerencias Ocultar sugerencias Catalogo Iniciar partida",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-reversi-initial",
+          "path": "visual-audit-02/tablet/game-reversi-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 33,
+              "y": 238,
+              "width": 565,
+              "height": 732
+            },
+            "gameBoardRect": {
+              "x": 95,
+              "y": 371,
+              "width": 442,
+              "height": 442
+            },
+            "visibleText": "Reversi Turno de GuiYo ESTADO Turno de GuiYo. Coloca tu pieza. JUGADORES ○ GuiYo △ Kelly ○ GuiYo 2 Kelly 2 △ Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-initial",
+          "path": "visual-audit-02/tablet/game-buscaminas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 33,
+              "y": 226,
+              "width": 565,
+              "height": 732
+            },
+            "gameBoardRect": {
+              "x": 106,
+              "y": 501,
+              "width": 420,
+              "height": 420
+            },
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00 Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-interaction",
+          "path": "visual-audit-02/tablet/game-buscaminas-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 33,
+              "y": 226,
+              "width": 565,
+              "height": 732
+            },
+            "gameBoardRect": {
+              "x": 106,
+              "y": 501,
+              "width": 420,
+              "height": 420
+            },
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00 Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-initial",
+          "path": "visual-audit-02/tablet/game-damas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 33,
+              "y": 321,
+              "width": 565,
+              "height": 567
+            },
+            "gameBoardRect": {
+              "x": 59,
+              "y": 351,
+              "width": 513,
+              "height": 513
+            },
+            "visibleText": "Damas Turno de GuiYo. Selecciona una ficha. ESTADO Turno de GuiYo. Selecciona una ficha. JUGADORES ○ GuiYo △ Kelly Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-interaction",
+          "path": "visual-audit-02/tablet/game-damas-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 33,
+              "y": 321,
+              "width": 565,
+              "height": 567
+            },
+            "gameBoardRect": {
+              "x": 59,
+              "y": 351,
+              "width": 513,
+              "height": 513
+            },
+            "visibleText": "Damas Turno de GuiYo. Elige destino. ESTADO Turno de GuiYo. Elige destino. JUGADORES ○ GuiYo △ Kelly Reiniciar Reglas",
+            "reversiCard": null
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "interactions": [
+        {
+          "id": "buscaminas",
+          "didInteract": true
+        },
+        {
+          "id": "damas",
+          "didInteract": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "screenshots": [
+        {
+          "name": "00-home-full",
+          "path": "visual-audit-02/desktop/00-home-full.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 1407,
+            "topbarRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 60
+            },
+            "boardRect": null,
+            "gameBoardRect": null,
+            "visibleText": "Minijuegos Juegos para toda la familia Clásicos de siempre, listos para jugar sin conexión. CATÁLOGO 13 juegos 3 en raya LÓGICA 2 jug. 4 en raya ESTRATEGIA 2–4 jug. Damas TABLERO 2 jug. Parchis FAMILIAR 2–4 jug. Escaleras y serpientes SUERTE 2–4 jug. Tráfico PUZZLE 1 jug. Buscaminas LÓGICA 1 jug. Sokoban DESAFÍO 1 jug. Parejas MEMORIA 1 jug. Billar HABILIDAD 2 jug. Futbol DEPORTES 2 jug. Tanques ACCIÓN 2 jug. Reversi ESTRATEGIA 2 jug.",
+            "reversiCard": {
+              "text": "Reversi ESTRATEGIA 2 jug.",
+              "svgText": "<svg viewBox=\"0 0 48 48\" role=\"presentation\" aria-hidden=\"true\">\n          <defs>\n            <linearGradient id=\"reversiGlyphBoard\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n              <stop offset=\"0%\" stop-color=\"#dff0e6\"></stop>\n              <stop offset=\"100%\" sto"
+            }
+          }
+        },
+        {
+          "name": "config-reversi",
+          "path": "visual-audit-02/desktop/config-reversi.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 939,
+            "topbarRect": {
+              "x": 169,
+              "y": 18,
+              "width": 1101,
+              "height": 85
+            },
+            "boardRect": null,
+            "gameBoardRect": null,
+            "visibleText": "Configurar Reversi Reversi Gira y domina el tablero Jugadores 2 jugadores Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Ayudas visuales Mostrar sugerencias Ocultar sugerencias Catalogo Iniciar partida",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-reversi-initial",
+          "path": "visual-audit-02/desktop/game-reversi-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "boardRect": {
+              "x": 210,
+              "y": 246,
+              "width": 884,
+              "height": 611
+            },
+            "gameBoardRect": {
+              "x": 431,
+              "y": 379,
+              "width": 442,
+              "height": 442
+            },
+            "visibleText": "Reversi Turno de GuiYo ESTADO Turno de GuiYo. Coloca tu pieza. JUGADORES ○ GuiYo △ Kelly ○ GuiYo 2 Kelly 2 △ Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-initial",
+          "path": "visual-audit-02/desktop/game-buscaminas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 990,
+            "topbarRect": {
+              "x": 161,
+              "y": 7,
+              "width": 1118,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 180,
+              "y": 217,
+              "width": 944,
+              "height": 712
+            },
+            "gameBoardRect": {
+              "x": 442,
+              "y": 472,
+              "width": 420,
+              "height": 420
+            },
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00 Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-interaction",
+          "path": "visual-audit-02/desktop/game-buscaminas-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 990,
+            "topbarRect": {
+              "x": 161,
+              "y": 7,
+              "width": 1118,
+              "height": 76
+            },
+            "boardRect": {
+              "x": 180,
+              "y": 217,
+              "width": 944,
+              "height": 712
+            },
+            "gameBoardRect": {
+              "x": 442,
+              "y": 472,
+              "width": 420,
+              "height": 420
+            },
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00 Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-initial",
+          "path": "visual-audit-02/desktop/game-damas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "boardRect": {
+              "x": 210,
+              "y": 256,
+              "width": 884,
+              "height": 574
+            },
+            "gameBoardRect": {
+              "x": 392,
+              "y": 286,
+              "width": 520,
+              "height": 520
+            },
+            "visibleText": "Damas Turno de GuiYo. Selecciona una ficha. ESTADO Turno de GuiYo. Selecciona una ficha. JUGADORES ○ GuiYo △ Kelly Reiniciar Reglas",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-interaction",
+          "path": "visual-audit-02/desktop/game-damas-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "boardRect": {
+              "x": 210,
+              "y": 256,
+              "width": 884,
+              "height": 574
+            },
+            "gameBoardRect": {
+              "x": 392,
+              "y": 286,
+              "width": 520,
+              "height": 520
+            },
+            "visibleText": "Damas Turno de GuiYo. Elige destino. ESTADO Turno de GuiYo. Elige destino. JUGADORES ○ GuiYo △ Kelly Reiniciar Reglas",
+            "reversiCard": null
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "interactions": [
+        {
+          "id": "buscaminas",
+          "didInteract": true
+        },
+        {
+          "id": "damas",
+          "didInteract": true
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "reversiHomeFixed": true,
+    "buscaminasBoardsVisible": true,
+    "damasTabletHorizontalOverflowFixed": true
+  }
+}

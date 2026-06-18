@@ -384,6 +384,37 @@ export function createUI({ appElement, toastElement }) {
           <circle cx="27.5" cy="27.5" r="4.1" fill="#f2d76b" stroke="#c9a83f" stroke-width="1" />
         </svg>
       `,
+      reversi: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="reversiGlyphBoard" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#dff0e6" />
+              <stop offset="100%" stop-color="#8ab79b" />
+            </linearGradient>
+            <radialGradient id="reversiGlyphLight" cx="32%" cy="28%" r="70%">
+              <stop offset="0%" stop-color="#fffaf0" />
+              <stop offset="70%" stop-color="#f2dfb2" />
+              <stop offset="100%" stop-color="#c8a75c" />
+            </radialGradient>
+            <radialGradient id="reversiGlyphDark" cx="32%" cy="28%" r="70%">
+              <stop offset="0%" stop-color="#6f846f" />
+              <stop offset="68%" stop-color="#24382c" />
+              <stop offset="100%" stop-color="#121c16" />
+            </radialGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#fbf4e8" stroke="#d9c8af" stroke-width="1.5" />
+          <rect x="9" y="9" width="30" height="30" rx="7" fill="url(#reversiGlyphBoard)" stroke="#5f8b70" stroke-width="1.1" />
+          <g stroke="rgba(255,255,255,0.58)" stroke-width="0.75">
+            <path d="M16.5 9V39M24 9V39M31.5 9V39" />
+            <path d="M9 16.5H39M9 24H39M9 31.5H39" />
+          </g>
+          <circle cx="20.25" cy="20.25" r="4" fill="url(#reversiGlyphLight)" stroke="#b79a55" stroke-width="0.8" />
+          <circle cx="27.75" cy="20.25" r="4" fill="url(#reversiGlyphDark)" stroke="#17241c" stroke-width="0.8" />
+          <circle cx="20.25" cy="27.75" r="4" fill="url(#reversiGlyphDark)" stroke="#17241c" stroke-width="0.8" />
+          <circle cx="27.75" cy="27.75" r="4" fill="url(#reversiGlyphLight)" stroke="#b79a55" stroke-width="0.8" />
+          <circle cx="31.5" cy="16.5" r="1.5" fill="none" stroke="#e76f51" stroke-width="1.2" stroke-dasharray="1.4 1.4" />
+        </svg>
+      `,
       parchis: `
         <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
           <rect x="4" y="4" width="40" height="40" rx="11" fill="#fbf4e8" stroke="#d9c8af" stroke-width="1.5" />
@@ -692,7 +723,8 @@ export function createUI({ appElement, toastElement }) {
         billar:                { tag: "Habilidad",  cls: "tag-habilidad"  },
         sokoban:               { tag: "Desafío",    cls: "tag-desafio"    },
         "futbol-turnos":       { tag: "Deportes",   cls: "tag-deportes"   },
-        tanques:               { tag: "Acción",     cls: "tag-accion"     }
+        tanques:               { tag: "Acción",     cls: "tag-accion"     },
+        reversi:               { tag: "Estrategia", cls: "tag-estrategia" }
       };
       return map[game?.id] || { tag: "Juego", cls: "tag-default" };
     }
@@ -1087,10 +1119,6 @@ export function createUI({ appElement, toastElement }) {
                 })}
               </section>
             </div>
-            <aside class="game-floating-actions" aria-label="Acciones de partida">
-              <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
-              <button class="btn btn-ghost" data-action="open-rules">Reglas</button>
-            </aside>
           </section>
         </div>
       </section>

@@ -4,6 +4,10 @@
   "private": true,
   "type": "commonjs",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "validate": "node --check server.js"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.0"
   }
 }

@@ -13921,3 +13921,57 @@ body.game-landscape-mobile-active .screen.game-layout {
     padding: 12px 14px;
   }
 }
+
+/* Phase 1.2: compact shared game shell after removing duplicated global actions. */
+.game-shell-body {
+  gap: 10px;
+}
+
+.game-status-band,
+.game-status-band.is-single {
+  gap: clamp(8px, 1.1vw, 12px);
+}
+
+.game-status-card {
+  gap: 6px;
+  padding: 12px 14px;
+}
+
+.game-status-text {
+  line-height: 1.22;
+}
+
+.player-chip-list-compact .player-chip {
+  min-height: 36px;
+}
+
+.game-stage-layout,
+body.is-game-screen .game-stage-layout,
+.game-stage-layout.is-immersive,
+body.is-game-screen .game-stage-layout.is-immersive {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+}
+
+.game-stage-layout:not(.is-immersive) .game-stage-main {
+  padding: clamp(10px, 1.4vw, 16px);
+}
+
+@media (max-width: 760px) {
+  .game-shell-body {
+    gap: 8px;
+  }
+
+  .game-status-card {
+    padding: 9px 11px;
+  }
+
+  .game-status-text {
+    font-size: 0.84rem;
+  }
+
+  .player-chip-list-compact .player-chip {
+    min-height: 34px;
+    padding: 6px 9px;
+  }
+}

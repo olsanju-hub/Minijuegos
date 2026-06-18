@@ -1,0 +1,2434 @@
+{
+  "generatedAt": "2026-06-17T16:28:44.024Z",
+  "rootUrl": "http://127.0.0.1:8080",
+  "browser": "playwright chromium",
+  "browserPluginPath": "fallback-playwright-script",
+  "viewports": [
+    {
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "screenshots": [
+        {
+          "name": "00-home-full",
+          "path": "visual-audit-03/mobile/00-home-full.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 1568,
+            "topbarRect": {
+              "x": 0,
+              "y": 0,
+              "width": 390,
+              "height": 60
+            },
+            "statusRect": null,
+            "stageRect": null,
+            "mainRect": null,
+            "boardRect": null,
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 0,
+            "topbarRulesCount": 0,
+            "visibleText": "Minijuegos Juegos para toda la familia Clásicos de siempre, listos para jugar sin conexión. CATÁLOGO 13 juegos 3 en raya LÓGICA 2 jug. 4 en raya ESTRATEGIA 2–4 jug. Damas TABLERO 2 jug. Parchis FAMILIAR 2–4 jug. Escaleras y serpientes SUERTE 2–4 jug. Tráfico PUZZLE 1 jug. Buscaminas LÓGICA 1 jug. Sokoban DESAFÍO 1 jug. Parejas MEMORIA 1 jug. Billar HABILIDAD 2 jug. Futbol DEPORTES 2 jug. Tanques ACCIÓN 2 jug. Reversi ESTRATEGIA 2 jug.",
+            "reversiCard": {
+              "text": "Reversi ESTRATEGIA 2 jug.",
+              "svgText": "<svg viewBox=\"0 0 48 48\" role=\"presentation\" aria-hidden=\"true\">\n          <defs>\n            <linearGradient id=\"reversiGlyphBoard\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n              <stop offset=\"0%\" stop-color=\"#dff0e6\"></stop>\n              <stop offset=\"100%\" stop-color=\"#8ab79b\"></stop>\n            </"
+            }
+          }
+        },
+        {
+          "name": "game-parchis-initial",
+          "path": "visual-audit-03/mobile/game-parchis-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 917,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 92,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 736
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 736
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 160,
+              "width": 344,
+              "height": 718
+            },
+            "gameBoardRect": {
+              "x": 6,
+              "y": 161,
+              "width": 378,
+              "height": 716
+            },
+            "gameBoardViewportRatio": 0.822,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Parchis Turno de GuiYo. Tira los dados. ESTADO Turno de GuiYo. Tira los dados. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Pulsa Tirar dados para continuar.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-parchis-interaction",
+          "path": "visual-audit-03/mobile/game-parchis-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 945,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 92,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 764
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 764
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 160,
+              "width": 344,
+              "height": 746
+            },
+            "gameBoardRect": {
+              "x": 6,
+              "y": 161,
+              "width": 378,
+              "height": 744
+            },
+            "gameBoardViewportRatio": 0.854,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Parchis Turno de GuiYo. Busca doble para salir. ESTADO Turno de GuiYo. Busca doble para salir. 1 2 3 4 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS Resultado: 3 y 2 TURNO GuiYo Busca doble para salir. Vas por el intento 2 de 3. Intentos de salida: 1 de 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-initial",
+          "path": "visual-audit-03/mobile/game-damas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 92,
+              "width": 261,
+              "height": 134
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 234,
+              "width": 362,
+              "height": 362
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 234,
+              "width": 362,
+              "height": 362
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 243,
+              "width": 344,
+              "height": 344
+            },
+            "gameBoardRect": {
+              "x": 37,
+              "y": 257,
+              "width": 316,
+              "height": 316
+            },
+            "gameBoardViewportRatio": 0.303,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Damas Turno de GuiYo. Selecciona una ficha. ESTADO Turno de GuiYo. Selecciona una ficha. JUGADORES ○ GuiYo △ Kelly",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-initial",
+          "path": "visual-audit-03/mobile/game-buscaminas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 86,
+              "width": 71,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 145,
+              "width": 362,
+              "height": 615
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 145,
+              "width": 362,
+              "height": 615
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 154,
+              "width": 344,
+              "height": 597
+            },
+            "gameBoardRect": {
+              "x": 37,
+              "y": 421,
+              "width": 316,
+              "height": 316
+            },
+            "gameBoardViewportRatio": 0.303,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-reversi-initial",
+          "path": "visual-audit-03/mobile/game-reversi-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 86,
+              "width": 362,
+              "height": 134
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 228,
+              "width": 362,
+              "height": 586
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 228,
+              "width": 362,
+              "height": 586
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 237,
+              "width": 344,
+              "height": 568
+            },
+            "gameBoardRect": {
+              "x": 43,
+              "y": 354,
+              "width": 304,
+              "height": 304
+            },
+            "gameBoardViewportRatio": 0.281,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Reversi Turno de GuiYo ESTADO Turno de GuiYo. Coloca tu pieza. JUGADORES ○ GuiYo △ Kelly ○ GuiYo 2 Kelly 2 △",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-billar-initial",
+          "path": "visual-audit-03/mobile/game-billar-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 390,
+            "scrollHeight": 844,
+            "topbarRect": {
+              "x": 14,
+              "y": 16,
+              "width": 362,
+              "height": 56
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 80,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 139,
+              "width": 362,
+              "height": 669
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 139,
+              "width": 362,
+              "height": 669
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 148,
+              "width": 344,
+              "height": 651
+            },
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Billar ESTADO Coral abre la partida MEJOR EN HORIZONTAL Gira el dispositivo La mesa necesita anchura real para apuntar bien y leer el tiro con claridad.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-billar-interaction",
+          "path": "visual-audit-03/mobile/game-billar-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 390,
+            "scrollHeight": 844,
+            "topbarRect": {
+              "x": 14,
+              "y": 16,
+              "width": 362,
+              "height": 56
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 80,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 139,
+              "width": 362,
+              "height": 669
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 139,
+              "width": 362,
+              "height": 669
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 148,
+              "width": 344,
+              "height": 651
+            },
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Billar ESTADO Coral abre la partida MEJOR EN HORIZONTAL Gira el dispositivo La mesa necesita anchura real para apuntar bien y leer el tiro con claridad.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-futbol-turnos-initial",
+          "path": "visual-audit-03/mobile/game-futbol-turnos-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 54
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "boardRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "gameBoardRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "gameBoardViewportRatio": 0.748,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "ESTADO Juega Coral 0 JUEGA CORAL 0 1 2 3 1 2 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-futbol-turnos-interaction",
+          "path": "visual-audit-03/mobile/game-futbol-turnos-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 54
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "boardRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "gameBoardRect": {
+              "x": 14,
+              "y": 65,
+              "width": 362,
+              "height": 680
+            },
+            "gameBoardViewportRatio": 0.748,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "ESTADO Juega Coral 0 JUEGA CORAL 0 1 2 3 1 2 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-tanques-initial",
+          "path": "visual-audit-03/mobile/game-tanques-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 92,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 663
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 663
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 160,
+              "width": 344,
+              "height": 645
+            },
+            "gameBoardRect": {
+              "x": 24,
+              "y": 161,
+              "width": 342,
+              "height": 604
+            },
+            "gameBoardViewportRatio": 0.628,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tanques Vida 100 - 100 · Turno de GuiYo ESTADO Turno de GuiYo GuiYo 100 Combustible 120 Armamento 1/1 AIMING_PHASE 21 km/h ← Turno de GuiYo Kelly 100 Combustible 120 Armamento 1/1 GuiYo Canon base 1/1 Arrastra desde tu tanque y suelta para disparar Toque corto a un lado del tanque para mover",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-tanques-interaction",
+          "path": "visual-audit-03/mobile/game-tanques-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 858,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 62
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 92,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 663
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 151,
+              "width": 362,
+              "height": 663
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 160,
+              "width": 344,
+              "height": 645
+            },
+            "gameBoardRect": {
+              "x": 24,
+              "y": 161,
+              "width": 342,
+              "height": 604
+            },
+            "gameBoardViewportRatio": 0.628,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tanques Vida 100 - 100 · Turno de GuiYo ESTADO Turno de GuiYo GuiYo 100 Combustible 120 Armamento 1/1 AIMING_PHASE 21 km/h ← Turno de GuiYo Kelly 100 Combustible 120 Armamento 1/1 GuiYo Canon base 1/1 Arrastra desde tu tanque y suelta para disparar Toque corto a un lado del tanque para mover",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-trafico-initial",
+          "path": "visual-audit-03/mobile/game-trafico-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 879,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 86,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 145,
+              "width": 362,
+              "height": 704
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 145,
+              "width": 362,
+              "height": 704
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 154,
+              "width": 344,
+              "height": 686
+            },
+            "gameBoardRect": {
+              "x": 24,
+              "y": 155,
+              "width": 342,
+              "height": 684
+            },
+            "gameBoardViewportRatio": 0.711,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tráfico ESTADO Listo para jugar Listo Pulsa Empezar para arrancar. INFINITO LISTO COCHE Aguanta lo maximo posible. TIEMPO 0.0s PUNTUACION 0 Empezar Telemetria DISTANCIA 0 ADELANTAMIENTOS 0 RECOGIDAS 0 MEJOR 0.0s",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-trafico-interaction",
+          "path": "visual-audit-03/mobile/game-trafico-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 879,
+            "topbarRect": {
+              "x": 14,
+              "y": 22,
+              "width": 362,
+              "height": 56
+            },
+            "statusRect": {
+              "x": 14,
+              "y": 86,
+              "width": 362,
+              "height": 51
+            },
+            "stageRect": {
+              "x": 14,
+              "y": 145,
+              "width": 362,
+              "height": 704
+            },
+            "mainRect": {
+              "x": 14,
+              "y": 145,
+              "width": 362,
+              "height": 704
+            },
+            "boardRect": {
+              "x": 23,
+              "y": 154,
+              "width": 344,
+              "height": 686
+            },
+            "gameBoardRect": {
+              "x": 24,
+              "y": 155,
+              "width": 342,
+              "height": 684
+            },
+            "gameBoardViewportRatio": 0.711,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tráfico ESTADO Partida en curso INFINITO JUGANDO COCHE Aguanta lo maximo posible. TIEMPO 0.5s PUNTUACION 0 Pausa Telemetria DISTANCIA 0 ADELANTAMIENTOS 0 RECOGIDAS 0 MEJOR 0.0s",
+            "reversiCard": null
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "interactions": [
+        {
+          "id": "parchis",
+          "interaction": "roll-die",
+          "didInteract": true
+        },
+        {
+          "id": "billar",
+          "interaction": "cue-drag",
+          "didInteract": false
+        },
+        {
+          "id": "futbol-turnos",
+          "interaction": "piece-drag",
+          "didInteract": true
+        },
+        {
+          "id": "tanques",
+          "interaction": "fire",
+          "didInteract": false
+        },
+        {
+          "id": "trafico",
+          "interaction": "start-run",
+          "didInteract": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      "screenshots": [
+        {
+          "name": "00-home-full",
+          "path": "visual-audit-03/tablet/00-home-full.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1601,
+            "topbarRect": {
+              "x": 0,
+              "y": 0,
+              "width": 768,
+              "height": 60
+            },
+            "statusRect": null,
+            "stageRect": null,
+            "mainRect": null,
+            "boardRect": null,
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 0,
+            "topbarRulesCount": 0,
+            "visibleText": "Minijuegos Juegos para toda la familia Clásicos de siempre, listos para jugar sin conexión. CATÁLOGO 13 juegos 3 en raya LÓGICA 2 jug. 4 en raya ESTRATEGIA 2–4 jug. Damas TABLERO 2 jug. Parchis FAMILIAR 2–4 jug. Escaleras y serpientes SUERTE 2–4 jug. Tráfico PUZZLE 1 jug. Buscaminas LÓGICA 1 jug. Sokoban DESAFÍO 1 jug. Parejas MEMORIA 1 jug. Billar HABILIDAD 2 jug. Futbol DEPORTES 2 jug. Tanques ACCIÓN 2 jug. Reversi ESTRATEGIA 2 jug.",
+            "reversiCard": {
+              "text": "Reversi ESTRATEGIA 2 jug.",
+              "svgText": "<svg viewBox=\"0 0 48 48\" role=\"presentation\" aria-hidden=\"true\">\n          <defs>\n            <linearGradient id=\"reversiGlyphBoard\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n              <stop offset=\"0%\" stop-color=\"#dff0e6\"></stop>\n              <stop offset=\"100%\" stop-color=\"#8ab79b\"></stop>\n            </"
+            }
+          }
+        },
+        {
+          "name": "game-parchis-initial",
+          "path": "visual-audit-03/tablet/game-parchis-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1358,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 1130
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 1130
+            },
+            "boardRect": {
+              "x": 29,
+              "y": 202,
+              "width": 711,
+              "height": 1107
+            },
+            "gameBoardRect": {
+              "x": 8,
+              "y": 209,
+              "width": 752,
+              "height": 1099
+            },
+            "gameBoardViewportRatio": 1.051,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Parchis Turno de GuiYo. Tira los dados. ESTADO Turno de GuiYo. Tira los dados. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Pulsa Tirar dados para continuar. JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO Pulsa Tirar dados para empezar.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-parchis-interaction",
+          "path": "visual-audit-03/tablet/game-parchis-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1358,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 1130
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 1130
+            },
+            "boardRect": {
+              "x": 29,
+              "y": 202,
+              "width": 711,
+              "height": 1107
+            },
+            "gameBoardRect": {
+              "x": 8,
+              "y": 209,
+              "width": 752,
+              "height": 1099
+            },
+            "gameBoardViewportRatio": 1.051,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Parchis Turno de GuiYo. Busca doble para salir. ESTADO Turno de GuiYo. Busca doble para salir. 1 2 3 4 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS Resultado: 1 y 3 TURNO GuiYo Busca doble para salir. Vas por el intento 2 de 3. Intentos de salida: 1 de 3 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO No salio doble (1 y 3). Intento 1 de 3 para salir.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-initial",
+          "path": "visual-audit-03/tablet/game-damas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 175
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 302,
+              "width": 734,
+              "height": 685
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 302,
+              "width": 734,
+              "height": 598
+            },
+            "boardRect": {
+              "x": 29,
+              "y": 314,
+              "width": 711,
+              "height": 574
+            },
+            "gameBoardRect": {
+              "x": 124,
+              "y": 344,
+              "width": 520,
+              "height": 520
+            },
+            "gameBoardViewportRatio": 0.344,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Damas Turno de GuiYo. Selecciona una ficha. ESTADO Turno de GuiYo. Selecciona una ficha. JUGADORES ○ GuiYo △ Kelly",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-initial",
+          "path": "visual-audit-03/tablet/game-buscaminas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 84
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 211,
+              "width": 734,
+              "height": 776
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 211,
+              "width": 734,
+              "height": 756
+            },
+            "boardRect": {
+              "x": 29,
+              "y": 223,
+              "width": 711,
+              "height": 732
+            },
+            "gameBoardRect": {
+              "x": 174,
+              "y": 497,
+              "width": 420,
+              "height": 420
+            },
+            "gameBoardViewportRatio": 0.224,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-reversi-initial",
+          "path": "visual-audit-03/tablet/game-reversi-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 87
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 214,
+              "width": 734,
+              "height": 773
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 214,
+              "width": 734,
+              "height": 773
+            },
+            "boardRect": {
+              "x": 29,
+              "y": 226,
+              "width": 711,
+              "height": 750
+            },
+            "gameBoardRect": {
+              "x": 163,
+              "y": 359,
+              "width": 442,
+              "height": 442
+            },
+            "gameBoardViewportRatio": 0.248,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Reversi Turno de GuiYo ESTADO Turno de GuiYo. Coloca tu pieza. JUGADORES ○ GuiYo △ Kelly ○ GuiYo 2 Kelly 2 △",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-billar-initial",
+          "path": "visual-audit-03/tablet/game-billar-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "topbarRect": {
+              "x": 17,
+              "y": 3,
+              "width": 734,
+              "height": 58
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 85,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 161,
+              "width": 734,
+              "height": 826
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 161,
+              "width": 734,
+              "height": 826
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 162,
+              "width": 732,
+              "height": 824
+            },
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Billar Marcador 0 - 0 · Coral abre la partida ESTADO Coral abre la partida MEJOR EN HORIZONTAL Gira el dispositivo La mesa necesita anchura real para apuntar bien y leer el tiro con claridad.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-billar-interaction",
+          "path": "visual-audit-03/tablet/game-billar-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "topbarRect": {
+              "x": 17,
+              "y": 3,
+              "width": 734,
+              "height": 58
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 85,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 161,
+              "width": 734,
+              "height": 826
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 161,
+              "width": 734,
+              "height": 826
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 162,
+              "width": 732,
+              "height": 824
+            },
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Billar Marcador 0 - 0 · Coral abre la partida ESTADO Coral abre la partida MEJOR EN HORIZONTAL Gira el dispositivo La mesa necesita anchura real para apuntar bien y leer el tiro con claridad.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-futbol-turnos-initial",
+          "path": "visual-audit-03/tablet/game-futbol-turnos-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 3,
+              "width": 734,
+              "height": 70
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 17,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "boardRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "gameBoardRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "gameBoardViewportRatio": 0.635,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "ESTADO Juega Coral 0 JUEGA CORAL 0 1 2 3 1 2 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-futbol-turnos-interaction",
+          "path": "visual-audit-03/tablet/game-futbol-turnos-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 3,
+              "width": 734,
+              "height": 70
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 17,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "boardRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "gameBoardRect": {
+              "x": 17,
+              "y": 81,
+              "width": 734,
+              "height": 680
+            },
+            "gameBoardViewportRatio": 0.635,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "ESTADO Juega Coral 0 JUEGA CORAL 0 1 2 3 1 2 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-tanques-initial",
+          "path": "visual-audit-03/tablet/game-tanques-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 111,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 187,
+              "width": 734,
+              "height": 808
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 187,
+              "width": 734,
+              "height": 808
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 251,
+              "width": 732,
+              "height": 680
+            },
+            "gameBoardRect": {
+              "x": 35,
+              "y": 268,
+              "width": 698,
+              "height": 400
+            },
+            "gameBoardViewportRatio": 0.355,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tanques Vida 100 - 100 · Turno de GuiYo ESTADO Turno de GuiYo GuiYo Activo 100 Combustible 120 Armamento 1/1 AIMING_PHASE 21 km/h ← Turno de GuiYo Ajusta el tiro del tanque activo y dispara una sola vez. Viento 21 km/h ← Turno 1 Kelly Suspendido 100 Combustible 120 Armamento 1/1 MOVIMIENTO 120 ← → ANGULO 54° − + POTENCIA 68% − + ARMAMENTO 1/1 Canon base Visible solo en AIMING_PHASE Disparar",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-tanques-interaction",
+          "path": "visual-audit-03/tablet/game-tanques-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 111,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 187,
+              "width": 734,
+              "height": 808
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 187,
+              "width": 734,
+              "height": 808
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 251,
+              "width": 732,
+              "height": 680
+            },
+            "gameBoardRect": {
+              "x": 35,
+              "y": 268,
+              "width": 698,
+              "height": 297
+            },
+            "gameBoardViewportRatio": 0.264,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tanques Vida 100 - 100 · Disparo de GuiYo ESTADO Disparo de GuiYo GuiYo Activo 100 Combustible 120 Armamento 0/1 SIMULATION 21 km/h ← Disparo de GuiYo La camara sigue el proyectil hasta el impacto. Viento 21 km/h ← Turno 1 Kelly Suspendido 100 Combustible 120 Armamento 1/1 SIMULATION Disparo de GuiYo La camara sigue el proyectil hasta el impacto.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-trafico-initial",
+          "path": "visual-audit-03/tablet/game-trafico-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 796
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 796
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 192,
+              "width": 732,
+              "height": 794
+            },
+            "gameBoardRect": {
+              "x": 35,
+              "y": 209,
+              "width": 698,
+              "height": 522
+            },
+            "gameBoardViewportRatio": 0.463,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tráfico ESTADO Listo para jugar Listo Pulsa Empezar para arrancar. INFINITO LISTO COCHE GuiYo Aguanta lo maximo posible. Pulsa Empezar para salir a la carretera. TIEMPO 0.0s PUNTUACION 0 Empezar Telemetria DISTANCIA 0 ADELANTAMIENTOS 0 RECOGIDAS 0 MEJOR 0.0s",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-trafico-interaction",
+          "path": "visual-audit-03/tablet/game-trafico-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1040,
+            "topbarRect": {
+              "x": 17,
+              "y": 11,
+              "width": 734,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 115,
+              "width": 734,
+              "height": 64
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 796
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 191,
+              "width": 734,
+              "height": 796
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 192,
+              "width": 732,
+              "height": 794
+            },
+            "gameBoardRect": {
+              "x": 35,
+              "y": 209,
+              "width": 698,
+              "height": 522
+            },
+            "gameBoardViewportRatio": 0.463,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tráfico ESTADO Partida en curso INFINITO JUGANDO COCHE GuiYo Aguanta lo maximo posible. Arranca la partida. TIEMPO 0.7s PUNTUACION 1 Pausa Telemetria DISTANCIA 1 ADELANTAMIENTOS 0 RECOGIDAS 0 MEJOR 0.0s",
+            "reversiCard": null
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "interactions": [
+        {
+          "id": "parchis",
+          "interaction": "roll-die",
+          "didInteract": true
+        },
+        {
+          "id": "billar",
+          "interaction": "cue-drag",
+          "didInteract": false
+        },
+        {
+          "id": "futbol-turnos",
+          "interaction": "piece-drag",
+          "didInteract": true
+        },
+        {
+          "id": "tanques",
+          "interaction": "fire",
+          "didInteract": true
+        },
+        {
+          "id": "trafico",
+          "interaction": "start-run",
+          "didInteract": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "screenshots": [
+        {
+          "name": "00-home-full",
+          "path": "visual-audit-03/desktop/00-home-full.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 1407,
+            "topbarRect": {
+              "x": 0,
+              "y": 0,
+              "width": 1440,
+              "height": 60
+            },
+            "statusRect": null,
+            "stageRect": null,
+            "mainRect": null,
+            "boardRect": null,
+            "gameBoardRect": null,
+            "gameBoardViewportRatio": 0,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 0,
+            "topbarRulesCount": 0,
+            "visibleText": "Minijuegos Juegos para toda la familia Clásicos de siempre, listos para jugar sin conexión. CATÁLOGO 13 juegos 3 en raya LÓGICA 2 jug. 4 en raya ESTRATEGIA 2–4 jug. Damas TABLERO 2 jug. Parchis FAMILIAR 2–4 jug. Escaleras y serpientes SUERTE 2–4 jug. Tráfico PUZZLE 1 jug. Buscaminas LÓGICA 1 jug. Sokoban DESAFÍO 1 jug. Parejas MEMORIA 1 jug. Billar HABILIDAD 2 jug. Futbol DEPORTES 2 jug. Tanques ACCIÓN 2 jug. Reversi ESTRATEGIA 2 jug.",
+            "reversiCard": {
+              "text": "Reversi ESTRATEGIA 2 jug.",
+              "svgText": "<svg viewBox=\"0 0 48 48\" role=\"presentation\" aria-hidden=\"true\">\n          <defs>\n            <linearGradient id=\"reversiGlyphBoard\" x1=\"0\" y1=\"0\" x2=\"1\" y2=\"1\">\n              <stop offset=\"0%\" stop-color=\"#dff0e6\"></stop>\n              <stop offset=\"100%\" stop-color=\"#8ab79b\"></stop>\n            </"
+            }
+          }
+        },
+        {
+          "name": "game-parchis-initial",
+          "path": "visual-audit-03/desktop/game-parchis-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 1012,
+            "topbarRect": {
+              "x": 81,
+              "y": 7,
+              "width": 1278,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 81,
+              "y": 120,
+              "width": 1278,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 81,
+              "y": 200,
+              "width": 1278,
+              "height": 771
+            },
+            "mainRect": {
+              "x": 81,
+              "y": 200,
+              "width": 1278,
+              "height": 771
+            },
+            "boardRect": {
+              "x": 98,
+              "y": 217,
+              "width": 1244,
+              "height": 737
+            },
+            "gameBoardRect": {
+              "x": 340,
+              "y": 224,
+              "width": 760,
+              "height": 729
+            },
+            "gameBoardViewportRatio": 0.427,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Parchis Turno de GuiYo. Tira los dados. ESTADO Turno de GuiYo. Tira los dados. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Pulsa Tirar dados para continuar. JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO Pulsa Tirar dados para empezar.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-parchis-interaction",
+          "path": "visual-audit-03/desktop/game-parchis-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 1077,
+            "topbarRect": {
+              "x": 81,
+              "y": 7,
+              "width": 1278,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 81,
+              "y": 120,
+              "width": 1278,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 81,
+              "y": 200,
+              "width": 1278,
+              "height": 836
+            },
+            "mainRect": {
+              "x": 81,
+              "y": 200,
+              "width": 1278,
+              "height": 836
+            },
+            "boardRect": {
+              "x": 98,
+              "y": 217,
+              "width": 1244,
+              "height": 802
+            },
+            "gameBoardRect": {
+              "x": 340,
+              "y": 224,
+              "width": 760,
+              "height": 794
+            },
+            "gameBoardViewportRatio": 0.466,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Parchis Turno de GuiYo. Toca un destino para salir o mover. ESTADO Turno de GuiYo. Toca un destino para salir o mover. 1 2 3 4 1 2 3 4 Salir 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS Resultado: 4 y 4 TURNO GuiYo Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Salir JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO Doble 4-4. Toca un destino para salir o mover.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-damas-initial",
+          "path": "visual-audit-03/desktop/game-damas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 191,
+              "y": 120,
+              "width": 1058,
+              "height": 103
+            },
+            "stageRect": {
+              "x": 191,
+              "y": 235,
+              "width": 1058,
+              "height": 624
+            },
+            "mainRect": {
+              "x": 191,
+              "y": 235,
+              "width": 1058,
+              "height": 608
+            },
+            "boardRect": {
+              "x": 208,
+              "y": 252,
+              "width": 1024,
+              "height": 574
+            },
+            "gameBoardRect": {
+              "x": 460,
+              "y": 282,
+              "width": 520,
+              "height": 520
+            },
+            "gameBoardViewportRatio": 0.209,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Damas Turno de GuiYo. Selecciona una ficha. ESTADO Turno de GuiYo. Selecciona una ficha. JUGADORES ○ GuiYo △ Kelly",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-buscaminas-initial",
+          "path": "visual-audit-03/desktop/game-buscaminas-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 978,
+            "topbarRect": {
+              "x": 161,
+              "y": 7,
+              "width": 1118,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 161,
+              "y": 111,
+              "width": 1118,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 161,
+              "y": 191,
+              "width": 1118,
+              "height": 746
+            },
+            "mainRect": {
+              "x": 161,
+              "y": 191,
+              "width": 1118,
+              "height": 746
+            },
+            "boardRect": {
+              "x": 178,
+              "y": 208,
+              "width": 1084,
+              "height": 712
+            },
+            "gameBoardRect": {
+              "x": 510,
+              "y": 462,
+              "width": 420,
+              "height": 420
+            },
+            "gameBoardViewportRatio": 0.136,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Buscaminas ESTADO Listo FÁCIL CLÁSICO LISTO 8x8 · 64 activas · 10 minas Abre una celda para empezar. La primera jugada excluye esa celda y su vecindad activa inmediata. REINICIAR MINAS RESTANTES 10 TIEMPO 00:00",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-reversi-initial",
+          "path": "visual-audit-03/desktop/game-reversi-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 191,
+              "y": 120,
+              "width": 1058,
+              "height": 87
+            },
+            "stageRect": {
+              "x": 191,
+              "y": 219,
+              "width": 1058,
+              "height": 645
+            },
+            "mainRect": {
+              "x": 191,
+              "y": 219,
+              "width": 1058,
+              "height": 645
+            },
+            "boardRect": {
+              "x": 208,
+              "y": 236,
+              "width": 1024,
+              "height": 611
+            },
+            "gameBoardRect": {
+              "x": 499,
+              "y": 369,
+              "width": 442,
+              "height": 442
+            },
+            "gameBoardViewportRatio": 0.151,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Reversi Turno de GuiYo ESTADO Turno de GuiYo. Coloca tu pieza. JUGADORES ○ GuiYo △ Kelly ○ GuiYo 2 Kelly 2 △",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-billar-initial",
+          "path": "visual-audit-03/desktop/game-billar-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 1010,
+            "topbarRect": {
+              "x": 17,
+              "y": -1,
+              "width": 1406,
+              "height": 61
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 84,
+              "width": 1406,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 164,
+              "width": 1406,
+              "height": 816
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 164,
+              "width": 1406,
+              "height": 816
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 165,
+              "width": 1404,
+              "height": 814
+            },
+            "gameBoardRect": {
+              "x": 19,
+              "y": 166,
+              "width": 1402,
+              "height": 812
+            },
+            "gameBoardViewportRatio": 0.878,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Billar Marcador 0 - 0 · Coral abre la partida ESTADO Coral abre la partida 1 2 3 4 5",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-billar-interaction",
+          "path": "visual-audit-03/desktop/game-billar-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 1010,
+            "topbarRect": {
+              "x": 17,
+              "y": -1,
+              "width": 1406,
+              "height": 61
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 84,
+              "width": 1406,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 164,
+              "width": 1406,
+              "height": 816
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 164,
+              "width": 1406,
+              "height": 816
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 165,
+              "width": 1404,
+              "height": 814
+            },
+            "gameBoardRect": {
+              "x": 19,
+              "y": 166,
+              "width": 1402,
+              "height": 812
+            },
+            "gameBoardViewportRatio": 0.878,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Billar Marcador 0 - 0 · Coral abre la partida ESTADO Coral abre la partida 1 2 3 4 5",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-futbol-turnos-initial",
+          "path": "visual-audit-03/desktop/game-futbol-turnos-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 191,
+              "y": 120,
+              "width": 1058,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 191,
+              "y": 200,
+              "width": 1058,
+              "height": 685
+            },
+            "mainRect": {
+              "x": 191,
+              "y": 200,
+              "width": 1058,
+              "height": 685
+            },
+            "boardRect": {
+              "x": 192,
+              "y": 201,
+              "width": 1056,
+              "height": 683
+            },
+            "gameBoardRect": {
+              "x": 209,
+              "y": 218,
+              "width": 1022,
+              "height": 649
+            },
+            "gameBoardViewportRatio": 0.512,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Futbol Marcador 0 - 0 · Juega Coral ESTADO Juega Coral 0 JUEGA CORAL 0 1 2 3 1 2 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-futbol-turnos-interaction",
+          "path": "visual-audit-03/desktop/game-futbol-turnos-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 916,
+            "topbarRect": {
+              "x": 191,
+              "y": 7,
+              "width": 1058,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 191,
+              "y": 120,
+              "width": 1058,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 191,
+              "y": 200,
+              "width": 1058,
+              "height": 685
+            },
+            "mainRect": {
+              "x": 191,
+              "y": 200,
+              "width": 1058,
+              "height": 685
+            },
+            "boardRect": {
+              "x": 192,
+              "y": 201,
+              "width": 1056,
+              "height": 683
+            },
+            "gameBoardRect": {
+              "x": 209,
+              "y": 218,
+              "width": 1022,
+              "height": 649
+            },
+            "gameBoardViewportRatio": 0.512,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Futbol Marcador 0 - 0 · Juega Coral ESTADO Juega Coral 0 JUEGA CORAL 0 1 2 3 1 2 3",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-tanques-initial",
+          "path": "visual-audit-03/desktop/game-tanques-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 988,
+            "topbarRect": {
+              "x": 17,
+              "y": 7,
+              "width": 1406,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 118,
+              "width": 1406,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 198,
+              "width": 1406,
+              "height": 749
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 198,
+              "width": 1406,
+              "height": 749
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 199,
+              "width": 1404,
+              "height": 747
+            },
+            "gameBoardRect": {
+              "x": 35,
+              "y": 216,
+              "width": 1370,
+              "height": 713
+            },
+            "gameBoardViewportRatio": 0.754,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tanques Vida 100 - 100 · Turno de GuiYo ESTADO Turno de GuiYo GuiYo Activo 100 Combustible 120 Armamento 1/1 AIMING_PHASE 21 km/h ← Turno de GuiYo Ajusta el tiro del tanque activo y dispara una sola vez. Viento 21 km/h ← Turno 1 Kelly Suspendido 100 Combustible 120 Armamento 1/1 MOVIMIENTO 120 ← → ANGULO 54° − + POTENCIA 68% − + ARMAMENTO 1/1 Canon base Visible solo en AIMING_PHASE Disparar",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-tanques-interaction",
+          "path": "visual-audit-03/desktop/game-tanques-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 988,
+            "topbarRect": {
+              "x": 17,
+              "y": 7,
+              "width": 1406,
+              "height": 85
+            },
+            "statusRect": {
+              "x": 17,
+              "y": 118,
+              "width": 1406,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 17,
+              "y": 198,
+              "width": 1406,
+              "height": 749
+            },
+            "mainRect": {
+              "x": 17,
+              "y": 198,
+              "width": 1406,
+              "height": 749
+            },
+            "boardRect": {
+              "x": 18,
+              "y": 199,
+              "width": 1404,
+              "height": 747
+            },
+            "gameBoardRect": {
+              "x": 35,
+              "y": 216,
+              "width": 1370,
+              "height": 713
+            },
+            "gameBoardViewportRatio": 0.754,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tanques Vida 100 - 100 · Disparo de GuiYo ESTADO Disparo de GuiYo GuiYo Activo 100 Combustible 120 Armamento 0/1 SIMULATION 21 km/h ← Disparo de GuiYo La camara sigue el proyectil hasta el impacto. Viento 21 km/h ← Turno 1 Kelly Suspendido 100 Combustible 120 Armamento 1/1 SIMULATION Disparo de GuiYo La camara sigue el proyectil hasta el impacto.",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-trafico-initial",
+          "path": "visual-audit-03/desktop/game-trafico-initial.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 938,
+            "topbarRect": {
+              "x": 19,
+              "y": 7,
+              "width": 1402,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 19,
+              "y": 111,
+              "width": 1402,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 19,
+              "y": 191,
+              "width": 1402,
+              "height": 706
+            },
+            "mainRect": {
+              "x": 19,
+              "y": 191,
+              "width": 1402,
+              "height": 706
+            },
+            "boardRect": {
+              "x": 20,
+              "y": 192,
+              "width": 1400,
+              "height": 704
+            },
+            "gameBoardRect": {
+              "x": 294,
+              "y": 209,
+              "width": 852,
+              "height": 670
+            },
+            "gameBoardViewportRatio": 0.44,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tráfico ESTADO Listo para jugar Listo Pulsa Empezar para arrancar. INFINITO LISTO COCHE GuiYo Aguanta lo maximo posible. Pulsa Empezar para salir a la carretera. TIEMPO 0.0s PUNTUACION 0 Empezar Desliza sobre la carretera. Estos botones quedan como respaldo. ← → Telemetria Metricas de carrera DISTANCIA 0 ADELANTAMIENTOS 0 RECOGIDAS 0 MEJOR 0.0s",
+            "reversiCard": null
+          }
+        },
+        {
+          "name": "game-trafico-interaction",
+          "path": "visual-audit-03/desktop/game-trafico-interaction.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 938,
+            "topbarRect": {
+              "x": 19,
+              "y": 7,
+              "width": 1402,
+              "height": 76
+            },
+            "statusRect": {
+              "x": 19,
+              "y": 111,
+              "width": 1402,
+              "height": 67
+            },
+            "stageRect": {
+              "x": 19,
+              "y": 191,
+              "width": 1402,
+              "height": 706
+            },
+            "mainRect": {
+              "x": 19,
+              "y": 191,
+              "width": 1402,
+              "height": 706
+            },
+            "boardRect": {
+              "x": 20,
+              "y": 192,
+              "width": 1400,
+              "height": 704
+            },
+            "gameBoardRect": {
+              "x": 294,
+              "y": 209,
+              "width": 852,
+              "height": 670
+            },
+            "gameBoardViewportRatio": 0.44,
+            "floatingActionsCount": 0,
+            "visibleFloatingActionsCount": 0,
+            "topbarRestartCount": 1,
+            "topbarRulesCount": 1,
+            "visibleText": "Tráfico ESTADO Partida en curso INFINITO JUGANDO COCHE GuiYo Aguanta lo maximo posible. Arranca la partida. TIEMPO 0.7s PUNTUACION 1 Pausa Desliza sobre la carretera. Estos botones quedan como respaldo. ← → Telemetria Metricas de carrera DISTANCIA 1 ADELANTAMIENTOS 0 RECOGIDAS 0 MEJOR 0.0s",
+            "reversiCard": null
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "interactions": [
+        {
+          "id": "parchis",
+          "interaction": "roll-die",
+          "didInteract": true
+        },
+        {
+          "id": "billar",
+          "interaction": "cue-drag",
+          "didInteract": true
+        },
+        {
+          "id": "futbol-turnos",
+          "interaction": "piece-drag",
+          "didInteract": true
+        },
+        {
+          "id": "tanques",
+          "interaction": "fire",
+          "didInteract": true
+        },
+        {
+          "id": "trafico",
+          "interaction": "start-run",
+          "didInteract": true
+        }
+      ]
+    }
+  ],
+  "comparison": {
+    "duplicatedFloatingActionsRemoved": true,
+    "topbarGlobalActionsPresent": true,
+    "noHorizontalOverflow": true,
+    "buscaminasDamasStillVisible": true,
+    "reversiHomeKept": true
+  }
+}

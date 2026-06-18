@@ -1,0 +1,2172 @@
+{
+  "generatedAt": "2026-06-18T22:06:45.549Z",
+  "rootUrl": "http://127.0.0.1:8080",
+  "browser": "playwright chromium",
+  "viewports": [
+    {
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 844
+      },
+      "screenshots": [
+        {
+          "name": "01-config-normal",
+          "path": "visual-audit-06-parchis-polish/mobile/01-config-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 850,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        },
+        {
+          "name": "02-config-caos",
+          "path": "visual-audit-06-parchis-polish/mobile/02-config-caos.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 850,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        },
+        {
+          "name": "03-game-inicial-normal",
+          "path": "visual-audit-06-parchis-polish/mobile/03-game-inicial-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 991,
+            "boardRect": {
+              "x": 67,
+              "y": 198,
+              "width": 256,
+              "height": 256
+            },
+            "shellRect": {
+              "x": 43,
+              "y": 174,
+              "width": 304,
+              "height": 776
+            },
+            "eventRect": {
+              "x": 55,
+              "y": 850,
+              "width": 280,
+              "height": 88
+            },
+            "boardViewportRatio": 0.199,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "synthetic-no-legal-roll",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-no-legal-roll.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 868,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 840
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 754,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "synthetic-roll-five-selected",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-roll-five-selected.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 886,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 858
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 772,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 4,
+            "selectedPieces": 1,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1=5 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. D1=5 ULTIMO EVENTO ESTADO Tirada de 5 y 2. Toca un destino para mover."
+          }
+        },
+        {
+          "name": "synthetic-movement-done",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-movement-done.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 870,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 842
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 756,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 1 2 3 4 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Queda 2 por jugar. Toca el siguiente destino. Seguros activos y captura con bonus 21. D2 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "synthetic-capture-normal",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-capture-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 898,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 870
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 784,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 2 3 4 1 +21 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 6 · suma 11 TURNO GuiYo Modo Normal Bonus de 21. Toca el destino. Seguros activos y captura con bonus 21. Bonus activo: 21 +21 ULTIMO EVENTO BONUS Bonus de 21: toca el destino."
+          }
+        },
+        {
+          "name": "synthetic-safe-normal",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-safe-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 886,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 858
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 772,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 2,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 2 3 4 1 Mover 1 1 1 Suma D1 Disponible D2 Disponible TIRAR DADOS D1 2 · D2 2 · suma 4 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. Suma D1 D2 ULTIMO EVENTO TURNO EXTRA Doble 2-2. Juega la tirada y repites turno."
+          }
+        },
+        {
+          "name": "synthetic-bridge-normal",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-bridge-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 390,
+            "scrollHeight": 844,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 812
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 726,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 1,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": true,
+            "text": "3 4 2 3 4 1 1 2 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO Kelly Modo Normal Pulsa Tirar dados para continuar. Seguros activos y captura con bonus 21. ULTIMO EVENTO ESTADO No hay jugada legal con 5 y 6."
+          }
+        },
+        {
+          "name": "synthetic-chaos-old-safe-capture",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-chaos-old-safe-capture.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 870,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 842
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 756,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": false,
+            "modeChaosText": true,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 2 3 4 1 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 2 · D2 2 · suma 4 TURNO GuiYo Modo Caos Queda 2 por jugar. Toca el siguiente destino. Sin seguros ni bonus de captura. D2 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "synthetic-winner-goal",
+          "path": "visual-audit-06-parchis-polish/mobile/synthetic-winner-goal.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 390,
+            "scrollHeight": 844,
+            "boardRect": {
+              "x": 38,
+              "y": 38,
+              "width": 314,
+              "height": 314
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 362,
+              "height": 812
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 726,
+              "width": 338,
+              "height": 88
+            },
+            "boardViewportRatio": 0.3,
+            "movablePieces": 0,
+            "selectedPieces": 1,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1 Usado D2 Disponible TIRAR DADOS D1 2 · D2 4 · suma 6 TURNO GuiYo Modo Normal Partida finalizada. Seguros activos y captura con bonus 21. ULTIMO EVENTO VICTORIA Partida terminada."
+          }
+        },
+        {
+          "name": "04-real-roll-five",
+          "path": "visual-audit-06-parchis-polish/mobile/04-real-roll-five.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 1046,
+            "boardRect": {
+              "x": 48,
+              "y": 198,
+              "width": 294,
+              "height": 294
+            },
+            "shellRect": {
+              "x": 24,
+              "y": 174,
+              "width": 342,
+              "height": 832
+            },
+            "eventRect": {
+              "x": 36,
+              "y": 906,
+              "width": 318,
+              "height": 88
+            },
+            "boardViewportRatio": 0.263,
+            "movablePieces": 4,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Toca un destino para salir o mover. ESTADO Turno de GuiYo. Toca un destino para salir o mover. 1 2 3 4 1 2 3 4 D1=5 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. D1=5 ULTIMO EVENTO ESTADO Tirada de 5 y 2. Toca un destino para mover."
+          }
+        },
+        {
+          "name": "05-real-after-move",
+          "path": "visual-audit-06-parchis-polish/mobile/05-real-after-move.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 1009,
+            "boardRect": {
+              "x": 67,
+              "y": 214,
+              "width": 256,
+              "height": 256
+            },
+            "shellRect": {
+              "x": 43,
+              "y": 190,
+              "width": 304,
+              "height": 778
+            },
+            "eventRect": {
+              "x": 55,
+              "y": 869,
+              "width": 280,
+              "height": 88
+            },
+            "boardViewportRatio": 0.199,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Queda un dado por jugar: toca el siguiente destino. ESTADO Turno de GuiYo. Queda un dado por jugar: toca el siguiente destino. 2 3 4 1 2 3 4 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Queda 2 por jugar. Toca el siguiente destino. Seguros activos y captura con bonus 21. D2 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "06-real-after-restart",
+          "path": "visual-audit-06-parchis-polish/mobile/06-real-after-restart.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 991,
+            "boardRect": {
+              "x": 67,
+              "y": 198,
+              "width": 256,
+              "height": 256
+            },
+            "shellRect": {
+              "x": 43,
+              "y": 174,
+              "width": 304,
+              "height": 776
+            },
+            "eventRect": {
+              "x": 55,
+              "y": 850,
+              "width": 280,
+              "height": 88
+            },
+            "boardViewportRatio": 0.199,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "07-rules-open",
+          "path": "visual-audit-06-parchis-polish/mobile/07-rules-open.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 991,
+            "boardRect": {
+              "x": 67,
+              "y": 198,
+              "width": 256,
+              "height": 256
+            },
+            "shellRect": {
+              "x": 43,
+              "y": 174,
+              "width": 304,
+              "height": 776
+            },
+            "eventRect": {
+              "x": 55,
+              "y": 850,
+              "width": 280,
+              "height": 88
+            },
+            "boardViewportRatio": 0.199,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar. Reglas del juego Dados En cada turno tiras 2 dados: puedes mover una ficha con la suma o 2 fichas distintas, una con cada dado. Salida Para sacar ficha de casa necesitas un 5, ya sea en un dado individual o con la suma de los dos dados. Dobles Si sacas dobles, juegas la tirada y repites turno. El tercer doble seguido penaliza y pasa el turno. Captura En modo Normal, capturar en casilla no segura da un bonus obligatorio de 21 casillas. En modo Caos no hay bonus de captura. Seguros En modo Normal hay seguros y los puentes so"
+          }
+        },
+        {
+          "name": "08-back-to-config",
+          "path": "visual-audit-06-parchis-polish/mobile/08-back-to-config.png",
+          "metrics": {
+            "viewport": {
+              "width": 390,
+              "height": 844
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 390,
+            "scrollHeight": 850,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "checks": [
+        {
+          "name": "config-mode-toggle",
+          "ok": true
+        },
+        {
+          "name": "no-legal-roll-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "roll-five-selected-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "movement-done-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "capture-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "safe-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "bridge-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "chaos-old-safe-capture-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "winner-goal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "restart-keeps-game-usable",
+          "ok": true
+        },
+        {
+          "name": "rules-open",
+          "ok": true
+        },
+        {
+          "name": "back-to-config",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1024
+      },
+      "screenshots": [
+        {
+          "name": "01-config-normal",
+          "path": "visual-audit-06-parchis-polish/tablet/01-config-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1056,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        },
+        {
+          "name": "02-config-caos",
+          "path": "visual-audit-06-parchis-polish/tablet/02-config-caos.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1056,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        },
+        {
+          "name": "03-game-inicial-normal",
+          "path": "visual-audit-06-parchis-polish/tablet/03-game-inicial-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1200,
+            "boardRect": {
+              "x": 168,
+              "y": 233,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 116,
+              "y": 209,
+              "width": 537,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 128,
+              "y": 1043,
+              "width": 513,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "synthetic-no-legal-roll",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-no-legal-roll.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 848,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES O GuiYo Casa 4 - Meta 0 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "synthetic-roll-five-selected",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-roll-five-selected.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 948
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 855,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 4,
+            "selectedPieces": 1,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1=5 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. D1=5 JUGADORES O GuiYo Casa 4 - Meta 0 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Tirada de 5 y 2. Toca un destino para mover."
+          }
+        },
+        {
+          "name": "synthetic-movement-done",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-movement-done.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 848,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 1 2 3 4 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Queda 2 por jugar. Toca el siguiente destino. Seguros activos y captura con bonus 21. D2 JUGADORES O GuiYo Casa 3 - Meta 0 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "synthetic-capture-normal",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-capture-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 959
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 867,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 2 3 4 1 +21 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 6 · suma 11 TURNO GuiYo Modo Normal Bonus de 21. Toca el destino. Seguros activos y captura con bonus 21. Bonus activo: 21 +21 JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO BONUS Bonus de 21: toca el destino."
+          }
+        },
+        {
+          "name": "synthetic-safe-normal",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-safe-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 948
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 855,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 2,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 2 3 4 1 Mover 1 1 1 Suma D1 Disponible D2 Disponible TIRAR DADOS D1 2 · D2 2 · suma 4 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. Suma D1 D2 JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 3 - Meta 0 ULTIMO EVENTO TURNO EXTRA Doble 2-2. Juega la tirada y repites turno."
+          }
+        },
+        {
+          "name": "synthetic-bridge-normal",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-bridge-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 848,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 1,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": true,
+            "text": "3 4 2 3 4 1 1 2 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO Kelly Modo Normal Pulsa Tirar dados para continuar. Seguros activos y captura con bonus 21. JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 2 - Meta 0 ULTIMO EVENTO ESTADO No hay jugada legal con 5 y 6."
+          }
+        },
+        {
+          "name": "synthetic-chaos-old-safe-capture",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-chaos-old-safe-capture.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 848,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": false,
+            "modeChaosText": true,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 2 3 4 1 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 2 · D2 2 · suma 4 TURNO GuiYo Modo Caos Queda 2 por jugar. Toca el siguiente destino. Sin seguros ni bonus de captura. D2 JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 3 - Meta 0 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "synthetic-winner-goal",
+          "path": "visual-audit-06-parchis-polish/tablet/synthetic-winner-goal.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 768,
+            "scrollHeight": 1024,
+            "boardRect": {
+              "x": 168,
+              "y": 38,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 14,
+              "y": 14,
+              "width": 740,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 26,
+              "y": 848,
+              "width": 716,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 0,
+            "selectedPieces": 1,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1 Usado D2 Disponible TIRAR DADOS D1 2 · D2 4 · suma 6 TURNO GuiYo Modo Normal Partida finalizada. Seguros activos y captura con bonus 21. JUGADORES O GuiYo Casa 0 - Meta 4 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO VICTORIA Partida terminada."
+          }
+        },
+        {
+          "name": "04-real-roll-five",
+          "path": "visual-audit-06-parchis-polish/tablet/04-real-roll-five.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1208,
+            "boardRect": {
+              "x": 168,
+              "y": 233,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 30,
+              "y": 209,
+              "width": 709,
+              "height": 948
+            },
+            "eventRect": {
+              "x": 42,
+              "y": 1051,
+              "width": 685,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 4,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Toca un destino para salir o mover. ESTADO Turno de GuiYo. Toca un destino para salir o mover. 1 2 3 4 1 2 3 4 D1=5 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. D1=5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Tirada de 5 y 2. Toca un destino para mover."
+          }
+        },
+        {
+          "name": "05-real-after-move",
+          "path": "visual-audit-06-parchis-polish/tablet/05-real-after-move.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1200,
+            "boardRect": {
+              "x": 168,
+              "y": 233,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 112,
+              "y": 209,
+              "width": 545,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 124,
+              "y": 1043,
+              "width": 521,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Queda un dado por jugar: toca el siguiente destino. ESTADO Turno de GuiYo. Queda un dado por jugar: toca el siguiente destino. 2 3 4 1 2 3 4 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Queda 2 por jugar. Toca el siguiente destino. Seguros activos y captura con bonus 21. D2 JUGADORES ○ GuiYo Casa 3 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "06-real-after-restart",
+          "path": "visual-audit-06-parchis-polish/tablet/06-real-after-restart.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1200,
+            "boardRect": {
+              "x": 168,
+              "y": 233,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 116,
+              "y": 209,
+              "width": 537,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 128,
+              "y": 1043,
+              "width": 513,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "07-rules-open",
+          "path": "visual-audit-06-parchis-polish/tablet/07-rules-open.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1200,
+            "boardRect": {
+              "x": 168,
+              "y": 233,
+              "width": 432,
+              "height": 432
+            },
+            "shellRect": {
+              "x": 116,
+              "y": 209,
+              "width": 537,
+              "height": 941
+            },
+            "eventRect": {
+              "x": 128,
+              "y": 1043,
+              "width": 513,
+              "height": 95
+            },
+            "boardViewportRatio": 0.237,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar. Reglas del juego Dados En cada turno tiras 2 dados: puedes mover una ficha con la suma o 2 fichas distintas, una con cada dado. Salida Para sacar ficha de casa necesitas un 5, ya sea en un dado individual o con la suma de los dos dados. Dobles Si sacas dobles, juegas la tirada y repites turno. El tercer doble seguido penaliza y pasa el turno. Captura En modo Normal, capturar en casilla no segura da un bonus obligatorio de 21 casillas. En modo Caos no hay bonus de ca"
+          }
+        },
+        {
+          "name": "08-back-to-config",
+          "path": "visual-audit-06-parchis-polish/tablet/08-back-to-config.png",
+          "metrics": {
+            "viewport": {
+              "width": 768,
+              "height": 1024
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 768,
+            "scrollHeight": 1056,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "checks": [
+        {
+          "name": "config-mode-toggle",
+          "ok": true
+        },
+        {
+          "name": "no-legal-roll-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "roll-five-selected-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "movement-done-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "capture-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "safe-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "bridge-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "chaos-old-safe-capture-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "winner-goal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "restart-keeps-game-usable",
+          "ok": true
+        },
+        {
+          "name": "rules-open",
+          "ok": true
+        },
+        {
+          "name": "back-to-config",
+          "ok": true
+        }
+      ]
+    },
+    {
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 900
+      },
+      "screenshots": [
+        {
+          "name": "01-config-normal",
+          "path": "visual-audit-06-parchis-polish/desktop/01-config-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 988,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        },
+        {
+          "name": "02-config-caos",
+          "path": "visual-audit-06-parchis-polish/desktop/02-config-caos.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 988,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        },
+        {
+          "name": "03-game-inicial-normal",
+          "path": "visual-audit-06-parchis-polish/desktop/03-game-inicial-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 955,
+            "boardRect": {
+              "x": 330,
+              "y": 256,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 298,
+              "y": 224,
+              "width": 844,
+              "height": 672
+            },
+            "eventRect": {
+              "x": 866,
+              "y": 785,
+              "width": 260,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "synthetic-no-legal-roll",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-no-legal-roll.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 672
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 575,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES O GuiYo Casa 4 - Meta 0 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "synthetic-roll-five-selected",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-roll-five-selected.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 674
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 577,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 4,
+            "selectedPieces": 1,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1=5 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. D1=5 JUGADORES O GuiYo Casa 4 - Meta 0 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Tirada de 5 y 2. Toca un destino para mover."
+          }
+        },
+        {
+          "name": "synthetic-movement-done",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-movement-done.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 674
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 577,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 1 2 3 4 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Queda 2 por jugar. Toca el siguiente destino. Seguros activos y captura con bonus 21. D2 JUGADORES O GuiYo Casa 3 - Meta 0 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "synthetic-capture-normal",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-capture-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 702
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 605,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 2 3 4 1 +21 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 6 · suma 11 TURNO GuiYo Modo Normal Bonus de 21. Toca el destino. Seguros activos y captura con bonus 21. Bonus activo: 21 +21 JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO BONUS Bonus de 21: toca el destino."
+          }
+        },
+        {
+          "name": "synthetic-safe-normal",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-safe-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 674
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 577,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 2,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 2 3 4 1 Mover 1 1 1 Suma D1 Disponible D2 Disponible TIRAR DADOS D1 2 · D2 2 · suma 4 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. Suma D1 D2 JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 3 - Meta 0 ULTIMO EVENTO TURNO EXTRA Doble 2-2. Juega la tirada y repites turno."
+          }
+        },
+        {
+          "name": "synthetic-bridge-normal",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-bridge-normal.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 644
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 547,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 1,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": true,
+            "text": "3 4 2 3 4 1 1 2 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO Kelly Modo Normal Pulsa Tirar dados para continuar. Seguros activos y captura con bonus 21. JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 2 - Meta 0 ULTIMO EVENTO ESTADO No hay jugada legal con 5 y 6."
+          }
+        },
+        {
+          "name": "synthetic-chaos-old-safe-capture",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-chaos-old-safe-capture.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 674
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 577,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": false,
+            "modeChaosText": true,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "2 3 4 2 3 4 1 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 2 · D2 2 · suma 4 TURNO GuiYo Modo Caos Queda 2 por jugar. Toca el siguiente destino. Sin seguros ni bonus de captura. D2 JUGADORES O GuiYo Casa 0 - Meta 3 A Kelly Casa 3 - Meta 0 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "synthetic-winner-goal",
+          "path": "visual-audit-06-parchis-polish/desktop/synthetic-winner-goal.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": false,
+            "scrollWidth": 1440,
+            "scrollHeight": 900,
+            "boardRect": {
+              "x": 192,
+              "y": 46,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 160,
+              "y": 14,
+              "width": 1120,
+              "height": 644
+            },
+            "eventRect": {
+              "x": 728,
+              "y": 547,
+              "width": 536,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 0,
+            "selectedPieces": 1,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "1 2 3 4 1 2 3 4 D1 Usado D2 Disponible TIRAR DADOS D1 2 · D2 4 · suma 6 TURNO GuiYo Modo Normal Partida finalizada. Seguros activos y captura con bonus 21. JUGADORES O GuiYo Casa 0 - Meta 4 A Kelly Casa 4 - Meta 0 ULTIMO EVENTO VICTORIA Partida terminada."
+          }
+        },
+        {
+          "name": "04-real-roll-five",
+          "path": "visual-audit-06-parchis-polish/desktop/04-real-roll-five.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 957,
+            "boardRect": {
+              "x": 226,
+              "y": 256,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 194,
+              "y": 224,
+              "width": 1052,
+              "height": 674
+            },
+            "eventRect": {
+              "x": 762,
+              "y": 787,
+              "width": 468,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 4,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Toca un destino para salir o mover. ESTADO Turno de GuiYo. Toca un destino para salir o mover. 1 2 3 4 1 2 3 4 D1=5 1 2 3 4 D1 Disponible D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Toca un destino para salir, mover con la suma o empezar un movimiento con un dado. Seguros activos y captura con bonus 21. D1=5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Tirada de 5 y 2. Toca un destino para mover."
+          }
+        },
+        {
+          "name": "05-real-after-move",
+          "path": "visual-audit-06-parchis-polish/desktop/05-real-after-move.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 979,
+            "boardRect": {
+              "x": 303,
+              "y": 278,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 271,
+              "y": 246,
+              "width": 898,
+              "height": 674
+            },
+            "eventRect": {
+              "x": 839,
+              "y": 809,
+              "width": 314,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 1,
+            "selectedPieces": 0,
+            "moveTargets": 1,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Queda un dado por jugar: toca el siguiente destino. ESTADO Turno de GuiYo. Queda un dado por jugar: toca el siguiente destino. 2 3 4 1 2 3 4 1 D2 D1 Usado D2 Disponible TIRAR DADOS D1 5 · D2 2 · suma 7 TURNO GuiYo Modo Normal Queda 2 por jugar. Toca el siguiente destino. Seguros activos y captura con bonus 21. D2 JUGADORES ○ GuiYo Casa 3 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Queda un dado por jugar. Toca el siguiente destino."
+          }
+        },
+        {
+          "name": "06-real-after-restart",
+          "path": "visual-audit-06-parchis-polish/desktop/06-real-after-restart.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 955,
+            "boardRect": {
+              "x": 330,
+              "y": 256,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 298,
+              "y": 224,
+              "width": 844,
+              "height": 672
+            },
+            "eventRect": {
+              "x": 866,
+              "y": 785,
+              "width": 260,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar."
+          }
+        },
+        {
+          "name": "07-rules-open",
+          "path": "visual-audit-06-parchis-polish/desktop/07-rules-open.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 955,
+            "boardRect": {
+              "x": 330,
+              "y": 256,
+              "width": 500,
+              "height": 500
+            },
+            "shellRect": {
+              "x": 298,
+              "y": 224,
+              "width": 844,
+              "height": 672
+            },
+            "eventRect": {
+              "x": 866,
+              "y": 785,
+              "width": 260,
+              "height": 95
+            },
+            "boardViewportRatio": 0.193,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 8,
+            "bridgeCells": 0,
+            "eventVisible": true,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": true,
+            "lastEventLabel": true,
+            "text": "Parchis Turno de GuiYo. Necesitas un 5 para abrir. ESTADO Turno de GuiYo. Necesitas un 5 para abrir. 1 2 3 4 1 2 3 4 D1 Pendiente D2 Pendiente TIRAR DADOS Lanza para descubrir los 2 dados. TURNO GuiYo Modo Normal Necesitas un 5, en dado o suma, para abrir. Seguros activos y captura con bonus 21. Apertura: necesitas 5 JUGADORES ○ GuiYo Casa 4 - Meta 0 △ Kelly Casa 4 - Meta 0 ULTIMO EVENTO ESTADO Pulsa Tirar dados para empezar. Reglas del juego Dados En cada turno tiras 2 dados: puedes mover una ficha con la suma o 2 fichas distintas, una con cada dado. Salida Para sacar ficha de casa necesitas un 5, ya sea en un dado individual o con la suma de los dos dados. Dobles Si sacas dobles, juegas la tirada y repites turno. El tercer doble seguido penaliza y pasa el turno. Captura En modo Normal, capturar en casilla no segura da un bonus obligatorio de 21 casillas. En modo Caos no hay bonus de ca"
+          }
+        },
+        {
+          "name": "08-back-to-config",
+          "path": "visual-audit-06-parchis-polish/desktop/08-back-to-config.png",
+          "metrics": {
+            "viewport": {
+              "width": 1440,
+              "height": 900
+            },
+            "horizontalOverflow": false,
+            "verticalOverflow": true,
+            "scrollWidth": 1440,
+            "scrollHeight": 988,
+            "boardRect": null,
+            "shellRect": null,
+            "eventRect": null,
+            "boardViewportRatio": 0,
+            "movablePieces": 0,
+            "selectedPieces": 0,
+            "moveTargets": 0,
+            "safeCells": 0,
+            "bridgeCells": 0,
+            "eventVisible": false,
+            "modeNormalText": true,
+            "modeChaosText": false,
+            "diceSumText": false,
+            "lastEventLabel": false,
+            "text": "Configurar Parchis Parchis Tablero clasico Jugadores Multijugador local 2 jug. 3 jug. 4 jug. Nombres Personaliza los jugadores para esta partida. Jugador 1 Jugador 2 Modo Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus. Normal Caos Catalogo Iniciar partida"
+          }
+        }
+      ],
+      "consoleMessages": [],
+      "checks": [
+        {
+          "name": "config-mode-toggle",
+          "ok": true
+        },
+        {
+          "name": "no-legal-roll-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "roll-five-selected-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "movement-done-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "capture-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "safe-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "bridge-normal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "chaos-old-safe-capture-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "winner-goal-no-horizontal-overflow",
+          "ok": true
+        },
+        {
+          "name": "restart-keeps-game-usable",
+          "ok": true
+        },
+        {
+          "name": "rules-open",
+          "ok": true
+        },
+        {
+          "name": "back-to-config",
+          "ok": true
+        }
+      ]
+    }
+  ],
+  "consoleMessages": [],
+  "summary": {
+    "screenshots": 48,
+    "totalChecks": 36,
+    "passedChecks": 36,
+    "failedChecks": 0,
+    "consoleMessages": 0
+  }
+}

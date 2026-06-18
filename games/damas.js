@@ -901,6 +901,10 @@ export const damasGame = {
               0 18px 34px rgba(72, 58, 38, 0.14),
               inset 0 1px 0 rgba(255,255,255,0.95);
             padding: 18px;
+            width: min(100%, 600px);
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
           }
 
           .screen.game-screen-damas .checkers-board {
@@ -912,6 +916,9 @@ export const damasGame = {
               inset 0 1px 0 rgba(255,255,255,0.74);
             gap: 2px;
             padding: 8px;
+            width: min(100%, 520px);
+            max-width: 100%;
+            box-sizing: border-box;
           }
 
           .screen.game-screen-damas .checkers-cell {
@@ -994,6 +1001,16 @@ export const damasGame = {
 
           .screen.game-screen-damas .checkers-cell.is-last-to {
             box-shadow: inset 0 0 0 4px rgba(226, 164, 64, 0.34) !important;
+          }
+
+          @media (max-width: 1180px) {
+            .screen.game-screen-damas .checkers-shell {
+              width: min(100%, calc(100vw - 72px), 600px);
+            }
+
+            .screen.game-screen-damas .checkers-board {
+              width: min(100%, calc(100vw - 108px), 520px);
+            }
           }
 
 	          @media (max-width: 760px) {

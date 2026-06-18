@@ -1,0 +1,186 @@
+{
+  "generatedAt": "2026-06-18T22:05:50.439Z",
+  "rootUrl": "http://127.0.0.1:8080",
+  "browser": "playwright chromium",
+  "consoleMessages": [],
+  "tests": [
+    {
+      "rule": "Apertura sin 5",
+      "mode": "Normal",
+      "syntheticState": "4 fichas en casa, tirada 2-2",
+      "expected": "No debe salir ficha ni ofrecer destino",
+      "obtained": "targets=0, allHome=true",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Apertura con dado individual 5",
+      "mode": "Normal",
+      "syntheticState": "4 fichas en casa, tirada 5-2",
+      "expected": "Debe ofrecer salida y mover una ficha a salida",
+      "obtained": "targets=1,2,3,4, p0-0=0",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Apertura con suma 5",
+      "mode": "Normal",
+      "syntheticState": "4 fichas en casa, tirada 2-3",
+      "expected": "Debe salir con suma y pasar turno",
+      "obtained": "targets=1,2,3,4, current=1",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Movimiento por dado A/B/suma",
+      "mode": "Normal",
+      "syntheticState": "Dos fichas fuera, tirada 2-3",
+      "expected": "Debe ofrecer D1, D2 y Suma cuando son legales",
+      "obtained": "D1,D2,Suma,D1,D2,Suma",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Movimiento inexistente",
+      "mode": "Normal",
+      "syntheticState": "Opcion fake en fase de movimiento",
+      "expected": "Debe rechazar accion invalida",
+      "obtained": "ok=false, reason=invalid",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Meta sin pasar",
+      "mode": "Normal",
+      "syntheticState": "Una ficha en progreso 56, tirada 3-4",
+      "expected": "No debe ofrecer movimientos que sobrepasan meta",
+      "obtained": "targets=0",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Entrada exacta y victoria",
+      "mode": "Normal",
+      "syntheticState": "Tres fichas en meta, ultima en 56, tirada 2-4",
+      "expected": "Debe entrar exacto y declarar ganador",
+      "obtained": "target=D1, winner=0",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Captura Normal + bonus 21",
+      "mode": "Normal",
+      "syntheticState": "Ficha p0 a 5 de rival en casilla capturable",
+      "expected": "Rival vuelve a casa y queda bonus 21",
+      "obtained": "victim=-1, phase=await-bonus, bonus=21",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Seguro Normal no captura",
+      "mode": "Normal",
+      "syntheticState": "Rival en casilla segura visible 13, movimiento por suma 4",
+      "expected": "La ficha rival permanece y no hay bonus",
+      "obtained": "victim=20, bonus=none",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Bloqueo en seguro Normal",
+      "mode": "Normal",
+      "syntheticState": "Puente rival en seguro visible 13, pieza debe atravesarlo",
+      "expected": "No debe ofrecer movimiento que atraviese bloqueo",
+      "obtained": "targets=0, bridgeCells=1",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Caos captura en antiguo seguro sin bonus",
+      "mode": "Caos",
+      "syntheticState": "Rival en casilla que seria segura en Normal",
+      "expected": "Debe capturar y no conceder bonus",
+      "obtained": "safeCells=0, victim=-1, bonus=none",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Caos sin bloqueo de seguros",
+      "mode": "Caos",
+      "syntheticState": "Puente rival en antiguo seguro visible 13, pieza cruza sin aterrizar alli",
+      "expected": "Debe existir movimiento legal y no marcar puente de bloqueo",
+      "obtained": "targets=3, bridgeCells=0",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Primer doble repite",
+      "mode": "Normal",
+      "syntheticState": "Todo en casa, doble 1-1",
+      "expected": "Debe mantener jugador activo y doubleStreak 1",
+      "obtained": "current=0, streak=1, phase=await-roll",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Segundo doble repite",
+      "mode": "Normal",
+      "syntheticState": "Tras primer doble, doble 2-2",
+      "expected": "Debe mantener jugador activo y doubleStreak 2",
+      "obtained": "current=0, streak=2, phase=await-roll",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Tercer doble penaliza y desbloquea",
+      "mode": "Normal",
+      "syntheticState": "Tras dos dobles, tercer doble 3-3 sin ficha previa movida",
+      "expected": "Debe pasar turno y resetear doubleStreak",
+      "obtained": "current=1, streak=0, phase=await-roll",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Tercer doble devuelve ultima ficha",
+      "mode": "Normal",
+      "syntheticState": "doubleStreak 2, ultima ficha p0-0 fuera",
+      "expected": "Debe devolver p0-0 a casa y pasar turno",
+      "obtained": "p0-0=-1, current=1, streak=0",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Reinicio limpia estado avanzado",
+      "mode": "Caos",
+      "syntheticState": "createInitialState tras estado avanzado con modo Caos",
+      "expected": "Debe conservar modo y limpiar turno/dados/seleccion/dobles",
+      "obtained": "mode=chaos, current=0, streak=0, phase=await-roll",
+      "pass": true,
+      "correction": ""
+    },
+    {
+      "rule": "Cambio de modo no conserva residuos",
+      "mode": "Normal/Caos",
+      "syntheticState": "normalizeOptions normal -> chaos -> invalido",
+      "expected": "Debe normalizar cada modo de forma independiente",
+      "obtained": "normal=normal, chaos=chaos, invalid=normal",
+      "pass": true,
+      "correction": ""
+    }
+  ],
+  "screenshots": [
+    {
+      "name": "normal-safe-state",
+      "path": "visual-audit-05-parchis-rules/screenshots/normal-safe-state.png"
+    },
+    {
+      "name": "chaos-safe-state",
+      "path": "visual-audit-05-parchis-rules/screenshots/chaos-safe-state.png"
+    }
+  ],
+  "summary": {
+    "total": 18,
+    "passed": 18,
+    "failed": 0,
+    "consoleMessages": 0
+  }
+}
