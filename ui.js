@@ -642,17 +642,17 @@ export function createUI({ appElement, toastElement }) {
     /* Perfil semántico por juego: tag + clase CSS de color */
     function profileForGame(game) {
       const map = {
-        tictactoe: { tag: "Lógica", cls: "tag-logica", theme: "theme-tictactoe" },
-        connect4: { tag: "Estrategia", cls: "tag-estrategia", theme: "theme-connect4" },
+        tictactoe: { tag: "Lógica", cls: "tag-logica", theme: "theme-tictactoe", homeName: "3 en raya" },
+        connect4: { tag: "Estrategia", cls: "tag-estrategia", theme: "theme-connect4", homeName: "4 en raya" },
         damas: { tag: "Tablero", cls: "tag-tablero", theme: "theme-damas" },
-        parchis: { tag: "Familiar", cls: "tag-familiar", theme: "theme-parchis" },
-        "escaleras-serpientes": { tag: "Suerte", cls: "tag-suerte", theme: "theme-escaleras" },
-        trafico: { tag: "Puzzle", cls: "tag-puzzle", theme: "theme-trafico" },
+        parchis: { tag: "Familiar", cls: "tag-familiar", theme: "theme-parchis", homeName: "Parchís" },
+        "escaleras-serpientes": { tag: "Suerte", cls: "tag-suerte", theme: "theme-escaleras", homeName: "Escaleras" },
+        trafico: { tag: "Puzzle", cls: "tag-puzzle", theme: "theme-trafico", homeName: "Tráfico" },
         buscaminas: { tag: "Lógica", cls: "tag-logica", theme: "theme-buscaminas" },
         memory: { tag: "Memoria", cls: "tag-memoria", theme: "theme-memory" },
         billar: { tag: "Habilidad", cls: "tag-habilidad", theme: "theme-billar" },
         sokoban: { tag: "Desafío", cls: "tag-desafio", theme: "theme-sokoban" },
-        "futbol-turnos": { tag: "Deportes", cls: "tag-deportes", theme: "theme-futbol" },
+        "futbol-turnos": { tag: "Deportes", cls: "tag-deportes", theme: "theme-futbol", homeName: "Fútbol" },
         tanques: { tag: "Acción", cls: "tag-accion", theme: "theme-tanques" },
         reversi: { tag: "Estrategia", cls: "tag-estrategia", theme: "theme-reversi" }
       };
@@ -662,8 +662,9 @@ export function createUI({ appElement, toastElement }) {
     const cardsHtml = games.map((game, index) => {
       const profile = profileForGame(game);
       const players = game.minPlayers === game.maxPlayers
-        ? `${game.minPlayers} jug.`
-        : `${game.minPlayers}–${game.maxPlayers} jug.`;
+        ? `${game.minPlayers} ${game.minPlayers === 1 ? "jugador" : "jugadores"}`
+        : `${game.minPlayers}–${game.maxPlayers} jugadores`;
+      const homeName = profile.homeName || game.name;
       return `
         <button
           class="game-card-v2 home-perspective-band ${profile.theme}"
@@ -681,7 +682,7 @@ export function createUI({ appElement, toastElement }) {
             </div>
           </div>
           <div class="game-card-body">
-            <h3 class="game-card-name">${escapeHtml(game.name)}</h3>
+            <h3 class="game-card-name">${escapeHtml(homeName)}</h3>
             <div class="game-card-meta">
               <span class="game-card-tag ${profile.cls}">${profile.tag}</span>
               <span class="game-card-players">${players}</span>
