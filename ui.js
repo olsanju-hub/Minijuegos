@@ -637,8 +637,6 @@ export function createUI({ appElement, toastElement }) {
         </div>
       `;
     }
-    const games = Array.isArray(vm.games) ? vm.games : [];
-
     /* Perfil semántico por juego: tag + clase CSS de color */
     function profileForGame(game) {
       const map = {
@@ -658,6 +656,19 @@ export function createUI({ appElement, toastElement }) {
       };
       return map[game?.id] || { tag: "Juego", cls: "tag-default", theme: "theme-default" };
     }
+
+  function renderHome(vm) {
+    const baseGames = Array.isArray(vm.games) ? vm.games : [];
+    if (baseGames.length === 0) {
+      return `
+        <div class="home-v2">
+          <div class="home-v2-inner" style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
+            <p style="color:var(--text-sub);font-size:1rem;">No hay juegos disponibles por ahora.</p>
+          </div>
+        </div>
+      `;
+    }
+    const games = Array.isArray(vm.games) ? vm.games : [];
 
     const cardsHtml = games.map((game, index) => {
       const profile = profileForGame(game);
@@ -751,6 +762,7 @@ export function createUI({ appElement, toastElement }) {
       return renderHome(vm);
     }
 
+    const profile = profileForGame(game);
     const maxPlayers = game.maxPlayers || 4;
     const minPlayers = game.minPlayers || 1;
     const isFixedPlayers = minPlayers === maxPlayers;
@@ -826,7 +838,7 @@ export function createUI({ appElement, toastElement }) {
       <section class="screen config-screen">
         <header class="topbar">
           <div class="topbar-main">
-            <button class="btn-icon" data-action="go-home" aria-label="Volver al catalogo">${renderUiIcon("back")}</button>
+            <button class="btn-icon" data-action="go-home" aria-label="Volver al catálogo">${renderUiIcon("back")}</button>
             <div class="topbar-copy">
               <h2 class="topbar-title">Configurar</h2>
               <p class="topbar-sub">${escapeHtml(game.name)}</p>
@@ -834,12 +846,13 @@ export function createUI({ appElement, toastElement }) {
           </div>
         </header>
 
-        <article class="card config-card config-card-modern">
+        <article class="card config-card config-card-modern ${profile.theme}">
           <section class="config-hero">
             <div class="config-hero-media">
-              ${typeof game.renderCardIllustration === "function" ? game.renderCardIllustration() : `<div class="config-game-glyph">${renderHomeGameGlyph(game.id)}</div>`}
+              ${typeof game.renderCardIllustration === "function" ? game.renderCardIllustration() : `<div class="config-game-glyph"><div class="game-card-icon"><div class="game-card-icon-svg">${renderHomeGameGlyph(game.id)}</div></div></div>`}
             </div>
             <div class="config-hero-copy">
+              <span class="game-card-tag ${profile.cls}">${profile.tag}</span>
               <h1 class="config-title">${escapeHtml(game.name)}</h1>
               <p class="config-tagline">${escapeHtml(game.tagline || game.subtitle || "Partida local")}</p>
             </div>
@@ -852,7 +865,7 @@ export function createUI({ appElement, toastElement }) {
           </div>
 
           <div class="action-row config-actions">
-            <button class="btn btn-secondary" data-action="go-home">Catalogo</button>
+            <button class="btn btn-secondary" data-action="go-home">Catálogo</button>
             <button class="btn btn-primary" data-action="config-continue">
               Iniciar partida
               ${renderUiIcon("play", "ui-icon btn-ui-icon")}
@@ -1008,7 +1021,11 @@ export function createUI({ appElement, toastElement }) {
         <header class="topbar">
           <div class="topbar-main">
             <button class="btn-icon" data-action="game-back" aria-label="Volver a configurar">${renderUiIcon("back")}</button>
-            <div class="topbar-game-icon" aria-hidden="true">${renderHomeGameGlyph(game.id)}</div>
+            <div class="topbar-game-icon game-card-icon" aria-hidden="true">
+              <div class="game-card-icon-svg">
+                ${renderHomeGameGlyph(game.id)}
+              </div>
+            </div>
             <div class="topbar-copy">
               <h2 class="topbar-title">${escapeHtml(game.name)}</h2>
               ${topbarSubtitle ? `<p class="topbar-sub">${escapeHtml(topbarSubtitle)}</p>` : ""}
