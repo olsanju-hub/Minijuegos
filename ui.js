@@ -667,25 +667,22 @@ export function createUI({ appElement, toastElement }) {
       const homeName = profile.homeName || game.name;
       return `
         <button
-          class="game-card-v2 home-perspective-band ${profile.theme}"
+          class="game-card-v2 ${profile.theme}"
           data-action="open-game"
           data-game-id="${game.id}"
-          style="--band-index:${index};"
+          style="--card-index:${index};"
           aria-label="Jugar a ${escapeHtml(game.name)}"
         >
-          <span class="home-band-side" aria-hidden="true"></span>
-          <span class="home-band-gloss" aria-hidden="true"></span>
-          <span class="home-band-shadow" aria-hidden="true"></span>
-          <div class="game-card-icon home-band-icon">
-            <div class="game-card-icon-svg">
-              ${renderHomeGameGlyph(game.id)}
-            </div>
-          </div>
           <div class="game-card-body">
             <h3 class="game-card-name">${escapeHtml(homeName)}</h3>
             <div class="game-card-meta">
               <span class="game-card-tag ${profile.cls}">${profile.tag}</span>
               <span class="game-card-players">${players}</span>
+            </div>
+          </div>
+          <div class="game-card-icon">
+            <div class="game-card-icon-svg">
+              ${renderHomeGameGlyph(game.id)}
             </div>
           </div>
         </button>
@@ -697,23 +694,18 @@ export function createUI({ appElement, toastElement }) {
         <div class="home-topbar-brand">
           <h1 class="home-topbar-name">Minijuegos</h1>
         </div>
+        <button class="btn-icon home-help-btn" data-action="open-rules" aria-label="Ayuda y reglas del catálogo">?</button>
       </header>
 
       <div class="home-v2">
         <div class="home-v2-inner">
-          <section class="home-catalog home-perspective-catalog" aria-label="Catálogo de juegos">
-            <div class="home-catalog-header">
-              <h2 class="home-catalog-title">Elige juego</h2>
-              <span class="home-catalog-count">${games.length} juegos</span>
-            </div>
-            <div class="home-catalog-grid home-band-stack" role="list">
+          <section class="home-catalog" aria-label="Catálogo de juegos">
+            <div class="home-catalog-grid" role="list">
               ${cardsHtml}
             </div>
           </section>
-
         </div>
       </div>
-
     `;
   }
 

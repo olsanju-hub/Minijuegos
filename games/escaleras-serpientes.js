@@ -15,12 +15,12 @@ const DIE_PIPS = {
 };
 
 const LADDERS = Object.freeze([
-  Object.freeze({ id: "ladder-snail", start: 3, end: 39, width: 24, rungs: 5, color: "#9f7c64" }),
-  Object.freeze({ id: "ladder-frog", start: 13, end: 47, width: 24, rungs: 5, color: "#9f7c64" }),
-  Object.freeze({ id: "ladder-right", start: 31, end: 51, width: 22, rungs: 4, color: "#9f7c64" }),
-  Object.freeze({ id: "ladder-tower", start: 37, end: 94, width: 28, rungs: 7, color: "#9f7c64" }),
-  Object.freeze({ id: "ladder-left", start: 44, end: 83, width: 24, rungs: 5, color: "#9f7c64" }),
-  Object.freeze({ id: "ladder-top", start: 70, end: 89, width: 20, rungs: 3, color: "#9f7c64" })
+  Object.freeze({ id: "ladder-snail", start: 3, end: 39, width: 24, rungs: 5, color: "#f3c623" }),
+  Object.freeze({ id: "ladder-frog", start: 13, end: 47, width: 24, rungs: 5, color: "#f3c623" }),
+  Object.freeze({ id: "ladder-right", start: 31, end: 51, width: 22, rungs: 4, color: "#f3c623" }),
+  Object.freeze({ id: "ladder-tower", start: 37, end: 94, width: 28, rungs: 7, color: "#f3c623" }),
+  Object.freeze({ id: "ladder-left", start: 44, end: 83, width: 24, rungs: 5, color: "#f3c623" }),
+  Object.freeze({ id: "ladder-top", start: 70, end: 89, width: 20, rungs: 3, color: "#f3c623" })
 ]);
 
 const SNAKES = Object.freeze([
@@ -29,8 +29,8 @@ const SNAKES = Object.freeze([
     start: 98,
     end: 58,
     width: 34,
-    body: "#b7d8c5",
-    stripe: "#edf7f0",
+    body: "#3fb56c",
+    stripe: "#d9f7d8",
     cheek: "#ef9d8d",
     tongue: "#f08d88",
     points: Object.freeze([
@@ -48,8 +48,8 @@ const SNAKES = Object.freeze([
     start: 74,
     end: 46,
     width: 34,
-    body: "#ba9ac0",
-    stripe: "#ead9ec",
+    body: "#8b5cc9",
+    stripe: "#eadcff",
     cheek: "#ef9d8d",
     tongue: "#f08d88",
     points: Object.freeze([
@@ -66,8 +66,8 @@ const SNAKES = Object.freeze([
     start: 88,
     end: 69,
     width: 34,
-    body: "#f2e4a7",
-    stripe: "#fff7d7",
+    body: "#f4d047",
+    stripe: "#fff1a7",
     cheek: "#ef9d8d",
     tongue: "#f08d88",
     points: Object.freeze([
@@ -83,8 +83,8 @@ const SNAKES = Object.freeze([
     start: 53,
     end: 8,
     width: 36,
-    body: "#8fc6e0",
-    stripe: "#dbeef6",
+    body: "#4aa7d8",
+    stripe: "#d9f2ff",
     cheek: "#ef9d8d",
     tongue: "#f08d88",
     points: Object.freeze([
@@ -101,8 +101,8 @@ const SNAKES = Object.freeze([
     start: 36,
     end: 4,
     width: 34,
-    body: "#f6df81",
-    stripe: "#fff4be",
+    body: "#f5b84a",
+    stripe: "#fff0b8",
     cheek: "#ef9d8d",
     tongue: "#f08d88",
     points: Object.freeze([
@@ -661,7 +661,17 @@ function buildBoardCells(state, players, canAct) {
       })
       .join(", ");
 
-    const aria = labelPieces ? `Casilla ${cell}. Fichas de ${labelPieces}.` : `Casilla ${cell}.`;
+    const jump = JUMPS_BY_START.get(cell);
+    const specialLabel = cell === 1
+      ? " Inicio."
+      : cell === GOAL_CELL
+        ? " Meta."
+        : jump
+          ? ` ${jump.type === "ladder" ? "Escalera" : "Serpiente"} hacia la casilla ${jump.to}.`
+          : "";
+    const aria = labelPieces
+      ? `Casilla ${cell}.${specialLabel} Fichas de ${labelPieces}.`
+      : `Casilla ${cell}.${specialLabel}`;
 
     return `
       <div class="${classes.join(" ")}" style="${renderGridPlacement(cell)}" aria-label="${escapeHtml(aria)}">
@@ -1072,12 +1082,14 @@ export const escalerasSerpientesGame = {
       /* OVERLAYS REALISTAS: ESCALERAS DE CUERDA */
       .sns-ladder-rail {
         stroke-width: 7px !important;
-        stroke: #4d2f1d !important;
-        filter: drop-shadow(0px 8px 6px rgba(0,0,0,0.3)) !important;
+        stroke: #f3c623 !important;
+        filter:
+          drop-shadow(0px 8px 6px rgba(75, 55, 18, 0.3))
+          drop-shadow(0px 1px 0 rgba(255, 248, 178, 0.8)) !important;
       }
       .sns-ladder-rungs line {
         stroke-width: 5px !important;
-        stroke: #664632 !important;
+        stroke: #ffdd4a !important;
       }
 
       /* SERPIENTES REALISTAS CON RELIEVE Y OJOS BRILLANTES */
@@ -1086,9 +1098,11 @@ export const escalerasSerpientesGame = {
         opacity: 0.45 !important;
       }
       .sns-snake-body {
-        stroke-width: 22px !important;
+        stroke-width: 24px !important;
         stroke-linecap: round !important;
-        filter: drop-shadow(0px 10px 8px rgba(0,0,0,0.25)) !important;
+        filter:
+          drop-shadow(0px 10px 8px rgba(39, 61, 34, 0.25))
+          drop-shadow(0px 1px 0 rgba(255,255,255,0.35)) !important;
       }
       .sns-snake-stripe {
         stroke-width: 8px !important;
