@@ -327,10 +327,45 @@ function getWinnerState(board, activeSlot) {
 }
 
 function buildSelectionState(state, row, col) {
+  const piece = state.board[row][col];
+  const mandatoryCaptures = getMandatoryCaptureMoves(state.board, state.turnSlot, state.forcedChainCell);
+  const selectedMoves = getLegalMovesForPiece(state.board, row, col, state.turnSlot, state.forcedChainCell);
+  const captureCount = selectedMoves.filter((move) => move.type === "capture").length;
+  const event = state.forcedChainCell
+    ? `Cadena obligatoria: continua con la ficha de fila ${row + 1}, columna ${col + 1}.`
+    : captureCount > 0 || mandatoryCaptures.length > 0
+      ? `Ficha seleccionada. Hay ${captureCount || mandatoryCaptures.length} captura${(captureCount || mandatoryCaptures.length) === 1 ? "" : "s"} obligatoria${(captureCount || mandatoryCaptures.length) === 1 ? "" : "s"}.`
+      : `${isKingPiece(piece) ? "Dama" : "Ficha"} seleccionada. Elige una casilla marcada.`;
+
   return {
     ...state,
-    selectedCell: { row, col }
+    selectedCell: { row, col },
+    lastEvent: event
   };
+}
+
+function describeMoveEvent(move, piece, crowned, winner = null, continues = false) {
+  const from = `fila ${move.fromRow + 1}, columna ${move.fromCol + 1}`;
+  const to = `fila ${move.toRow + 1}, columna ${move.toCol + 1}`;
+  const parts = [];
+
+  if (move.type === "capture" && move.captured) {
+    parts.push(`${isKingPiece(piece) ? "La dama" : "La ficha"} captura y cae en ${to}.`);
+  } else {
+    parts.push(`${isKingPiece(piece) ? "La dama" : "La ficha"} mueve de ${from} a ${to}.`);
+  }
+
+  if (crowned) {
+    parts.push("Corona y termina el turno.");
+  } else if (continues) {
+    parts.push("Debe seguir capturando con la misma ficha.");
+  }
+
+  if (winner) {
+    parts.push(winner.reason === "no-moves" ? "Victoria: el rival no tiene movimientos." : "Victoria: el rival no tiene fichas.");
+  }
+
+  return parts.join(" ");
 }
 
 function buildMoveState(state, move) {
@@ -369,7 +404,8 @@ function buildMoveState(state, move) {
       result: immediateWinner,
       selectedCell: null,
       forcedChainCell: null,
-      lastMove
+      lastMove,
+      lastEvent: describeMoveEvent(move, piece, crowned, immediateWinner)
     };
   }
 
@@ -381,7 +417,8 @@ function buildMoveState(state, move) {
         board,
         selectedCell: { row: move.toRow, col: move.toCol },
         forcedChainCell: { row: move.toRow, col: move.toCol },
-        lastMove
+        lastMove,
+        lastEvent: describeMoveEvent(move, piece, crowned, null, true)
       };
     }
   }
@@ -392,7 +429,8 @@ function buildMoveState(state, move) {
     turnSlot: state.turnSlot === PLAYER_ONE ? PLAYER_TWO : PLAYER_ONE,
     selectedCell: null,
     forcedChainCell: null,
-    lastMove
+    lastMove,
+    lastEvent: describeMoveEvent(move, piece, crowned)
   };
 }
 
@@ -429,7 +467,8 @@ function resolveCellSelection(state, row, col) {
         ok: true,
         state: {
           ...state,
-          selectedCell: null
+          selectedCell: null,
+          lastEvent: "Seleccion cancelada."
         }
       };
     }
@@ -531,7 +570,8 @@ export const damasGame = {
       result: null,
       selectedCell: null,
       forcedChainCell: null,
-      lastMove: null
+      lastMove: null,
+      lastEvent: "Selecciona una ficha para empezar."
     };
   },
   getTurnSlot(state) {
@@ -551,6 +591,10 @@ export const damasGame = {
 
     if (state.forcedChainCell) {
       return `Turno de ${name}. Debes seguir capturando con la misma ficha.`;
+    }
+
+    if (state.lastEvent && state.selectedCell) {
+      return `Turno de ${name}. ${state.lastEvent}`;
     }
 
     if (getMandatoryCaptureMoves(state.board, state.turnSlot).length > 0) {
@@ -652,6 +696,7 @@ export const damasGame = {
     const pathCells = new Set(
       selectedMoves.flatMap((move) => move.trail.map((cell) => cellKey(cell.row, cell.col)))
     );
+    const capturedCells = new Set((state.lastMove?.captured || []).map((cell) => cellKey(cell.row, cell.col)));
     const forcedOrigins = new Set(
       getMandatoryCaptureMoves(state.board, state.turnSlot, state.forcedChainCell).map((move) => cellKey(move.fromRow, move.fromCol))
     );
@@ -668,6 +713,7 @@ export const damasGame = {
             const isCaptureTarget = captureTargetCells.has(cellKey(row, col));
             const isPath = pathCells.has(cellKey(row, col));
             const isForced = forcedOrigins.has(cellKey(row, col));
+            const isCaptured = capturedCells.has(cellKey(row, col));
             const isLastFrom = state.lastMove && state.lastMove.fromRow === row && state.lastMove.fromCol === col;
             const isLastTo = state.lastMove && state.lastMove.toRow === row && state.lastMove.toCol === col;
 
@@ -691,11 +737,17 @@ export const damasGame = {
             if (showHints && isForced) {
               classes.push("is-forced");
             }
+            if (isCaptured) {
+              classes.push("is-last-captured");
+            }
             if (isLastFrom) {
               classes.push("is-last-from");
             }
             if (isLastTo) {
               classes.push("is-last-to");
+            }
+            if (isLastTo && state.lastMove?.crowned) {
+              classes.push("is-crowned-now");
             }
 
             const disabled = !playable || !canAct;
@@ -901,6 +953,13 @@ export const damasGame = {
               0 18px 34px rgba(72, 58, 38, 0.14),
               inset 0 1px 0 rgba(255,255,255,0.95);
             padding: 18px;
+            width: min(100%, 600px);
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
           }
 
           .screen.game-screen-damas .checkers-board {
@@ -912,6 +971,9 @@ export const damasGame = {
               inset 0 1px 0 rgba(255,255,255,0.74);
             gap: 2px;
             padding: 8px;
+            width: min(100%, 520px);
+            max-width: 100%;
+            box-sizing: border-box;
           }
 
           .screen.game-screen-damas .checkers-cell {
@@ -943,6 +1005,28 @@ export const damasGame = {
               linear-gradient(180deg, #c99664 0%, #9f6b3d 100%) !important;
           }
 
+          .screen.game-screen-damas .checkers-cell.is-capture-target {
+            background:
+              radial-gradient(circle, rgba(213, 80, 56, 0.42) 0%, rgba(213, 80, 56, 0.12) 68%),
+              linear-gradient(180deg, #c99664 0%, #9f6b3d 100%) !important;
+            box-shadow: inset 0 0 0 4px rgba(156, 42, 30, 0.26) !important;
+          }
+
+          .screen.game-screen-damas .checkers-cell.is-forced .checkers-piece {
+            outline: 3px solid rgba(255, 238, 160, 0.92);
+            outline-offset: 3px;
+          }
+
+          .screen.game-screen-damas .checkers-cell.is-path::after {
+            content: "";
+            position: absolute;
+            inset: 30%;
+            border-radius: 999px;
+            background: rgba(255, 246, 218, 0.3);
+            border: 1px dashed rgba(255, 238, 160, 0.6);
+            pointer-events: none;
+          }
+
           .screen.game-screen-damas .checkers-target-dot {
             width: 16px;
             height: 16px;
@@ -966,6 +1050,7 @@ export const damasGame = {
               radial-gradient(circle at 32% 26%, rgba(255,255,255,0.62) 0 13%, rgba(255,255,255,0) 32%),
               radial-gradient(circle at 50% 78%, rgba(0,0,0,0.18), transparent 48%),
               var(--player-accent, #e0765e);
+            isolation: isolate;
           }
 
           .screen.game-screen-damas .checkers-piece-core {
@@ -996,6 +1081,39 @@ export const damasGame = {
             box-shadow: inset 0 0 0 4px rgba(226, 164, 64, 0.34) !important;
           }
 
+          .screen.game-screen-damas .checkers-cell.is-last-captured {
+            box-shadow: inset 0 0 0 4px rgba(177, 58, 46, 0.34) !important;
+          }
+
+          .screen.game-screen-damas .checkers-cell.is-crowned-now .checkers-piece {
+            outline: 3px solid rgba(250, 199, 64, 0.7);
+            outline-offset: 4px;
+          }
+
+          .screen.game-screen-damas .checkers-feedback {
+            width: 100%;
+            margin: 0;
+            padding: 9px 12px;
+            border-radius: 14px;
+            border: 1px solid rgba(125, 94, 53, 0.16);
+            background: rgba(255, 252, 246, 0.72);
+            color: #5c4a34;
+            font-size: 0.86rem;
+            font-weight: 650;
+            line-height: 1.3;
+            text-align: center;
+          }
+
+          @media (max-width: 1180px) {
+            .screen.game-screen-damas .checkers-shell {
+              width: min(100%, calc(100vw - 72px), 600px);
+            }
+
+            .screen.game-screen-damas .checkers-board {
+              width: min(100%, calc(100vw - 108px), 520px);
+            }
+          }
+
 	          @media (max-width: 760px) {
 	            .screen.game-screen-damas .checkers-shell {
 	              width: min(100%, calc(100vw - 48px));
@@ -1010,11 +1128,17 @@ export const damasGame = {
               gap: 1px;
               box-sizing: border-box;
             }
+
+            .screen.game-screen-damas .checkers-feedback {
+              font-size: 0.78rem;
+              padding: 8px 10px;
+            }
           }
         </style>
         <div class="checkers-board">
           ${boardMarkup}
         </div>
+        <p class="checkers-feedback" aria-live="polite">${escapeHtml(state.lastEvent || "Selecciona una ficha para empezar.")}</p>
       </div>
     `;
   },

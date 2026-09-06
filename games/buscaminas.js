@@ -439,6 +439,17 @@ const BUSCAMINAS_STYLES = String.raw`
   border-radius: 19px !important;
 }
 
+.mines-board {
+  display: grid !important;
+  grid-template-columns: repeat(var(--mines-cols), minmax(0, 1fr)) !important;
+  width: min(var(--mines-board-max), calc(100dvh - 300px), calc(100vw - 160px)) !important;
+  min-width: min(100%, 320px) !important;
+  max-width: 100% !important;
+  aspect-ratio: var(--mines-cols) / var(--mines-rows) !important;
+  box-sizing: border-box !important;
+  touch-action: manipulation;
+}
+
 .mines-cell {
   border-radius: 8px !important;
   background: linear-gradient(180deg, #fffdf8 0%, #e9dfce 100%) !important;
@@ -552,6 +563,8 @@ const BUSCAMINAS_STYLES = String.raw`
   }
 
   .mines-board {
+    width: min(100%, var(--mines-board-max), calc(100vw - 68px)) !important;
+    min-width: 0 !important;
     gap: clamp(3px, 1.2vw, 5px) !important;
   }
 }

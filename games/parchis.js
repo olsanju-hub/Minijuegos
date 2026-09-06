@@ -2,6 +2,8 @@ const TRACK_LENGTH = 52;
 const FINAL_LENGTH = 6;
 const GOAL_PROGRESS = TRACK_LENGTH + FINAL_LENGTH;
 const PIECES_PER_PLAYER = 4;
+const GAME_MODES = Object.freeze(["normal", "chaos"]);
+const DEFAULT_MODE = "normal";
 
 // Ludo-style path: 52 outer cells + 6 final lane cells per player.
 // Visible numbering is rebuilt to match the new 15x15 board geometry.
@@ -220,6 +222,18 @@ function clamp(value, min, max) {
   return Math.max(min, Math.min(max, value));
 }
 
+function normalizeMode(mode) {
+  return GAME_MODES.includes(mode) ? mode : DEFAULT_MODE;
+}
+
+function isChaosMode(state) {
+  return normalizeMode(state.mode) === "chaos";
+}
+
+function isNormalMode(state) {
+  return !isChaosMode(state);
+}
+
 function getTheme(slot) {
   return SLOT_THEMES[slot] || SLOT_THEMES[slot % SLOT_THEMES.length] || SLOT_THEMES[0];
 }
@@ -238,6 +252,10 @@ function isBridge(occupants) {
     return false;
   }
   return occupants.every((piece) => piece.playerSlot === occupants[0].playerSlot);
+}
+
+function isBlockingBridge(state, trackIndex, occupants) {
+  return isNormalMode(state) && SAFE_INDICES.has(trackIndex) && isBridge(occupants);
 }
 
 function buildTrackMap(pieces) {
@@ -302,7 +320,7 @@ function getBridgePieceIds(state, playerSlot) {
   return ids;
 }
 
-function evaluateTrackLanding(piece, targetIndex, trackMap) {
+function evaluateTrackLanding(state, piece, targetIndex, trackMap) {
   const occupants = getTrackOccupants(trackMap, targetIndex, piece.id);
 
   if (occupants.length === 0) {
@@ -317,7 +335,7 @@ function evaluateTrackLanding(piece, targetIndex, trackMap) {
     return { ok: true, capturePieceId: null };
   }
 
-  if (SAFE_INDICES.has(targetIndex)) {
+  if (isNormalMode(state) && SAFE_INDICES.has(targetIndex)) {
     if (occupants.length >= 2) {
       return { ok: false, capturePieceId: null };
     }
@@ -341,7 +359,7 @@ function computeMoveForPiece(state, piece, steps, options = {}, trackMap) {
     }
 
     const exitIndex = START_INDICES[piece.playerSlot];
-    const landing = evaluateTrackLanding(piece, exitIndex, trackMap);
+    const landing = evaluateTrackLanding(state, piece, exitIndex, trackMap);
     if (!landing.ok) {
       return null;
     }
@@ -377,14 +395,14 @@ function computeMoveForPiece(state, piece, steps, options = {}, trackMap) {
     trackPath.push(trackIndex);
 
     const bridgeOccupants = getTrackOccupants(trackMap, trackIndex, piece.id);
-    if (isBridge(bridgeOccupants)) {
+    if (isBlockingBridge(state, trackIndex, bridgeOccupants)) {
       return null;
     }
   }
 
   if (target <= trackLimit) {
     const targetIndex = indexForProgress(piece.playerSlot, target);
-    const landing = evaluateTrackLanding(piece, targetIndex, trackMap);
+    const landing = evaluateTrackLanding(state, piece, targetIndex, trackMap);
     if (!landing.ok) {
       return null;
     }
@@ -494,8 +512,29 @@ function advanceToNextPlayer(state) {
   state.bonusQueue = [];
   state.extraTurnsPending = 0;
   state.homeRollAttempts = 0;
+  state.doubleStreak = 0;
   resetTurnDiceState(state);
   state.phase = "await-roll";
+}
+
+function applyThirdDoublePenalty(state, playerSlot) {
+  const candidate = state.pieces.find((piece) =>
+    piece.id === state.lastMovedPieceId &&
+    piece.playerSlot === playerSlot &&
+    piece.progress >= 0 &&
+    piece.progress < GOAL_PROGRESS
+  );
+
+  if (candidate) {
+    candidate.progress = -1;
+    state.lastMovedPieceId = candidate.id;
+    state.selectedPieceId = candidate.id;
+    state.lastPath = [];
+    state.lastEvent = "Tercer doble: la ultima ficha movida vuelve a casa y el turno pasa.";
+    return;
+  }
+
+  state.lastEvent = "Tercer doble: pierdes el turno.";
 }
 
 function applyMoveCore(state, move) {
@@ -514,8 +553,12 @@ function applyMoveCore(state, move) {
     const captured = state.pieces.find((item) => item.id === move.capturePieceId);
     if (captured) {
       captured.progress = -1;
-      state.bonusQueue.push({ type: 20, reason: "capture", sourcePieceId: piece.id });
-      state.lastEvent = "Captura realizada. Bonus de 20 casillas.";
+      if (isNormalMode(state)) {
+        state.bonusQueue.push({ type: 21, reason: "capture", sourcePieceId: piece.id });
+        state.lastEvent = "Captura realizada. Bonus de 21 casillas.";
+      } else {
+        state.lastEvent = "Captura realizada. En modo Caos no hay bonus de captura.";
+      }
     }
   }
 
@@ -553,6 +596,17 @@ function availableDiceIndices(state) {
 
 function getExitMoves(state, playerSlot) {
   return getLegalMoves(state, playerSlot, 0, { exitFromHome: true });
+}
+
+function createExitOptions(state, consumeDice, badge, label) {
+  return getExitMoves(state, state.currentPlayerIndex).map((move) =>
+    createMoveOption(state, move, {
+      kind: "exit-five",
+      consumeDice,
+      badge,
+      label
+    })
+  );
 }
 
 function describeMoveTargetForPlayer(playerSlot, move) {
@@ -653,20 +707,20 @@ function buildTurnOptions(state) {
     const [firstDieIndex, secondDieIndex] = available;
     const firstValue = state.diceValues[firstDieIndex];
     const secondValue = state.diceValues[secondDieIndex];
-    const isDouble = firstValue === secondValue;
 
-    if (isDouble && hasHomePieces(state, playerSlot)) {
-      const exitMoves = getExitMoves(state, playerSlot);
-      options.push(
-        ...exitMoves.map((move) =>
-          createMoveOption(state, move, {
-            kind: "exit-double",
-            consumeDice: [firstDieIndex, secondDieIndex],
-            badge: "Salir",
-            label: "Salir con doble"
-          })
-        )
-      );
+    if (hasHomePieces(state, playerSlot)) {
+      const exitOptions = [];
+      if (firstValue + secondValue === 5) {
+        exitOptions.push(...createExitOptions(state, [firstDieIndex, secondDieIndex], "Salir 5", "Salir con la suma 5"));
+      }
+      for (const dieIndex of available) {
+        if (state.diceValues[dieIndex] === 5) {
+          exitOptions.push(...createExitOptions(state, [dieIndex], `D${dieIndex + 1}=5`, `Salir con el dado ${dieIndex + 1}`));
+        }
+      }
+      if (exitOptions.length > 0) {
+        return exitOptions;
+      }
     }
 
     const sumMoves = getLegalMoves(state, playerSlot, firstValue + secondValue, {});
@@ -681,8 +735,7 @@ function buildTurnOptions(state) {
       )
     );
 
-    const splitStarts = isDouble ? [firstDieIndex] : available;
-    for (const dieIndex of splitStarts) {
+    for (const dieIndex of available) {
       const singleMoves = buildSingleDieOptions(state, dieIndex, []);
       for (const option of singleMoves) {
         if (canContinueSplitAfterMove(state, option.move, dieIndex)) {
@@ -700,6 +753,12 @@ function buildTurnOptions(state) {
   }
 
   const remainingDieIndex = available[0];
+  if (hasHomePieces(state, playerSlot) && state.diceValues?.[remainingDieIndex] === 5) {
+    const exitOptions = createExitOptions(state, [remainingDieIndex], `D${remainingDieIndex + 1}=5`, `Salir con el dado ${remainingDieIndex + 1}`);
+    if (exitOptions.length > 0) {
+      return exitOptions;
+    }
+  }
   return buildSingleDieOptions(state, remainingDieIndex, splitUsedPieceIds);
 }
 
@@ -837,7 +896,7 @@ function runRollAction(state) {
   state.showDiceAnimation = true;
   state.diceToken = (state.diceToken + 1) % 1000000;
   state.lastPath = [];
-  state.homeRollAttempts = allHome ? Number(state.homeRollAttempts || 0) : 0;
+  state.homeRollAttempts = 0;
   state.splitUsedPieceIds = [];
   state.bonusQueue = [];
   state.bonusPending = null;
@@ -845,28 +904,30 @@ function runRollAction(state) {
   state.movablePieceIds = [];
   state.selectedPieceId = null;
   state.effectiveSteps = null;
+  state.doubleStreak = isDouble ? Number(state.doubleStreak || 0) + 1 : 0;
 
-  if (allHome && !isDouble) {
-    state.homeRollAttempts += 1;
-    if (state.homeRollAttempts >= 3) {
-      state.lastEvent = `No salio doble en 3 intentos (${leftDie} y ${rightDie}). Pierdes el turno.`;
-      advanceToNextPlayer(state);
-      return { ok: true };
-    }
-
-    state.lastEvent = `No salio doble (${leftDie} y ${rightDie}). Intento ${state.homeRollAttempts} de 3 para salir.`;
+  if (isDouble && state.doubleStreak >= 3) {
+    applyThirdDoublePenalty(state, playerSlot);
+    state.doubleStreak = 0;
+    advanceToNextPlayer(state);
     return { ok: true };
   }
 
+  if (isDouble) {
+    state.extraTurnsPending = (state.extraTurnsPending || 0) + 1;
+  }
+
   const message = isDouble
-    ? `Doble ${leftDie}-${rightDie}. Toca un destino para salir o mover.`
+    ? `Doble ${leftDie}-${rightDie}. Juega la tirada y repites turno.`
     : `Tirada de ${leftDie} y ${rightDie}. Toca un destino para mover.`;
 
   if (startTurnDestinationSelection(state, message)) {
     return { ok: true };
   }
 
-  state.lastEvent = `No hay jugada legal con ${leftDie} y ${rightDie}.`;
+  state.lastEvent = allHome
+    ? `No salio 5 para abrir (${leftDie} y ${rightDie}).`
+    : `No hay jugada legal con ${leftDie} y ${rightDie}.`;
   finalizeTurnAfterResolution(state);
   return { ok: true };
 }
@@ -898,7 +959,8 @@ function runDestinationSelection(state, selectionId, expectBonusAction) {
   }
 
   const currentOptions = buildCurrentOptions(state);
-  const selectedOption = currentOptions.find((option) => option.id === selectionId);
+  const selectedOption = currentOptions.find((option) => option.id === selectionId)
+    || currentOptions.find((option) => option.move.pieceId === selectionId);
   if (!selectedOption) {
     return { ok: false, reason: "invalid" };
   }
@@ -1209,8 +1271,8 @@ function buildPhaseHelp(state) {
     return "Partida finalizada.";
   }
   if (state.phase === "await-roll") {
-    if (allPiecesInHome(state, state.currentPlayerIndex) && state.homeRollAttempts > 0) {
-      return `Busca doble para salir. Vas por el intento ${Math.min(state.homeRollAttempts + 1, 3)} de 3.`;
+    if (allPiecesInHome(state, state.currentPlayerIndex)) {
+      return "Necesitas un 5, en dado o suma, para abrir.";
     }
     return "Pulsa Tirar dados para continuar.";
   }
@@ -1230,10 +1292,54 @@ function buildPhaseHelp(state) {
   return "Resolviendo movimiento.";
 }
 
+function getEventTone(state) {
+  if (state.winnerSlot !== null) {
+    return "is-win";
+  }
+
+  const event = String(state.lastEvent || "").toLowerCase();
+  if (!event) {
+    return "is-neutral";
+  }
+  if (event.includes("tercer doble") || event.includes("penaliza") || event.includes("pierdes")) {
+    return "is-warning";
+  }
+  if (event.includes("captura")) {
+    return "is-capture";
+  }
+  if (event.includes("bonus")) {
+    return "is-bonus";
+  }
+  if (event.includes("meta")) {
+    return "is-goal";
+  }
+  if (event.includes("doble") || event.includes("tiro extra")) {
+    return "is-extra";
+  }
+  if (event.includes("no queda") || event.includes("necesitas")) {
+    return "is-muted";
+  }
+  return "is-neutral";
+}
+
+function renderConfigPanel({ options } = {}) {
+  const mode = normalizeMode(options?.mode);
+  return `
+    <div class="block">
+      <h3 class="block-title">Modo</h3>
+      <p class="block-sub">Normal conserva seguros y bonus de captura. Caos elimina seguros y bonus.</p>
+      <div class="player-count-row">
+        <button class="pill ${mode === "normal" ? "is-active" : ""}" data-action="set-game-option" data-option="mode" data-value="normal">Normal</button>
+        <button class="pill ${mode === "chaos" ? "is-active" : ""}" data-action="set-game-option" data-option="mode" data-value="chaos">Caos</button>
+      </div>
+    </div>
+  `;
+}
+
 export const parchisGame = {
   id: "parchis",
   name: "Parchis",
-  subtitle: "2-4 jugadores",
+  subtitle: "2-4 jugadores · Normal/Caos",
   tagline: "Tablero clasico",
   minPlayers: 2,
   maxPlayers: 4,
@@ -1241,22 +1347,25 @@ export const parchisGame = {
   hideDefaultPlayerChips: true,
   rules: [
     { title: "Dados", text: "En cada turno tiras 2 dados: puedes mover una ficha con la suma o 2 fichas distintas, una con cada dado." },
-    { title: "Salida", text: "Se puede sacar ficha con cualquier doble. Si usas el doble para salir, se consume completo y no haces otro movimiento." },
-    { title: "Dobles", text: "Si ya tienes fichas fuera, el doble se juega como una tirada normal: puedes usar suma o dos fichas distintas, pero no da tiro extra por si mismo." },
-    { title: "3 intentos", text: "Si no tienes ninguna ficha fuera, dispones de 3 intentos para sacar un doble. Si no sale, pierdes el turno." },
-    { title: "Captura", text: "En casilla no segura capturas al rival y obtienes un bonus obligatorio de 20 casillas. Si no hay jugada legal, se pierde." },
-    { title: "Puentes", text: "Dos fichas del mismo color forman puente, bloquean el paso y tampoco puedes terminar con una tercera ficha encima." },
+    { title: "Salida", text: "Para sacar ficha de casa necesitas un 5, ya sea en un dado individual o con la suma de los dos dados." },
+    { title: "Dobles", text: "Si sacas dobles, juegas la tirada y repites turno. El tercer doble seguido penaliza y pasa el turno." },
+    { title: "Captura", text: "En modo Normal, capturar en casilla no segura da un bonus obligatorio de 21 casillas. En modo Caos no hay bonus de captura." },
+    { title: "Seguros", text: "En modo Normal hay seguros y los puentes solo bloquean en seguros. En modo Caos no hay seguros." },
     { title: "Meta", text: "Para entrar en meta necesitas numero exacto. Meter ficha no da 10: solo concede un tiro extra completo al terminar el turno." },
     { title: "Victoria", text: "Gana quien mete sus 4 fichas en meta." }
   ],
   getDefaultOptions() {
-    return {};
+    return { mode: DEFAULT_MODE };
   },
-  normalizeOptions() {
-    return {};
+  normalizeOptions(options = {}) {
+    return { mode: normalizeMode(options.mode) };
   },
-  createInitialState({ playerCount }) {
+  renderConfigPanel({ options }) {
+    return renderConfigPanel({ options });
+  },
+  createInitialState({ playerCount, options = {} }) {
     const totalPlayers = clamp(Number(playerCount) || 2, 2, 4);
+    const normalizedOptions = this.normalizeOptions(options);
     const pieces = [];
 
     for (let slot = 0; slot < totalPlayers; slot += 1) {
@@ -1272,6 +1381,7 @@ export const parchisGame = {
 
     return {
       playerCount: totalPlayers,
+      mode: normalizedOptions.mode,
       currentPlayerIndex: 0,
       winnerSlot: null,
       phase: "await-roll",
@@ -1288,6 +1398,7 @@ export const parchisGame = {
       splitUsedPieceIds: [],
       extraTurnsPending: 0,
       homeRollAttempts: 0,
+      doubleStreak: 0,
       showDiceAnimation: false,
       selectedPieceId: null,
       lastEvent: "Pulsa Tirar dados para empezar.",
@@ -1317,8 +1428,8 @@ export const parchisGame = {
     const name = active ? active.name : "Jugador";
 
     if (state.phase === "await-roll") {
-      if (allPiecesInHome(state, state.currentPlayerIndex) && state.homeRollAttempts > 0) {
-        return `Turno de ${name}. Busca doble para salir.`;
+      if (allPiecesInHome(state, state.currentPlayerIndex)) {
+        return `Turno de ${name}. Necesitas un 5 para abrir.`;
       }
       return `Turno de ${name}. Tira los dados.`;
     }
@@ -1435,7 +1546,7 @@ export const parchisGame = {
     const goalMap = buildSlotPieceMap(state.pieces, (piece) => piece.progress >= GOAL_PROGRESS);
     const bridgeCells = new Set();
     for (const [index, occupants] of trackMap.entries()) {
-      if (isBridge(occupants)) {
+      if (isBlockingBridge(state, index, occupants)) {
         bridgeCells.add(index);
       }
     }
@@ -1444,7 +1555,7 @@ export const parchisGame = {
       const index = cell.visibleCell - 1;
       const startOwner = START_INDICES.findIndex((value) => value === index);
       const isEntry = FINAL_ENTRY_INDICES.includes(index);
-      const isSafe = SAFE_INDICES.has(index);
+      const isSafe = isNormalMode(state) && SAFE_INDICES.has(index);
       const isBridgeCell = bridgeCells.has(index);
       const placement = getTrackPlacement(cell);
       const occupants = (trackMap.get(index) || []).slice().sort((a, b) => a.playerSlot - b.playerSlot || a.pieceIndex - b.pieceIndex);
@@ -1606,21 +1717,55 @@ export const parchisGame = {
       `
       : "";
     const exitAttemptsMarkup =
-      allPiecesInHome(state, state.currentPlayerIndex) && state.homeRollAttempts > 0 && state.phase === "await-roll"
-        ? `<p class="parchis-side-badge">Intentos de salida: ${state.homeRollAttempts} de 3</p>`
+      allPiecesInHome(state, state.currentPlayerIndex) && state.phase === "await-roll"
+        ? `<p class="parchis-side-badge">Apertura: necesitas 5</p>`
         : "";
+    const modeLabel = isChaosMode(state) ? "Caos" : "Normal";
+    const modeHelp = isChaosMode(state)
+      ? "Sin seguros ni bonus de captura."
+      : "Seguros activos y captura con bonus 21.";
+    const shellClasses = [
+      "parchis-shell",
+      isChaosMode(state) ? "is-chaos-mode" : "is-normal-mode",
+      `is-phase-${state.phase || "idle"}`,
+      state.winnerSlot !== null ? "is-finished" : ""
+    ].filter(Boolean);
+    const activeTheme = activePlayer ? getTheme(activePlayer.slot) : getTheme(0);
+    const eventTone = getEventTone(state);
+    const eventLabel = eventTone === "is-capture"
+      ? "Captura"
+      : eventTone === "is-bonus"
+        ? "Bonus"
+        : eventTone === "is-goal"
+          ? "Meta"
+          : eventTone === "is-warning"
+            ? "Aviso"
+            : eventTone === "is-win"
+              ? "Victoria"
+              : eventTone === "is-extra"
+                ? "Turno extra"
+                : "Estado";
+    const diceResultLabel = diceValues.every((value) => Number.isInteger(value))
+      ? `D1 ${diceValues[0]} · D2 ${diceValues[1]} · suma ${diceValues[0] + diceValues[1]}`
+      : "Lanza para descubrir los 2 dados.";
 
     return `
       <style>
       /* EVOLUCIÓN PREMIUM: PARCHÍS DE MARQUETERÍA FINA Y CUERO CREMA */
 
+      .game-screen-parchis .topbar-actions [data-action="restart-game"] {
+        display: grid !important;
+      }
+
       .parchis-shell {
         display: flex;
         flex-direction: row;
-        gap: 32px;
-        max-width: 1200px;
+        align-items: flex-start;
+        gap: 20px;
+        width: min(100%, 1120px);
+        max-width: 1120px;
         margin: 0 auto;
-        padding: 24px;
+        padding: 16px;
         background: radial-gradient(circle at 50% 50%, #fcfbf8 0%, #f3ebe0 100%);
         border-radius: 20px;
         box-shadow: 0 20px 50px rgba(74, 56, 41, 0.12);
@@ -1631,10 +1776,16 @@ export const parchisGame = {
       .parchis-shell * {
         box-sizing: border-box !important;
       }
+      .parchis-shell.is-chaos-mode {
+        background: radial-gradient(circle at 50% 50%, #fcfbf8 0%, #f0e6dc 100%);
+      }
 
       /* MARCO DE ARCE DORADO PREMIUM */
       .parchis-board-frame {
-        padding: 16px;
+        flex: 0 0 auto;
+        width: fit-content !important;
+        max-width: 100%;
+        padding: 12px;
         background:
           radial-gradient(circle at 50% 50%, #eddabf 0%, #d89f64 100%),
           repeating-linear-gradient(45deg, rgba(255,255,255,0.06) 0px, rgba(255,255,255,0.06) 2px, transparent 2px, transparent 4px);
@@ -1651,8 +1802,10 @@ export const parchisGame = {
         display: grid;
         grid-template-rows: repeat(15, 1fr);
         grid-template-columns: repeat(15, 1fr);
-        width: min(520px, 80vw, 70vh);
-        height: min(520px, 80vw, 70vh);
+        width: min(500px, 48vw, calc(var(--app-dvh, 100dvh) - 300px));
+        height: min(500px, 48vw, calc(var(--app-dvh, 100dvh) - 300px));
+        min-width: 320px;
+        min-height: 320px;
         aspect-ratio: 1 / 1;
         background:
           radial-gradient(circle at 50% 50%, #FAF8F5 0%, #ebdcc8 100%),
@@ -1698,6 +1851,14 @@ export const parchisGame = {
         align-items: center;
         justify-content: center;
       }
+      .parchis-home.is-inactive {
+        filter: grayscale(0.35);
+        opacity: 0.5;
+      }
+      .parchis-home-slot.is-empty {
+        background: rgba(255,255,255,0.12) !important;
+        border-style: dashed !important;
+      }
 
       /* CASILLAS DEL PASILLO (Hueso pulido claro) */
       .parchis-track-cell, .parchis-final-cell {
@@ -1710,6 +1871,26 @@ export const parchisGame = {
         display: flex;
         align-items: center;
         justify-content: center;
+      }
+      .parchis-track-core,
+      .parchis-final-core {
+        position: absolute;
+        inset: 10%;
+        border-radius: 5px;
+        border: 1px solid rgba(110, 75, 45, 0.1);
+        pointer-events: none;
+      }
+      .parchis-cell-contents {
+        position: absolute;
+        inset: 0;
+        z-index: 4;
+        display: grid;
+        place-items: center;
+        pointer-events: none;
+      }
+      .parchis-cell-contents .parchis-piece,
+      .parchis-cell-contents .parchis-move-target {
+        pointer-events: auto;
       }
 
       .parchis-track-cell.is-safe {
@@ -1726,6 +1907,31 @@ export const parchisGame = {
         border: 1px solid rgba(212, 175, 55, 0.15);
         border-radius: 3px;
         pointer-events: none;
+      }
+      .parchis-track-cell.is-safe .parchis-track-core::after {
+        content: '';
+        position: absolute;
+        inset: 30%;
+        border-radius: 50%;
+        background: rgba(212, 175, 55, 0.55);
+        box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.55);
+      }
+      .parchis-track-cell.is-start .parchis-track-core {
+        border-color: rgba(44, 30, 19, 0.22);
+        box-shadow: inset 0 0 0 2px rgba(255,255,255,0.42);
+      }
+      .parchis-start-marker {
+        position: absolute;
+        inset: 22%;
+        border-radius: 999px;
+        border: 2px solid rgba(44, 30, 19, 0.25);
+        z-index: 2;
+        pointer-events: none;
+      }
+      .parchis-track-cell.is-bridge {
+        box-shadow:
+          inset 0 0 0 2px rgba(101, 65, 35, 0.45),
+          0 0 0 2px rgba(101, 65, 35, 0.12) !important;
       }
 
       /* PINTADO DE PASILLOS POR JUGADOR (Esmaltados luminosos claros) */
@@ -1757,8 +1963,8 @@ export const parchisGame = {
 
       /* FICHAS: CUENTAS DE VIDRIO / GEMAS PRECIOSAS */
       .parchis-piece {
-        width: 28px;
-        height: 28px;
+        width: min(30px, 82%);
+        height: min(30px, 82%);
         border-radius: 50% !important;
         position: relative;
         display: flex;
@@ -1773,54 +1979,96 @@ export const parchisGame = {
           inset 0 3px 6px rgba(255,255,255,0.7),
           inset 0 -3px 6px rgba(0,0,0,0.4),
           0 4px 8px rgba(74,56,41,0.3);
-        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+        min-width: 20px;
+        min-height: 20px;
+        touch-action: manipulation;
       }
       .parchis-piece.slot-0 { background: radial-gradient(circle at 35% 35%, #ff5256 0%, #b31418 80%, #6e0004 100%) !important; }
       .parchis-piece.slot-1 { background: radial-gradient(circle at 35% 35%, #52abff 0%, #1462b3 80%, #00366e 100%) !important; }
       .parchis-piece.slot-2 { background: radial-gradient(circle at 35% 35%, #fff152 0%, #b38b14 80%, #6e5200 100%) !important; }
       .parchis-piece.slot-3 { background: radial-gradient(circle at 35% 35%, #6bff52 0%, #20b314 80%, #006e07 100%) !important; }
 
-      /* FLOTACIÓN ELÉSTICA PARA SELECCIONABLES */
+      /* ESTADOS DE JUGABILIDAD */
       .parchis-piece.is-movable {
-        animation: parchisPieceFloat 1.6s infinite ease-in-out !important;
+        animation: parchisPieceReady 1.5s infinite ease-in-out !important;
         cursor: pointer;
         z-index: 10;
+        outline: 3px solid rgba(255,255,255,0.92);
+        outline-offset: 2px;
       }
-      @keyframes parchisPieceFloat {
+      @keyframes parchisPieceReady {
         0%, 100% {
           transform: translateY(0) scale(1);
           box-shadow:
-            0 0 12px var(--piece),
+            0 0 0 3px rgba(212, 175, 55, 0.18),
             inset 0 3px 6px rgba(255,255,255,0.7),
             inset 0 -3px 6px rgba(0,0,0,0.3),
             0 4px 8px rgba(74,56,41,0.3);
         }
         50% {
-          transform: translateY(-8px) scale(1.08);
+          transform: translateY(-4px) scale(1.06);
           box-shadow:
-            0 0 25px var(--piece),
+            0 0 0 5px rgba(212, 175, 55, 0.28),
             inset 0 3px 6px rgba(255,255,255,0.8),
             inset 0 -3px 6px rgba(0,0,0,0.2),
-            0 12px 20px rgba(74,56,41,0.5);
+            0 8px 14px rgba(74,56,41,0.34);
         }
       }
 
       .parchis-piece.is-selected {
-        transform: translateY(-12px) scale(1.15) !important;
-        box-shadow: 0 0 30px #ffffff, 0 15px 25px rgba(74,56,41,0.6) !important;
+        transform: translateY(-7px) scale(1.12) !important;
+        outline: 3px solid #ffffff;
+        outline-offset: 3px;
+        box-shadow: 0 0 0 5px var(--piece), 0 10px 18px rgba(74,56,41,0.42) !important;
         z-index: 12;
       }
 
-      /* ANIMACIÓN FISICA DE SALTO DE LLEGADA */
-      .parchis-piece.is-last {
-        animation: parchisPieceBounce 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards !important;
+      .parchis-piece.is-goal {
+        box-shadow:
+          inset 0 3px 6px rgba(255,255,255,0.7),
+          inset 0 -3px 6px rgba(0,0,0,0.3),
+          0 0 0 3px rgba(212, 175, 55, 0.35),
+          0 4px 8px rgba(74,56,41,0.22);
       }
-      @keyframes parchisPieceBounce {
-        0% { transform: translateY(-60px) scale(1.4); opacity: 0; }
-        60% { transform: translateY(5px) scale(0.9); }
-        80% { transform: translateY(-8px) scale(1.05); }
+      .parchis-piece.is-bridge {
+        box-shadow:
+          inset 0 3px 6px rgba(255,255,255,0.7),
+          inset 0 -3px 6px rgba(0,0,0,0.35),
+          0 0 0 3px rgba(101, 65, 35, 0.38),
+          0 4px 8px rgba(74,56,41,0.3);
+      }
+
+      /* FEEDBACK BREVE DE LLEGADA */
+      .parchis-piece.is-last {
+        animation: parchisPieceSettle 0.34s ease-out forwards !important;
+      }
+      @keyframes parchisPieceSettle {
+        0% { transform: translateY(-10px) scale(1.12); opacity: 0.75; }
         100% { transform: translateY(0) scale(1); opacity: 1; }
       }
+
+      .parchis-piece-stack {
+        position: relative;
+        display: grid;
+        place-items: center;
+        width: 100%;
+        height: 100%;
+      }
+      .parchis-piece-dock {
+        grid-area: 1 / 1;
+        display: grid;
+        place-items: center;
+      }
+      .parchis-piece-stack.count-2 .parchis-piece-dock:nth-child(1) { transform: translate(-5px, -4px); }
+      .parchis-piece-stack.count-2 .parchis-piece-dock:nth-child(2) { transform: translate(5px, 4px); }
+      .parchis-piece-stack.count-3 .parchis-piece-dock:nth-child(1) { transform: translate(-6px, -5px); }
+      .parchis-piece-stack.count-3 .parchis-piece-dock:nth-child(2) { transform: translate(6px, -4px); }
+      .parchis-piece-stack.count-3 .parchis-piece-dock:nth-child(3) { transform: translate(0, 6px); }
+      .parchis-piece-stack.count-4 .parchis-piece-dock:nth-child(1) { transform: translate(-6px, -6px); }
+      .parchis-piece-stack.count-4 .parchis-piece-dock:nth-child(2) { transform: translate(6px, -6px); }
+      .parchis-piece-stack.count-4 .parchis-piece-dock:nth-child(3) { transform: translate(-6px, 6px); }
+      .parchis-piece-stack.count-4 .parchis-piece-dock:nth-child(4) { transform: translate(6px, 6px); }
 
       /* CUBILETE LANDING PAD DE CUERO ARENA PULIDO Y DORADOS */
       .parchis-die-card {
@@ -1847,14 +2095,21 @@ export const parchisGame = {
         box-shadow: inset 0 0 15px rgba(142, 105, 69, 0.05);
         pointer-events: none;
       }
+      .parchis-die-card.is-ready {
+        border-color: rgba(212, 175, 55, 0.48) !important;
+        box-shadow:
+          inset 0 0 15px rgba(110,75,45,0.1),
+          0 0 0 3px rgba(212, 175, 55, 0.1),
+          0 10px 25px rgba(74,56,41,0.08) !important;
+      }
 
       /* DADOS 3D HOLOGRÁFICOS TRANSLÚCIDOS SATINADOS CLAROS */
       .parchis-dice-grid {
         display: flex;
-        gap: 32px;
+        gap: 20px;
         justify-content: center;
         perspective: 800px;
-        padding: 24px 0;
+        padding: 8px 0 12px;
       }
        .parchis-die {
         width: 60px;
@@ -1867,6 +2122,48 @@ export const parchisGame = {
       .parchis-die.is-clickable {
         cursor: pointer;
         pointer-events: auto;
+      }
+      .parchis-die-label,
+      .parchis-die-status {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 8;
+        white-space: nowrap;
+        font-weight: 800;
+        line-height: 1;
+        pointer-events: none;
+      }
+      .parchis-die-label {
+        top: -8px;
+        color: #8e623a;
+        font-size: 10px;
+        letter-spacing: 0;
+      }
+      .parchis-die-status {
+        bottom: -12px;
+        font-size: 9px;
+        color: #6a5747;
+      }
+      .parchis-die.is-available.is-settled .parchis-die-status {
+        color: #126b49;
+      }
+      .parchis-die.is-consumed {
+        opacity: 0.52;
+        filter: grayscale(0.35);
+      }
+      .parchis-die.is-clickable::after {
+        content: '';
+        position: absolute;
+        inset: -8px;
+        border-radius: 16px;
+        border: 2px solid rgba(212, 175, 55, 0.28);
+        animation: parchisDieReady 1.3s infinite ease-in-out;
+        pointer-events: none;
+      }
+      @keyframes parchisDieReady {
+        0%, 100% { opacity: 0.45; transform: scale(1); }
+        50% { opacity: 0.85; transform: scale(1.04); }
       }
 
       /* CARAS DEL CUBO 3D */
@@ -1960,16 +2257,20 @@ export const parchisGame = {
       .parchis-side {
         display: flex;
         flex-direction: column;
-        gap: 16px;
-        flex: 1;
+        gap: 10px;
+        flex: 1 1 300px;
+        min-width: 260px;
       }
       .parchis-side-card {
         background: rgba(254, 252, 249, 0.75) !important;
         backdrop-filter: blur(12px);
         border: 1px solid rgba(142, 105, 69, 0.15) !important;
         border-radius: 12px !important;
-        padding: 16px !important;
+        padding: 12px !important;
         box-shadow: 0 8px 32px rgba(74, 56, 41, 0.05) !important;
+      }
+      .parchis-turn-card {
+        border-left: 4px solid var(--active-player) !important;
       }
       .parchis-side-card h4 {
         color: #8e623a !important;
@@ -2004,6 +2305,54 @@ export const parchisGame = {
         cursor: not-allowed;
       }
 
+      .parchis-move-target {
+        position: absolute;
+        inset: 2px;
+        z-index: 14;
+        display: grid;
+        place-items: center;
+        border: 2px solid rgba(212, 175, 55, 0.9);
+        border-radius: 7px;
+        background: rgba(255, 248, 227, 0.64);
+        box-shadow: 0 0 0 2px rgba(255,255,255,0.72), 0 6px 12px rgba(74,56,41,0.16);
+        color: #6c470e;
+        cursor: pointer;
+        text-decoration: none;
+      }
+      .parchis-move-target.is-delayed {
+        opacity: 0.5;
+        pointer-events: none;
+      }
+      .parchis-move-target-badge {
+        min-width: 28px;
+        min-height: 22px;
+        display: inline-grid;
+        place-items: center;
+        padding: 2px 6px;
+        border-radius: 999px;
+        background: #fff8e3;
+        border: 1px solid rgba(176, 129, 26, 0.32);
+        font-size: 10px;
+        font-weight: 900;
+        line-height: 1;
+      }
+      .parchis-move-target-choice-row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 3px;
+      }
+      .parchis-move-target-choice {
+        min-width: 24px;
+        min-height: 24px;
+        border-radius: 999px;
+        border: 1px solid rgba(176, 129, 26, 0.45);
+        background: #ffffff;
+        color: #6c470e;
+        font-weight: 900;
+        cursor: pointer;
+      }
+
       .parchis-option-chip-row {
         display: flex;
         flex-wrap: wrap;
@@ -2025,6 +2374,17 @@ export const parchisGame = {
         font-weight: 700;
         margin: 0 0 6px 0;
         color: #2c1e13;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .parchis-turn-player::before {
+        content: '';
+        width: 12px;
+        height: 12px;
+        border-radius: 999px;
+        background: var(--active-player);
+        box-shadow: 0 0 0 3px rgba(255,255,255,0.75), 0 0 0 4px var(--active-player-dark);
       }
       .parchis-side-badge {
         display: inline-block;
@@ -2042,32 +2402,71 @@ export const parchisGame = {
         color: #6a5747;
         margin: 6px 0 0 0;
       }
+      .parchis-mode-badge.is-chaos {
+        background: #f8ece5;
+        border-color: #e8c3ae;
+        color: #974d28;
+      }
+      .parchis-event-card {
+        border-left: 4px solid #d1c2ad !important;
+      }
+      .parchis-event-card p {
+        margin: 6px 0 0 0;
+        color: #3b2a1b;
+        font-size: 13px;
+        line-height: 1.3;
+      }
+      .parchis-event-label {
+        display: inline-block;
+        padding: 3px 7px;
+        border-radius: 999px;
+        background: #f5efe6;
+        color: #73543a;
+        font-size: 10px;
+        font-weight: 900;
+        text-transform: uppercase;
+        letter-spacing: 0;
+      }
+      .parchis-event-card.is-capture { border-left-color: #b83131 !important; }
+      .parchis-event-card.is-capture .parchis-event-label { background: #ffe7e7; color: #9e2424; }
+      .parchis-event-card.is-bonus,
+      .parchis-event-card.is-extra { border-left-color: #b0811a !important; }
+      .parchis-event-card.is-bonus .parchis-event-label,
+      .parchis-event-card.is-extra .parchis-event-label { background: #fff8e3; color: #946a0f; }
+      .parchis-event-card.is-goal,
+      .parchis-event-card.is-win { border-left-color: #24885f !important; }
+      .parchis-event-card.is-goal .parchis-event-label,
+      .parchis-event-card.is-win .parchis-event-label { background: #e6f7ef; color: #176945; }
+      .parchis-event-card.is-warning { border-left-color: #a94725 !important; }
+      .parchis-event-card.is-warning .parchis-event-label { background: #faece5; color: #973b1a; }
 
       /* RESPONSIVE FLUIDO APANIZADO */
       @media (max-width: 900px) {
         .parchis-shell {
           flex-direction: column;
           align-items: center;
-          gap: 18px;
-          padding: 16px;
+          gap: 12px;
+          padding: 12px;
         }
         .parchis-board-frame {
           margin: 0 auto;
-          width: min(100%, calc(100vw - 48px));
-          padding: 10px;
+          width: min(100%, 456px, calc(100vw - 48px)) !important;
+          padding: 8px;
           box-sizing: border-box !important;
         }
         .parchis-board {
-          width: 100%;
+          width: 100% !important;
           height: auto;
-          max-width: 520px;
+          min-width: 0;
+          min-height: 0;
+          max-width: 432px;
           max-height: none;
         }
         .parchis-side {
           width: 100%;
           display: grid;
           grid-template-columns: 1fr 1fr;
-          gap: 12px;
+          gap: 10px;
         }
         .parchis-side-card {
           margin: 0 !important;
@@ -2085,10 +2484,33 @@ export const parchisGame = {
           display: flex;
           flex-direction: column;
           width: 100%;
-          gap: 12px;
+          gap: 10px;
         }
         .parchis-side-card {
-          padding: 14px !important;
+          padding: 10px !important;
+        }
+        .parchis-home {
+          padding: 8px;
+        }
+        .parchis-home-slot {
+          width: 32px;
+          height: 32px;
+        }
+        .parchis-piece {
+          font-size: 12px;
+        }
+        .parchis-players-card {
+          display: none;
+        }
+        .parchis-event-card {
+          display: block;
+        }
+        .parchis-event-card p,
+        .parchis-side-note {
+          font-size: 11px;
+        }
+        .parchis-dice-grid {
+          padding-bottom: 16px;
         }
       }
 
@@ -2177,9 +2599,20 @@ export const parchisGame = {
           height: 30px !important;
         }
       }
+
+      @media (prefers-reduced-motion: reduce) {
+        .parchis-piece,
+        .parchis-piece.is-movable,
+        .parchis-piece.is-last,
+        .parchis-die.is-clickable::after,
+        .parchis-die-cube-3d {
+          animation: none !important;
+          transition: none !important;
+        }
+      }
       </style>
 
-      <section class="parchis-shell">
+      <section class="${shellClasses.join(" ")}" style="--active-player:${activeTheme.piece};--active-player-dark:${activeTheme.pieceDark}">
         <div class="parchis-board-frame">
           <div class="parchis-board">
             ${homeAreas}
@@ -2190,7 +2623,7 @@ export const parchisGame = {
         </div>
 
         <aside class="parchis-side">
-          <article class="parchis-side-card parchis-die-card">
+          <article class="parchis-side-card parchis-die-card ${canRoll ? "is-ready" : "is-locked"}">
             <div class="parchis-dice-grid">
               ${diceMarkup}
             </div>
@@ -2203,7 +2636,7 @@ export const parchisGame = {
               Tirar dados
             </button>
             <p class="parchis-side-note">
-              ${diceValues.every((value) => Number.isInteger(value)) ? `Resultado: ${diceValues[0]} y ${diceValues[1]}` : "Lanza para descubrir los 2 dados."}
+              ${escapeHtml(diceResultLabel)}
             </p>
           </article>
 
@@ -2212,7 +2645,9 @@ export const parchisGame = {
             <p class="parchis-turn-player">
               ${escapeHtml(activePlayer ? activePlayer.name : "Jugador")}
             </p>
+            <p class="parchis-side-badge parchis-mode-badge ${isChaosMode(state) ? "is-chaos" : "is-normal"}">${escapeHtml(`Modo ${modeLabel}`)}</p>
             <p class="parchis-side-note">${escapeHtml(buildPhaseHelp(state))}</p>
+            <p class="parchis-side-note">${escapeHtml(modeHelp)}</p>
             ${
               state.bonusPending
                 ? `<p class="parchis-side-badge">Bonus activo: ${state.bonusPending.type}</p>`
@@ -2227,8 +2662,9 @@ export const parchisGame = {
             <div class="parchis-player-list">${renderPlayerStatus(state, players)}</div>
           </article>
 
-          <article class="parchis-side-card parchis-event-card">
+          <article class="parchis-side-card parchis-event-card ${eventTone}" aria-live="polite">
             <h4>Ultimo evento</h4>
+            <span class="parchis-event-label">${escapeHtml(eventLabel)}</span>
             <p>${escapeHtml(state.lastEvent || "")}</p>
           </article>
         </aside>

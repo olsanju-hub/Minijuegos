@@ -196,9 +196,6 @@ export function createUI({ appElement, toastElement }) {
   let toastTimer = null;
   let currentVm = null;
   let viewportRefreshFrame = null;
-  let homeActiveIndex = 0;
-  let homeDrawerOpen = false;
-  let homeMotionDir = 0;
   let footballTickFrame = null;
   let footballLastFrameAt = 0;
   let footballDispatchInFlight = false;
@@ -217,81 +214,14 @@ export function createUI({ appElement, toastElement }) {
   let memoryResolveInFlight = false;
   let sokobanAutoNextTimerId = null;
   let sokobanAutoNextInFlight = false;
-  let homeSwipeStartX = null;
   let trafficSwipeState = null;
   let trafficSwipeInFlight = false;
   let gameSwipeState = null;
   let gameSwipeInFlight = false;
+  let homeIconPulseTimer = null;
 
   function isCompactTouchViewport() {
     return window.matchMedia("(max-width: 760px)").matches;
-  }
-
-  function getHomeCatalog(vm) {
-    return Array.isArray(vm?.games) ? vm.games : [];
-  }
-
-  function normalizeHomeIndex(vm) {
-    const total = getHomeCatalog(vm).length;
-    if (total <= 0) {
-      homeActiveIndex = 0;
-      return 0;
-    }
-    homeActiveIndex = ((homeActiveIndex % total) + total) % total;
-    return homeActiveIndex;
-  }
-
-  function setHomeIndex(index, vm = currentVm) {
-    if (!vm) {
-      return;
-    }
-    const total = getHomeCatalog(vm).length;
-    if (total === 0) {
-      return;
-    }
-    const previous = homeActiveIndex;
-    const numeric = Number(index);
-    if (!Number.isFinite(numeric)) {
-      return;
-    }
-    homeActiveIndex = ((numeric % total) + total) % total;
-    const drift = circularDelta(homeActiveIndex, previous, total);
-    homeMotionDir = drift === 0 ? 0 : drift > 0 ? 1 : -1;
-    homeDrawerOpen = false;
-    render(vm);
-  }
-
-  function shiftHomeIndex(step, vm = currentVm) {
-    setHomeIndex(homeActiveIndex + Number(step || 0), vm);
-  }
-
-  function shiftHomeIndexLinear(step, vm = currentVm) {
-    if (!vm) {
-      return;
-    }
-    const total = getHomeCatalog(vm).length;
-    if (total <= 0) {
-      return;
-    }
-    const next = Math.max(0, Math.min(total - 1, homeActiveIndex + Number(step || 0)));
-    if (next === homeActiveIndex) {
-      return;
-    }
-    const previous = homeActiveIndex;
-    homeActiveIndex = next;
-    homeMotionDir = homeActiveIndex > previous ? 1 : -1;
-    homeDrawerOpen = false;
-    render(vm);
-  }
-
-  function circularDelta(index, active, total) {
-    let delta = index - active;
-    if (delta > total / 2) {
-      delta -= total;
-    } else if (delta < -total / 2) {
-      delta += total;
-    }
-    return delta;
   }
 
   function renderTopbar({
@@ -382,6 +312,37 @@ export function createUI({ appElement, toastElement }) {
           </g>
           <circle cx="20.5" cy="20.5" r="4.1" fill="#de6a51" stroke="#b14c37" stroke-width="1" />
           <circle cx="27.5" cy="27.5" r="4.1" fill="#f2d76b" stroke="#c9a83f" stroke-width="1" />
+        </svg>
+      `,
+      reversi: `
+        <svg viewBox="0 0 48 48" role="presentation" aria-hidden="true">
+          <defs>
+            <linearGradient id="reversiGlyphBoard" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#dff0e6" />
+              <stop offset="100%" stop-color="#8ab79b" />
+            </linearGradient>
+            <radialGradient id="reversiGlyphLight" cx="32%" cy="28%" r="70%">
+              <stop offset="0%" stop-color="#fffaf0" />
+              <stop offset="70%" stop-color="#f2dfb2" />
+              <stop offset="100%" stop-color="#c8a75c" />
+            </radialGradient>
+            <radialGradient id="reversiGlyphDark" cx="32%" cy="28%" r="70%">
+              <stop offset="0%" stop-color="#6f846f" />
+              <stop offset="68%" stop-color="#24382c" />
+              <stop offset="100%" stop-color="#121c16" />
+            </radialGradient>
+          </defs>
+          <rect x="4" y="4" width="40" height="40" rx="11" fill="#fbf4e8" stroke="#d9c8af" stroke-width="1.5" />
+          <rect x="9" y="9" width="30" height="30" rx="7" fill="url(#reversiGlyphBoard)" stroke="#5f8b70" stroke-width="1.1" />
+          <g stroke="rgba(255,255,255,0.58)" stroke-width="0.75">
+            <path d="M16.5 9V39M24 9V39M31.5 9V39" />
+            <path d="M9 16.5H39M9 24H39M9 31.5H39" />
+          </g>
+          <circle cx="20.25" cy="20.25" r="4" fill="url(#reversiGlyphLight)" stroke="#b79a55" stroke-width="0.8" />
+          <circle cx="27.75" cy="20.25" r="4" fill="url(#reversiGlyphDark)" stroke="#17241c" stroke-width="0.8" />
+          <circle cx="20.25" cy="27.75" r="4" fill="url(#reversiGlyphDark)" stroke="#17241c" stroke-width="0.8" />
+          <circle cx="27.75" cy="27.75" r="4" fill="url(#reversiGlyphLight)" stroke="#b79a55" stroke-width="0.8" />
+          <circle cx="31.5" cy="16.5" r="1.5" fill="none" stroke="#e76f51" stroke-width="1.2" stroke-dasharray="1.4 1.4" />
         </svg>
       `,
       parchis: `
@@ -676,40 +637,45 @@ export function createUI({ appElement, toastElement }) {
         </div>
       `;
     }
-    const games = getHomeCatalog(vm);
+    const games = Array.isArray(vm.games) ? vm.games : [];
 
     /* Perfil semántico por juego: tag + clase CSS de color */
     function profileForGame(game) {
       const map = {
-        tictactoe:             { tag: "Lógica",     cls: "tag-logica"     },
-        connect4:              { tag: "Estrategia", cls: "tag-estrategia" },
-        damas:                 { tag: "Tablero",    cls: "tag-tablero"    },
-        parchis:               { tag: "Familiar",   cls: "tag-familiar"   },
-        "escaleras-serpientes":{ tag: "Suerte",     cls: "tag-suerte"     },
-        trafico:               { tag: "Puzzle",     cls: "tag-puzzle"     },
-        buscaminas:            { tag: "Lógica",     cls: "tag-logica"     },
-        memory:                { tag: "Memoria",    cls: "tag-memoria"    },
-        billar:                { tag: "Habilidad",  cls: "tag-habilidad"  },
-        sokoban:               { tag: "Desafío",    cls: "tag-desafio"    },
-        "futbol-turnos":       { tag: "Deportes",   cls: "tag-deportes"   },
-        tanques:               { tag: "Acción",     cls: "tag-accion"     }
+        tictactoe: { tag: "Lógica", cls: "tag-logica", theme: "theme-tictactoe" },
+        connect4: { tag: "Estrategia", cls: "tag-estrategia", theme: "theme-connect4" },
+        damas: { tag: "Tablero", cls: "tag-tablero", theme: "theme-damas" },
+        parchis: { tag: "Familiar", cls: "tag-familiar", theme: "theme-parchis" },
+        "escaleras-serpientes": { tag: "Suerte", cls: "tag-suerte", theme: "theme-escaleras" },
+        trafico: { tag: "Puzzle", cls: "tag-puzzle", theme: "theme-trafico" },
+        buscaminas: { tag: "Lógica", cls: "tag-logica", theme: "theme-buscaminas" },
+        memory: { tag: "Memoria", cls: "tag-memoria", theme: "theme-memory" },
+        billar: { tag: "Habilidad", cls: "tag-habilidad", theme: "theme-billar" },
+        sokoban: { tag: "Desafío", cls: "tag-desafio", theme: "theme-sokoban" },
+        "futbol-turnos": { tag: "Deportes", cls: "tag-deportes", theme: "theme-futbol" },
+        tanques: { tag: "Acción", cls: "tag-accion", theme: "theme-tanques" },
+        reversi: { tag: "Estrategia", cls: "tag-estrategia", theme: "theme-reversi" }
       };
-      return map[game?.id] || { tag: "Juego", cls: "tag-default" };
+      return map[game?.id] || { tag: "Juego", cls: "tag-default", theme: "theme-default" };
     }
 
-    const cardsHtml = games.map((game) => {
+    const cardsHtml = games.map((game, index) => {
       const profile = profileForGame(game);
       const players = game.minPlayers === game.maxPlayers
         ? `${game.minPlayers} jug.`
         : `${game.minPlayers}–${game.maxPlayers} jug.`;
       return `
         <button
-          class="game-card-v2"
+          class="game-card-v2 home-perspective-band ${profile.theme}"
           data-action="open-game"
           data-game-id="${game.id}"
+          style="--band-index:${index};"
           aria-label="Jugar a ${escapeHtml(game.name)}"
         >
-          <div class="game-card-icon">
+          <span class="home-band-side" aria-hidden="true"></span>
+          <span class="home-band-gloss" aria-hidden="true"></span>
+          <span class="home-band-shadow" aria-hidden="true"></span>
+          <div class="game-card-icon home-band-icon">
             <div class="game-card-icon-svg">
               ${renderHomeGameGlyph(game.id)}
             </div>
@@ -726,54 +692,20 @@ export function createUI({ appElement, toastElement }) {
     }).join("");
 
     return `
-      <!-- Topbar HOME V2 -->
       <header class="home-topbar" role="banner">
         <div class="home-topbar-brand">
-          <div class="home-topbar-icon">
-            <picture>
-              <source srcset="./assets/icono.webp" type="image/webp" />
-              <img src="./assets/icono.png" alt="Minijuegos" />
-            </picture>
-          </div>
           <h1 class="home-topbar-name">Minijuegos</h1>
-        </div>
-        <div class="home-topbar-actions">
-          <button class="home-topbar-btn" aria-label="Información" data-action="open-rules-home">
-            ${renderUiIcon("help")}
-          </button>
         </div>
       </header>
 
-      <!-- Contenedor principal HOME V2 -->
       <div class="home-v2">
         <div class="home-v2-inner">
-
-          <!-- HERO -->
-          <section class="home-hero" aria-label="Bienvenida">
-            <picture>
-              <source srcset="./assets/home-hero-family.webp" type="image/webp" />
-              <img
-                class="home-hero-img"
-                src="./assets/home-hero-family.png"
-                alt="Familia jugando juntos"
-                loading="eager"
-                fetchpriority="high"
-              />
-            </picture>
-            <div class="home-hero-overlay" aria-hidden="true"></div>
-            <div class="home-hero-body">
-              <h2 class="home-hero-title">Juegos para<br>toda la familia</h2>
-              <p class="home-hero-sub">Clásicos de siempre, listos para jugar sin conexión.</p>
-            </div>
-          </section>
-
-          <!-- CATÁLOGO -->
-          <section class="home-catalog" aria-label="Catálogo de juegos">
+          <section class="home-catalog home-perspective-catalog" aria-label="Catálogo de juegos">
             <div class="home-catalog-header">
-              <h2 class="home-catalog-title">Catálogo</h2>
+              <h2 class="home-catalog-title">Elige juego</h2>
               <span class="home-catalog-count">${games.length} juegos</span>
             </div>
-            <div class="home-catalog-grid" role="list">
+            <div class="home-catalog-grid home-band-stack" role="list">
               ${cardsHtml}
             </div>
           </section>
@@ -782,6 +714,42 @@ export function createUI({ appElement, toastElement }) {
       </div>
 
     `;
+  }
+
+  function pulseVisibleHomeIcons() {
+    if (!currentVm || currentVm.screen !== "home") {
+      return;
+    }
+
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const icons = Array.from(appElement.querySelectorAll(".home-band-icon"));
+    if (icons.length === 0) {
+      return;
+    }
+
+    const viewportHeight = window.innerHeight || document.documentElement.clientHeight || 0;
+    for (const icon of icons) {
+      const rect = icon.getBoundingClientRect();
+      if (rect.bottom >= 0 && rect.top <= viewportHeight) {
+        icon.classList.remove("is-scroll-pulsing");
+        void icon.offsetWidth;
+        icon.classList.add("is-scroll-pulsing");
+      }
+    }
+
+    if (homeIconPulseTimer) {
+      window.clearTimeout(homeIconPulseTimer);
+    }
+
+    homeIconPulseTimer = window.setTimeout(() => {
+      for (const icon of icons) {
+        icon.classList.remove("is-scroll-pulsing");
+      }
+      homeIconPulseTimer = null;
+    }, 180);
   }
 
   function renderConfig(vm) {
@@ -1087,10 +1055,6 @@ export function createUI({ appElement, toastElement }) {
                 })}
               </section>
             </div>
-            <aside class="game-floating-actions" aria-label="Acciones de partida">
-              <button class="btn btn-secondary" data-action="restart-game">Reiniciar</button>
-              <button class="btn btn-ghost" data-action="open-rules">Reglas</button>
-            </aside>
           </section>
         </div>
       </section>
@@ -1266,9 +1230,6 @@ export function createUI({ appElement, toastElement }) {
     }
 
     currentVm = vm;
-    if (vm.screen !== "home") {
-      homeDrawerOpen = false;
-    }
     let html;
 
     if (vm.screen === "home") {
@@ -1945,39 +1906,7 @@ export function createUI({ appElement, toastElement }) {
       }
 
       const action = target.dataset.action;
-      if (action === "home-select") {
-        setHomeIndex(Number(target.dataset.homeIndex));
-        return;
-      }
-
-      if (action === "home-prev") {
-        shiftHomeIndexLinear(-1);
-        return;
-      }
-
-      if (action === "home-next") {
-        shiftHomeIndexLinear(1);
-        return;
-      }
-
-      if (action === "toggle-home-drawer") {
-        homeDrawerOpen = !homeDrawerOpen;
-        if (currentVm) {
-          render(currentVm);
-        }
-        return;
-      }
-
-      if (action === "close-home-drawer") {
-        homeDrawerOpen = false;
-        if (currentVm) {
-          render(currentVm);
-        }
-        return;
-      }
-
       if (action === "open-game") {
-        homeDrawerOpen = false;
         await onAction("open-game", { gameId: target.dataset.gameId || "" });
         return;
       }
@@ -2055,23 +1984,7 @@ export function createUI({ appElement, toastElement }) {
       });
     });
 
-    document.addEventListener("keydown", (event) => {
-      const target = event.target;
-      if (!target || !(target instanceof HTMLElement)) {
-        return;
-      }
-
-      if (target.dataset.action !== "home-select") {
-        return;
-      }
-
-      if (event.key !== "Enter" && event.key !== " ") {
-        return;
-      }
-
-      event.preventDefault();
-      setHomeIndex(Number(target.dataset.homeIndex));
-    });
+    window.addEventListener("scroll", pulseVisibleHomeIcons, { passive: true });
 
     document.addEventListener("keydown", async (event) => {
       const interactiveTarget = event.target;
@@ -2160,11 +2073,6 @@ export function createUI({ appElement, toastElement }) {
       }
 
       if (event.target instanceof Element) {
-        const homeZone = event.target.closest("[data-home-swipe]");
-        if (homeZone && currentVm && currentVm.screen === "home") {
-          homeSwipeStartX = touch.clientX;
-        }
-
         const trafficZone = event.target.closest("[data-traffic-road]");
         if (
           trafficZone &&
@@ -2201,17 +2109,6 @@ export function createUI({ appElement, toastElement }) {
     });
 
     document.addEventListener("touchend", (event) => {
-      if (homeSwipeStartX !== null && currentVm && currentVm.screen === "home") {
-        const touch = event.changedTouches && event.changedTouches[0];
-        if (touch) {
-          const deltaX = touch.clientX - homeSwipeStartX;
-          if (Math.abs(deltaX) >= 44) {
-            shiftHomeIndex(deltaX < 0 ? 1 : -1);
-          }
-        }
-      }
-      homeSwipeStartX = null;
-
       if (
         trafficSwipeState &&
         currentVm &&
@@ -2295,7 +2192,6 @@ export function createUI({ appElement, toastElement }) {
     });
 
     document.addEventListener("touchcancel", () => {
-      homeSwipeStartX = null;
       clearTrafficSwipeState();
       clearGameSwipeState();
     });
