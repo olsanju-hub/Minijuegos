@@ -43,7 +43,7 @@ engine.registerGame(reversiGame);
 engine.boot();
 
 if ("serviceWorker" in navigator) {
-  const SERVICE_WORKER_URL = "./sw.js?v=20260906-premium-8";
+  const SERVICE_WORKER_URL = "./sw.js?v=20260906-premium-9";
   const SERVICE_WORKER_ACTIVATED = "minijuegos:sw-activated";
   const SERVICE_WORKER_RELOAD_KEY = "minijuegos:sw-reload-version";
   const hadControllerOnBoot = Boolean(navigator.serviceWorker.controller);

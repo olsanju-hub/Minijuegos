@@ -309,9 +309,10 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-field-frame {
-  fill: #efe4d0;
-  stroke: #cab999;
+  fill: #e9d6b5;
+  stroke: #b99b68;
   stroke-width: 2.4;
+  filter: drop-shadow(0 14px 16px rgba(22, 44, 28, 0.24));
 }
 
 .football-field-pitch {
@@ -327,15 +328,15 @@ const FOOTBALL_STYLES = String.raw`
 
 .football-pitch-grid {
   fill: url(#footballPitchPattern);
-  opacity: 0.18;
+  opacity: 0.24;
 }
 
 .football-pitch-stripe {
-  fill: rgba(255, 255, 255, 0.075);
+  fill: rgba(255, 255, 255, 0.1);
 }
 
 .football-field-grain {
-  opacity: 0.1;
+  opacity: 0.16;
 }
 
 .football-goal-net {
@@ -408,9 +409,11 @@ const FOOTBALL_STYLES = String.raw`
 .football-piece-core {
   fill: var(--football-piece-fill);
   stroke: var(--football-piece-stroke);
-  stroke-width: 4.6;
+  stroke-width: 5.2;
   paint-order: stroke;
-  filter: drop-shadow(0 7px 10px rgba(10, 20, 15, 0.34)) drop-shadow(0 2px 3px rgba(10, 20, 15, 0.32));
+  filter:
+    drop-shadow(0 9px 11px rgba(10, 20, 15, 0.34))
+    drop-shadow(0 2px 3px rgba(10, 20, 15, 0.32));
   transition: filter 140ms ease, stroke-width 140ms ease;
 }
 
@@ -441,7 +444,10 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-piece.is-clickable:hover .football-piece-core {
-  filter: drop-shadow(0 8px 10px rgba(39, 43, 48, 0.2));
+  stroke-width: 6.2;
+  filter:
+    drop-shadow(0 10px 13px rgba(39, 43, 48, 0.24))
+    drop-shadow(0 0 7px var(--football-piece-fill));
 }
 
 .football-piece-detail {
@@ -491,13 +497,14 @@ const FOOTBALL_STYLES = String.raw`
 }
 
 .football-ball-shadow {
-  fill: rgba(46, 43, 38, 0.14);
+  fill: rgba(46, 43, 38, 0.2);
 }
 
 .football-ball-shell {
-  fill: #fffaf1;
-  stroke: #d6c4a2;
-  stroke-width: 2.2;
+  fill: #fffef8;
+  stroke: #27323a;
+  stroke-width: 2.6;
+  filter: drop-shadow(0 6px 7px rgba(11, 24, 16, 0.18));
 }
 
 .football-ball-ring {
@@ -1269,6 +1276,7 @@ function renderField(state, canAct) {
           data-team="${piece.team}"
           transform="translate(${piece.x} ${piece.y})"
         >
+          <title>${escapeHtml(`${TEAM_META[piece.team]?.short || "Equipo"} ${piece.index + 1}${clickable ? ", disponible para disparar" : ""}`)}</title>
           <ellipse class="football-piece-shadow" cx="0" cy="${piece.r * 0.76}" rx="${piece.r * 0.92}" ry="${piece.r * 0.44}"></ellipse>
           <circle class="football-turn-ring" cx="0" cy="0" r="${piece.r + 8}"></circle>
           <circle class="football-piece-core" cx="0" cy="0" r="${piece.r}"></circle>
@@ -1289,7 +1297,7 @@ function renderField(state, canAct) {
       data-football-field
       viewBox="${-GOAL_DEPTH} 0 ${FIELD_WIDTH + GOAL_DEPTH * 2} ${FIELD_HEIGHT}"
       role="img"
-      aria-label="Campo de futbol por turnos"
+      aria-label="${escapeHtml(`Campo de futbol por turnos. Marcador ${state.score[0]} a ${state.score[1]}. ${buildStatusCopy(state).title}`)}"
     >
       <defs>
         <linearGradient id="footballPitchFill" x1="0" y1="0" x2="0" y2="1">
