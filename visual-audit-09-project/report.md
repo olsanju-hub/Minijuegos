@@ -33,7 +33,7 @@
 | mobile | billar | no | no | 344x420 | no |
 | mobile | futbol-turnos | no | no | 374x362 | si |
 | mobile | tanques | no | no | 378x610 | no |
-| mobile | reversi | no | no | 306x306 | si |
+| mobile | reversi | no | no | 302x302 | si |
 | tablet | tictactoe | no | no | 386x386 | si |
 | tablet | connect4 | no | no | 520x446 | si |
 | tablet | damas | no | no | 520x520 | si |
@@ -46,7 +46,7 @@
 | tablet | billar | no | no | 458x824 | no |
 | tablet | futbol-turnos | no | no | 476x736 | si |
 | tablet | tanques | no | no | 460x285 | no |
-| tablet | reversi | no | no | 442x442 | si |
+| tablet | reversi | no | no | 438x438 | si |
 | desktop | tictactoe | no | no | 386x386 | si |
 | desktop | connect4 | no | no | 520x446 | si |
 | desktop | damas | no | no | 520x520 | si |
@@ -59,7 +59,7 @@
 | desktop | billar | no | no | 1406x814 | si |
 | desktop | futbol-turnos | no | no | 1010x576 | si |
 | desktop | tanques | no | no | 1132x702 | no |
-| desktop | reversi | no | no | 442x442 | si |
+| desktop | reversi | no | no | 438x438 | si |
 
 ## Consola
 - Sin errores ni warnings relevantes de consola.

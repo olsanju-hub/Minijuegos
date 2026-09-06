@@ -367,7 +367,17 @@ export const reversiGame = {
 
         const disabled = state.result || !canAct || !isLegal;
         const currentActiveColor = state.turnSlot === PLAYER_ONE ? p1.identity.color : p2.identity.color;
-        const hintDot = isLegal && showHints ? `<span class="reversi-hint-ring" style="--player-accent: ${currentActiveColor}"></span>` : "";
+        const flipsForCell = legalMovesMap.get(cellKey(r, c)) || [];
+        const hintDot = isLegal && showHints
+          ? `<span class="reversi-hint-ring" style="--player-accent: ${currentActiveColor}"><span>${flipsForCell.length}</span></span>`
+          : "";
+        const cellStateLabel = value === PLAYER_ONE
+          ? p1.name
+          : value === PLAYER_TWO
+            ? p2.name
+            : isLegal
+              ? `Movimiento disponible, voltea ${flipsForCell.length}`
+              : "Vacia";
 
         cellsMarkup += `
           <button
@@ -377,7 +387,7 @@ export const reversiGame = {
             data-row="${r}"
             data-col="${c}"
             ${disabled ? "disabled" : ""}
-            aria-label="Fila ${r + 1}, Columna ${c + 1}. ${value === PLAYER_ONE ? p1.name : value === PLAYER_TWO ? p2.name : isLegal ? "Movimiento sugerido disponible" : "Vacía"}"
+            aria-label="${escapeHtml(`Fila ${r + 1}, columna ${c + 1}. ${cellStateLabel}`)}"
           >
             ${hintDot}
             ${pieceMarkup}
@@ -402,19 +412,20 @@ export const reversiGame = {
             padding: 8px;
           }
 
-          /* HUD de puntuación glassmorphism */
+          /* HUD de puntuación compacto y táctil */
           .reversi-hud {
             width: 100%;
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(12px) saturate(140%);
-            -webkit-backdrop-filter: blur(12px) saturate(140%);
-            border: 1px solid rgba(255, 255, 255, 0.5);
+            background:
+              linear-gradient(180deg, rgba(255,255,255,0.96), rgba(244, 237, 224, 0.9));
+            border: 1px solid rgba(102, 127, 103, 0.2);
             border-radius: 16px;
             padding: 12px 16px;
             display: flex;
             flex-direction: column;
             gap: 8px;
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05), inset 0 2px 4px rgba(255,255,255,0.6);
+            box-shadow:
+              0 10px 18px rgba(46, 68, 50, 0.1),
+              inset 0 1px 0 rgba(255,255,255,0.9);
           }
 
           .reversi-hud-scores {
@@ -432,17 +443,21 @@ export const reversiGame = {
 
           .reversi-player-hud.active {
             transform: scale(1.04);
+            filter: saturate(1.08);
           }
 
           .reversi-player-hud-icon {
-            width: 24px;
-            height: 24px;
+            width: 28px;
+            height: 28px;
             border-radius: 50%;
             display: grid;
             place-items: center;
             font-weight: bold;
             color: #fff;
-            box-shadow: inset 0 -3px 4px rgba(0,0,0,0.2), 0 3px 6px rgba(0,0,0,0.1);
+            box-shadow:
+              inset 0 -4px 5px rgba(0,0,0,0.18),
+              inset 0 2px 3px rgba(255,255,255,0.34),
+              0 4px 8px rgba(0,0,0,0.12);
           }
 
           .reversi-player-hud-info {
@@ -469,12 +484,13 @@ export const reversiGame = {
           /* Barra de control y dominio */
           .reversi-progress-container {
             width: 100%;
-            height: 8px;
-            background: rgba(0,0,0,0.06);
+            height: 10px;
+            background: rgba(32, 55, 39, 0.08);
             border-radius: 999px;
             overflow: hidden;
             display: flex;
-            border: 1px solid rgba(255, 255, 255, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.72);
+            box-shadow: inset 0 1px 3px rgba(28, 45, 33, 0.12);
           }
 
           .reversi-progress-bar {
@@ -482,13 +498,19 @@ export const reversiGame = {
             transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
           }
 
-          /* Tablero 3D */
+          /* Tablero 2.5D */
           .reversi-board-wrapper {
-            background: linear-gradient(135deg, #1c2621, #0d1210);
-            padding: 10px;
+            background:
+              linear-gradient(135deg, rgba(255,255,255,0.16), transparent 35%),
+              linear-gradient(180deg, #25563d, #123322);
+            padding: 12px;
             border-radius: 20px;
-            box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25), inset 0 2px 4px rgba(255, 255, 255, 0.08);
-            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow:
+              0 22px 32px rgba(27, 50, 33, 0.24),
+              0 7px 0 #0b2416,
+              inset 0 2px 3px rgba(255, 255, 255, 0.16),
+              inset 0 -8px 14px rgba(0, 0, 0, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.12);
             width: 100%;
             aspect-ratio: 1;
             box-sizing: border-box;
@@ -500,13 +522,17 @@ export const reversiGame = {
             display: grid;
             grid-template-columns: repeat(8, 1fr);
             grid-template-rows: repeat(8, 1fr);
-            background: linear-gradient(135deg, #184d34 0%, #0e3020 100%);
-            border: 2px solid #081a11;
+            background:
+              linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0) 28%),
+              linear-gradient(135deg, #23784d 0%, #135033 100%);
+            border: 1px solid rgba(2, 23, 12, 0.72);
             border-radius: 12px;
             overflow: hidden;
-            box-shadow: inset 0 10px 20px rgba(0, 0, 0, 0.4);
+            box-shadow:
+              inset 0 8px 18px rgba(0, 0, 0, 0.26),
+              inset 0 1px 0 rgba(255, 255, 255, 0.12);
             gap: 1px;
-            background-color: #0b2217; /* grid color */
+            background-color: #0b2c1b;
           }
 
           .reversi-cell {
@@ -521,30 +547,47 @@ export const reversiGame = {
             justify-content: center;
             align-items: center;
             outline: none;
-            transition: background-color 0.25s ease;
+            transition: background-color 0.25s ease, box-shadow 0.25s ease, transform 0.18s ease;
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.08);
           }
 
           .reversi-cell:hover:not([disabled]) {
-            background-color: rgba(255, 255, 255, 0.08);
+            background-color: rgba(255, 255, 255, 0.1);
+            box-shadow: inset 0 0 0 2px rgba(255,255,255,0.12);
           }
 
           .reversi-cell:active:not([disabled]) {
             background-color: rgba(255, 255, 255, 0.15);
+            transform: scale(0.97);
           }
 
           .reversi-cell.is-last-move {
-            background-color: rgba(255, 244, 205, 0.04);
+            background-color: rgba(255, 244, 205, 0.08);
           }
 
           /* Sugerencias de movimientos */
           .reversi-hint-ring {
-            width: 35%;
-            height: 35%;
+            width: 42%;
+            height: 42%;
             border-radius: 50%;
-            border: 2px dashed var(--player-accent);
-            opacity: 0.65;
+            border: 2px solid color-mix(in srgb, var(--player-accent) 78%, white);
+            opacity: 0.78;
             animation: reversi-pulse-ring 1.8s infinite ease-in-out;
             pointer-events: none;
+            display: grid;
+            place-items: center;
+            color: #fffef8;
+            font-size: clamp(0.58rem, 1.8vw, 0.72rem);
+            font-weight: 850;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.42);
+            background: rgba(255,255,255,0.08);
+            box-shadow:
+              0 0 0 3px rgba(255,255,255,0.08),
+              0 4px 8px rgba(0,0,0,0.16);
+          }
+
+          .reversi-hint-ring span {
+            transform: translateY(-0.02em);
           }
 
           @keyframes reversi-pulse-ring {
@@ -553,17 +596,19 @@ export const reversiGame = {
             100% { transform: scale(0.9); opacity: 0.4; }
           }
 
-          /* Ficha de vidrio de alta gama */
+          /* Ficha de baquelita pulida */
           .reversi-piece {
             position: absolute;
             width: 82%;
             height: 82%;
             border-radius: 50%;
-            background: radial-gradient(circle at 30% 30%, #fff 0%, transparent 60%),
-                        radial-gradient(circle at center, var(--player-accent) 0%, rgba(0, 0, 0, 0.8) 120%);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.45),
-                        inset 0 -4px 6px rgba(0, 0, 0, 0.35),
-                        inset 0 4px 6px rgba(255, 255, 255, 0.4);
+            background:
+              radial-gradient(circle at 30% 24%, rgba(255,255,255,0.86) 0 10%, rgba(255,255,255,0) 28%),
+              radial-gradient(circle at center, color-mix(in srgb, var(--player-accent) 86%, white) 0%, var(--player-accent) 58%, rgba(0, 0, 0, 0.72) 132%);
+            box-shadow:
+              0 7px 10px rgba(0, 0, 0, 0.34),
+              inset 0 -6px 8px rgba(0, 0, 0, 0.32),
+              inset 0 5px 7px rgba(255, 255, 255, 0.38);
             display: flex;
             justify-content: center;
             align-items: center;
