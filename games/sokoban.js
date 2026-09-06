@@ -1085,17 +1085,19 @@ const SOKOBAN_STYLES = String.raw`
   }
 }
 
-/* Phase 1 visual unification: light warehouse materials */
+/* Active light warehouse materials */
 .sokoban-hud,
 .sokoban-controls,
 .sokoban-board-frame {
-  border: 1px solid rgba(215, 198, 166, 0.9);
+  border: 1px solid rgba(197, 174, 132, 0.78);
   background:
-    radial-gradient(circle at top left, rgba(255,255,255,0.8), transparent 58%),
-    linear-gradient(180deg, #fffaf1 0%, #efe2c8 100%);
+    radial-gradient(circle at 18% 0%, rgba(255,255,255,0.9), transparent 48%),
+    linear-gradient(180deg, #fffaf1 0%, #eed7b2 100%);
   box-shadow:
-    0 16px 30px rgba(72, 58, 38, 0.12),
-    inset 0 1px 0 rgba(255,255,255,0.95);
+    0 18px 28px rgba(72, 58, 38, 0.16),
+    0 4px 0 rgba(151, 102, 50, 0.32),
+    inset 0 1px 0 rgba(255,255,255,0.96),
+    inset 0 -5px 10px rgba(123, 84, 43, 0.11);
 }
 
 .sokoban-hud.is-blocked,
@@ -1191,12 +1193,18 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-board-frame {
-  border: 1px solid #d8c49d;
+  border: 1px solid rgba(151, 102, 50, 0.32);
   background:
-    linear-gradient(rgba(179, 151, 105, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(179, 151, 105, 0.08) 1px, transparent 1px),
-    linear-gradient(180deg, #fff8ec 0%, #ead9bd 100%);
-  background-size: 24px 24px, 24px 24px, auto;
+    linear-gradient(rgba(179, 151, 105, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(179, 151, 105, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 50% 12%, rgba(255,255,255,0.7), transparent 50%),
+    linear-gradient(180deg, #fff7e7 0%, #e5c492 100%);
+  background-size: 24px 24px, 24px 24px, auto, auto;
+  box-shadow:
+    0 22px 32px rgba(72, 58, 38, 0.18),
+    0 8px 0 rgba(139, 91, 42, 0.38),
+    inset 0 1px 0 rgba(255,255,255,0.92),
+    inset 0 -8px 12px rgba(112, 73, 34, 0.16);
 }
 
 .sokoban-board-frame::before {
@@ -1212,27 +1220,35 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-cell.is-floor .sokoban-tile {
-  border: 1px solid #e0d2bc;
+  border: 1px solid #dfcfb3;
   background:
-    linear-gradient(90deg, rgba(184, 160, 121, 0.09) 1px, transparent 1px),
-    linear-gradient(180deg, #fffdf8 0%, #f0e7d8 100%);
-  background-size: 18px 100%, auto;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+    linear-gradient(90deg, rgba(184, 160, 121, 0.1) 1px, transparent 1px),
+    radial-gradient(circle at 30% 22%, rgba(255,255,255,0.76), transparent 42%),
+    linear-gradient(180deg, #fffdf8 0%, #efe0c5 100%);
+  background-size: 18px 100%, auto, auto;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.9),
+    inset 0 -2px 4px rgba(117, 83, 43, 0.08);
 }
 
 .sokoban-cell.is-wall .sokoban-tile {
   border: 1px solid #c7aa7c;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0) 48%),
+    linear-gradient(180deg, rgba(255,255,255,0.42), rgba(255,255,255,0) 48%),
     repeating-linear-gradient(0deg, rgba(139, 99, 55, 0.08) 0 11px, rgba(139, 99, 55, 0.18) 11px 12px),
-    linear-gradient(180deg, #d6ad7b 0%, #b88451 100%);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.36), inset 0 -2px 0 rgba(112, 72, 35, 0.2), 0 4px 8px rgba(91, 72, 42, 0.12);
+    linear-gradient(180deg, #dfb97f 0%, #a96e3c 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.4),
+    inset 0 -3px 0 rgba(112, 72, 35, 0.22),
+    0 4px 8px rgba(91, 72, 42, 0.14);
 }
 
 .sokoban-goal {
   border-color: #cf8d45;
-  background: radial-gradient(circle, rgba(239, 177, 91, 0.22) 0%, rgba(239, 177, 91, 0.04) 70%);
-  box-shadow: inset 0 0 0 2px rgba(255,255,255,0.5);
+  background: radial-gradient(circle, rgba(239, 177, 91, 0.28) 0%, rgba(239, 177, 91, 0.06) 70%);
+  box-shadow:
+    inset 0 0 0 2px rgba(255,255,255,0.56),
+    0 4px 8px rgba(143, 92, 39, 0.12);
   animation: none;
 }
 
@@ -1248,12 +1264,16 @@ const SOKOBAN_STYLES = String.raw`
 }
 
 .sokoban-box {
-  border: 1px solid #9d6a35;
+  border: 1px solid #96602f;
   background:
-    linear-gradient(135deg, rgba(255,255,255,0.42), rgba(255,255,255,0) 42%),
+    radial-gradient(circle at 28% 20%, rgba(255,255,255,0.5), transparent 30%),
+    linear-gradient(135deg, rgba(255,255,255,0.32), rgba(255,255,255,0) 42%),
     repeating-linear-gradient(90deg, rgba(255,255,255,0.08) 0 9px, rgba(99, 62, 27, 0.08) 9px 11px),
-    linear-gradient(180deg, #d8a064 0%, #ae7338 100%);
-  box-shadow: 0 7px 12px rgba(91, 72, 42, 0.18), inset 0 1px 0 rgba(255,255,255,0.38), inset 0 -2px 0 rgba(99, 62, 27, 0.18);
+    linear-gradient(180deg, #dda763 0%, #ad6b32 100%);
+  box-shadow:
+    0 8px 13px rgba(91, 72, 42, 0.22),
+    inset 0 1px 0 rgba(255,255,255,0.44),
+    inset 0 -3px 0 rgba(99, 62, 27, 0.2);
 }
 
 .sokoban-box::before {
@@ -1290,8 +1310,11 @@ const SOKOBAN_STYLES = String.raw`
   border-color: #315f8f;
   background:
     radial-gradient(circle at 35% 28%, rgba(255,255,255,0.92) 0 12%, rgba(255,255,255,0) 28%),
-    linear-gradient(180deg, #75b7ff 0%, #4e83d8 100%);
-  box-shadow: 0 7px 12px rgba(72, 58, 38, 0.18), inset 0 2px 4px rgba(255,255,255,0.45), inset 0 -3px 5px rgba(36, 67, 116, 0.24);
+    linear-gradient(180deg, #75b7ff 0%, #4e83d8 58%, #315cad 100%);
+  box-shadow:
+    0 8px 13px rgba(72, 58, 38, 0.2),
+    inset 0 2px 4px rgba(255,255,255,0.5),
+    inset 0 -4px 6px rgba(36, 67, 116, 0.26);
 }
 
 .sokoban-player-core::before,
