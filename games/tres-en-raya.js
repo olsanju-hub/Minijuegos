@@ -265,12 +265,18 @@ export const tresEnRayaGame = {
 
         const disabled = state.result || !canAct || occupied;
         const cellClass = `ttt-cell${isLast ? " is-last" : ""}${isWinning ? " is-winning" : ""}`;
+        const cellLabel = occupied
+          ? `Casilla ${index + 1}, ocupada por ${players.find((item) => item.slot === value)?.name || "jugador"}`
+          : `Casilla ${index + 1}, marcar`;
         return `
           <button
             class="${cellClass}"
             data-action="game-action"
             data-game-action="mark"
             data-cell="${index}"
+            data-row="${Math.floor(index / 3)}"
+            data-col="${index % 3}"
+            aria-label="${escapeHtml(cellLabel)}"
             ${disabled ? "disabled" : ""}
           >
             ${occupied ? content : ghostContent}
@@ -314,7 +320,7 @@ export const tresEnRayaGame = {
     }
 
     return `
-      <div class="ttt-board-container">
+      <div class="ttt-board-container${state.result?.type === "win" ? " has-winner" : ""}${state.result?.type === "draw" ? " is-draw" : ""}">
         <!-- Hidden SVG Definitions for Metal and Copper Materials -->
         <svg class="ttt-defs-svg" style="display: none;">
           <defs>
@@ -353,27 +359,48 @@ export const tresEnRayaGame = {
         <div class="ttt-brass-corner bottom-right"></div>
 
         <style>
-          /* ENCAPSULATED PREMIUM SLATE & METAL STYLES FOR TIC-TAC-TOE */
+          /* Encapsulated tactile board styles for 3 en raya. */
           .screen.game-screen-tictactoe .ttt-board-container {
-            background: linear-gradient(135deg, #3a2212 0%, #1f1107 100%);
-            padding: 24px;
-            border-radius: 20px;
-            border: 4px solid #1a0f06;
-            box-shadow: 
-              0 20px 40px rgba(0,0,0,0.65),
-              inset 0 4px 10px rgba(255,255,255,0.1),
-              inset 0 -4px 10px rgba(0,0,0,0.4);
+            --ttt-board-wood: #e5c58f;
+            --ttt-board-edge: #9b6a35;
+            --ttt-board-ink: #294258;
+            --ttt-board-paper: #fff9ec;
+            background:
+              linear-gradient(135deg, rgba(255,255,255,0.58), rgba(255,255,255,0) 38%),
+              linear-gradient(180deg, #f2d9aa 0%, var(--ttt-board-wood) 52%, #bb8745 100%);
+            padding: clamp(18px, 4vw, 26px);
+            border-radius: 24px;
+            border: 1px solid rgba(113, 74, 32, 0.42);
+            box-shadow:
+              0 24px 34px rgba(73, 55, 30, 0.2),
+              0 8px 0 #8b5929,
+              inset 0 2px 0 rgba(255,255,255,0.72),
+              inset 0 -7px 14px rgba(95, 58, 23, 0.24);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 20px;
+            margin: 0 auto 18px;
             max-width: 440px;
             width: 100%;
             position: relative;
             box-sizing: border-box;
+            isolation: isolate;
+          }
+
+          .screen.game-screen-tictactoe .ttt-board-container::before {
+            content: "";
+            position: absolute;
+            left: 9%;
+            right: 9%;
+            bottom: -15px;
+            height: 22px;
+            border-radius: 999px;
+            background: radial-gradient(ellipse at center, rgba(60, 43, 23, 0.3), rgba(60, 43, 23, 0));
+            filter: blur(3px);
+            pointer-events: none;
+            z-index: -1;
           }
           
-          /* Brass brackets on the board frame corners */
           .screen.game-screen-tictactoe .ttt-brass-corner {
             position: absolute;
             width: 24px;
@@ -414,16 +441,21 @@ export const tresEnRayaGame = {
           .screen.game-screen-tictactoe .ttt-brass-corner.bottom-right::after { top: auto; bottom: 4px; left: auto; right: 4px; }
 
           .screen.game-screen-tictactoe .ttt-board {
-            background: radial-gradient(circle, #2f353b 0%, #1b1e22 100%);
-            border: 12px solid #23140a; /* Inner dark wood frame */
-            border-radius: 12px;
-            box-shadow: 
-              inset 0 6px 18px rgba(0,0,0,0.85),
-              0 3px 8px rgba(0,0,0,0.4);
+            background:
+              linear-gradient(rgba(76, 105, 121, 0.07) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(76, 105, 121, 0.07) 1px, transparent 1px),
+              radial-gradient(circle at 50% 14%, #ffffff 0%, var(--ttt-board-paper) 56%, #e8d2aa 100%);
+            background-size: 28px 28px, 28px 28px, auto;
+            border: 1px solid rgba(129, 91, 45, 0.34);
+            border-radius: 18px;
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,0.94),
+              inset 0 -5px 10px rgba(120, 84, 42, 0.14),
+              0 12px 18px rgba(85, 62, 35, 0.16);
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            padding: 12px;
+            gap: clamp(9px, 2.6vw, 13px);
+            padding: clamp(10px, 2.8vw, 14px);
             aspect-ratio: 1;
             width: 100%;
             position: relative;
@@ -438,50 +470,70 @@ export const tresEnRayaGame = {
             z-index: 1;
           }
 
+          .screen.game-screen-tictactoe .ttt-chalk-grid g[stroke] {
+            stroke: rgba(65, 96, 130, 0.46);
+            stroke-width: 4;
+            filter: none;
+          }
+
+          .screen.game-screen-tictactoe .ttt-chalk-grid g[fill] {
+            display: none;
+          }
+
           .screen.game-screen-tictactoe .ttt-cell {
             position: relative;
             aspect-ratio: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            border: none;
-            border-radius: 8px;
-            background: transparent;
+            border: 1px solid rgba(122, 91, 50, 0.16);
+            border-radius: clamp(12px, 3vw, 16px);
+            background:
+              linear-gradient(180deg, rgba(255,255,255,0.84), rgba(255,255,255,0.18)),
+              #fffaf0;
             cursor: pointer;
             padding: 0;
             z-index: 2;
             transition: all 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
             overflow: visible;
+            box-shadow:
+              inset 0 1px 0 rgba(255,255,255,0.9),
+              inset 0 -2px 4px rgba(116, 83, 42, 0.08);
           }
           .screen.game-screen-tictactoe .ttt-cell:hover:not([disabled]) {
-            background: rgba(255, 255, 255, 0.03);
-            box-shadow: 
-              inset 0 1px 2px rgba(255,255,255,0.05),
-              0 0 12px rgba(255, 255, 255, 0.05);
+            background:
+              linear-gradient(180deg, #ffffff, #fff3dc);
+            box-shadow:
+              inset 0 0 0 1px rgba(44, 126, 210, 0.24),
+              0 8px 14px rgba(70, 96, 120, 0.12);
+            transform: translateY(-2px);
           }
           .screen.game-screen-tictactoe .ttt-cell.is-last {
-            background: rgba(255, 255, 255, 0.015);
-            box-shadow: inset 0 0 8px rgba(255,255,255,0.05);
+            background:
+              radial-gradient(circle at 50% 50%, rgba(46, 132, 232, 0.14), transparent 68%),
+              #fffaf0;
+            box-shadow: inset 0 0 0 2px rgba(46, 132, 232, 0.18);
           }
           .screen.game-screen-tictactoe .ttt-cell.is-winning {
-            background: radial-gradient(circle, rgba(255, 215, 0, 0.18) 0%, transparent 75%);
-            animation: tttWobble 1s infinite ease-in-out;
+            background:
+              radial-gradient(circle, rgba(255, 213, 78, 0.38) 0%, rgba(255, 213, 78, 0.08) 72%),
+              #fff9e9;
+            animation: tttWinCellPulse 950ms ease-in-out infinite;
           }
-          @keyframes tttWobble {
-            0%, 100% { transform: scale(1.05) rotate(0deg); }
-            25% { transform: scale(1.05) rotate(-1deg); }
-            75% { transform: scale(1.05) rotate(1deg); }
+          @keyframes tttWinCellPulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
           }
           
           /* Piece container styles */
           .screen.game-screen-tictactoe .mark {
-            width: 72%;
-            height: 72%;
+            width: 76%;
+            height: 76%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6)) drop-shadow(0 0 6px var(--player-color, transparent));
+            filter: drop-shadow(0 7px 9px rgba(59, 47, 32, 0.24));
           }
           .screen.game-screen-tictactoe .ttt-piece-svg {
             width: 100%;
@@ -506,7 +558,7 @@ export const tresEnRayaGame = {
             pointer-events: none;
           }
           .screen.game-screen-tictactoe .ttt-cell:hover:not([disabled]) .mark.is-ghost {
-            opacity: 0.55;
+            opacity: 0.5;
             transform: scale(0.98);
           }
           
@@ -524,68 +576,6 @@ export const tresEnRayaGame = {
           }
           @keyframes tttDrawLine {
             to { stroke-dashoffset: 0; }
-          }
-
-          /* Phase 1 visual unification: light family tabletop board */
-          .screen.game-screen-tictactoe .ttt-board-container {
-            background:
-              radial-gradient(circle at 50% 12%, rgba(255,255,255,0.86), transparent 55%),
-              linear-gradient(180deg, #fffaf1 0%, #efe2c8 100%);
-            border: 1px solid #d9c6a7;
-            border-radius: 24px;
-            box-shadow:
-              0 18px 34px rgba(72, 58, 38, 0.14),
-              inset 0 1px 0 rgba(255,255,255,0.95);
-            padding: 22px;
-          }
-
-          .screen.game-screen-tictactoe .ttt-brass-corner {
-            display: none;
-          }
-
-          .screen.game-screen-tictactoe .ttt-board {
-            background:
-              linear-gradient(rgba(183, 158, 117, 0.08) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(183, 158, 117, 0.08) 1px, transparent 1px),
-              radial-gradient(circle at 50% 18%, #fffdf8 0%, #f3eadb 100%);
-            background-size: 28px 28px, 28px 28px, auto;
-            border: 1px solid #d7c5a8;
-            border-radius: 18px;
-            box-shadow:
-              inset 0 1px 0 rgba(255,255,255,0.9),
-              0 10px 22px rgba(91, 72, 42, 0.1);
-          }
-
-          .screen.game-screen-tictactoe .ttt-chalk-grid g[stroke] {
-            stroke: rgba(138, 105, 62, 0.52);
-            stroke-width: 4;
-            filter: none;
-          }
-
-          .screen.game-screen-tictactoe .ttt-chalk-grid g[fill] {
-            display: none;
-          }
-
-          .screen.game-screen-tictactoe .ttt-cell {
-            border-radius: 12px;
-          }
-
-          .screen.game-screen-tictactoe .ttt-cell:hover:not([disabled]) {
-            background: rgba(255,255,255,0.52);
-            box-shadow: inset 0 0 0 1px rgba(216, 196, 157, 0.55), 0 6px 12px rgba(91, 72, 42, 0.08);
-          }
-
-          .screen.game-screen-tictactoe .ttt-cell.is-last {
-            background: rgba(232, 221, 201, 0.42);
-            box-shadow: inset 0 0 0 1px rgba(202, 183, 151, 0.48);
-          }
-
-          .screen.game-screen-tictactoe .ttt-cell.is-winning {
-            background: radial-gradient(circle, rgba(235, 191, 86, 0.24) 0%, rgba(235, 191, 86, 0.04) 72%);
-          }
-
-          .screen.game-screen-tictactoe .mark {
-            filter: drop-shadow(0 5px 8px rgba(91,72,42,0.18));
           }
 
           .screen.game-screen-tictactoe .mark.is-ghost {

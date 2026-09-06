@@ -21,7 +21,7 @@
 ## Tabla por juego
 | Viewport | Juego | Overflow H inicial | Scroll excesivo | Tablero | Interaccion smoke |
 |---|---|---|---|---|---|
-| mobile | tictactoe | no | no | 298x298 | si |
+| mobile | tictactoe | no | no | 306x306 | si |
 | mobile | connect4 | no | no | 344x295 | si |
 | mobile | damas | no | no | 316x316 | si |
 | mobile | parchis | no | no | 256x256 | si |
@@ -34,7 +34,7 @@
 | mobile | futbol-turnos | no | no | 374x362 | si |
 | mobile | tanques | no | no | 378x610 | no |
 | mobile | reversi | no | no | 306x306 | si |
-| tablet | tictactoe | no | no | 394x394 | si |
+| tablet | tictactoe | no | no | 386x386 | si |
 | tablet | connect4 | no | no | 520x446 | si |
 | tablet | damas | no | no | 520x520 | si |
 | tablet | parchis | no | no | 432x432 | si |
@@ -47,7 +47,7 @@
 | tablet | futbol-turnos | no | no | 476x736 | si |
 | tablet | tanques | no | no | 460x285 | no |
 | tablet | reversi | no | no | 442x442 | si |
-| desktop | tictactoe | no | no | 394x394 | si |
+| desktop | tictactoe | no | no | 386x386 | si |
 | desktop | connect4 | no | no | 520x446 | si |
 | desktop | damas | no | no | 520x520 | si |
 | desktop | parchis | no | no | 500x500 | si |
