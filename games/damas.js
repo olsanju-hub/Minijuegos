@@ -769,7 +769,7 @@ export const damasGame = {
 
             const hintMarkup = showHints && isTarget ? '<span class="checkers-target-dot" aria-hidden="true"></span>' : "";
             const label = playable
-              ? `${pieceLabel(cell)} en fila ${row + 1}, columna ${col + 1}`
+              ? `${pieceLabel(cell)} en fila ${row + 1}, columna ${col + 1}${isSelected ? ", seleccionada" : ""}${isCaptureTarget ? ", destino de captura" : isTarget ? ", destino posible" : ""}${isForced ? ", captura obligatoria" : ""}`
               : `Casilla clara fila ${row + 1}, columna ${col + 1}`;
 
             return `
@@ -804,154 +804,18 @@ export const damasGame = {
           </defs>
         </svg>
         <style>
-          /* ENCAPSULATED PREMIUM WOOD STYLES FOR DAMAS */
-          .screen.game-screen-damas .checkers-shell {
-            background: linear-gradient(135deg, #422917 0%, #29180b 100%);
-            padding: 16px;
-            border-radius: 24px;
-            border: 6px double #d4af37;
-            box-shadow: 
-              0 24px 48px rgba(0,0,0,0.5),
-              inset 0 4px 20px rgba(255,255,255,0.06);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-          }
-          .screen.game-screen-damas .checkers-board {
-            background: #2b180d;
-            border: 10px solid #5a361e;
-            border-radius: 12px;
-            box-shadow: 
-              inset 0 0 15px rgba(0,0,0,0.7),
-              0 4px 10px rgba(0,0,0,0.3);
-            display: grid;
-            grid-template-columns: repeat(8, 1fr);
-            gap: 1px;
-            aspect-ratio: 1;
-            width: 100%;
-            max-width: 520px;
-          }
-          .screen.game-screen-damas .checkers-cell {
-            position: relative;
-            aspect-ratio: 1;
-            display: grid;
-            place-items: center;
-            border: none;
-            padding: 0;
-            cursor: pointer;
-            transition: all 0.25s ease;
-          }
-          .screen.game-screen-damas .checkers-cell.is-light {
-            background: radial-gradient(circle, #f3e5d0 30%, #dfcca8 100%);
-            box-shadow: inset 0 1px 2px rgba(255,255,255,0.8);
-          }
-          .screen.game-screen-damas .checkers-cell.is-dark {
-            background: radial-gradient(circle, #56331c 30%, #3e210f 100%);
-            box-shadow: inset 0 2px 6px rgba(0,0,0,0.5);
-          }
-          .screen.game-screen-damas .checkers-cell:hover:not([disabled]) {
-            filter: brightness(1.15);
-          }
-          .screen.game-screen-damas .checkers-cell.is-target {
-            background: radial-gradient(circle, rgba(212,175,55,0.2) 20%, #3e210f 100%) !important;
-          }
-          .screen.game-screen-damas .checkers-target-dot {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            border: 2px solid #ffd54f;
-            background: rgba(255, 213, 79, 0.3);
-            box-shadow: 0 0 12px #ffd54f, inset 0 0 4px rgba(255,255,255,0.5);
-            animation: checkersPulse 1.4s infinite ease-in-out;
-          }
-          @keyframes checkersPulse {
-            0% { transform: scale(0.9); opacity: 0.7; }
-            50% { transform: scale(1.1); opacity: 1; box-shadow: 0 0 16px #ffd54f, inset 0 0 6px rgba(255,255,255,0.7); }
-            100% { transform: scale(0.9); opacity: 0.7; }
-          }
-          .screen.game-screen-damas .checkers-piece {
-            width: 82%;
-            height: 82%;
-            border-radius: 50%;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.28s ease;
-            box-shadow: 
-              0 6px 12px rgba(0, 0, 0, 0.4), 
-              inset 0 -6px 8px rgba(0, 0, 0, 0.4), 
-              inset 0 6px 8px rgba(255, 255, 255, 0.3);
-            background: radial-gradient(circle at 35% 30%, var(--player-accent, #e02030) 10%, rgba(0,0,0,0.3) 70%), var(--player-accent, #e02030);
-            z-index: 2;
-          }
-          .screen.game-screen-damas .checkers-piece-core {
-            width: 60%;
-            height: 60%;
-            border-radius: 50%;
-            border: 3px double rgba(0,0,0,0.22);
-            box-shadow: 
-              inset 0 3px 5px rgba(0, 0, 0, 0.4), 
-              0 2px 2px rgba(255, 255, 255, 0.25);
-            background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.08) 0%, transparent 60%);
-            display: block;
-          }
-          .screen.game-screen-damas .checkers-piece.is-king {
-            transform: translateY(-4px);
-            box-shadow: 
-              0 10px 18px rgba(0, 0, 0, 0.5), 
-              inset 0 -6px 8px rgba(0, 0, 0, 0.4), 
-              inset 0 6px 8px rgba(255, 255, 255, 0.3);
-          }
-          .screen.game-screen-damas .checkers-piece.is-king::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            border-radius: 50%;
-            background: inherit;
-            transform: translateY(6px);
-            z-index: -1;
-            box-shadow: 
-              0 6px 10px rgba(0, 0, 0, 0.4), 
-              inset 0 -4px 6px rgba(0, 0, 0, 0.4), 
-              inset 0 4px 6px rgba(255, 255, 255, 0.3);
-          }
-          .screen.game-screen-damas .checkers-piece-crown {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5;
-            pointer-events: none;
-          }
-          .screen.game-screen-damas .checkers-cell.is-selected .checkers-piece {
-            transform: scale(1.12) translateY(-10px);
-            box-shadow: 
-              0 18px 28px rgba(0, 0, 0, 0.55), 
-              inset 0 -6px 8px rgba(0, 0, 0, 0.4), 
-              inset 0 6px 8px rgba(255, 255, 255, 0.45);
-          }
-          .screen.game-screen-damas .checkers-cell.is-selected .checkers-piece.is-king {
-            transform: scale(1.12) translateY(-14px);
-          }
-          .screen.game-screen-damas .checkers-cell.is-last-from {
-            box-shadow: inset 0 0 16px rgba(255, 143, 0, 0.35), inset 0 2px 6px rgba(0,0,0,0.5) !important;
-          }
-          .screen.game-screen-damas .checkers-cell.is-last-to {
-            box-shadow: inset 0 0 20px rgba(255, 143, 0, 0.5), inset 0 2px 6px rgba(0,0,0,0.5) !important;
-          }
-
-          /* Phase 1 visual unification: warm light checkers board */
+          /* Encapsulated tactile checkers board. */
           .screen.game-screen-damas .checkers-shell {
             background:
-              radial-gradient(circle at 50% 12%, rgba(255,255,255,0.85), transparent 55%),
-              linear-gradient(180deg, #fffaf1 0%, #efe2c8 100%);
-            border: 1px solid #d9c6a7;
+              radial-gradient(circle at 50% 9%, rgba(255,255,255,0.9), transparent 52%),
+              linear-gradient(180deg, #fffaf1 0%, #e9d3ad 58%, #bc874f 100%);
+            border: 1px solid rgba(130, 88, 44, 0.38);
             border-radius: 24px;
             box-shadow:
-              0 18px 34px rgba(72, 58, 38, 0.14),
-              inset 0 1px 0 rgba(255,255,255,0.95);
+              0 22px 32px rgba(72, 58, 38, 0.18),
+              0 7px 0 #9b6836,
+              inset 0 2px 0 rgba(255,255,255,0.92),
+              inset 0 -7px 14px rgba(98, 61, 28, 0.2);
             padding: 18px;
             width: min(100%, 600px);
             max-width: 100%;
@@ -963,12 +827,13 @@ export const damasGame = {
           }
 
           .screen.game-screen-damas .checkers-board {
-            background: #dac29a;
-            border: 1px solid #c9ad7e;
+            background: linear-gradient(180deg, #d7b47a, #a7733f);
+            border: 1px solid rgba(101, 66, 31, 0.5);
             border-radius: 16px;
             box-shadow:
-              0 10px 22px rgba(91, 72, 42, 0.12),
-              inset 0 1px 0 rgba(255,255,255,0.74);
+              0 12px 22px rgba(91, 72, 42, 0.18),
+              inset 0 1px 0 rgba(255,255,255,0.74),
+              inset 0 -4px 8px rgba(70, 44, 20, 0.18);
             gap: 2px;
             padding: 8px;
             width: min(100%, 520px);
@@ -1042,15 +907,24 @@ export const damasGame = {
           }
 
           .screen.game-screen-damas .checkers-piece {
+            width: 82%;
+            height: 82%;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.28s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.28s ease;
             box-shadow:
-              0 6px 11px rgba(91, 72, 42, 0.22),
-              inset 0 -5px 7px rgba(0, 0, 0, 0.18),
-              inset 0 5px 7px rgba(255, 255, 255, 0.36);
+              0 8px 12px rgba(54, 38, 22, 0.28),
+              inset 0 -7px 9px rgba(0, 0, 0, 0.2),
+              inset 0 6px 8px rgba(255, 255, 255, 0.38);
             background:
               radial-gradient(circle at 32% 26%, rgba(255,255,255,0.62) 0 13%, rgba(255,255,255,0) 32%),
               radial-gradient(circle at 50% 78%, rgba(0,0,0,0.18), transparent 48%),
               var(--player-accent, #e0765e);
             isolation: isolate;
+            z-index: 2;
           }
 
           .screen.game-screen-damas .checkers-piece-core {
