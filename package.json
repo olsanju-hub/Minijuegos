@@ -5,7 +5,9 @@
   "type": "commonjs",
   "scripts": {
     "start": "node server.js",
-    "validate": "node --check server.js"
+    "validate": "node scripts/validate-js.cjs",
+    "validate:js": "node scripts/validate-js.cjs",
+    "audit:visual": "node visual-audit-09-project/audit.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.61.0"

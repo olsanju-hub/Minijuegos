@@ -1,4 +1,4 @@
-const CACHE_NAME = "minijuegos-shell-v21";
+const CACHE_NAME = "minijuegos-shell-v22";
 const UPDATE_MESSAGE_TYPE = "minijuegos:sw-activated";
 const SCOPE_URL = new URL(self.registration.scope);
 const APP_BASE = SCOPE_URL.pathname.endsWith("/") ? SCOPE_URL.pathname : `${SCOPE_URL.pathname}/`;
@@ -8,7 +8,6 @@ const APP_SHELL = [
   `${APP_BASE}index.html`,
   `${APP_BASE}styles.css`,
   `${APP_BASE}app.js`,
-  `${APP_BASE}appearance-refresh.js`,
   `${APP_BASE}compact-mobile.js`,
   `${APP_BASE}engine.js`,
   `${APP_BASE}ui.js`,
@@ -16,7 +15,6 @@ const APP_SHELL = [
   `${APP_BASE}assets/icono.webp`,
   `${APP_BASE}assets/icon-192.png`,
   `${APP_BASE}assets/icon-512.png`,
-  `${APP_BASE}assets/home-hero-family.webp`,
   `${APP_BASE}games/tres-en-raya.js`,
   `${APP_BASE}games/cuatro-en-raya.js`,
   `${APP_BASE}games/damas.js`,
@@ -37,7 +35,6 @@ const NETWORK_FIRST_PATHS = new Set([
   `${APP_BASE}index.html`,
   `${APP_BASE}styles.css`,
   `${APP_BASE}app.js`,
-  `${APP_BASE}appearance-refresh.js`,
   `${APP_BASE}engine.js`,
   `${APP_BASE}ui.js`,
   `${APP_BASE}manifest.webmanifest`
