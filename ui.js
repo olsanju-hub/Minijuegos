@@ -626,19 +626,8 @@ export function createUI({ appElement, toastElement }) {
     return glyphs[gameId] || glyphs.tictactoe;
   }
 
-  function renderHome(vm) {
-    const baseGames = Array.isArray(vm.games) ? vm.games : [];
-    if (baseGames.length === 0) {
-      return `
-        <div class="home-v2">
-          <div class="home-v2-inner" style="display:flex;align-items:center;justify-content:center;min-height:60vh;">
-            <p style="color:var(--text-sub);font-size:1rem;">No hay juegos disponibles por ahora.</p>
-          </div>
-        </div>
-      `;
-    }
-    /* Perfil semántico por juego: tag + clase CSS de color */
-    function profileForGame(game) {
+  /* Perfil semántico por juego: tag + clase CSS de color */
+  function profileForGame(game) {
       const map = {
         tictactoe: { tag: "Lógica", cls: "tag-logica", theme: "theme-tictactoe", homeName: "3 en raya" },
         connect4: { tag: "Estrategia", cls: "tag-estrategia", theme: "theme-connect4", homeName: "4 en raya" },
